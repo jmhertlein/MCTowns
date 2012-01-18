@@ -1,0 +1,25 @@
+name: MCTowns
+main: me.everdras.mctowns.MCTowns
+version: 0.8.5
+depend: [WorldGuard, Vault]
+commands:
+    mct:
+        description: Base command for plugin-wide config or generic commands
+        usage: /mct (addtown | removetown | info | join | list | refuse | cancel)
+        aliases:
+    town:
+        description: base command for all town-based commands
+        usage: /town (add | remove | active | list | motd | setmayor | bank | spawn | economy | dashboard)
+        aliases: to
+    territory:
+        description: base command for all territory-based commands
+        usage: /territory (add | remove | active | list | flag)
+        aliases: te
+    district:
+        description: base command for all district-based commands
+        usage: /district (add | remove | active | list | flag)
+        aliases: di
+    plot:
+        description: base command for all plot-based commands
+        usage: /plot (add | remove | active | list | sign | info | flag | economy)
+        aliases: pl
