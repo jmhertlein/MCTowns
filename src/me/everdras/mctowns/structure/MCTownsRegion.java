@@ -89,10 +89,14 @@ public abstract class MCTownsRegion implements Externalizable {
      * @return
      */
     public boolean addPlayerToWGRegion(WorldGuardPlugin wgp, Player p) {
+        return addPlayerToWGRegion(wgp, p.getName());
+    }
+
+    public boolean addPlayerToWGRegion(WorldGuardPlugin wgp, String playerName) {
         DefaultDomain dd = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getOwners();
 
-        if (!dd.contains(wgp.wrapPlayer(p))) {
-            dd.addPlayer(p.getName());
+        if (!dd.getPlayers().contains(playerName)) {
+            dd.addPlayer(playerName);
             return true;
         }
         return false;

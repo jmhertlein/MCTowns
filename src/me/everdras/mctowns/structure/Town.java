@@ -222,11 +222,16 @@ public class Town implements Externalizable {
      * @return false if player was not added because player was already added, true otherwise
      */
     public boolean addAssistant(Player player) {
-        if (assistants.containsKey(player.getName())) {
+        return addAssistant(player.getName());
+    }
+
+    //TODO: Test this thoroughly to make sure it performs as expected.
+    public boolean addAssistant(String playerName) {
+        if (assistants.get(playerName) != null && assistants.get(playerName)) {
             return false;
         }
 
-        assistants.put(player.getName(), Boolean.TRUE);
+        assistants.put(playerName, Boolean.TRUE);
         return true;
     }
 
@@ -269,7 +274,10 @@ public class Town implements Externalizable {
      */
     public boolean playerIsMayor(Player p) {
         return p.getName().equals(mayor);
+    }
 
+    public boolean playerIsMayor(String playerName) {
+        return playerName.equals(mayor);
     }
 
     /**
@@ -288,7 +296,7 @@ public class Town implements Externalizable {
         this.friendlyFire = friendlyFire;
     }
 
-    
+
 
     /**
      * Returns whether or not the player is an assistant in the town
@@ -312,9 +320,7 @@ public class Town implements Externalizable {
      *
      * @param p
      * @return
-     * @deprecated
      */
-    @Deprecated
     public boolean playerIsResident(String p) {
         return residents.containsKey(p);
     }

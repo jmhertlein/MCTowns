@@ -1021,7 +1021,6 @@ public class CommandHandler {
      */
     public void promoteToAssistant(String playerName) {
         Town t = senderWrapper.getActiveTown();
-        Player p = server.getPlayer(playerName);
 
         if (t == null) {
             senderWrapper.notifyActiveTownNotSet();
@@ -1035,29 +1034,30 @@ public class CommandHandler {
             return;
         }
 
-        if (p == null) {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " doesn't exist or is not online.");
-            return;
+        if (server.getPlayer(playerName) == null) {
+            senderWrapper.sendMessage(ChatColor.RED + playerName + " is not online! Make sure you typed their name correctly.");
         }
 
-        if (t.playerIsMayor(p)) {
+        if (t.playerIsMayor(playerName)) {
             senderWrapper.sendMessage(ChatColor.RED + "That player is already the mayor of the town.");
             return;
         }
 
 
-        if (!t.playerIsResident(p)) {
+        if (!t.playerIsResident(playerName)) {
             senderWrapper.sendMessage(ChatColor.RED + playerName + " is not a resident of " + t.getTownName() + ".");
             return;
         }
 
-        if (t.addAssistant(p)) {
+        if (t.addAssistant(playerName)) {
             for (Territory territ : t.getTerritoriesCollection()) {
-                territ.addPlayerToWGRegion(wgp, p);
+                territ.addPlayerToWGRegion(wgp, playerName);
             }
 
-            senderWrapper.sendMessage(p.getName() + " has been promoted to an assistant of " + t.getTownName() + ".");
-            p.sendMessage("You are now an Assistant Mayor of " + t.getTownName());
+            senderWrapper.sendMessage(playerName + " has been promoted to an assistant of " + t.getTownName() + ".");
+
+            if(server.getPlayer(playerName) != null)
+                server.getPlayer(playerName).sendMessage("You are now an Assistant Mayor of " + t.getTownName());
         }
         else {
             senderWrapper.sendMessage(ChatColor.RED + playerName + " is already an assistant in this town.");
@@ -1852,7 +1852,7 @@ public class CommandHandler {
         Player player = server.getPlayer(playerName);
 
         if (!senderWrapper.getActiveTown().playerIsResident(player)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not a member of the town.");
+            senderWrapper.sendMessage(err + "That player is not a member of the town.");
             return;
         }
 
@@ -1862,15 +1862,14 @@ public class CommandHandler {
         }
 
         if (player == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not online.");
-            return;
+            senderWrapper.sendMessage(err + playerName + " is not online. Make sure you typed their name correctly!");
         }
 
-        if (p.addPlayerToWGRegion(wgp, player)) {
+        if (p.addPlayerToWGRegion(wgp, playerName)) {
             senderWrapper.sendMessage("Player added to plot.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is already in that plot.");
+            senderWrapper.sendMessage(err + "That player is already in that plot.");
         }
 
     }
@@ -1888,26 +1887,27 @@ public class CommandHandler {
         District dist = senderWrapper.getActiveDistrict();
         Player player = server.getPlayer(playerName);
 
-        if (player == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not online.");
-            return;
-        }
+
 
         if (dist == null) {
             senderWrapper.notifyActiveDistrictNotSet();
             return;
         }
 
-        if (!senderWrapper.getActiveTown().playerIsResident(player)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not a member of the town.");
+        if (player == null) {
+            senderWrapper.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
+        }
+
+        if (!senderWrapper.getActiveTown().playerIsResident(playerName)) {
+            senderWrapper.sendMessage(err + "That player is not a member of the town.");
             return;
         }
 
-        if (dist.addPlayerToWGRegion(wgp, player)) {
+        if (dist.addPlayerToWGRegion(wgp, playerName)) {
             senderWrapper.sendMessage("Player added to district.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is already in that district.");
+            senderWrapper.sendMessage(err + "That player is already in that district.");
         }
     }
 
@@ -1971,8 +1971,7 @@ public class CommandHandler {
         Player player = server.getPlayer(playerName);
 
         if (player == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not online.");
-            return;
+            senderWrapper.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
         }
 
         if (!senderWrapper.getActiveTown().playerIsResident(player)) {
@@ -1985,7 +1984,7 @@ public class CommandHandler {
             return;
         }
 
-        if (territ.addPlayerToWGRegion(wgp, player)) {
+        if (territ.addPlayerToWGRegion(wgp, playerName)) {
             senderWrapper.sendMessage("Player added to territory.");
         }
         else {
