@@ -177,10 +177,13 @@ public class Town implements Externalizable {
      * @param p - the player to be removed
      */
     public void removePlayer(Player p) {
+        removePlayer(p.getName());
+    }
 
-        residents.remove(p.getName());
-        assistants.remove(p.getName());
-        residentNames.remove(p.getName());
+    public void removePlayer(String playerName) {
+        residents.remove(playerName);
+        assistants.remove(playerName);
+        residentNames.remove(playerName);
     }
 
     /**
@@ -548,4 +551,6 @@ public class Town implements Externalizable {
     public void setDefaultPlotPrice(float defaultPlotPrice) {
         this.defaultPlotPrice = defaultPlotPrice;
     }
+
+
 }

@@ -50,7 +50,14 @@ public class CommandHandler {
     private static final String TERRITORY_INFIX = "_territ_";
     private static final String DISTRICT_INFIX = "_dist_";
     private static final String PLOT_INFIX = "_plot_";
-    private static final ChatColor err = ChatColor.RED;
+
+    private static final ChatColor
+            FATAL = ChatColor.DARK_RED,
+            ERR = ChatColor.RED,
+            WARN = ChatColor.YELLOW,
+            SUCC = ChatColor.GREEN,
+            INFO = ChatColor.LIGHT_PURPLE;
+
     private MCTowns plugin;
     private CommandSenderWrapper senderWrapper;
     private TownManager townManager;
@@ -109,7 +116,7 @@ public class CommandHandler {
 
         switch (regionType) {
             case TOWN:
-                senderWrapper.sendMessage(err + "Can't apply flags to towns.");
+                senderWrapper.sendMessage(ERR + "Can't apply flags to towns.");
                 return;
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
@@ -123,7 +130,7 @@ public class CommandHandler {
         }
 
         if (reg == null) {
-            senderWrapper.sendMessage(err + "Your active " + regionType.toString() + " is not set.");
+            senderWrapper.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
             return;
         }
 
@@ -133,7 +140,7 @@ public class CommandHandler {
 
         if (wgReg == null) {
             MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
-            senderWrapper.sendMessage(err + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
+            senderWrapper.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
             return;
         }
 
@@ -149,7 +156,7 @@ public class CommandHandler {
         }
 
         if (foundFlag == null) {
-            senderWrapper.sendMessage(err + "Couldn't find a matching flag.");
+            senderWrapper.sendMessage(ERR + "Couldn't find a matching flag.");
             return;
         }
 
@@ -168,7 +175,7 @@ public class CommandHandler {
         try {
             setFlag(wgReg, foundFlag, senderWrapper.getSender(), s_stateOfFlag);
         } catch (InvalidFlagFormat ex) {
-            senderWrapper.sendMessage(err + "Error parsing flag arguments: " + ex.getMessage());
+            senderWrapper.sendMessage(ERR + "Error parsing flag arguments: " + ex.getMessage());
             return;
         }
 
@@ -181,7 +188,7 @@ public class CommandHandler {
 
         switch (regionType) {
             case TOWN:
-                senderWrapper.sendMessage(err + "Can't apply flags to towns.");
+                senderWrapper.sendMessage(ERR + "Can't apply flags to towns.");
                 return;
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
@@ -195,7 +202,7 @@ public class CommandHandler {
         }
 
         if (reg == null) {
-            senderWrapper.sendMessage(err + "Your active " + regionType.toString() + " is not set.");
+            senderWrapper.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
             return;
         }
 
@@ -205,7 +212,7 @@ public class CommandHandler {
 
         if (wgReg == null) {
             MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
-            senderWrapper.sendMessage(err + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
+            senderWrapper.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
             return;
         }
 
@@ -221,7 +228,7 @@ public class CommandHandler {
         }
 
         if (foundFlag == null) {
-            senderWrapper.sendMessage(err + "Couldn't find a matching flag.");
+            senderWrapper.sendMessage(ERR + "Couldn't find a matching flag.");
             return;
         }
 
@@ -351,21 +358,21 @@ public class CommandHandler {
         Player nuMayor = server.getPlayer(mayorName);
 
         if (nuMayor == null) {
-            senderWrapper.sendMessage(ChatColor.RED + mayorName + " doesn't exist or is not online.");
+            senderWrapper.sendMessage(ERR + mayorName + " doesn't exist or is not online.");
             return;
         }
 
         if (townManager.matchPlayerToTown(nuMayor) != null) {
-            senderWrapper.sendMessage(ChatColor.RED + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
+            senderWrapper.sendMessage(ERR + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
             return;
         }
 
         if (townManager.addTown(townName, nuMayor)) {
             senderWrapper.sendMessage("Town " + townName + " has been created.");
-            server.broadcastMessage(ChatColor.DARK_GREEN + "The town " + townName + " has been founded.");
+            server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "That town already exists!");
+            senderWrapper.sendMessage(ERR + "That town already exists!");
             return;
         }
 
@@ -383,7 +390,7 @@ public class CommandHandler {
             return;
         }
         if (townManager.getTown(townName) == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "The town \"" + townName + "\" does not exist.");
+            senderWrapper.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
         }
 
@@ -401,7 +408,7 @@ public class CommandHandler {
         Town t = townManager.getTown(townName);
 
         if (t == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "The town \"" + townName + "\" does not exist.");
+            senderWrapper.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
         }
 
@@ -426,7 +433,7 @@ public class CommandHandler {
         Player p = server.getPlayer(playerName);
 
         if (p == null && townManager.matchPlayerToTown(playerName) == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is either not online or doesn't exist.");
+            senderWrapper.sendMessage(ERR + "That player is either not online or doesn't exist.");
             return;
         }
 
@@ -466,7 +473,7 @@ public class CommandHandler {
         try {
             intPage = Integer.parseInt(page);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ChatColor.RED + "Parsing error: <page> is not a valid integer.");
+            senderWrapper.sendMessage(ERR + "Parsing error: <page> is not a valid integer.");
             return;
         }
 
@@ -479,7 +486,7 @@ public class CommandHandler {
      */
     private void listTowns(int page) {
         if (page <= 0) {
-            senderWrapper.sendMessage(ChatColor.RED + "Invalid page.");
+            senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
         }
         senderWrapper.sendMessage(ChatColor.AQUA + "Existing towns (page " + page + "):");
@@ -638,7 +645,7 @@ public class CommandHandler {
         }
 
         if (reg == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "You need to set your active " + level.toString().toLowerCase());
+            senderWrapper.sendMessage(ERR + "You need to set your active " + level.toString().toLowerCase());
             return;
         }
 
@@ -734,13 +741,13 @@ public class CommandHandler {
         Town t = townManager.getTown(townName);
 
         if (t == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That town doesn't exist.");
+            senderWrapper.sendMessage(ERR + "That town doesn't exist.");
             return;
         }
 
         senderWrapper.getPlayer().teleport(t.getTownSpawn(server));
 
-        senderWrapper.sendMessage(ChatColor.DARK_GRAY + "Teleported to " + t.getTownName() + "! Welcome!");
+        senderWrapper.sendMessage(INFO + "Teleported to " + t.getTownName() + "! Welcome!");
 
 
     }
@@ -759,7 +766,7 @@ public class CommandHandler {
         }
 
         if (!BlockDataValueTranslator.blockExists(blockName)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That block doesn't exist.");
+            senderWrapper.sendMessage(ERR + "That block doesn't exist.");
             return;
         }
 
@@ -783,7 +790,7 @@ public class CommandHandler {
         try {
             quantity = Integer.parseInt(s_quantity);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ChatColor.RED + "Error on parsing block quantity: not a valid integer.");
+            senderWrapper.sendMessage(ERR + "Error on parsing block quantity: not a valid integer.");
             return;
         }
 
@@ -794,7 +801,7 @@ public class CommandHandler {
         }
 
         if (!t.playerIsInsideTownBorders(wgp, senderWrapper.getPlayer()) && !senderWrapper.hasExternalPermissions(Perms.WITHDRAW_BANK_OUTSIDE_BORDERS.toString())) {
-            senderWrapper.sendMessage(ChatColor.RED + "You must be within the borders of your town to withdraw from the bank.");
+            senderWrapper.sendMessage(ERR + "You must be within the borders of your town to withdraw from the bank.");
             return;
         }
 
@@ -802,7 +809,7 @@ public class CommandHandler {
         BlockBank bank = t.getBank();
 
         if (BlockDataValueTranslator.getBlockID(blockName) == -1) {
-            senderWrapper.sendMessage(ChatColor.RED + blockName + " is not a valid block name.");
+            senderWrapper.sendMessage(ERR + blockName + " is not a valid block name.");
             return;
         }
 
@@ -812,7 +819,7 @@ public class CommandHandler {
             senderWrapper.sendMessage("Blocks withdrawn.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "Number out of valid range. Enter a number between 1 and the number of blocks in your bank.");
+            senderWrapper.sendMessage(ERR + "Number out of valid range. Enter a number between 1 and the number of blocks in your bank.");
         }
     }
 
@@ -834,19 +841,19 @@ public class CommandHandler {
         try {
             quantity = Integer.parseInt(s_quantity);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ChatColor.RED + "Error on parsing block quantity: not a valid integer.");
+            senderWrapper.sendMessage(ERR + "Error on parsing block quantity: not a valid integer.");
             return;
         }
 
         BlockBank bank = t.getBank();
 
         if (BlockDataValueTranslator.getBlockID(blockName) == -1) {
-            senderWrapper.sendMessage(ChatColor.RED + blockName + " is not a valid block name.");
+            senderWrapper.sendMessage(ERR + blockName + " is not a valid block name.");
             return;
         }
 
         if (!senderWrapper.getPlayer().getInventory().contains(BlockDataValueTranslator.getBlockID(blockName), quantity)) {
-            senderWrapper.sendMessage(ChatColor.RED + "You do not have enough " + blockName + " to deposit that much.");
+            senderWrapper.sendMessage(ERR + "You do not have enough " + blockName + " to deposit that much.");
             return;
         }
 
@@ -856,7 +863,7 @@ public class CommandHandler {
             senderWrapper.sendMessage("Blocks deposited.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "Invalid quantity. Please input a number greater than 0.");
+            senderWrapper.sendMessage(ERR + "Invalid quantity. Please input a number greater than 0.");
         }
 
     }
@@ -869,7 +876,7 @@ public class CommandHandler {
         String blockName = null;
 
         if (senderWrapper.getPlayer().getItemInHand() == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "There is no item in your hand!");
+            senderWrapper.sendMessage(ERR + "There is no item in your hand!");
             return;
         }
 
@@ -887,7 +894,7 @@ public class CommandHandler {
         }
 
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(err + "The economy isn't enabled for your server.");
+            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
@@ -895,7 +902,7 @@ public class CommandHandler {
         try {
             amt = new BigDecimal(quantity);
         } catch (NumberFormatException nfe) {
-            senderWrapper.sendMessage(ChatColor.RED + "Error parsing quantity \"" + quantity + "\" : " + nfe.getMessage());
+            senderWrapper.sendMessage(ERR + "Error parsing quantity \"" + quantity + "\" : " + nfe.getMessage());
             return;
         }
 
@@ -918,7 +925,7 @@ public class CommandHandler {
 
     public void depositCurrencyBank(String quantity) {
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(err + "The economy isn't enabled for your server.");
+            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
@@ -926,7 +933,7 @@ public class CommandHandler {
         try {
             amt = new BigDecimal(quantity);
         } catch (NumberFormatException nfe) {
-            senderWrapper.sendMessage(ChatColor.RED + "Error parsing quantity \"" + quantity + "\" : " + nfe.getMessage());
+            senderWrapper.sendMessage(ERR + "Error parsing quantity \"" + quantity + "\" : " + nfe.getMessage());
             return;
         }
 
@@ -944,7 +951,7 @@ public class CommandHandler {
             senderWrapper.sendMessage(quantity + " was withdrawn from your account and deposited into " + t.getTownName() + "'s town bank.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "Transaction failed; maybe you do not have enough money to do this?");
+            senderWrapper.sendMessage(ERR + "Transaction failed; maybe you do not have enough money to do this?");
             senderWrapper.sendMessage(ChatColor.GOLD + "Actual amount deposited: " + result.amount);
         }
 
@@ -952,7 +959,7 @@ public class CommandHandler {
 
     public void checkCurrencyBank() {
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(err + "The economy isn't enabled for your server.");
+            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
@@ -1002,7 +1009,7 @@ public class CommandHandler {
             friendlyFire = Boolean.parseBoolean(sFriendlyFire);
         }
         catch(Exception e) {
-            senderWrapper.sendMessage(err + "Parse error attempting to parse boolean \"" + sFriendlyFire + "\":" + e.getMessage());
+            senderWrapper.sendMessage(ERR + "Parse error attempting to parse boolean \"" + sFriendlyFire + "\":" + e.getMessage());
             return;
         }
 
@@ -1035,17 +1042,17 @@ public class CommandHandler {
         }
 
         if (server.getPlayer(playerName) == null) {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " is not online! Make sure you typed their name correctly.");
+            senderWrapper.sendMessage(ERR + playerName + " is not online! Make sure you typed their name correctly.");
         }
 
         if (t.playerIsMayor(playerName)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is already the mayor of the town.");
+            senderWrapper.sendMessage(ERR + "That player is already the mayor of the town.");
             return;
         }
 
 
         if (!t.playerIsResident(playerName)) {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " is not a resident of " + t.getTownName() + ".");
+            senderWrapper.sendMessage(ERR + playerName + " is not a resident of " + t.getTownName() + ".");
             return;
         }
 
@@ -1060,7 +1067,7 @@ public class CommandHandler {
                 server.getPlayer(playerName).sendMessage("You are now an Assistant Mayor of " + t.getTownName());
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " is already an assistant in this town.");
+            senderWrapper.sendMessage(ERR + playerName + " is already an assistant in this town.");
         }
 
 
@@ -1089,13 +1096,13 @@ public class CommandHandler {
         }
 
         if (p == null) {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " doesn't exist or is not online.");
+            senderWrapper.sendMessage(ERR + playerName + " doesn't exist or is not online.");
             return;
         }
 
 
         if (!t.playerIsResident(p)) {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " is not a resident of " + t.getTownName() + ".");
+            senderWrapper.sendMessage(ERR + playerName + " is not a resident of " + t.getTownName() + ".");
             return;
         }
 
@@ -1104,7 +1111,7 @@ public class CommandHandler {
             p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + p.getName() + " is not an assistant in this town.");
+            senderWrapper.sendMessage(ERR + p.getName() + " is not an assistant in this town.");
         }
     }
 
@@ -1129,12 +1136,12 @@ public class CommandHandler {
         }
 
         if (p == null) {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " either does not exist or is not online.");
+            senderWrapper.sendMessage(ERR + playerName + " either does not exist or is not online.");
             return;
         }
 
         if (!t.playerIsResident(p)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not a member of the town.");
+            senderWrapper.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
@@ -1157,8 +1164,7 @@ public class CommandHandler {
         Town removeFrom = senderWrapper.getActiveTown();
 
         if (removeMe == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "Player is not online.");
-            return;
+            senderWrapper.sendMessage(ERR + playerName + " is not online. Make sure you typed their name correctly.");
         }
 
         if (removeFrom == null) {
@@ -1166,23 +1172,24 @@ public class CommandHandler {
             return;
         }
 
-        if (removeFrom.playerIsMayor(removeMe)) {
-            senderWrapper.sendMessage(ChatColor.RED + "A mayor cannot be removed from his own town.");
+        if (removeFrom.playerIsMayor(playerName)) {
+            senderWrapper.sendMessage(ERR + "A mayor cannot be removed from his own town.");
             return;
         }
 
-        if (removeFrom.playerIsAssistant(removeMe) && !removeFrom.playerIsMayor(senderWrapper.getPlayer())) {
-            senderWrapper.sendMessage(ChatColor.RED + "Only the mayor can remove assistants from the town.");
+        if (removeFrom.playerIsAssistant(playerName) && !removeFrom.playerIsMayor(senderWrapper.getPlayer())) {
+            senderWrapper.sendMessage(ERR + "Only the mayor can remove assistants from the town.");
             return;
         }
 
 
-        senderWrapper.getActiveTown().removePlayer(removeMe);
+        senderWrapper.getActiveTown().removePlayer(playerName);
 
         townManager.removePlayerFromTownsWGRegions(wgp, removeFrom, removeMe);
 
-        senderWrapper.sendMessage(removeMe.getName() + " was removed from the town.");
-        removeMe.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + senderWrapper.getPlayer().getName());
+        senderWrapper.sendMessage(playerName + " was removed from the town.");
+        if(removeMe != null)
+            removeMe.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + senderWrapper.getPlayer().getName());
     }
 
     /**
@@ -1192,12 +1199,12 @@ public class CommandHandler {
 
         Town t = senderWrapper.getActiveTown();
         if (t == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "You're either not a member of a town, or your active town isn't set.");
+            senderWrapper.sendMessage(ERR + "You're either not a member of a town, or your active town isn't set.");
             senderWrapper.sendMessage("To set your active town to your own town, use /town active reset");
         }
 
         if (t.playerIsMayor(senderWrapper.getPlayer())) {
-            senderWrapper.sendMessage(ChatColor.RED + "You're the mayor. You need to specify a new mayor before leaving your current town.");
+            senderWrapper.sendMessage(ERR + "You're the mayor. You need to specify a new mayor before leaving your current town.");
             return;
         }
 
@@ -1224,7 +1231,7 @@ public class CommandHandler {
         Player p = server.getPlayer(invitee);
 
         if (townManager.playerIsAlreadyInATown(p)) {
-            senderWrapper.sendMessage(ChatColor.RED + p.getName() + " is already in a town.");
+            senderWrapper.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
 
@@ -1232,7 +1239,7 @@ public class CommandHandler {
         Town t = senderWrapper.getActiveTown();
 
         if (p == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not online.");
+            senderWrapper.sendMessage(ERR + "That player is not online.");
             return;
         }
 
@@ -1257,7 +1264,7 @@ public class CommandHandler {
         }
         else {
             joinManager.submitInvitation(infoPair);
-            senderWrapper.sendMessage(ChatColor.GREEN + p.getName() + " has been invited to join " + t.getTownName() + ".");
+            senderWrapper.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
             p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
             p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
 
@@ -1274,14 +1281,14 @@ public class CommandHandler {
      */
     public void requestAdditionToTown(String townName) {
         if (townManager.playerIsAlreadyInATown(senderWrapper.getPlayer())) {
-            senderWrapper.sendMessage(ChatColor.RED + "You cannot be in more than one town at a time.");
+            senderWrapper.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
         }
 
         Town addTo = townManager.getTown(townName);
 
         if (addTo == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "\"" + townName + "\" doesn't exist.");
+            senderWrapper.sendMessage(ERR + "\"" + townName + "\" doesn't exist.");
             return;
         }
 
@@ -1319,7 +1326,7 @@ public class CommandHandler {
         Town t = senderWrapper.getActiveTown();
 
 //        if (p == null) {
-//            senderWrapper.sendMessage(ChatColor.RED + "Player does not exist or is not online.");
+//            senderWrapper.sendMessage(ERR + "Player does not exist or is not online.");
 //            return;
 //        }
 
@@ -1329,7 +1336,7 @@ public class CommandHandler {
         }
 
         if (!joinManager.removeRequest(t, (p == null ? playerName : p.getName()))) {
-            senderWrapper.sendMessage(ChatColor.RED + "No matching request found.");
+            senderWrapper.sendMessage(ERR + "No matching request found.");
         }
         else {
             senderWrapper.sendMessage(ChatColor.GOLD + (p == null ? playerName : p.getName()) + "'s request has been rejected.");
@@ -1351,17 +1358,17 @@ public class CommandHandler {
         Town t = townManager.getTown(townName);
 
         if (t == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "\"" + townName + "\" doesn't exist.");
+            senderWrapper.sendMessage(ERR + "\"" + townName + "\" doesn't exist.");
             return;
         }
 
         if (!joinManager.removeInvitation(t, p)) {
-            senderWrapper.sendMessage(ChatColor.RED + "No matching invite found.");
+            senderWrapper.sendMessage(ERR + "No matching invite found.");
         }
         else {
             senderWrapper.sendMessage(ChatColor.GOLD + "You have rejected the request to join " + townName);
 
-            t.broadcastMessageToTown(server, ChatColor.RED + p.getName() + " has declined the invitation to join the town.");
+            t.broadcastMessageToTown(server, ERR + p.getName() + " has declined the invitation to join the town.");
         }
 
     }
@@ -1401,7 +1408,7 @@ public class CommandHandler {
             senderWrapper.sendMessage(ChatColor.GOLD + "The invitation for " + playerName + " has been withdrawn.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + playerName + " does not have any pending invitations from " + t.getTownName() + ".");
+            senderWrapper.sendMessage(ERR + playerName + " does not have any pending invitations from " + t.getTownName() + ".");
         }
     }
 
@@ -1418,7 +1425,7 @@ public class CommandHandler {
         Town t = townManager.getTown(townName);
 
         if (t == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That town doesn't exist.");
+            senderWrapper.sendMessage(ERR + "That town doesn't exist.");
             return;
         }
 
@@ -1426,7 +1433,7 @@ public class CommandHandler {
             senderWrapper.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "You haven't submitted a request to join " + t.getTownName() + ".");
+            senderWrapper.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
         }
 
     }
@@ -1540,13 +1547,13 @@ public class CommandHandler {
         }
 
         if (!t.getWorldName().equals(senderWrapper.getPlayer().getWorld().getName())) {
-            senderWrapper.sendMessage(err + "You're not in the same world as the town, so you can't add Territories to it in this world.");
+            senderWrapper.sendMessage(ERR + "You're not in the same world as the town, so you can't add Territories to it in this world.");
             return;
         }
 
         if ((t.getSize() < options.getMinNumPlayersToBuyTerritory()) && !admin) {
-            senderWrapper.sendMessage(err + "You don't have enough people in your town to buy territories yet.");
-            senderWrapper.sendMessage(err + "You have " + t.getSize() + " people, but you need a total of " + options.getMinNumPlayersToBuyTerritory() + "!");
+            senderWrapper.sendMessage(ERR + "You don't have enough people in your town to buy territories yet.");
+            senderWrapper.sendMessage(ERR + "You have " + t.getSize() + " people, but you need a total of " + options.getMinNumPlayersToBuyTerritory() + "!");
             return;
         }
 
@@ -1561,14 +1568,14 @@ public class CommandHandler {
 
 
         if (region == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "No region selected!");
+            senderWrapper.sendMessage(ERR + "No region selected!");
             return;
         }
 
         RegionManager regMan = wgp.getRegionManager(wgp.getServer().getWorld(worldName));
 
         if (regMan.hasRegion(territName)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That name is already in use. Please pick a different one.");
+            senderWrapper.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
 
@@ -1582,8 +1589,8 @@ public class CommandHandler {
 
             if (t.getBank().getCurrencyBalance().doubleValue() < price) {
                 //If they can't afford it...
-                senderWrapper.sendMessage(ChatColor.RED + "Your town can't afford that large of a region.");
-                senderWrapper.sendMessage(ChatColor.RED + "Total Price: " + price);
+                senderWrapper.sendMessage(ERR + "Your town can't afford that large of a region.");
+                senderWrapper.sendMessage(ERR + "Total Price: " + price);
                 return;
             }
 
@@ -1663,7 +1670,7 @@ public class CommandHandler {
         }
 
         if (!this.selectionIsWithinParent(region, senderWrapper.getActiveTerritory())) {
-            senderWrapper.sendMessage(ChatColor.RED + "Selection is not in territory!");
+            senderWrapper.sendMessage(ERR + "Selection is not in territory!");
             return;
         }
 
@@ -1677,7 +1684,7 @@ public class CommandHandler {
         RegionManager regMan = wgp.getRegionManager(wgp.getServer().getWorld(worldName));
 
         if (regMan.hasRegion(distName)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That name is already in use. Please pick a different one.");
+            senderWrapper.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
 
@@ -1691,7 +1698,7 @@ public class CommandHandler {
 
         if (autoActive) {
             senderWrapper.setActiveDistrict(d);
-            senderWrapper.sendMessage(ChatColor.LIGHT_PURPLE + "Active district set to newly created district.");
+            senderWrapper.sendMessage(INFO + "Active district set to newly created district.");
 
         }
 
@@ -1741,7 +1748,7 @@ public class CommandHandler {
         }
 
         if (!this.selectionIsWithinParent(plotRegion, d)) {
-            senderWrapper.sendMessage(ChatColor.RED + "Selection is not in your active district!");
+            senderWrapper.sendMessage(ERR + "Selection is not in your active district!");
             return;
         }
 
@@ -1756,7 +1763,7 @@ public class CommandHandler {
 
         RegionManager regMan = wgp.getRegionManager(wgp.getServer().getWorld(worldName));
         if (regMan.hasRegion(plotName)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That name is already in use. Please pick a different one.");
+            senderWrapper.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
         regMan.addRegion(plotRegion);
@@ -1831,7 +1838,7 @@ public class CommandHandler {
             senderWrapper.sendMessage("Player removed from plot.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + player + " is not a member of this region.");
+            senderWrapper.sendMessage(ERR + player + " is not a member of this region.");
         }
 
 
@@ -1852,7 +1859,7 @@ public class CommandHandler {
         Player player = server.getPlayer(playerName);
 
         if (!senderWrapper.getActiveTown().playerIsResident(player)) {
-            senderWrapper.sendMessage(err + "That player is not a member of the town.");
+            senderWrapper.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
@@ -1862,14 +1869,14 @@ public class CommandHandler {
         }
 
         if (player == null) {
-            senderWrapper.sendMessage(err + playerName + " is not online. Make sure you typed their name correctly!");
+            senderWrapper.sendMessage(ERR + playerName + " is not online. Make sure you typed their name correctly!");
         }
 
         if (p.addPlayerToWGRegion(wgp, playerName)) {
             senderWrapper.sendMessage("Player added to plot.");
         }
         else {
-            senderWrapper.sendMessage(err + "That player is already in that plot.");
+            senderWrapper.sendMessage(ERR + "That player is already in that plot.");
         }
 
     }
@@ -1899,7 +1906,7 @@ public class CommandHandler {
         }
 
         if (!senderWrapper.getActiveTown().playerIsResident(playerName)) {
-            senderWrapper.sendMessage(err + "That player is not a member of the town.");
+            senderWrapper.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
@@ -1907,7 +1914,7 @@ public class CommandHandler {
             senderWrapper.sendMessage("Player added to district.");
         }
         else {
-            senderWrapper.sendMessage(err + "That player is already in that district.");
+            senderWrapper.sendMessage(ERR + "That player is already in that district.");
         }
     }
 
@@ -1930,13 +1937,13 @@ public class CommandHandler {
         }
 
         if (player == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not online.");
+            senderWrapper.sendMessage(ERR + "That player is not online.");
             return;
         }
 
         if (recursive) {
             if (!dist.removePlayerFromWGRegion(wgp, player)) {
-                senderWrapper.sendMessage(ChatColor.RED + "That player is not in that district.");
+                senderWrapper.sendMessage(ERR + "That player is not in that district.");
                 return;
             }
 
@@ -1952,7 +1959,7 @@ public class CommandHandler {
                 senderWrapper.sendMessage("Player removed from district.");
             }
             else {
-                senderWrapper.sendMessage(ChatColor.RED + "That player is not in that district.");
+                senderWrapper.sendMessage(ERR + "That player is not in that district.");
             }
         }
     }
@@ -1975,7 +1982,7 @@ public class CommandHandler {
         }
 
         if (!senderWrapper.getActiveTown().playerIsResident(player)) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not a member of the town.");
+            senderWrapper.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
@@ -1988,7 +1995,7 @@ public class CommandHandler {
             senderWrapper.sendMessage("Player added to territory.");
         }
         else {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is already in that territory.");
+            senderWrapper.sendMessage(ERR + "That player is already in that territory.");
         }
     }
 
@@ -2011,13 +2018,13 @@ public class CommandHandler {
         }
 
         if (player == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "That player is not online.");
+            senderWrapper.sendMessage(ERR + "That player is not online.");
             return;
         }
 
         if (recursive) {
             if (!territ.removePlayerFromWGRegion(wgp, player)) {
-                senderWrapper.sendMessage(ChatColor.RED + "That player is not in this territory.");
+                senderWrapper.sendMessage(ERR + "That player is not in this territory.");
                 return;
             }
 
@@ -2033,7 +2040,7 @@ public class CommandHandler {
         }
         else {
             if (!territ.removePlayerFromWGRegion(wgp, player)) {
-                senderWrapper.sendMessage(ChatColor.RED + "That player is not in this territory.");
+                senderWrapper.sendMessage(ERR + "That player is not in this territory.");
                 return;
             }
             senderWrapper.sendMessage("Player removed from territory.");
@@ -2082,7 +2089,7 @@ public class CommandHandler {
         }
 
         if (!t.usesBuyablePlots()) {
-            senderWrapper.sendMessage(err + t.getTownName() + " does not allow the sale of plots.");
+            senderWrapper.sendMessage(ERR + t.getTownName() + " does not allow the sale of plots.");
             return;
         }
 
@@ -2090,7 +2097,7 @@ public class CommandHandler {
         try {
             forSale = Boolean.parseBoolean(s_forSale);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ChatColor.RED + "Error parsing boolean on token: " + s_forSale);
+            senderWrapper.sendMessage(ERR + "Error parsing boolean on token: " + s_forSale);
             return;
         }
 
@@ -2119,7 +2126,7 @@ public class CommandHandler {
         try {
             price = Float.parseFloat(s_price);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ChatColor.RED + "Error parsing float on token: " + s_price);
+            senderWrapper.sendMessage(ERR + "Error parsing float on token: " + s_price);
             return;
         }
 
@@ -2152,7 +2159,7 @@ public class CommandHandler {
         }
 
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(err + "The economy is not enabled for your server.");
+            senderWrapper.sendMessage(ERR + "The economy is not enabled for your server.");
             return;
         }
 
@@ -2161,7 +2168,7 @@ public class CommandHandler {
         try {
             buyability = Boolean.parseBoolean(s_buyability);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ChatColor.RED + "Error in parsing boolean: expected true/false, found " + s_buyability);
+            senderWrapper.sendMessage(ERR + "Error in parsing boolean: expected true/false, found " + s_buyability);
             return;
         }
 
@@ -2178,7 +2185,7 @@ public class CommandHandler {
         }
 
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(err + "The economy isn't enabled for your server.");
+            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
@@ -2200,7 +2207,7 @@ public class CommandHandler {
         }
 
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(err + "The economy isn't enabled for your server.");
+            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
@@ -2235,7 +2242,7 @@ public class CommandHandler {
         mctLoc = me.everdras.mctowns.structure.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
 
         if (mctLoc == null) {
-            senderWrapper.sendMessage(err + "Couldn't get the location you're looking at.");
+            senderWrapper.sendMessage(ERR + "Couldn't get the location you're looking at.");
             return;
         }
 
@@ -2259,7 +2266,7 @@ public class CommandHandler {
         ProtectedRegion reg = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
 
         if (!reg.isOwner(wgp.wrapPlayer(senderWrapper.getPlayer()))) {
-            senderWrapper.sendMessage(err + "You don't own this plot, so you can't surrender it!");
+            senderWrapper.sendMessage(ERR + "You don't own this plot, so you can't surrender it!");
             return;
         }
 
@@ -2279,45 +2286,45 @@ public class CommandHandler {
 
     public void confirmPlotPurchase(HashMap<Player, ActiveSet> buyers) {
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(err + "The economy isn't enabled for your server.");
+            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
         ActiveSet plotToBuy = buyers.get(senderWrapper.getPlayer());
 
         if (plotToBuy == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "You haven't selected a plot to buy yet.");
+            senderWrapper.sendMessage(ERR + "You haven't selected a plot to buy yet.");
             return;
         }
 
         if (townManager.playerIsAlreadyInATown(senderWrapper.getPlayer())) {
             if (!plotToBuy.getActiveTown().equals(townManager.matchPlayerToTown(senderWrapper.getPlayer()))) {
-                senderWrapper.sendMessage(err + "You're already in a different town.");
+                senderWrapper.sendMessage(ERR + "You're already in a different town.");
                 return;
             }
         }
 
         if (!plotToBuy.getActiveTown().playerIsResident(senderWrapper.getPlayer())) {
             if (!plotToBuy.getActiveTown().usesEconomyJoins()) {
-                senderWrapper.sendMessage(ChatColor.RED + "You aren't a member of this town.");
+                senderWrapper.sendMessage(ERR + "You aren't a member of this town.");
                 return;
             }
         }
 
         if (!plotToBuy.getActiveTown().usesBuyablePlots()) {
-            senderWrapper.sendMessage(ChatColor.RED + "This town's plots aren't buyable.");
+            senderWrapper.sendMessage(ERR + "This town's plots aren't buyable.");
             return;
         }
 
         Plot p = plotToBuy.getActivePlot();
 
         if (!p.isForSale()) {
-            senderWrapper.sendMessage(ChatColor.RED + "This plot isn't for sale.");
+            senderWrapper.sendMessage(ERR + "This plot isn't for sale.");
             return;
         }
 
         if (!economy.bankWithdraw(senderWrapper.getPlayer().getName(), p.getPrice()).transactionSuccess()) {
-            senderWrapper.sendMessage(ChatColor.RED + "Insufficient funds.");
+            senderWrapper.sendMessage(ERR + "Insufficient funds.");
             return;
         }
 
@@ -2354,7 +2361,7 @@ public class CommandHandler {
         }
 
         if (townManager.getTown(townName) == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "The town \"" + townName + "\" does not exist.");
+            senderWrapper.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
         }
 
@@ -2369,7 +2376,7 @@ public class CommandHandler {
     public void resetActiveTown() {
         Town t = townManager.matchPlayerToTown((Player) senderWrapper.getSender());
         if (t == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "Unable to match you to a town. Are you sure you belong to one?");
+            senderWrapper.sendMessage(ERR + "Unable to match you to a town. Are you sure you belong to one?");
             return;
         }
 
@@ -2398,7 +2405,7 @@ public class CommandHandler {
         }
 
         if (nuActive == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "The territory \"" + territName + "\" does not exist.");
+            senderWrapper.sendMessage(ERR + "The territory \"" + territName + "\" does not exist.");
             return;
         }
 
@@ -2435,7 +2442,7 @@ public class CommandHandler {
         }
 
         if (nuActive == null) {
-            senderWrapper.sendMessage(ChatColor.RED + "The district \"" + distName + "\" does not exist.");
+            senderWrapper.sendMessage(ERR + "The district \"" + distName + "\" does not exist.");
             return;
         }
 
@@ -2480,7 +2487,7 @@ public class CommandHandler {
             }
 
             if (nuActive == null) {
-                senderWrapper.sendMessage(ChatColor.RED + "The plot \"" + plotName + "\" does not exist.");
+                senderWrapper.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
                 return;
             }
         }
@@ -2501,7 +2508,7 @@ public class CommandHandler {
             }
 
             if (nuActive == null) {
-                senderWrapper.sendMessage(ChatColor.RED + "The plot \"" + plotName + "\" does not exist.");
+                senderWrapper.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
                 return;
             }
         }
@@ -2527,7 +2534,7 @@ public class CommandHandler {
         }
 
         if (!t.playerIsInsideTownBorders(wgp, senderWrapper.getPlayer())) {
-            senderWrapper.sendMessage(ChatColor.RED + "You need to be inside your town borders to do that.");
+            senderWrapper.sendMessage(ERR + "You need to be inside your town borders to do that.");
             return;
         }
 
