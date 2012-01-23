@@ -54,7 +54,7 @@ public class MCTPvPListener extends EntityListener {
         }
 
         Town damagerTown = manager.matchPlayerToTown(damager);
-        if(damagerTown.isFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
+        if(damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
             event.setCancelled(true);
             damager.sendMessage(ChatColor.RED + "That player is in your town! Don't attack him!");
             return;
