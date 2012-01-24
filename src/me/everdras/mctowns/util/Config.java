@@ -16,6 +16,9 @@ public class Config {
     private boolean mayorsCanBuyTerritories;
     private float pricePerXZBlock;
     private int minNumPlayersToBuyTerritory;
+    private boolean allowTownFriendlyFireManagement;
+
+
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -126,6 +129,26 @@ public class Config {
 
         //==================================================================
 
+        curLine = getNextLine(fileScan);
+
+        if (curLine == null) {
+            failBit = true;
+            failReason = "Reached end of config while parsing.";
+            return;
+        }
+        lineScan = new Scanner(curLine);
+
+
+        if (!lineScan.hasNextBoolean()) {
+            failBit = true;
+            failReason = "Error on token: \"" + lineScan + "\".";
+            return;
+        }
+
+        allowTownFriendlyFireManagement = lineScan.nextBoolean();
+
+        //==================================================================
+
 
 
 
@@ -146,6 +169,12 @@ public class Config {
     public int getMinNumPlayersToBuyTerritory() {
         return minNumPlayersToBuyTerritory;
     }
+
+    public boolean allowsTownFriendlyFireManagement() {
+        return allowTownFriendlyFireManagement;
+    }
+
+
 
     /*
      * Returns the next uncommented, non-empty line in the file.
@@ -206,6 +235,9 @@ public class Config {
 
         ps.println("#Number of players that a town needs to have for a mayor to be able to add territories");
         ps.println("0");
+        ps.println();
+        ps.println("#Mayors can decide whether or not their towns allow friendly fire. (false causes MCTowns to not interfere with PvP at all.)");
+        ps.println("false");
 
 
         ps.close();

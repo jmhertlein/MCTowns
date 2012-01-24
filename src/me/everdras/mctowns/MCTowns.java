@@ -1084,7 +1084,8 @@ public class MCTowns extends JavaPlugin {
         MCTPlayerListener plotBuyListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
 
-        getServer().getPluginManager().registerEvent(Type.ENTITY_DAMAGE, townPvPListener, Priority.High, this);
+        if(options.allowsTownFriendlyFireManagement())
+            getServer().getPluginManager().registerEvent(Type.ENTITY_DAMAGE, townPvPListener, Priority.High, this);
 
         getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, joinListener, Priority.Monitor, this);
 
