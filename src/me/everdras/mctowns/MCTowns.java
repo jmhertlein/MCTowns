@@ -1080,7 +1080,7 @@ public class MCTowns extends JavaPlugin {
 
     private void regEventListeners() {
         MCTPlayerListener joinListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
-        MCTPlayerListener respawnListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
+        //MCTPlayerListener respawnListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPlayerListener plotBuyListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
 

@@ -1005,17 +1005,13 @@ public class CommandHandler {
 
         boolean friendlyFire;
 
-        try {
-            friendlyFire = Boolean.parseBoolean(sFriendlyFire);
-        }
-        catch(Exception e) {
-            senderWrapper.sendMessage(ERR + "Parse error attempting to parse boolean \"" + sFriendlyFire + "\":" + e.getMessage());
-            return;
-        }
+
+        friendlyFire = sFriendlyFire.equalsIgnoreCase("on");
+
 
         t.setFriendlyFire(friendlyFire);
 
-        senderWrapper.sendMessage(ChatColor.GREEN + "Friendly fire in " + t.getTownName() + " is now set to " + friendlyFire + ".");
+        senderWrapper.sendMessage(ChatColor.GREEN + "Friendly fire in " + t.getTownName() + " is now " + (friendlyFire ? "on" : "off") + ".");
 
 
 
