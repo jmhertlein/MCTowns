@@ -389,12 +389,22 @@ public class CommandHandler {
             senderWrapper.notifyInsufPermissions();
             return;
         }
-        if (townManager.getTown(townName) == null) {
+
+        Town t = townManager.getTown(townName);
+        if (t == null) {
             senderWrapper.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
         }
 
         townManager.removeTown(wgp, townName);
+
+        try {
+            wgp.getRegionManager(server.getWorld(t.getWorldName())).save();
+        } catch (IOException ex) {
+            MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
+            MCTowns.logSevere(ex.getMessage());
+        }
+
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
     }
