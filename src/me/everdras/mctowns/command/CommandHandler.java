@@ -389,12 +389,22 @@ public class CommandHandler {
             senderWrapper.notifyInsufPermissions();
             return;
         }
-        if (townManager.getTown(townName) == null) {
+
+        Town t = townManager.getTown(townName);
+        if (t == null) {
             senderWrapper.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
         }
 
         townManager.removeTown(wgp, townName);
+
+        try {
+            wgp.getRegionManager(server.getWorld(t.getWorldName())).save();
+        } catch (IOException ex) {
+            MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
+            MCTowns.logSevere(ex.getMessage());
+        }
+
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
     }
@@ -1005,17 +1015,13 @@ public class CommandHandler {
 
         boolean friendlyFire;
 
-        try {
-            friendlyFire = Boolean.parseBoolean(sFriendlyFire);
-        }
-        catch(Exception e) {
-            senderWrapper.sendMessage(ERR + "Parse error attempting to parse boolean \"" + sFriendlyFire + "\":" + e.getMessage());
-            return;
-        }
+
+        friendlyFire = sFriendlyFire.equalsIgnoreCase("on");
+
 
         t.setFriendlyFire(friendlyFire);
 
-        senderWrapper.sendMessage(ChatColor.GREEN + "Friendly fire in " + t.getTownName() + " is now set to " + friendlyFire + ".");
+        senderWrapper.sendMessage(ChatColor.GREEN + "Friendly fire in " + t.getTownName() + " is now " + (friendlyFire ? "on" : "off") + ".");
 
 
 
@@ -1628,15 +1634,24 @@ public class CommandHandler {
             return;
         }
 
-        Town t = senderWrapper.getActiveTown();
+        Town to = senderWrapper.getActiveTown();
 
-        if (t == null) {
-            senderWrapper.notifyInsufPermissions();
+        if(to == null) {
+            senderWrapper.notifyActiveTownNotSet();
             return;
         }
 
-        townManager.unregisterTerritoryFromWorldGuard(wgp, t.removeTerritory(territName));
-        senderWrapper.sendMessage("Territory removed.");
+        Territory removeMe = to.getTerritory(territName);
+
+        if(removeMe == null) {
+            senderWrapper.sendMessage(ERR + "That territory doesn't exist. Make sure you're using the full name of the territory (townname_territory_territoryshortname).");
+        }
+
+        to.removeTerritory(territName);
+
+        townManager.unregisterTerritoryFromWorldGuard(wgp, removeMe);
+
+        senderWrapper.sendMessage(SUCC + "Territory removed.");
     }
 
     //===============================DISTRICT REGION MANAGEMENT=============
@@ -1714,8 +1729,23 @@ public class CommandHandler {
             return;
         }
 
-        townManager.unregisterDistrictFromWorldGuard(wgp, senderWrapper.getActiveTerritory().removeDistrict(districtName));
-        senderWrapper.sendMessage("District removed.");
+        Territory t = senderWrapper.getActiveTerritory();
+
+        if(t == null) {
+            senderWrapper.notifyActiveTerritoryNotSet();
+            return;
+        }
+
+        District removeMe = t.getDistrict(districtName);
+
+        if(removeMe == null) {
+            senderWrapper.sendMessage(ERR + "That district doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
+        }
+
+        t.removeDistrict(districtName);
+
+        townManager.unregisterDistrictFromWorldGuard(wgp, removeMe);
+        senderWrapper.sendMessage(SUCC + "District removed.");
     }
 
     //==============================PLOT REGION MANAGEMENT==================
@@ -1795,10 +1825,24 @@ public class CommandHandler {
             senderWrapper.notifyInsufPermissions();
             return;
         }
+        District d = senderWrapper.getActiveDistrict();
 
-        townManager.unregisterPlotFromWorldGuard(wgp, senderWrapper.getActiveDistrict().removePlot(plotName));
+        if(d == null) {
+            senderWrapper.notifyActiveDistrictNotSet();
+            return;
+        }
 
-        senderWrapper.sendMessage("Plot removed.");
+        Plot removeMe = d.getPlot(plotName);
+
+        if(removeMe == null) {
+            senderWrapper.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the plot (townname_plot_plotshortname).");
+        }
+
+        d.removePlot(plotName);
+
+        townManager.unregisterPlotFromWorldGuard(wgp, removeMe);
+
+        senderWrapper.sendMessage(SUCC + "Plot removed.");
     }
 
     /**
