@@ -1624,15 +1624,24 @@ public class CommandHandler {
             return;
         }
 
-        Town t = senderWrapper.getActiveTown();
+        Town to = senderWrapper.getActiveTown();
 
-        if (t == null) {
-            senderWrapper.notifyInsufPermissions();
+        if(to == null) {
+            senderWrapper.notifyActiveTownNotSet();
             return;
         }
 
-        townManager.unregisterTerritoryFromWorldGuard(wgp, t.removeTerritory(territName));
-        senderWrapper.sendMessage("Territory removed.");
+        Territory removeMe = to.getTerritory(territName);
+
+        if(removeMe == null) {
+            senderWrapper.sendMessage(ERR + "That territory doesn't exist. Make sure you're using the full name of the territory (townname_territory_territoryshortname).");
+        }
+
+        to.removeTerritory(territName);
+
+        townManager.unregisterTerritoryFromWorldGuard(wgp, removeMe);
+
+        senderWrapper.sendMessage(SUCC + "Territory removed.");
     }
 
     //===============================DISTRICT REGION MANAGEMENT=============
@@ -1710,8 +1719,23 @@ public class CommandHandler {
             return;
         }
 
-        townManager.unregisterDistrictFromWorldGuard(wgp, senderWrapper.getActiveTerritory().removeDistrict(districtName));
-        senderWrapper.sendMessage("District removed.");
+        Territory t = senderWrapper.getActiveTerritory();
+
+        if(t == null) {
+            senderWrapper.notifyActiveTerritoryNotSet();
+            return;
+        }
+
+        District removeMe = t.getDistrict(districtName);
+
+        if(removeMe == null) {
+            senderWrapper.sendMessage(ERR + "That district doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
+        }
+
+        t.removeDistrict(districtName);
+
+        townManager.unregisterDistrictFromWorldGuard(wgp, removeMe);
+        senderWrapper.sendMessage(SUCC + "District removed.");
     }
 
     //==============================PLOT REGION MANAGEMENT==================
@@ -1791,10 +1815,24 @@ public class CommandHandler {
             senderWrapper.notifyInsufPermissions();
             return;
         }
+        District d = senderWrapper.getActiveDistrict();
 
-        townManager.unregisterPlotFromWorldGuard(wgp, senderWrapper.getActiveDistrict().removePlot(plotName));
+        if(d == null) {
+            senderWrapper.notifyActiveDistrictNotSet();
+            return;
+        }
 
-        senderWrapper.sendMessage("Plot removed.");
+        Plot removeMe = d.getPlot(plotName);
+
+        if(removeMe == null) {
+            senderWrapper.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the plot (townname_plot_plotshortname).");
+        }
+
+        d.removePlot(plotName);
+
+        townManager.unregisterPlotFromWorldGuard(wgp, removeMe);
+
+        senderWrapper.sendMessage(SUCC + "Plot removed.");
     }
 
     /**
