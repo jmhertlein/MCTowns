@@ -9,7 +9,7 @@ commands:
         aliases:
     town:
         description: base command for all town-based commands
-        usage: /town (add | remove | active | list | motd | setmayor | bank | spawn | economy | dashboard)
+        usage: /town (add | remove | active | list | motd | setmayor | bank | spawn | economy | dashboard | pvp)
         aliases: to
     territory:
         description: base command for all territory-based commands
