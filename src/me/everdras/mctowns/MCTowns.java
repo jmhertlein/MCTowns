@@ -1046,7 +1046,7 @@ public class MCTowns extends JavaPlugin {
             fis.close();
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if is is the first run.");
+            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             townManager = new TownManager();
         }
 
