@@ -291,7 +291,7 @@ public class Town implements Externalizable {
         return residentNames;
     }
 
-    public boolean isFriendlyFire() {
+    public boolean allowsFriendlyFire() {
         return friendlyFire;
     }
 

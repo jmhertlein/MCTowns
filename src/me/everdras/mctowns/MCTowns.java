@@ -16,7 +16,6 @@ import me.everdras.mctowns.command.CommandHandler;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.listeners.*;
 import me.everdras.mctowns.permission.Perms;
-import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.TownLevel;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,7 +25,6 @@ import me.everdras.mctowns.townjoin.TownJoinMethod;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -121,118 +119,7 @@ public class MCTowns extends JavaPlugin {
 
         switch (label) {
             case "mct":
-
-                switch (args[0]) {
-                    case "confirm":
-                        handler.confirmPlotPurchase(potentialPlotBuyers);
-                        return true;
-                    case "convert":
-                        if (args.length < 4) {
-                            sender.sendMessage("/mct convert <town name> <parent region name> <desired district name>");
-                            return true;
-                        }
-                        handler.convertRegionToMCTown(args[1], args[2], args[3]);
-                        return true;
-
-                    case "purge":
-                        handler.purge();
-                        return true;
-                    case "addtown":
-                        if (args.length < 3) {
-                            sender.sendMessage("/mct addtown <town name> <mayor name>");
-                            return true;
-                        }
-                        handler.createTown(args[1], args[2]);
-                        return true;
-
-                    case "removetown":
-                        if (args.length < 2) {
-                            sender.sendMessage("/mct removetown <town name>");
-                            return true;
-                        }
-                        handler.removeTown(args[1]);
-                        return true;
-
-                    case "info":
-                        if (args.length < 2) {
-                            sender.sendMessage("/mct info (player | town)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "town":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/mct info town <town name>");
-                                    return true;
-                                }
-                                handler.queryTownInfo(args[2]);
-                                return true;
-                            case "player":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/mct info player <player name>");
-                                    return true;
-                                }
-                                handler.queryPlayerInfo(args[2]);
-                                return true;
-                        }
-                        break;
-
-                    case "join":
-                        if (args.length < 2) {
-                            sender.sendMessage("/mct join <town name>");
-                            return true;
-                        }
-
-                        handler.requestAdditionToTown(args[1]);
-                        return true;
-
-                    case "cancel":
-                        if (args.length == 1) {
-                            sender.sendMessage("/mct cancel <town name>");
-                            return true;
-                        }
-
-                        handler.cancelRequest(args[1]);
-                        return true;
-
-                    case "refuse":
-                        if (args.length < 2) {
-                            sender.sendMessage("/mct refuse <town name>");
-                            return true;
-                        }
-
-                        if (args[1].equals("all")) {
-                            handler.rejectAllInvitations();
-                            return true;
-                        }
-
-                        handler.rejectInvitation(args[1]);
-                        return true;
-
-
-                    case "list":
-                        if (args.length == 1) {
-                            sender.sendMessage("/mct list (towns | invites | requests)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "towns":
-                                if (args.length == 2) {
-                                    handler.listTowns();
-                                }
-                                else {
-                                    handler.listTowns(args[2]);
-                                }
-                                return true;
-
-                            case "invites":
-                                handler.listInvitesForPlayer();
-                                return true;
-                            case "requests":
-                                handler.listRequestsForPlayer();
-                                return true;
-                        }
-                }
-                break;
+                return handleMCTCommand(sender, handler, args);
 
 
             case "gov":
@@ -241,661 +128,870 @@ public class MCTowns extends JavaPlugin {
 
             case "to":
             case "town":
-                if (args.length == 0) {
-                    return false;
-                }
-                switch (args[0]) {
-                    case "add":
-                        if (args.length < 2) {
-                            sender.sendMessage("/town add (player | assistant | territory)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "territory":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town add territory <territory name>");
-                                    return true;
-                                }
-                                if (args.length == 3) {
-                                    handler.addTerritorytoTown(args[2], false, true);
-                                }
-                                else if (args.length == 4) {
-                                    handler.addTerritorytoTown(args[2], args[3].equalsIgnoreCase("-admin"), true);
-                                }
-                                return true;
-                            case "player":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town add player <player name>");
-                                    return true;
-                                }
-
-                                handler.invitePlayerToTown(args[2]);
-                                return true;
-                            case "assistant":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town add assistant <resident name>");
-                                    return true;
-                                }
-                                handler.promoteToAssistant(args[2]);
-                                return true;
-                        }
-                        break;
-                    case "reject":
-                    case "remove":
-                        if (args.length < 2) {
-                            sender.sendMessage("/town remove (self | territory | player | assistant | request | invite)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "territory":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town remove territory <territory name>");
-                                    return true;
-                                }
-                                handler.removeTerritoryFromTown(args[2]);
-                                return true;
-                            case "player":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town remove player <player name>");
-                                    return true;
-                                }
-                                handler.removePlayerFromTown(args[2]);
-                                return true;
-                            case "assistant":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town remove assistant <assistant name>");
-                                    return true;
-                                }
-                                handler.demoteFromAssistant(args[2]);
-                                return true;
-
-
-                            case "request":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town reject request <player name>");
-                                    return true;
-                                }
-                                handler.rejectRequest(args[2]);
-                                return true;
-
-                            case "invite":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town remove invite <player name>");
-                                    return true;
-                                }
-                                handler.cancelInvitation(args[2]);
-                                return true;
-
-                            case "self":
-                                handler.removeSelfFromTown();
-                                return true;
-                        }
-                        break;
-                    case "active":
-                        if (args.length < 2) {
-                            sender.sendMessage("/town active (set | reset)");
-                            return true;
-                        }
-                        if (args[1].equals("reset")) {
-                            handler.resetActiveTown();
-                            return true;
-                        }
-                        if (args[1].equals("set")) {
-                            if (args.length < 3) {
-                                sender.sendMessage("/town active set <town name>");
-                                return true;
-                            }
-                            handler.setActiveTown(args[2]);
-                            return true;
-                        }
-                        break;
-                    case "list":
-                        if (args.length < 2) {
-                            sender.sendMessage("/town list (players | territories | invites | requests)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "players":
-                                if (args.length > 2) {
-                                    handler.listResidents(Integer.parseInt(args[2]));
-                                }
-                                else {
-                                    handler.listResidents();
-                                }
-                                return true;
-                            case "territories":
-                                if (args.length > 2) {
-                                    handler.listTerritories(Integer.parseInt(args[2]));
-                                }
-                                else {
-                                    handler.listTerritories();
-                                }
-                                return true;
-                            case "requests":
-                                handler.listRequestsForTown();
-                                return true;
-                            case "invites":
-                                handler.listInvitesForTown();
-                                return true;
-                        }
-                        break;
-                    case "motd":
-                        if (args.length == 1) {
-                            handler.printMOTD();
-                        }
-                        else {
-                            String temp = "";
-                            for (int i = 2; i < args.length; i++) {
-                                temp += args[i] + " ";
-                            }
-
-                            handler.setMOTD(temp);
-
-                        }
-                        return true;
-                    case "setmayor":
-                        if (args.length < 2) {
-                            sender.sendMessage("/town setmayor <mayor name>");
-                            return true;
-                        }
-                        handler.setMayor(args[1]);
-                        return true;
-                    case "bank":
-                        if (args.length < 2) {
-                            sender.sendMessage("/town bank (deposit | withdraw | check");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "deposit":
-                                if (args.length < 4) {
-                                    sender.sendMessage("/town bank deposit (<block name>|hand|currency) <amount>");
-                                    return true;
-                                }
-
-                                if (args[2].equals("hand")) {
-                                    handler.depositHeldItem(args[3]);
-                                    return true;
-                                }
-                                else if (args[2].equalsIgnoreCase("currency")) {
-                                    //deposit the amount of currency in the bank
-                                    handler.depositCurrencyBank(args[3]);
-                                    return true;
-                                }
-                                else {
-                                    handler.depositBlockBank(args[2], args[3]);
-                                    return true;
-                                }
-                            case "withdraw":
-                                if (args.length < 4) {
-                                    sender.sendMessage("/town bank withdraw (<block name>|currency) <amount>");
-                                    return true;
-                                }
-
-                                if (args[2].equalsIgnoreCase("currency")) {
-                                    handler.withdrawCurrencyBank(args[3]);
-                                    return true;
-                                }
-                                handler.withdrawBlockBank(args[2], args[3]);
-                                return true;
-                            case "check":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town bank check (<block name>|currency)");
-                                    return true;
-                                }
-
-                                if (args[2].equalsIgnoreCase("currency")) {
-                                    //check the amount of currency in the bank
-                                    handler.checkCurrencyBank();
-                                    return true;
-                                }
-                                handler.checkBlockBank(args[2]);
-                                return true;
-                        }
-                        break;
-                    case "spawn":
-                        if (args.length == 1) {
-                            handler.warpToSpawn();
-                            return true;
-                        }
-                        else if (args.length == 2) {
-                            if (!args[1].equals("set")) {
-                                handler.warpToOtherSpawn(args[1]);
-                                return true;
-                            }
-                            else if (args[1].equals("set")) {
-                                handler.setTownSpawn();
-                                return true;
-                            }
-                        }
-                        break;
-
-                    case "pvp":
-                        if(args.length == 1) {
-                            sender.sendMessage("/town pvp (friendlyfire)");
-                            return true;
-                        }
-                        else if(args[1].equals("friendlyfire")) {
-                            if(args.length < 3) {
-                                sender.sendMessage("/town pvp friendlyfire <on/off>");
-                                return true;
-                            }
-
-                            handler.setTownFriendlyFire(args[2]);
-                        }
-                        break;
-
-                    case "economy":
-                        if (args.length == 1) {
-                            sender.sendMessage("/town economy (buyableplots | economyjoins)");
-                            return true;
-                        }
-
-                        switch (args[1]) {
-                            case "setdefault":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town economy setdefault (plotprice)");
-                                    return true;
-                                }
-                                switch (args[2]) {
-                                    case "plotprice":
-                                        if (args.length < 4) {
-                                            sender.sendMessage("/town economy setdefault plotprice <number>");
-                                            return true;
-                                        }
-
-                                        //set the default plot price to args[3]
-                                        sender.sendMessage("Not yet implemented.");
-                                        return true;
-                                }
-
-                                return true;
-
-                            case "buyableplots":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town economy buyableplots <true/false>");
-                                    return true;
-                                }
-                                handler.setTownPlotBuyability(args[2]);
-
-                                return true;
-
-                            case "economyjoins":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/town economy economyjoins <true/false>");
-                                    return true;
-                                }
-                                //set economyjoins to args[2]
-                                try {
-                                    if (Boolean.parseBoolean(args[2])) {
-                                        handler.setTownJoinMethod(TownJoinMethod.ECONOMY);
-                                    }
-                                    else {
-                                        handler.setTownJoinMethod(TownJoinMethod.INVITATION);
-                                    }
-                                } catch (Exception e) {
-                                    sender.sendMessage(ChatColor.RED + "Error parsing boolean: Expected true/false, found: " + args[2]);
-                                }
-
-
-                                return true;
-                        }
-                }
-                break;
+                return handleTownCommand(sender, handler, args);
 
             case "te":
             case "territory":
-                if (args.length == 0) {
-                    return false;
-                }
-                switch (args[0]) {
-
-                    case "flag":
-                        if (args.length == 1) {
-                            sender.sendMessage("/territory flag <flag name> (flag arguments)");
-                            sender.sendMessage("Provide no arguments to remove a flag.");
-                            return true;
-                        }
-
-                        if (args.length == 2) {
-                            handler.unflagRegion(args[1], TownLevel.TERRITORY);
-                            return true;
-                        }
-
-                        String[] nuArgs = new String[args.length - 2];
-                        System.arraycopy(args, 2, nuArgs, 0, args.length - 2);
-                        handler.flagRegion(args[1], nuArgs, TownLevel.TERRITORY);
-                        return true;
-
-                    case "active":
-                        if (args.length < 2) {
-                            sender.sendMessage("/territory active set <territory name>");
-                            return true;
-                        }
-                        if (args[1].equals("set")) {
-                            handler.setActiveTerritory(args[2]);
-                            return true;
-                        }
-                        break;
-                    case "add":
-                        if (args.length < 2) {
-                            sender.sendMessage("/territory add (district | player)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "district":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/territory add district <district name>");
-                                    return true;
-                                }
-                                handler.addDistrictToTerritory(args[2], true);
-                                return true;
-                            case "player":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/territory add player <player name>");
-                                    return true;
-                                }
-                                handler.addPlayerToTerritory(args[2]);
-                                return true;
-                        }
-                        break;
-                    case "remove":
-                        if (args.length < 2) {
-                            sender.sendMessage("/territory remove (district | player");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "district":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/territory remove district <district name>");
-                                    return true;
-                                }
-                                handler.removeDistrictFromTerritory(args[2]);
-                                return true;
-                            case "player":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/territory add player <player name>");
-                                    return true;
-                                }
-                                if (args.length == 3) {
-                                    handler.removePlayerFromTerritory(args[2], false);
-                                }
-                                else if (args.length == 4 && args[3].equalsIgnoreCase("r")) {
-                                    handler.removePlayerFromTerritory(label, true);
-                                }
-                                return true;
-                        }
-                        break;
-                    case "list":
-                        if (args.length < 2) {
-                            sender.sendMessage("/territory list (players | districts)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "players":
-                                handler.listPlayers(TownLevel.TERRITORY);
-                                return true;
-                            case "districts":
-                                if (args.length > 2) {
-                                    try {
-                                        handler.listDistricts(Integer.parseInt(args[2]));
-                                    } catch (Exception e) {
-                                        sender.sendMessage(ChatColor.RED + "Error parsing integer.");
-                                    }
-                                }
-                                else {
-                                    handler.listDistricts();
-
-                                }
-                                return true;
-                        }
-                        break;
-                }
+                return handleTerritoryCommand(sender, handler, args);
 
             case "di":
             case "district":
-                if (args.length == 0) {
-                    return false;
-                }
-                switch (args[0]) {
-
-                    case "flag":
-                        if (args.length == 1) {
-                            sender.sendMessage("/district flag <flag name> (flag arguments)");
-                            sender.sendMessage("Provide no arguments to remove a flag.");
-                            return true;
-                        }
-
-                        if (args.length == 2) {
-                            handler.unflagRegion(args[1], TownLevel.DISTRICT);
-                            return true;
-                        }
-
-                        String[] nuArgs = new String[args.length - 2];
-                        System.arraycopy(args, 2, nuArgs, 0, args.length - 2);
-                        handler.flagRegion(args[1], nuArgs, TownLevel.DISTRICT);
-                        return true;
-
-                    case "active":
-                        if (args.length < 3) {
-                            sender.sendMessage("/district active set <district name>");
-                            return true;
-                        }
-                        if (args[1].equals("set")) {
-                            handler.setActiveDistrict(args[2]);
-                            return true;
-                        }
-                        break;
-                    case "add":
-                        if (args.length < 2) {
-                            sender.sendMessage("/district add (plot | player)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "plot":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/district add plot <plot name>");
-                                    return true;
-                                }
-                                handler.addPlotToDistrict(args[2], true);
-                                return true;
-                            case "player":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/district add player <player name>");
-                                    return true;
-                                }
-                                handler.addPlayerToDistrict(args[2]);
-                                return true;
-                        }
-                        break;
-                    case "remove":
-                        if (args.length < 2) {
-                            sender.sendMessage("/district remove (plot | player)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "plot":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/district remove plot <plot name>");
-                                    return true;
-                                }
-                                handler.removePlotFromDistrict(args[2]);
-                                return true;
-                            case "player":
-                                if (args.length < 3) {
-                                    sender.sendMessage("/district remove player <player name>");
-                                    return true;
-                                }
-                                if (args.length == 3) {
-                                    handler.removePlayerFromDistrict(args[2], false);
-                                }
-                                else if (args.length == 4 && args[3].equalsIgnoreCase("r")) {
-                                    handler.removePlayerFromDistrict(label, true);
-                                }
-                                return true;
-                        }
-                        break;
-                    case "list":
-                        if (args.length < 2) {
-                            sender.sendMessage("/district list (plots | players)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "players":
-                                handler.listPlayers(TownLevel.DISTRICT);
-                                return true;
-                            case "plots":
-                                if (args.length > 2) {
-                                    try {
-                                        handler.listPlots(Integer.parseInt(args[2]));
-                                    } catch (Exception e) {
-                                        sender.sendMessage(ChatColor.RED + "Error parsing integer.");
-                                    }
-                                }
-                                else {
-                                    handler.listPlots();
-                                }
-                                return true;
-                        }
-                        break;
-                }
+                return handleDistrictCommand(sender, handler, args);
 
             case "pl":
             case "plot":
-                if (args.length == 0) {
-                    return false;
-                }
-                switch (args[0]) {
-
-                    case "flag":
-                        if (args.length == 1) {
-                            sender.sendMessage("/plot flag <flag name> (flag arguments)");
-                            sender.sendMessage("Provide no arguments to remove a flag.");
-                            return true;
-                        }
-
-                        if (args.length == 2) {
-                            handler.unflagRegion(args[1], TownLevel.PLOT);
-                            return true;
-                        }
-
-                        String[] nuArgs = new String[args.length - 2];
-                        System.arraycopy(args, 2, nuArgs, 0, args.length - 2);
-                        handler.flagRegion(args[1], nuArgs, TownLevel.PLOT);
-                        return true;
-
-                    case "info":
-                        handler.printPlotInfo();
-                        return true;
-                    case "add":
-                        if (args.length == 1) {
-                            sender.sendMessage("/plot add (player|guest)");
-                            return true;
-                        }
-
-                        switch (args[1]) {
-                            case "player":
-                                if (args.length == 2) {
-                                    sender.sendMessage("/plot add player <player name>");
-                                    return true;
-                                }
-                                handler.addPlayerToPlot(args[2]);
-                                return true;
-                            case "guest":
-                                if (args.length == 2) {
-                                    sender.sendMessage("/plot add guest <player name>");
-                                    return true;
-                                }
-                                handler.addPlayerToPlotAsGuest(args[2]);
-                                return true;
-                        }
-                        break;
-                    case "sign":
-                        if (args.length < 2) {
-                            sender.sendMessage("/plot sign (build | demolish)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "build":
-                                handler.buildSign();
-                                return true;
-                            case "demolish":
-                                handler.demolishSign();
-                                return true;
-
-                            case "setpos":
-                                //set the position of the sign on top of the block the person is looking at.
-                                handler.setPlotSignPosition();
-                                return true;
-                            default:
-                                sender.sendMessage("/plot sign (build | demolish)");
-                                return true;
-                        }
-                    case "economy":
-                        if (args.length == 1) {
-                            sender.sendMessage("/plot economy (price | forsale)");
-                            return true;
-                        }
-                        switch (args[1]) {
-                            case "price":
-                                if (args.length > 3) {
-                                    sender.sendMessage("/plot economy price <price>");
-                                    return true;
-                                }
-                                handler.setPlotPrice(args[2]);
-                                return true;
-
-                            case "forsale":
-                                if (args.length > 3) {
-                                    sender.sendMessage("/plot economy forsale <true/false>");
-                                    return true;
-                                }
-                                handler.setPlotBuyability(args[2]);
-                                return true;
-                        }
-
-                        break;
-                    case "remove":
-                        if (args.length < 3) {
-                            sender.sendMessage("/plot remove player <player name>");
-                            return true;
-                        }
-                        if (args[1].equals("player")) {
-                            handler.removePlayerFromPlot(args[2]);
-                            return true;
-
-                        }
-                        break;
-                    case "list":
-                        if (args.length < 2) {
-                            sender.sendMessage("/plot list players");
-                            return true;
-                        }
-                        if (args[1].equals("players")) {
-                            handler.listPlayers(TownLevel.PLOT);
-                            return true;
-                        }
-                        break;
-                    case "active":
-                        if (args.length < 3) {
-                            sender.sendMessage("/plot active set <plot name>");
-                            return true;
-                        }
-                        if (args[1].equals("set")) {
-                            if (args.length == 3) {
-                                handler.setActivePlot(args[2], false);
-                            }
-                            else {
-                                handler.setActivePlot(args[2], args[3].equalsIgnoreCase("q"));
-                            }
-                            return true;
-                        }
-                        break;
-                }
-                break;
+                return handlePlotCommand(sender, handler, args);
         }
 
 
         return false;
+    }
+
+    private boolean handleTerritoryCommand(CommandSender sender, CommandHandler handler, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+        switch (args[0]) {
+
+            case "flag":
+                if (args.length == 1) {
+                    sender.sendMessage("/territory flag <flag name> (flag arguments)");
+                    sender.sendMessage("Provide no arguments to remove a flag.");
+                    return true;
+                }
+
+                if (args.length == 2) {
+                    handler.unflagRegion(args[1], TownLevel.TERRITORY);
+                    return true;
+                }
+
+                String[] nuArgs = new String[args.length - 2];
+                System.arraycopy(args, 2, nuArgs, 0, args.length - 2);
+                handler.flagRegion(args[1], nuArgs, TownLevel.TERRITORY);
+                return true;
+
+            case "active":
+                if (args.length < 2) {
+                    sender.sendMessage("/territory active set <territory name>");
+                    return true;
+                }
+                if (args[1].equals("set")) {
+                    handler.setActiveTerritory(args[2]);
+                    return true;
+                }
+                else {
+                    sender.sendMessage("/territory active set <territory name>");
+                    return true;
+                }
+            case "add":
+                if (args.length < 2) {
+                    sender.sendMessage("/territory add (district | player)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "district":
+                        if (args.length < 3) {
+                            sender.sendMessage("/territory add district <district name>");
+                            return true;
+                        }
+                        handler.addDistrictToTerritory(args[2], true);
+                        return true;
+                    case "player":
+                        if (args.length < 3) {
+                            sender.sendMessage("/territory add player <player name>");
+                            return true;
+                        }
+                        handler.addPlayerToTerritory(args[2]);
+                        return true;
+
+                    default:
+                        sender.sendMessage("/territory add district <district name>");
+                        return true;
+
+                }
+            case "remove":
+                if (args.length < 2) {
+                    sender.sendMessage("/territory remove (district | player");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "district":
+                        if (args.length < 3) {
+                            sender.sendMessage("/territory remove district <district name>");
+                            return true;
+                        }
+                        handler.removeDistrictFromTerritory(args[2]);
+                        return true;
+                    case "player":
+                        if (args.length < 3) {
+                            sender.sendMessage("/territory add player <player name>");
+                            return true;
+                        }
+                        if (args.length == 3) {
+                            handler.removePlayerFromTerritory(args[2], false);
+                        }
+                        else if (args.length == 4 && args[3].equalsIgnoreCase("r")) {
+                            handler.removePlayerFromTerritory(args[2], true);
+                        }
+                        return true;
+
+                    default:
+                        sender.sendMessage("/territory remove district <district name>");
+                        return true;
+                }
+            case "list":
+                if (args.length < 2) {
+                    sender.sendMessage("/territory list (players | districts)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "players":
+                        handler.listPlayers(TownLevel.TERRITORY);
+                        return true;
+                    case "districts":
+                        if (args.length > 2) {
+                            try {
+                                handler.listDistricts(Integer.parseInt(args[2]));
+                            } catch (Exception e) {
+                                sender.sendMessage(ChatColor.RED + "Error parsing integer.");
+                            }
+                        }
+                        else {
+                            handler.listDistricts();
+
+                        }
+                        return true;
+
+                    default:
+                        sender.sendMessage("/territory list (players | districts)");
+                        return true;
+                }
+
+            default:
+                return false;
+        }
+    }
+
+    private boolean handleMCTCommand(CommandSender sender, CommandHandler handler, String[] args) {
+        switch (args[0]) {
+            case "confirm":
+                handler.confirmPlotPurchase(potentialPlotBuyers);
+                return true;
+            case "convert":
+                if (args.length < 4) {
+                    sender.sendMessage("/mct convert <town name> <parent region name> <desired district name>");
+                    return true;
+                }
+                handler.convertRegionToMCTown(args[1], args[2], args[3]);
+                return true;
+
+            case "purge":
+                handler.purge();
+                return true;
+            case "addtown":
+                if (args.length < 3) {
+                    sender.sendMessage("/mct addtown <town name> <mayor name>");
+                    return true;
+                }
+                handler.createTown(args[1], args[2]);
+                return true;
+
+            case "removetown":
+                if (args.length < 2) {
+                    sender.sendMessage("/mct removetown <town name>");
+                    return true;
+                }
+                handler.removeTown(args[1]);
+                return true;
+
+            case "info":
+                if (args.length < 2) {
+                    sender.sendMessage("/mct info (player | town)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "town":
+                        if (args.length < 3) {
+                            sender.sendMessage("/mct info town <town name>");
+                            return true;
+                        }
+                        handler.queryTownInfo(args[2]);
+                        return true;
+                    case "player":
+                        if (args.length < 3) {
+                            sender.sendMessage("/mct info player <player name>");
+                            return true;
+                        }
+                        handler.queryPlayerInfo(args[2]);
+                        return true;
+
+                    default:
+                        sender.sendMessage("/mct info (player | town)");
+                        return true;
+                }
+
+            case "join":
+                if (args.length < 2) {
+                    sender.sendMessage("/mct join <town name>");
+                    return true;
+                }
+
+                handler.requestAdditionToTown(args[1]);
+                return true;
+
+            case "cancel":
+                if (args.length == 1) {
+                    sender.sendMessage("/mct cancel <town name>");
+                    return true;
+                }
+
+                handler.cancelRequest(args[1]);
+                return true;
+
+            case "refuse":
+                if (args.length < 2) {
+                    sender.sendMessage("/mct refuse <town name>");
+                    return true;
+                }
+
+                if (args[1].equals("all")) {
+                    handler.rejectAllInvitations();
+                    return true;
+                }
+
+                handler.rejectInvitation(args[1]);
+                return true;
+
+
+            case "list":
+                if (args.length == 1) {
+                    sender.sendMessage("/mct list (towns | invites | requests)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "towns":
+                        if (args.length == 2) {
+                            handler.listTowns();
+                        }
+                        else {
+                            handler.listTowns(args[2]);
+                        }
+                        return true;
+
+                    case "invites":
+                        handler.listInvitesForPlayer();
+                        return true;
+                    case "requests":
+                        handler.listRequestsForPlayer();
+                        return true;
+                }
+
+                default:
+                    return false;
+        }
+
+
+    }
+
+    private boolean handleTownCommand(CommandSender sender, CommandHandler handler, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+        switch (args[0]) {
+            case "add":
+                if (args.length < 2) {
+                    sender.sendMessage("/town add (player | assistant | territory)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "territory":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town add territory <territory name>");
+                            return true;
+                        }
+                        if (args.length == 3) {
+                            handler.addTerritorytoTown(args[2], false, true);
+                        }
+                        else if (args.length == 4) {
+                            handler.addTerritorytoTown(args[2], args[3].equalsIgnoreCase("-admin"), true);
+                        }
+                        return true;
+                    case "player":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town add player <player name>");
+                            return true;
+                        }
+
+                        handler.invitePlayerToTown(args[2]);
+                        return true;
+                    case "assistant":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town add assistant <resident name>");
+                            return true;
+                        }
+                        handler.promoteToAssistant(args[2]);
+                        return true;
+
+                    default:
+                        sender.sendMessage("/town add territory <territory name>");
+                        return true;
+
+                }
+            case "reject":
+            case "remove":
+                if (args.length < 2) {
+                    sender.sendMessage("/town remove (self | territory | player | assistant | request | invite)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "territory":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town remove territory <territory name>");
+                            return true;
+                        }
+                        handler.removeTerritoryFromTown(args[2]);
+                        return true;
+                    case "player":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town remove player <player name>");
+                            return true;
+                        }
+                        handler.removePlayerFromTown(args[2]);
+                        return true;
+                    case "assistant":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town remove assistant <assistant name>");
+                            return true;
+                        }
+                        handler.demoteFromAssistant(args[2]);
+                        return true;
+
+
+                    case "request":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town reject request <player name>");
+                            return true;
+                        }
+                        handler.rejectRequest(args[2]);
+                        return true;
+
+                    case "invite":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town remove invite <player name>");
+                            return true;
+                        }
+                        handler.cancelInvitation(args[2]);
+                        return true;
+
+                    case "self":
+                        handler.removeSelfFromTown();
+                        return true;
+
+                    default:
+                        sender.sendMessage("/town remove territory <territory name>");
+                        return true;
+                }
+            case "active":
+                if (args.length < 2) {
+                    sender.sendMessage("/town active (set | reset)");
+                    return true;
+                }
+                if (args[1].equals("reset")) {
+                    handler.resetActiveTown();
+                    return true;
+                }
+                if (args[1].equals("set")) {
+                    if (args.length < 3) {
+                        sender.sendMessage("/town active set <town name>");
+                        return true;
+                    }
+                    handler.setActiveTown(args[2]);
+
+                }
+                else {
+                    sender.sendMessage("/town active (set | reset)");
+
+                }
+                return true;
+
+            case "list":
+                if (args.length < 2) {
+                    sender.sendMessage("/town list (players | territories | invites | requests)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "players":
+                        if (args.length > 2) {
+                            handler.listResidents(Integer.parseInt(args[2]));
+                        }
+                        else {
+                            handler.listResidents();
+                        }
+                        return true;
+                    case "territories":
+                        if (args.length > 2) {
+                            handler.listTerritories(Integer.parseInt(args[2]));
+                        }
+                        else {
+                            handler.listTerritories();
+                        }
+                        return true;
+                    case "requests":
+                        handler.listRequestsForTown();
+                        return true;
+                    case "invites":
+                        handler.listInvitesForTown();
+                        return true;
+
+                    default:
+                        sender.sendMessage("/town list (players | territories | invites | requests)");
+                        return true;
+                }
+            case "motd":
+                if (args.length == 1) {
+                    handler.printMOTD();
+                }
+                else {
+                    String temp = "";
+                    for (int i = 2; i < args.length; i++) {
+                        temp += args[i] + " ";
+                    }
+
+                    handler.setMOTD(temp);
+
+                }
+                return true;
+            case "setmayor":
+                if (args.length < 2) {
+                    sender.sendMessage("/town setmayor <mayor name>");
+                    return true;
+                }
+                handler.setMayor(args[1]);
+                return true;
+            case "bank":
+                if (args.length < 2) {
+                    sender.sendMessage("/town bank (deposit | withdraw | check");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "deposit":
+                        if (args.length < 4) {
+                            sender.sendMessage("/town bank deposit (<block name>|hand|currency) <amount>");
+                            return true;
+                        }
+
+                        if (args[2].equals("hand")) {
+                            handler.depositHeldItem(args[3]);
+                        }
+                        else if (args[2].equalsIgnoreCase("currency")) {
+                            //deposit the amount of currency in the bank
+                            handler.depositCurrencyBank(args[3]);
+                        }
+                        else {
+                            handler.depositBlockBank(args[2], args[3]);
+                        }
+                        return true;
+                    case "withdraw":
+                        if (args.length < 4) {
+                            sender.sendMessage("/town bank withdraw (<block name>|currency) <amount>");
+                            return true;
+                        }
+
+                        if (args[2].equalsIgnoreCase("currency")) {
+                            handler.withdrawCurrencyBank(args[3]);
+                            return true;
+                        }
+                        handler.withdrawBlockBank(args[2], args[3]);
+                        return true;
+                    case "check":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town bank check (<block name>|currency)");
+                            return true;
+                        }
+
+                        if (args[2].equalsIgnoreCase("currency")) {
+                            //check the amount of currency in the bank
+                            handler.checkCurrencyBank();
+                            return true;
+                        }
+                        handler.checkBlockBank(args[2]);
+                        return true;
+
+                    default:
+                        sender.sendMessage("/town bank (deposit | withdraw | check");
+                        return true;
+                }
+            case "spawn":
+                if (args.length == 1) {
+                    handler.warpToSpawn();
+                    return true;
+                }
+                else if (args.length == 2) {
+                    if (!args[1].equals("set")) {
+                        handler.warpToOtherSpawn(args[1]);
+                        return true;
+                    }
+                    else if (args[1].equals("set")) {
+                        handler.setTownSpawn();
+                        return true;
+                    }
+
+                }
+                return true;
+
+
+            case "pvp":
+                if (args.length == 1) {
+                    sender.sendMessage("/town pvp (friendlyfire)");
+                    return true;
+                }
+                else if (args[1].equals("friendlyfire")) {
+                    if (args.length < 3) {
+                        sender.sendMessage("/town pvp friendlyfire <on/off>");
+                        return true;
+                    }
+
+                    handler.setTownFriendlyFire(args[2]);
+
+                }
+                else {
+                    sender.sendMessage("/town pvp (friendlyfire)");
+
+                }
+                return true;
+
+            case "economy":
+                if (args.length == 1) {
+                    sender.sendMessage("/town economy (buyableplots | economyjoins)");
+                    return true;
+                }
+
+                switch (args[1]) {
+                    case "setdefault":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town economy setdefault (plotprice)");
+                            return true;
+                        }
+                        switch (args[2]) {
+                            case "plotprice":
+                                if (args.length < 4) {
+                                    sender.sendMessage("/town economy setdefault plotprice <number>");
+                                    return true;
+                                }
+
+                                //TODO: implement setting default plot price...?
+                                sender.sendMessage("Not yet implemented.");
+                                return true;
+
+                            default:
+                                sender.sendMessage("/town economy setdefault (plotprice)");
+                                return true;
+                        }
+
+                    case "buyableplots":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town economy buyableplots <true/false>");
+                            return true;
+                        }
+                        handler.setTownPlotBuyability(args[2]);
+
+                        return true;
+
+                    case "economyjoins":
+                        if (args.length < 3) {
+                            sender.sendMessage("/town economy economyjoins <true/false>");
+                            return true;
+                        }
+                        //set economyjoins to args[2]
+                        try {
+                            if (Boolean.parseBoolean(args[2])) {
+                                handler.setTownJoinMethod(TownJoinMethod.ECONOMY);
+                            }
+                            else {
+                                handler.setTownJoinMethod(TownJoinMethod.INVITATION);
+                            }
+                        } catch (Exception e) {
+                            sender.sendMessage(ChatColor.RED + "Error parsing boolean: Expected true/false, found: " + args[2]);
+                        }
+
+
+                        return true;
+                    default:
+                        sender.sendMessage("/town economy setdefault (plotprice)");
+                        return true;
+                }
+            default:
+                return false;
+        }
+    }
+
+    private boolean handleDistrictCommand(CommandSender sender, CommandHandler handler, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+        switch (args[0]) {
+
+            case "flag":
+                if (args.length == 1) {
+                    sender.sendMessage("/district flag <flag name> (flag arguments)");
+                    sender.sendMessage("Provide no arguments to remove a flag.");
+                    return true;
+                }
+
+                if (args.length == 2) {
+                    handler.unflagRegion(args[1], TownLevel.DISTRICT);
+                    return true;
+                }
+
+                String[] nuArgs = new String[args.length - 2];
+                System.arraycopy(args, 2, nuArgs, 0, args.length - 2);
+                handler.flagRegion(args[1], nuArgs, TownLevel.DISTRICT);
+                return true;
+
+            case "active":
+                if (args.length < 3) {
+                    sender.sendMessage("/district active set <district name>");
+                    return true;
+                }
+                if (args[1].equals("set")) {
+                    handler.setActiveDistrict(args[2]);
+                    return true;
+                }
+            case "add":
+                if (args.length < 2) {
+                    sender.sendMessage("/district add (plot | player)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "plot":
+                        if (args.length < 3) {
+                            sender.sendMessage("/district add plot <plot name>");
+                            return true;
+                        }
+                        handler.addPlotToDistrict(args[2], true);
+                        return true;
+                    case "player":
+                        if (args.length < 3) {
+                            sender.sendMessage("/district add player <player name>");
+                            return true;
+                        }
+                        handler.addPlayerToDistrict(args[2]);
+                        return true;
+
+                    default:
+                        sender.sendMessage("/district add (plot | player)");
+                        return true;
+
+                }
+            case "remove":
+                if (args.length < 2) {
+                    sender.sendMessage("/district remove (plot | player)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "plot":
+                        if (args.length < 3) {
+                            sender.sendMessage("/district remove plot <plot name>");
+                            return true;
+                        }
+                        handler.removePlotFromDistrict(args[2]);
+                        return true;
+                    case "player":
+                        if (args.length < 3) {
+                            sender.sendMessage("/district remove player <player name>");
+                            return true;
+                        }
+                        if (args.length == 3) {
+                            handler.removePlayerFromDistrict(args[2], false);
+                        }
+                        else if (args.length == 4 && args[3].equalsIgnoreCase("r")) {
+                            handler.removePlayerFromDistrict(args[2], true);
+                        }
+                        return true;
+
+                    default:
+                        sender.sendMessage("/district remove (plot | player)");
+                        return true;
+                }
+            case "list":
+                if (args.length < 2) {
+                    sender.sendMessage("/district list (plots | players)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "players":
+                        handler.listPlayers(TownLevel.DISTRICT);
+                        return true;
+                    case "plots":
+                        if (args.length > 2) {
+                            try {
+                                handler.listPlots(Integer.parseInt(args[2]));
+                            } catch (Exception e) {
+                                sender.sendMessage(ChatColor.RED + "Error parsing integer.");
+                            }
+                        }
+                        else {
+                            handler.listPlots();
+                        }
+                        return true;
+                    default:
+                        sender.sendMessage("/district list (plots | players)");
+                        return true;
+                }
+            default:
+                return false;
+        }
+    }
+
+    private boolean handlePlotCommand(CommandSender sender, CommandHandler handler, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+        switch (args[0]) {
+
+            case "flag":
+                if (args.length == 1) {
+                    sender.sendMessage("/plot flag <flag name> (flag arguments)");
+                    sender.sendMessage("Provide no arguments to remove a flag.");
+                    return true;
+                }
+
+                if (args.length == 2) {
+                    handler.unflagRegion(args[1], TownLevel.PLOT);
+                    return true;
+                }
+
+                String[] nuArgs = new String[args.length - 2];
+                System.arraycopy(args, 2, nuArgs, 0, args.length - 2);
+                handler.flagRegion(args[1], nuArgs, TownLevel.PLOT);
+                return true;
+
+            case "info":
+                handler.printPlotInfo();
+                return true;
+            case "add":
+                if (args.length == 1) {
+                    sender.sendMessage("/plot add (player|guest)");
+                    return true;
+                }
+
+                switch (args[1]) {
+                    case "player":
+                        if (args.length == 2) {
+                            sender.sendMessage("/plot add player <player name>");
+                            return true;
+                        }
+                        handler.addPlayerToPlot(args[2]);
+                        return true;
+                    case "guest":
+                        if (args.length == 2) {
+                            sender.sendMessage("/plot add guest <player name>");
+                            return true;
+                        }
+                        handler.addPlayerToPlotAsGuest(args[2]);
+                        return true;
+
+                    default:
+                        sender.sendMessage("/plot add (player|guest)");
+                        return true;
+                }
+            case "sign":
+                if (args.length < 2) {
+                    sender.sendMessage("/plot sign (build | demolish)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "build":
+                        handler.buildSign();
+                        return true;
+                    case "demolish":
+                        handler.demolishSign();
+                        return true;
+
+                    case "setpos":
+                        //set the position of the sign on top of the block the person is looking at.
+                        handler.setPlotSignPosition();
+                        return true;
+                    default:
+                        sender.sendMessage("/plot sign (build | demolish)");
+                        return true;
+                }
+            case "economy":
+                if (args.length == 1) {
+                    sender.sendMessage("/plot economy (price | forsale)");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "price":
+                        if (args.length > 3) {
+                            sender.sendMessage("/plot economy price <price>");
+                            return true;
+                        }
+                        handler.setPlotPrice(args[2]);
+                        return true;
+
+                    case "forsale":
+                        if (args.length > 3) {
+                            sender.sendMessage("/plot economy forsale <true/false>");
+                            return true;
+                        }
+                        handler.setPlotBuyability(args[2]);
+                        return true;
+
+                    default:
+                        sender.sendMessage("/plot economy (price | forsale)");
+                        return true;
+                }
+
+            case "remove":
+                if (args.length < 3) {
+                    sender.sendMessage("/plot remove player <player name>");
+                    return true;
+                }
+                if (args[1].equals("player")) {
+                    handler.removePlayerFromPlot(args[2]);
+                    return true;
+
+                }
+                else {
+                    sender.sendMessage("/plot remove player <player name>");
+                    return true;
+                }
+            case "list":
+                if (args.length < 2) {
+                    sender.sendMessage("/plot list players");
+                    return true;
+                }
+                if (args[1].equals("players")) {
+                    handler.listPlayers(TownLevel.PLOT);
+                    return true;
+                }
+                else {
+                    sender.sendMessage("/plot list players");
+                    return true;
+                }
+            case "active":
+                if (args.length < 3) {
+                    sender.sendMessage("/plot active set <plot name>");
+                    return true;
+                }
+                if (args[1].equals("set")) {
+                    if (args.length == 3) {
+                        handler.setActivePlot(args[2], false);
+                    }
+                    else {
+                        handler.setActivePlot(args[2], args[3].equalsIgnoreCase("q"));
+                    }
+                    return true;
+                }
+                else {
+                    sender.sendMessage("/plot active set <plot name>");
+                    return true;
+                }
+
+            default:
+                return false;
+        }
     }
 
     private void checkFiles() {
@@ -950,9 +1046,8 @@ public class MCTowns extends JavaPlugin {
             fis.close();
 
         } catch (Exception e) {
-            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if is is the first run.");
+            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             townManager = new TownManager();
-            log.log(Level.SEVERE, e.getMessage());
         }
 
 
@@ -982,11 +1077,12 @@ public class MCTowns extends JavaPlugin {
 
     private void regEventListeners() {
         MCTPlayerListener joinListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
-        MCTPlayerListener respawnListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
+        //MCTPlayerListener respawnListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPlayerListener plotBuyListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
 
-        getServer().getPluginManager().registerEvent(Type.ENTITY_DAMAGE, townPvPListener, Priority.High, this);
+        if(options.allowsTownFriendlyFireManagement())
+            getServer().getPluginManager().registerEvent(Type.ENTITY_DAMAGE, townPvPListener, Priority.High, this);
 
         getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, joinListener, Priority.Monitor, this);
 
