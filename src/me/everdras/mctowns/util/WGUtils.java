@@ -6,7 +6,6 @@ package me.everdras.mctowns.util;
 
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.everdras.mctowns.MCTowns;
 
 /**
  *

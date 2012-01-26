@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.player.PlayerListener;
 
 /**
  * EntityListener subclass intended to stop PvP between townmates.
@@ -57,7 +56,6 @@ public class MCTPvPListener extends EntityListener {
         if(damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
             event.setCancelled(true);
             damager.sendMessage(ChatColor.RED + "That player is in your town! Don't attack him!");
-            return;
         }
 
 

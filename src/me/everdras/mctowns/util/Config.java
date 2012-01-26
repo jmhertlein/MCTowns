@@ -2,8 +2,6 @@ package me.everdras.mctowns.util;
 
 import java.io.*;
 import java.util.Scanner;
-import java.util.logging.Level;
-import me.everdras.mctowns.MCTowns;
 
 /**
  *
@@ -44,7 +42,6 @@ public class Config {
         } catch (Exception ex) {
             failBit = true;
             failReason = "Generic exception in parsing config.";
-            return;
         }
     }
 

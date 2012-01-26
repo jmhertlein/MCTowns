@@ -10,8 +10,6 @@ import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
-import me.everdras.mctowns.structure.Location;
-import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.townjoin.TownJoinInfoPair;
 import me.everdras.mctowns.townjoin.TownJoinManager;

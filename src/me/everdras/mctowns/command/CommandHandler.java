@@ -1,31 +1,5 @@
 package me.everdras.mctowns.command;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import me.everdras.mctowns.MCTowns;
-import me.everdras.mctowns.banking.BlockBank;
-import me.everdras.mctowns.database.TownManager;
-import me.everdras.mctowns.permission.Perms;
-import me.everdras.mctowns.structure.*;
-import me.everdras.mctowns.townjoin.*;
-import me.everdras.mctowns.util.*;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -36,9 +10,33 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.*;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
-import net.minecraft.server.ConsoleCommandHandler;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import me.everdras.mctowns.MCTowns;
+import me.everdras.mctowns.banking.BlockBank;
+import me.everdras.mctowns.database.TownManager;
+import me.everdras.mctowns.permission.Perms;
+import me.everdras.mctowns.structure.*;
+import me.everdras.mctowns.townjoin.TownJoinInfoPair;
+import me.everdras.mctowns.townjoin.TownJoinManager;
+import me.everdras.mctowns.townjoin.TownJoinMethod;
+import me.everdras.mctowns.util.BlockDataValueTranslator;
+import me.everdras.mctowns.util.Config;
+import me.everdras.mctowns.util.WGUtils;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * CommandHandler wraps a CommandSender and various other pertinent objects together
@@ -373,7 +371,6 @@ public class CommandHandler {
         }
         else {
             senderWrapper.sendMessage(ERR + "That town already exists!");
-            return;
         }
 
 
