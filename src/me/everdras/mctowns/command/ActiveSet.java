@@ -4,10 +4,7 @@
  */
 package me.everdras.mctowns.command;
 
-import me.everdras.mctowns.structure.District;
-import me.everdras.mctowns.structure.Plot;
-import me.everdras.mctowns.structure.Territory;
-import me.everdras.mctowns.structure.Town;
+import me.everdras.mctowns.structure.*;
 
 /**
  * The set of active objects for a player.
@@ -100,4 +97,6 @@ public class ActiveSet {
     public void setActiveTown(Town activeTown) {
         this.activeTown = activeTown;
     }
+
+
 }

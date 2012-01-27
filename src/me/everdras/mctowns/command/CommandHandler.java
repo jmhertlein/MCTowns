@@ -5,10 +5,7 @@ import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
-import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
-import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.*;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -23,17 +20,12 @@ import me.everdras.mctowns.banking.BlockBank;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.*;
-import me.everdras.mctowns.townjoin.TownJoinInfoPair;
-import me.everdras.mctowns.townjoin.TownJoinManager;
-import me.everdras.mctowns.townjoin.TownJoinMethod;
-import me.everdras.mctowns.util.BlockDataValueTranslator;
-import me.everdras.mctowns.util.Config;
-import me.everdras.mctowns.util.WGUtils;
+import me.everdras.mctowns.townjoin.*;
+import me.everdras.mctowns.util.*;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Server;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -645,10 +637,13 @@ public class CommandHandler {
         switch (level) {
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
+                break;
             case DISTRICT:
                 reg = senderWrapper.getActiveDistrict();
+                break;
             case PLOT:
                 reg = senderWrapper.getActivePlot();
+                break;
         }
 
         if (reg == null) {

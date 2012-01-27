@@ -9,9 +9,7 @@ import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.util.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityListener;
+import org.bukkit.event.entity.*;
 
 /**
  * EntityListener subclass intended to stop PvP between townmates.

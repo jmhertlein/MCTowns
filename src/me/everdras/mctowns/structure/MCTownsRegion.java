@@ -6,10 +6,7 @@ package me.everdras.mctowns.structure;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.*;
 import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
 import org.bukkit.entity.Player;
