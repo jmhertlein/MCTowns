@@ -2359,7 +2359,7 @@ public class CommandHandler {
             return;
         }
 
-        if (!economy.bankWithdraw(senderWrapper.getPlayer().getName(), p.getPrice()).transactionSuccess()) {
+        if (!economy.withdrawPlayer(senderWrapper.getPlayer().getName(), p.getPrice()).transactionSuccess()) {
             senderWrapper.sendMessage(ERR + "Insufficient funds.");
             return;
         }
