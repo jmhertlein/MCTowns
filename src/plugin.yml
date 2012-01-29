@@ -1,6 +1,6 @@
 name: MCTowns
 main: me.everdras.mctowns.MCTowns
-version: 0.8.6
+version: 0.8.7
 depend: [WorldGuard, Vault]
 commands:
     mct:
