@@ -68,7 +68,7 @@ public class Town implements Externalizable {
     public Town(String townName, Player mayor) {
         this.townName = townName;
         this.mayor = mayor.getName();
-        townMOTD = "Use /town motd <msg> to set the town MOTD!";
+        townMOTD = "Use /town motd set <msg> to set the town MOTD!";
         townSpawn = Location.convertFromBukkitLocation(mayor.getLocation());
         worldName = mayor.getWorld().getName();
 

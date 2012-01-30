@@ -272,8 +272,12 @@ public class TownManager implements Externalizable {
      * @param p
      */
     public void removePlayerFromTownsWGRegions(WorldGuardPlugin wgp, Town town, Player p) {
+        removePlayerFromTownsWGRegions(wgp, town, p.getName());
+    }
+
+    public void removePlayerFromTownsWGRegions(WorldGuardPlugin wgp, Town town, String playerName) {
         for (Territory territ : town.getTerritoriesCollection()) {
-            removePlayerFromTerritorysWGRegions(wgp, territ, p);
+            removePlayerFromTerritorysWGRegions(wgp, territ, playerName);
         }
     }
 
@@ -284,10 +288,14 @@ public class TownManager implements Externalizable {
      * @param p
      */
     public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, Player p) {
-        removePlayerFromWorldGuardRegion(wgp, territ, p);
+        removePlayerFromTerritorysWGRegions(wgp, territ, p.getName());
+    }
+
+    public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, String playerName) {
+        removePlayerFromWorldGuardRegion(wgp, territ, playerName);
 
         for (District dist : territ.getDistrictsCollection()) {
-            removePlayerFromDistrictsWGRegions(wgp, dist, p);
+            removePlayerFromDistrictsWGRegions(wgp, dist, playerName);
         }
     }
 
@@ -298,10 +306,15 @@ public class TownManager implements Externalizable {
      * @param p
      */
     public void removePlayerFromDistrictsWGRegions(WorldGuardPlugin wgp, District dist, Player p) {
-        removePlayerFromWorldGuardRegion(wgp, dist, p);
+        removePlayerFromDistrictsWGRegions(wgp, dist, p.getName());
+
+    }
+
+    public void removePlayerFromDistrictsWGRegions(WorldGuardPlugin wgp, District dist, String playerName) {
+        removePlayerFromWorldGuardRegion(wgp, dist, playerName);
 
         for (Plot plot : dist.getPlotsCollection()) {
-            removePlayerFromPlotsWGRegion(wgp, plot, p);
+            removePlayerFromPlotsWGRegion(wgp, plot, playerName);
         }
 
     }
@@ -313,13 +326,22 @@ public class TownManager implements Externalizable {
      * @param p the player to be removed from the plot
      */
     public void removePlayerFromPlotsWGRegion(WorldGuardPlugin wgp, Plot plot, Player p) {
-        removePlayerFromWorldGuardRegion(wgp, plot, p);
+        removePlayerFromWorldGuardRegion(wgp, plot, p.getName());
+    }
+
+    public void removePlayerFromPlotsWGRegion(WorldGuardPlugin wgp, Plot plot, String playerName) {
+        removePlayerFromWorldGuardRegion(wgp, plot, playerName);
+
     }
 
     private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, Player p) {
+        removePlayerFromWorldGuardRegion(wgp, mctRegion, p.getName());
+    }
+
+    private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, String playerName) {
         ProtectedRegion reg = wgp.getRegionManager(wgp.getServer().getWorld(mctRegion.getWorldName())).getRegion(mctRegion.getName());
-        reg.getMembers().removePlayer(p.getName());
-        reg.getOwners().removePlayer(p.getName());
+        reg.getMembers().removePlayer(playerName);
+        reg.getOwners().removePlayer(playerName);
     }
 
     @Override

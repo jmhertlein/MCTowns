@@ -159,7 +159,7 @@ public class CommandHandler {
                 s_stateOfFlag += s;
                 s_stateOfFlag += " ";
             }
-            s_stateOfFlag = s_stateOfFlag.substring(0, s_stateOfFlag.length() - 2);
+            s_stateOfFlag = s_stateOfFlag.substring(0, s_stateOfFlag.length() - 1);
         }
 
         try {
@@ -1162,7 +1162,7 @@ public class CommandHandler {
         Town removeFrom = senderWrapper.getActiveTown();
 
         if (removeMe == null) {
-            senderWrapper.sendMessage(ERR + playerName + " is not online. Make sure you typed their name correctly.");
+            senderWrapper.sendMessage(INFO + playerName + " is not online. Make sure you typed their name correctly.");
         }
 
         if (removeFrom == null) {
@@ -1183,9 +1183,9 @@ public class CommandHandler {
 
         senderWrapper.getActiveTown().removePlayer(playerName);
 
-        townManager.removePlayerFromTownsWGRegions(wgp, removeFrom, removeMe);
+        townManager.removePlayerFromTownsWGRegions(wgp, removeFrom, playerName);
 
-        senderWrapper.sendMessage(playerName + " was removed from the town.");
+        senderWrapper.sendMessage("\"" + playerName + "\" was removed from the town.");
         if(removeMe != null)
             removeMe.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + senderWrapper.getPlayer().getName());
     }
