@@ -2192,11 +2192,12 @@ public class CommandHandler {
             return;
         }
 
-        TownJoinMethod method = null;
+        TownJoinMethod method;
         try {
             method = TownJoinMethod.parseMethod(s_method);
         } catch (TownJoinMethodFormatException ex) {
             senderWrapper.sendMessage(ERR + ex.getMessage());
+            return;
         }
 
         //TODO: Refactor Town so that it holds a TownJoinMethod instead of a boolean that determines economy joins or invites.
