@@ -698,13 +698,13 @@ public class MCTowns extends JavaPlugin {
                             sender.sendMessage("/town economy economyjoins <true/false>");
                             return true;
                         }
-                        //set economyjoins to args[2]
+                        
                         try {
                             if (Boolean.parseBoolean(args[2])) {
-                                handler.setTownJoinMethod(TownJoinMethod.ECONOMY);
+                                handler.setTownJoinMethod(TownJoinMethod.ECONOMY.toString());
                             }
                             else {
-                                handler.setTownJoinMethod(TownJoinMethod.INVITATION);
+                                handler.setTownJoinMethod(TownJoinMethod.INVITATION.toString());
                             }
                         } catch (Exception e) {
                             sender.sendMessage(ChatColor.RED + "Error parsing boolean: Expected true/false, found: " + args[2]);

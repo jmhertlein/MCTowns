@@ -171,6 +171,8 @@ public class CommandHandler {
 
         senderWrapper.sendMessage(ChatColor.GREEN + "Region successfully flagged.");
 
+        doRegManSave(regMan);
+
     }
 
     public void unflagRegion(String flagName, TownLevel regionType) {
@@ -2177,8 +2179,35 @@ public class CommandHandler {
         senderWrapper.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
     }
 
-    public void setTownJoinMethod(TownJoinMethod method) {
-        //set town join method to $method
+    public void setTownJoinMethod(String s_method) {
+        if(!senderWrapper.hasMayoralPermissions()) {
+            senderWrapper.notifyInsufPermissions();
+            return;
+        }
+
+        Town t = senderWrapper.getActiveTown();
+
+        if(t == null) {
+            senderWrapper.notifyActiveTownNotSet();
+            return;
+        }
+
+        TownJoinMethod method = null;
+        try {
+            method = TownJoinMethod.parseMethod(s_method);
+        } catch (TownJoinMethodFormatException ex) {
+            senderWrapper.sendMessage(ERR + ex.getMessage());
+        }
+
+        //TODO: Refactor Town so that it holds a TownJoinMethod instead of a boolean that determines economy joins or invites.
+        if(method == TownJoinMethod.ECONOMY) {
+            t.setEconomyJoins(true);
+        }
+        else if(method == TownJoinMethod.INVITATION) {
+            t.setEconomyJoins(false);
+        }
+
+
     }
 
     public void setTownPlotBuyability(String s_buyability) {
@@ -2639,7 +2668,7 @@ public class CommandHandler {
         try {
             regMan.save();
         } catch (IOException ex) {
-            Logger.getLogger("Minecraft").log(Level.SEVERE, "MCTowns: issue saving WG region list.");
+            MCTowns.logSevere("Issue saving WG region list.");
         }
     }
 
