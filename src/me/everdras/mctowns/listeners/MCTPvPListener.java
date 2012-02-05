@@ -9,28 +9,30 @@ import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.util.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
- * EntityListener subclass intended to stop PvP between townmates.
+ *  intended to stop PvP between townmates.
  *
  * @author Joshua
  */
-public class MCTPvPListener extends EntityListener {
+public class MCTPvPListener implements Listener {
 
     private TownManager manager;
     private Config options;
 
     public MCTPvPListener(TownManager manager, Config options) {
-        super();
-
         this.manager = manager;
         this.options = options;
 
     }
 
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamage(EntityDamageEvent event) {
 
         if(!(event instanceof EntityDamageByEntityEvent)) {
