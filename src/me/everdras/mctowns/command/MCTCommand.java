@@ -4,12 +4,14 @@
  */
 package me.everdras.mctowns.command;
 
+import java.util.*;
+
 /**
  *
  * @author Joshua
  */
 public class MCTCommand {
-    private String[] args, flags;
+    private LinkedList<String> args, flags;
 
     /**
      * Converts elements available in onCommand into an MCTCommand
@@ -17,7 +19,17 @@ public class MCTCommand {
      * @param args all following words and args
      */
     public MCTCommand(String label, String[] args) {
+        this.args = new LinkedList<>();
+        this.flags = new LinkedList<>();
 
+        this.args.add(label);
+
+        for(String s : args) {
+            if(s.startsWith("-"))
+                this.flags.add(s);
+            else
+                this.args.add(s);
+        }
     }
 
     /**
@@ -25,7 +37,19 @@ public class MCTCommand {
      * @param slashCommand
      */
     public MCTCommand(String slashCommand) {
+        this.args = new LinkedList<>();
+        this.flags = new LinkedList<>();
+        
+        Scanner scan = new Scanner(slashCommand);
 
+        String s;
+        while(scan.hasNext()) {
+            s = scan.next();
+            if(s.startsWith("-"))
+                flags.add(s);
+            else
+                args.add(s);
+        }
     }
 
     /**
@@ -34,6 +58,10 @@ public class MCTCommand {
      * @param flags
      */
     public MCTCommand(String[] args, String[] flags) {
+        this.args = new LinkedList<>();
+        this.flags = new LinkedList<>();
 
+        this.args.addAll(Arrays.asList(args));
+        this.flags.addAll(Arrays.asList(flags));
     }
 }
