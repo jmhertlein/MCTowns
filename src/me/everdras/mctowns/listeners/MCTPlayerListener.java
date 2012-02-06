@@ -19,13 +19,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 
 /**
  *
  * @author Joshua
  */
-public class MCTPlayerListener extends PlayerListener {
+public class MCTPlayerListener implements Listener {
 
     private TownManager townManager;
     private TownJoinManager joinManager;
@@ -34,13 +37,11 @@ public class MCTPlayerListener extends PlayerListener {
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
 
     /**
-     *
+     * 
      * @param townManager
      * @param joinManager
      */
     public MCTPlayerListener(TownManager townManager, TownJoinManager joinManager, Config opt, Economy econ, HashMap<Player, ActiveSet> buyers) {
-        super();
-
         options = opt;
         this.townManager = townManager;
         this.joinManager = joinManager;
@@ -52,7 +53,7 @@ public class MCTPlayerListener extends PlayerListener {
      *
      * @param event
      */
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         Town t = townManager.matchPlayerToTown(p);
@@ -103,7 +104,7 @@ public class MCTPlayerListener extends PlayerListener {
      *
      * @param event
      */
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player p = event.getPlayer();
 
@@ -117,7 +118,7 @@ public class MCTPlayerListener extends PlayerListener {
 
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(PlayerInteractEvent event) {
 
         if (!options.isEconomyEnabled()) {

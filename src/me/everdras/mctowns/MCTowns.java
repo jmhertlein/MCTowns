@@ -698,7 +698,7 @@ public class MCTowns extends JavaPlugin {
                             sender.sendMessage("/town economy economyjoins <true/false>");
                             return true;
                         }
-                        
+
                         try {
                             if (Boolean.parseBoolean(args[2])) {
                                 handler.setTownJoinMethod(TownJoinMethod.ECONOMY.toString());
@@ -1072,21 +1072,16 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void regEventListeners() {
-        MCTPlayerListener joinListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
-        //MCTPlayerListener respawnListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
-        MCTPlayerListener plotBuyListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
+        MCTPlayerListener playerListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
 
         if(options.allowsTownFriendlyFireManagement())
-            getServer().getPluginManager().registerEvent(Type.ENTITY_DAMAGE, townPvPListener, Priority.High, this);
+            getServer().getPluginManager().registerEvents(townPvPListener, this);
 
-        getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, joinListener, Priority.Monitor, this);
+        getServer().getPluginManager().registerEvents(playerListener, this);
 
         //TODO: Fix this, see ticket no. 13
         //getServer().getPluginManager().registerEvent(Type.PLAYER_RESPAWN, respawnListener, Priority.Monitor, this);
-
-
-        getServer().getPluginManager().registerEvent(Type.PLAYER_INTERACT, plotBuyListener, Priority.Monitor, this);
     }
 
     private void loadConfig() {
