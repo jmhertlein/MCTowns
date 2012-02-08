@@ -11,7 +11,7 @@ import java.util.*;
  * @author Joshua
  */
 public class MCTCommand {
-    private LinkedList<String> args, flags;
+    private ArrayList<String> args, flags;
 
     /**
      * Converts elements available in onCommand into an MCTCommand
@@ -19,8 +19,8 @@ public class MCTCommand {
      * @param args all following words and args
      */
     public MCTCommand(String label, String[] args) {
-        this.args = new LinkedList<>();
-        this.flags = new LinkedList<>();
+        this.args = new ArrayList<>();
+        this.flags = new ArrayList<>();
 
         this.args.add(label);
 
@@ -37,10 +37,14 @@ public class MCTCommand {
      * @param slashCommand
      */
     public MCTCommand(String slashCommand) {
-        this.args = new LinkedList<>();
-        this.flags = new LinkedList<>();
-        
+        this.args = new ArrayList<>();
+        this.flags = new ArrayList<>();
+
+        slashCommand = slashCommand.substring(1); //take off the leading /
+
         Scanner scan = new Scanner(slashCommand);
+
+
 
         String s;
         while(scan.hasNext()) {
@@ -58,10 +62,43 @@ public class MCTCommand {
      * @param flags
      */
     public MCTCommand(String[] args, String[] flags) {
-        this.args = new LinkedList<>();
-        this.flags = new LinkedList<>();
+        this.args = new ArrayList<>();
+        this.flags = new ArrayList<>();
 
         this.args.addAll(Arrays.asList(args));
         this.flags.addAll(Arrays.asList(flags));
     }
+
+    /**
+     * Checks whether or not the flag is present in the command.
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(String flag) {
+        return flags.contains(flag);
+    }
+
+    @Override
+    public String toString() {
+        String nu = "/";
+        for(String s : args) {
+            nu += s;
+            nu += " ";
+        }
+
+        nu += "(";
+        for(String s : flags) {
+            nu += s;
+            nu += ", ";
+        }
+        nu += ")";
+
+        return nu;
+    }
+
+    public String getArgAtIndex(int i) {
+        return args.get(i);
+    }
+
+
 }
