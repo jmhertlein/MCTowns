@@ -1764,7 +1764,15 @@ public class CommandHandler {
 
         boolean autoActive = !cmd.hasFlag(MCTCommand.DISABLE_AUTOACTIVE);
 
+        Town t = senderWrapper.getActiveTown();
+
+        if(t == null) {
+            senderWrapper.notifyActiveTownNotSet();
+            return;
+        }
+
         District d = senderWrapper.getActiveDistrict();
+
 
         if (d == null) {
             senderWrapper.notifyActiveDistrictNotSet();
@@ -1775,6 +1783,7 @@ public class CommandHandler {
 
         plotName = senderWrapper.getActiveTown().getTownName() + PLOT_INFIX + plotName;
         Plot p = new Plot(plotName, worldName);
+        p.setPrice(t.getDefaultPlotPrice());
 
         ProtectedCuboidRegion plotRegion = getSelectedRegion(p.getName());
 
@@ -1804,8 +1813,10 @@ public class CommandHandler {
         regMan.addRegion(plotRegion);
         d.addPlot(p);
 
+
         doRegManSave(regMan);
         senderWrapper.sendMessage("Plot added.");
+        p.calculateSignLoc(wgp);
 
         if (autoActive) {
             senderWrapper.setActivePlot(p);
@@ -1815,8 +1826,6 @@ public class CommandHandler {
 
         if (options.isEconomyEnabled() && senderWrapper.getActiveTown().usesBuyablePlots()) {
             p.setForSale(true);
-            p.setPrice(senderWrapper.getActiveTown().getDefaultPlotPrice());
-            p.calculateSignLoc(wgp);
             p.buildSign(server);
         }
     }
@@ -2174,10 +2183,10 @@ public class CommandHandler {
             return;
         }
 
-        float price;
+        BigDecimal price;
 
         try {
-            price = Float.parseFloat(s_price);
+            price = new BigDecimal(s_price);
         } catch (Exception e) {
             senderWrapper.sendMessage(ERR + "Error parsing float on token: " + s_price);
             return;
@@ -2256,6 +2265,34 @@ public class CommandHandler {
         t.setBuyablePlots(buyability);
         senderWrapper.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots can now be sold and new plots are buyable by default.");
 
+
+    }
+
+    public void setDefaultPlotPrice(String plotPrice) {
+        if(!senderWrapper.hasMayoralPermissions()) {
+            senderWrapper.notifyInsufPermissions();
+            return;
+        }
+
+        Town t = senderWrapper.getActiveTown();
+
+        if(t == null) {
+            senderWrapper.notifyActiveTownNotSet();
+            return;
+        }
+
+
+        BigDecimal price;
+
+        try {
+            price = new BigDecimal(plotPrice);
+        } catch(NumberFormatException nfe) {
+            senderWrapper.sendMessage(ERR + "Error parsing plot price: " + nfe.getMessage());
+            return;
+        }
+
+        t.setDefaultPlotPrice(price);
+        senderWrapper.sendMessage(SUCC + "The default price of plots in " + t.getTownName() + " has been set to " + price);
 
     }
 
@@ -2360,7 +2397,7 @@ public class CommandHandler {
 
 
         p.setForSale(false);
-        p.setPrice(-1);
+        p.setPrice(BigDecimal.ZERO);
 
 
     }
@@ -2404,14 +2441,14 @@ public class CommandHandler {
             return;
         }
 
-        if (!economy.withdrawPlayer(senderWrapper.getPlayer().getName(), p.getPrice()).transactionSuccess()) {
+        if (!economy.withdrawPlayer(senderWrapper.getPlayer().getName(), p.getPrice().floatValue()).transactionSuccess()) {
             senderWrapper.sendMessage(ERR + "Insufficient funds.");
             return;
         }
 
-        plotToBuy.getActiveTown().getBank().depositCurrency(new BigDecimal(p.getPrice()));
+        plotToBuy.getActiveTown().getBank().depositCurrency(p.getPrice());
 
-        p.setPrice(-1);
+        p.setPrice(BigDecimal.ZERO);
         p.setForSale(false);
         ProtectedRegion plotReg = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
         p.demolishSign(server);
@@ -2722,6 +2759,8 @@ public class CommandHandler {
     private void runCommandAsConsole(String command) {
         server.dispatchCommand(server.getConsoleSender(), command);
     }
+
+
 
 
 }

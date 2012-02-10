@@ -22,7 +22,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 /**
  *
@@ -37,7 +39,7 @@ public class MCTPlayerListener implements Listener {
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
 
     /**
-     * 
+     *
      * @param townManager
      * @param joinManager
      */
@@ -168,7 +170,7 @@ public class MCTPlayerListener implements Listener {
         }
 
 
-        if (!economy.has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice())) {
+        if (!economy.has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice().floatValue())) {
             event.getPlayer().sendMessage(ChatColor.RED + "Insufficient funds (costs " + plotToBuy.getActivePlot().getPrice() + ").");
             return;
         }

@@ -667,8 +667,7 @@ public class MCTowns extends JavaPlugin {
                                     return true;
                                 }
 
-                                //TODO: implement setting default plot price...?
-                                sender.sendMessage("Not yet implemented.");
+                                handler.setDefaultPlotPrice(args[3]);
                                 return true;
 
                             default:
@@ -1043,7 +1042,8 @@ public class MCTowns extends JavaPlugin {
             wgp = (WorldGuardPlugin) this.getServer().getPluginManager().getPlugin("WorldGuard");
         } catch (Exception e) {
             log.log(Level.SEVERE, "[MCTowns] Error occurred in hooking in to WorldGuard. Is both WorldGuard and WorldEdit installed?");
-            log.log(Level.SEVERE, "[MCTowns] !!!!!WARNING!!!!! MCTOWNS WILL NOT RUN CORRECTLY OR POSSIBLY NOT RUN AT ALL.  !!!!!WARNING!!!!!");
+            log.log(Level.SEVERE, "[MCTowns] !!!!!NOTICE!!!!! MCTOWNS WILL NOW BE DISABLED.  !!!!!NOTICE!!!!!");
+            this.getPluginLoader().disablePlugin(this);
         }
 
         if (options.isEconomyEnabled()) {
@@ -1075,7 +1075,9 @@ public class MCTowns extends JavaPlugin {
         options = new Config(MCT_TEXT_CONFIG_PATH);
 
         if (options.badConfig()) {
-            log.log(Level.SEVERE, "MCTowns: " + options.getFailReason());
+            logSevere(options.getFailReason());
+            logSevere("Couldn't load the config! DISABLING MCTOWNS.");
+            this.getPluginLoader().disablePlugin(this);
         }
     }
 

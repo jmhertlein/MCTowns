@@ -8,6 +8,7 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
 import org.bukkit.Material;
@@ -25,14 +26,14 @@ public class Plot extends MCTownsRegion implements Externalizable {
     /*
      *
      */
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     private boolean forSale;
-    private float price;
+    private BigDecimal price;
     private Location signLoc;
 
     public Plot() {
         forSale = false;
-        price = 0;
+        price = BigDecimal.ZERO;
     }
 
     /**
@@ -46,11 +47,11 @@ public class Plot extends MCTownsRegion implements Externalizable {
         //calculateSignLoc(wgp);
     }
 
-    public float getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -134,7 +135,7 @@ public class Plot extends MCTownsRegion implements Externalizable {
         out.writeInt(VERSION);
 
         out.writeBoolean(forSale);
-        out.writeFloat(price);
+        out.writeObject(price);
         out.writeObject(signLoc);
 
 
@@ -152,15 +153,23 @@ public class Plot extends MCTownsRegion implements Externalizable {
             //Plot did not originally have any variables
             //============End of original variables for version 0===============
             forSale = false;
-            price = 0;
+            price = BigDecimal.ZERO;
             signLoc = null;
         }
         else if (ver == 1) {
             //============Beginning of original variables for version 1=========
             forSale = in.readBoolean();
-            price = in.readFloat();
+            price = new BigDecimal(in.readFloat());
             signLoc = (Location) in.readObject();
             //============End of original variables for version 1===============
+        }
+        else if(ver == 2) {
+            //============Beginning of original variables for version 2=========
+            forSale = in.readBoolean();
+            price = (BigDecimal) (in.readObject());
+            signLoc = (Location) in.readObject();
+            //============End of original variables for version 2===============
+
         }
         else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Plot.");

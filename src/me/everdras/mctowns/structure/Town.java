@@ -9,6 +9,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
@@ -24,7 +25,7 @@ import org.bukkit.entity.Player;
 public class Town implements Externalizable {
 
     private static final long serialVersionUID = "TOWN".hashCode(); // DO NOT CHANGE
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
     //the town name
     private String townName;
     private String worldName;
@@ -50,7 +51,7 @@ public class Town implements Externalizable {
     //the town makes you a member. Also, if this is false, you need to be a
     //member of the town in order to buy plots.
     private boolean economyJoins;
-    private float defaultPlotPrice;
+    private BigDecimal defaultPlotPrice;
 
     private boolean friendlyFire;
 
@@ -81,7 +82,7 @@ public class Town implements Externalizable {
 
         buyablePlots = false;
         economyJoins = false;
-        defaultPlotPrice = 100;
+        defaultPlotPrice = BigDecimal.TEN;
         friendlyFire = false;
 
 
@@ -466,7 +467,7 @@ public class Town implements Externalizable {
         out.writeObject(assistants);
         out.writeBoolean(buyablePlots);
         out.writeBoolean(economyJoins);
-        out.writeFloat(defaultPlotPrice);
+        out.writeObject(defaultPlotPrice);
         out.writeBoolean(friendlyFire);
 
 
@@ -493,7 +494,7 @@ public class Town implements Externalizable {
 
             buyablePlots = false;
             economyJoins = false;
-            defaultPlotPrice = 100;
+            defaultPlotPrice = BigDecimal.TEN;
             friendlyFire = false;
         }
         else if (ver == 1) {
@@ -511,7 +512,7 @@ public class Town implements Externalizable {
             assistants = (HashMap<String, Boolean>) in.readObject();
             buyablePlots = in.readBoolean();
             economyJoins = in.readBoolean();
-            defaultPlotPrice = in.readFloat();
+            defaultPlotPrice = new BigDecimal(in.readFloat());
             //============End of original variables for version 1===============
             friendlyFire = false;
         }
@@ -529,9 +530,28 @@ public class Town implements Externalizable {
             assistants = (HashMap<String, Boolean>) in.readObject();
             buyablePlots = in.readBoolean();
             economyJoins = in.readBoolean();
-            defaultPlotPrice = in.readFloat();
+            defaultPlotPrice = new BigDecimal(in.readFloat());
             friendlyFire = in.readBoolean();
             //============End of original variables for version 2===============
+        }
+        else if(ver == 3) {
+            townName = in.readUTF();
+            worldName = in.readUTF();
+            townMOTD = in.readUTF();
+            motdColor = (ChatColor) in.readObject();
+            townSpawn = (Location) in.readObject();
+            bank = (BlockBank) in.readObject();
+            territories = (HashMap<String, Territory>) in.readObject();
+            residents = (HashMap<String, Boolean>) in.readObject();
+            residentNames = (ArrayList<String>) in.readObject();
+            mayor = in.readUTF();
+            assistants = (HashMap<String, Boolean>) in.readObject();
+            buyablePlots = in.readBoolean();
+            economyJoins = in.readBoolean();
+            defaultPlotPrice = (BigDecimal) in.readObject();
+            friendlyFire = in.readBoolean();
+            //============End of original variables for version 3===============
+
         }
         else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Town.");
@@ -539,11 +559,11 @@ public class Town implements Externalizable {
 
     }
 
-    public float getDefaultPlotPrice() {
+    public BigDecimal getDefaultPlotPrice() {
         return defaultPlotPrice;
     }
 
-    public void setDefaultPlotPrice(float defaultPlotPrice) {
+    public void setDefaultPlotPrice(BigDecimal defaultPlotPrice) {
         this.defaultPlotPrice = defaultPlotPrice;
     }
 
