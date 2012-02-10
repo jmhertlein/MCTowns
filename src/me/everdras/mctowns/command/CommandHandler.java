@@ -57,6 +57,7 @@ public class CommandHandler {
     private Economy economy;
     private Server server;
     private Config options;
+    private MCTCommand cmd;
 
     /**
      * Wraps the command sender.
@@ -66,7 +67,7 @@ public class CommandHandler {
      * @param p the command sender
      * @param activeSets the map of active sets
      */
-    public CommandHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt) {
+    public CommandHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, MCTCommand cmd) {
         townManager = t;
         joinManager = j;
         server = p.getServer();
@@ -77,6 +78,8 @@ public class CommandHandler {
         economy = econ;
 
         options = opt;
+
+        this.cmd = cmd;
 
 
 
@@ -1524,7 +1527,9 @@ public class CommandHandler {
      *
      * @param territName
      */
-    public void addTerritorytoTown(String territName, boolean admin, boolean autoActive) {
+    public void addTerritorytoTown(String territName) {
+        boolean autoActive = !cmd.hasFlag(MCTCommand.DISABLE_AUTOACTIVE);
+        boolean admin = cmd.hasFlag(MCTCommand.ADMIN);
         if (!senderWrapper.hasExternalPermissions(Perms.ADMIN.toString()) && admin) {
             senderWrapper.sendMessage(ChatColor.DARK_RED + "You're not permitted to run this command with administrative priviliges!");
             return;
@@ -1534,6 +1539,8 @@ public class CommandHandler {
             senderWrapper.sendMessage(ChatColor.BLUE + "Mayors are not allowed to add territories. If you're an admin, try adding '-admin' to the end of the command.");
             return;
         }
+
+
 
 
 
@@ -1653,11 +1660,13 @@ public class CommandHandler {
      *
      * @param distName
      */
-    public void addDistrictToTerritory(String distName, boolean autoActive) {
+    public void addDistrictToTerritory(String distName) {
         if (!senderWrapper.hasMayoralPermissions()) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
+
+        boolean autoActive = !cmd.hasFlag(MCTCommand.DISABLE_AUTOACTIVE);
 
         distName = senderWrapper.getActiveTown().getTownName() + DISTRICT_INFIX + distName;
 
@@ -1747,11 +1756,13 @@ public class CommandHandler {
      *
      * @param plotName
      */
-    public void addPlotToDistrict(String plotName, boolean autoActive) {
+    public void addPlotToDistrict(String plotName) {
         if (!senderWrapper.hasMayoralPermissions()) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
+
+        boolean autoActive = !cmd.hasFlag(MCTCommand.DISABLE_AUTOACTIVE);
 
         District d = senderWrapper.getActiveDistrict();
 
@@ -1961,11 +1972,13 @@ public class CommandHandler {
      * @param playerName
      * @param recursive
      */
-    public void removePlayerFromDistrict(String player, boolean recursive) {
+    public void removePlayerFromDistrict(String player) {
         if (!senderWrapper.hasMayoralPermissions()) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
+
+        boolean recursive = cmd.hasFlag(MCTCommand.RECURSIVE);
 
         District dist = senderWrapper.getActiveDistrict();
 
@@ -2042,11 +2055,13 @@ public class CommandHandler {
      * @param playerName
      * @param recursive
      */
-    public void removePlayerFromTerritory(String player, boolean recursive) {
+    public void removePlayerFromTerritory(String player) {
         if (!senderWrapper.hasMayoralPermissions()) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
+
+        boolean recursive = cmd.hasFlag(MCTCommand.RECURSIVE);
 
         Territory territ = senderWrapper.getActiveTerritory();
 

@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.CommandHandler;
+import me.everdras.mctowns.command.MCTCommand;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.listeners.MCTPlayerListener;
 import me.everdras.mctowns.listeners.MCTPvPListener;
@@ -105,7 +106,8 @@ public class MCTowns extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        CommandHandler handler = new CommandHandler(this, townManager, joinManager, sender, activeSets, wgp, economy, options);
+        CommandHandler handler = new CommandHandler(this, townManager, joinManager, sender, activeSets, wgp, economy, options, new MCTCommand(label, args));
+
 
         if (!(args.length > 0)) {
             return false;
@@ -188,7 +190,7 @@ public class MCTowns extends JavaPlugin {
                             sender.sendMessage("/territory add district <district name>");
                             return true;
                         }
-                        handler.addDistrictToTerritory(args[2], true);
+                        handler.addDistrictToTerritory(args[2]);
                         return true;
                     case "player":
                         if (args.length < 3) {
@@ -222,12 +224,9 @@ public class MCTowns extends JavaPlugin {
                             return true;
                         }
                         if (args.length == 3) {
-                            handler.removePlayerFromTerritory(args[2], false);
+                            handler.removePlayerFromTerritory(args[2]);
+                            return true;
                         }
-                        else if (args.length == 4 && args[3].equalsIgnoreCase("r")) {
-                            handler.removePlayerFromTerritory(args[2], true);
-                        }
-                        return true;
 
                     default:
                         sender.sendMessage("/territory remove district <district name>");
@@ -403,12 +402,7 @@ public class MCTowns extends JavaPlugin {
                             sender.sendMessage("/town add territory <territory name>");
                             return true;
                         }
-                        if (args.length == 3) {
-                            handler.addTerritorytoTown(args[2], false, true);
-                        }
-                        else if (args.length == 4) {
-                            handler.addTerritorytoTown(args[2], args[3].equalsIgnoreCase("-admin"), true);
-                        }
+                            handler.addTerritorytoTown(args[2]);
                         return true;
                     case "player":
                         if (args.length < 3) {
@@ -762,7 +756,7 @@ public class MCTowns extends JavaPlugin {
                             sender.sendMessage("/district add plot <plot name>");
                             return true;
                         }
-                        handler.addPlotToDistrict(args[2], true);
+                        handler.addPlotToDistrict(args[2]);
                         return true;
                     case "player":
                         if (args.length < 3) {
@@ -795,12 +789,7 @@ public class MCTowns extends JavaPlugin {
                             sender.sendMessage("/district remove player <player name>");
                             return true;
                         }
-                        if (args.length == 3) {
-                            handler.removePlayerFromDistrict(args[2], false);
-                        }
-                        else if (args.length == 4 && args[3].equalsIgnoreCase("r")) {
-                            handler.removePlayerFromDistrict(args[2], true);
-                        }
+                            handler.removePlayerFromDistrict(args[2]);
                         return true;
 
                     default:

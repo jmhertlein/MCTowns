@@ -11,7 +11,9 @@ import java.util.*;
  * @author Joshua
  */
 public class MCTCommand {
+    public static final String DISABLE_AUTOACTIVE = "-na", RECURSIVE = "-r", ADMIN = "-admin";
     private ArrayList<String> args, flags;
+
 
     /**
      * Converts elements available in onCommand into an MCTCommand
