@@ -394,6 +394,8 @@ public class CommandHandler {
         } catch (IOException ex) {
             MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
             MCTowns.logSevere(ex.getMessage());
+        } catch(NullPointerException npe) {
+            MCTowns.logSevere("Couldn't force WG to save its regions. (null)");
         }
 
         senderWrapper.sendMessage("Town removed.");
