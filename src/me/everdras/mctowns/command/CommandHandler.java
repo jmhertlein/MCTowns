@@ -399,10 +399,17 @@ public class CommandHandler {
             MCTowns.logSevere(ex.getMessage());
         } catch(NullPointerException npe) {
             MCTowns.logSevere("Couldn't force WG to save its regions. (null)");
+            MCTowns.logSevere("Debug analysis:");
+            MCTowns.logSevere("WG plugin was null: " + (wgp == null));
+            MCTowns.logSevere("Server was null: " + (wgp == null));
+            MCTowns.logSevere("Town was null: " + (t == null));
+            MCTowns.logSevere("Town's world (String) was null in storage: " + (t.getWorldName() == null));
+            MCTowns.logSevere("Town's world was null: " + (server.getWorld(t.getWorldName()) == null));
         }
 
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
+        plugin.purge();
     }
 
     //==========================TOWN INFO MANAGEMENT========================
