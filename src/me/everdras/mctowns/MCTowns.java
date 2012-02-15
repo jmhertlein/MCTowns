@@ -1,7 +1,6 @@
 package me.everdras.mctowns;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.io.*;
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -19,12 +18,9 @@ import me.everdras.mctowns.townjoin.TownJoinMethod;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
