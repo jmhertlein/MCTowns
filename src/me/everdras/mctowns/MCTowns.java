@@ -1,6 +1,7 @@
 package me.everdras.mctowns;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.io.*;
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import me.everdras.mctowns.townjoin.TownJoinMethod;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,6 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * The main class of the MCTowns plugin.
+ *
  * @author joshua
  */
 public class MCTowns extends JavaPlugin {
@@ -67,7 +70,8 @@ public class MCTowns extends JavaPlugin {
     }
 
     /**
-     * Sets up files needed for persistence, registers listeners and permissions, etc
+     * Sets up files needed for persistence, registers listeners and
+     * permissions, etc
      */
     @Override
     public void onEnable() {
@@ -97,7 +101,9 @@ public class MCTowns extends JavaPlugin {
     }
 
     /**
-     * Processes commands by wrapping the sender and other pertinent info in a CommandSenderWrapper.
+     * Processes commands by wrapping the sender and other pertinent info in a
+     * CommandSenderWrapper.
+     *
      * @param sender the command sender
      * @param command the command
      * @param label the command root
@@ -382,8 +388,8 @@ public class MCTowns extends JavaPlugin {
                         return true;
                 }
 
-                default:
-                    return false;
+            default:
+                return false;
         }
 
 
@@ -1075,8 +1081,9 @@ public class MCTowns extends JavaPlugin {
         MCTPlayerListener playerListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
 
-        if(options.allowsTownFriendlyFireManagement())
+        if (options.allowsTownFriendlyFireManagement()) {
             getServer().getPluginManager().registerEvents(townPvPListener, this);
+        }
 
         getServer().getPluginManager().registerEvents(playerListener, this);
 
