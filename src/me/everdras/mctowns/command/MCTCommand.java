@@ -4,7 +4,9 @@
  */
 package me.everdras.mctowns.command;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  *
@@ -100,6 +102,10 @@ public class MCTCommand {
 
     public String getArgAtIndex(int i) {
         return args.get(i);
+    }
+
+    public boolean hasArgAtIndex(int i) {
+        return args.size() > i;
     }
 
 

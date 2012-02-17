@@ -110,7 +110,9 @@ public class MCTowns extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        CommandHandler handler = new CommandHandler(this, townManager, joinManager, sender, activeSets, wgp, economy, options, new MCTCommand(label, args));
+        MCTCommand cmd = new MCTCommand(label, args);
+
+        CommandHandler handler = new CommandHandler(this, townManager, joinManager, sender, activeSets, wgp, economy, options, cmd);
 
 
         if (!(args.length > 0)) {
@@ -136,7 +138,7 @@ public class MCTowns extends JavaPlugin {
 
             case "di":
             case "district":
-                return handleDistrictCommand(sender, handler, args);
+                return handleDistrictCommand(cmd, sender, handler, args);
 
             case "pl":
             case "plot":
@@ -716,11 +718,11 @@ public class MCTowns extends JavaPlugin {
         }
     }
 
-    private boolean handleDistrictCommand(CommandSender sender, CommandHandler handler, String[] args) {
+    private boolean handleDistrictCommand(MCTCommand cmd, CommandSender sender, CommandHandler handler, String[] args) {
         if (args.length == 0) {
             return false;
         }
-        switch (args[0]) {
+        switch (cmd.getArgAtIndex(1)) {
 
             case "flag":
                 if (args.length == 1) {
@@ -729,11 +731,12 @@ public class MCTowns extends JavaPlugin {
                     return true;
                 }
 
-                if (args.length == 2) {
-                    handler.unflagRegion(args[1], TownLevel.DISTRICT);
+                if (cmd.hasArgAtIndex(2)) {
+                    handler.unflagRegion(cmd.getArgAtIndex(2), TownLevel.DISTRICT);
                     return true;
                 }
 
+                //TODO: Clean this up to use MCTCommand
                 String[] nuArgs = new String[args.length - 2];
                 System.arraycopy(args, 2, nuArgs, 0, args.length - 2);
                 handler.flagRegion(args[1], nuArgs, TownLevel.DISTRICT);
@@ -744,8 +747,8 @@ public class MCTowns extends JavaPlugin {
                     sender.sendMessage("/district active set <district name>");
                     return true;
                 }
-                if (args[1].equals("set")) {
-                    handler.setActiveDistrict(args[2]);
+                if (cmd.getArgAtIndex(2).equals("set")) {
+                    handler.setActiveDistrict(cmd.getArgAtIndex(3));
                     return true;
                 }
             case "add":
