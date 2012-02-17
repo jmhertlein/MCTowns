@@ -84,6 +84,10 @@ public class Plot extends MCTownsRegion implements Externalizable {
 
     public void buildSign(Server s) {
 
+        if(signLoc == null) {
+            MCTowns.logSevere("Sign was built but the location was null.");
+        }
+
         org.bukkit.Location loc = Location.convertToBukkitLocation(s, signLoc);
 
         loc.getBlock().setType(Material.SIGN_POST);

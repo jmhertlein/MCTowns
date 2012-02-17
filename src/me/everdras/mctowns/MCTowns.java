@@ -284,9 +284,6 @@ public class MCTowns extends JavaPlugin {
                 handler.convertRegionToMCTown(args[1], args[2], args[3]);
                 return true;
 
-            case "purge":
-                handler.purge();
-                return true;
             case "addtown":
                 if (args.length < 3) {
                     sender.sendMessage("/mct addtown <town name> <mayor name>");
@@ -1133,19 +1130,6 @@ public class MCTowns extends JavaPlugin {
 
         } catch (IOException e) {
             log.log(Level.WARNING, "Error saving the town database backup.");
-        }
-    }
-
-    /**
-     * Resets the active sets and joinManager. Is a soft-reload for purposes of
-     * memory usage.
-     */
-    public void purge() {
-        activeSets = new HashMap<>();
-        joinManager = new TownJoinManager(townManager);
-
-        if (options.isEconomyEnabled()) {
-            potentialPlotBuyers = new HashMap<>();
         }
     }
 

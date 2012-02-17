@@ -326,18 +326,6 @@ public class CommandHandler {
 
     }
 
-    /**
-     * @see MCTowns.purge()
-     */
-    public void purge() {
-        if (!senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
-            senderWrapper.notifyInsufPermissions();
-            return;
-        }
-        plugin.purge();
-        senderWrapper.sendMessage(ChatColor.DARK_RED + "MCTowns temporary data purged.");
-    }
-
     //=========================TOWN CREATION/DELETION=======================
     /**
      * Creates a new town. Checks to make sure town doesn't already exist, mayor is not a member of another town, the mayor exists.
@@ -409,7 +397,7 @@ public class CommandHandler {
 
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
-        plugin.purge();
+
     }
 
     //==========================TOWN INFO MANAGEMENT========================
