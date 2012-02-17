@@ -243,7 +243,7 @@ public class TownManager implements Externalizable {
             for (Territory te : to.getTerritoriesCollection()) {
                 for (District d : te.getDistrictsCollection()) {
                     for (Plot p : d.getPlotsCollection()) {
-                        if (p.getSignLoc().equals(mctLoc)) {
+                        if (p.getSignLoc() != null && p.getSignLoc().equals(mctLoc)) {
                             return new ActiveSet(to, te, d, p);
                         }
                     }
