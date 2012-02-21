@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.command.CommandHandler;
+import me.everdras.mctowns.command.handlers.CommandHandler;
 import me.everdras.mctowns.command.MCTCommand;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.listeners.MCTPlayerListener;
