@@ -5,8 +5,10 @@ import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -18,6 +20,7 @@ import me.everdras.mctowns.command.*;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Town;
+import me.everdras.mctowns.structure.TownLevel;
 import me.everdras.mctowns.townjoin.TownJoinInfoPair;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
@@ -90,6 +93,141 @@ public abstract class CommandHandler {
         if (wgp == null || wep == null) {
             MCTowns.log.log(Level.SEVERE, "[MCTowns] !!!!!YOU DO NOT HAVE WORLDGUARD INSTALLED. WORLDGUARD IS A REQUIRED DEPENDENCY OF MCTOWNS!!!!!");
         }
+
+    }
+
+    public void flagRegion(String flagName, String[] args, TownLevel regionType) {
+        if(!senderWrapper.hasExternalPermissions("mct.flag") && !senderWrapper.hasExternalPermissions("mct.admin")) {
+            senderWrapper.notifyInsufPermissions();
+            return;
+        }
+
+        MCTownsRegion reg = null;
+
+        switch (regionType) {
+            case TOWN:
+                senderWrapper.sendMessage(ERR + "Can't apply flags to towns.");
+                return;
+            case TERRITORY:
+                reg = senderWrapper.getActiveTerritory();
+                break;
+            case DISTRICT:
+                reg = senderWrapper.getActiveDistrict();
+                break;
+            case PLOT:
+                reg = senderWrapper.getActivePlot();
+                break;
+        }
+
+        if (reg == null) {
+            senderWrapper.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
+            return;
+        }
+
+        RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
+
+        ProtectedRegion wgReg = regMan.getRegion(reg.getName());
+
+        if (wgReg == null) {
+            MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
+            senderWrapper.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
+            return;
+        }
+
+
+
+        Flag<?> foundFlag = null;
+
+        for (Flag<?> flag : DefaultFlag.getFlags()) {
+            if (flag.getName().replace("-", "").equalsIgnoreCase(flagName.replace("-", ""))) {
+                foundFlag = flag;
+                break;
+            }
+        }
+
+        if (foundFlag == null) {
+            senderWrapper.sendMessage(ERR + "Couldn't find a matching flag.");
+            return;
+        }
+
+        String s_stateOfFlag = "";
+        if (args.length == 1) {
+            s_stateOfFlag = args[0];
+        } else {
+            for (String s : args) {
+                s_stateOfFlag += s;
+                s_stateOfFlag += " ";
+            }
+            s_stateOfFlag = s_stateOfFlag.substring(0, s_stateOfFlag.length() - 1);
+        }
+
+        try {
+            setFlag(wgReg, foundFlag, senderWrapper.getSender(), s_stateOfFlag);
+        } catch (InvalidFlagFormat ex) {
+            senderWrapper.sendMessage(ERR + "Error parsing flag arguments: " + ex.getMessage());
+            return;
+        }
+
+        senderWrapper.sendMessage(ChatColor.GREEN + "Region successfully flagged.");
+
+        doRegManSave(regMan);
+
+    }
+
+    public void unflagRegion(String flagName, TownLevel regionType) {
+        MCTownsRegion reg = null;
+
+        switch (regionType) {
+            case TOWN:
+                senderWrapper.sendMessage(ERR + "Can't apply flags to towns.");
+                return;
+            case TERRITORY:
+                reg = senderWrapper.getActiveTerritory();
+                break;
+            case DISTRICT:
+                reg = senderWrapper.getActiveDistrict();
+                break;
+            case PLOT:
+                reg = senderWrapper.getActivePlot();
+                break;
+        }
+
+        if (reg == null) {
+            senderWrapper.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
+            return;
+        }
+
+        RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
+
+        ProtectedRegion wgReg = regMan.getRegion(reg.getName());
+
+        if (wgReg == null) {
+            MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
+            senderWrapper.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
+            return;
+        }
+
+        wgReg.setFlag(DefaultFlag.CHEST_ACCESS, StateFlag.State.ALLOW); //this is going to be so annoying
+
+        Flag<?> foundFlag = null;
+
+        for (Flag<?> flag : DefaultFlag.getFlags()) {
+            if (flag.getName().replace("-", "").equalsIgnoreCase(flagName.replace("-", ""))) {
+                foundFlag = flag;
+                break;
+            }
+        }
+
+        if (foundFlag == null) {
+            senderWrapper.sendMessage(ERR + "Couldn't find a matching flag.");
+            return;
+        }
+
+        wgReg.setFlag(foundFlag, null);
+
+        senderWrapper.sendMessage(ChatColor.GREEN + "Successfully removed flag.");
+
+
 
     }
 
