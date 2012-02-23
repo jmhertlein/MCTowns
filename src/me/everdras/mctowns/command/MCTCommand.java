@@ -100,12 +100,21 @@ public class MCTCommand {
         return nu;
     }
 
-    public String getArgAtIndex(int i) {
+    public String getArgAtIndex(final int i) throws ArgumentCountException {
+
+
+        if(i >= args.size())
+            throw new ArgumentCountException(i);
+
         return args.get(i);
     }
 
     public boolean hasArgAtIndex(int i) {
         return args.size() > i;
+    }
+
+    public String get(int i) throws ArgumentCountException {
+        return getArgAtIndex(i);
     }
 
 
