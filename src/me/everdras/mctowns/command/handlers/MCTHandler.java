@@ -11,6 +11,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -388,5 +389,70 @@ public class MCTHandler extends CommandHandler {
 
         senderWrapper.sendMessage(temp);
         senderWrapper.sendMessage(ChatColor.BLUE + "Type /mct join <townname> to join one, or /mct refuse <town name> to refuse.");
+    }
+
+    public void confirmPlotPurchase(HashMap<Player, ActiveSet> buyers) {
+        if (!options.isEconomyEnabled()) {
+            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
+            return;
+        }
+
+        ActiveSet plotToBuy = buyers.get(senderWrapper.getPlayer());
+
+        if (plotToBuy == null) {
+            senderWrapper.sendMessage(ERR + "You haven't selected a plot to buy yet.");
+            return;
+        }
+
+        if (townManager.playerIsAlreadyInATown(senderWrapper.getPlayer())) {
+            if (!plotToBuy.getActiveTown().equals(townManager.matchPlayerToTown(senderWrapper.getPlayer()))) {
+                senderWrapper.sendMessage(ERR + "You're already in a different town.");
+                return;
+            }
+        }
+
+        if (!plotToBuy.getActiveTown().playerIsResident(senderWrapper.getPlayer())) {
+            if (!plotToBuy.getActiveTown().usesEconomyJoins()) {
+                senderWrapper.sendMessage(ERR + "You aren't a member of this town.");
+                return;
+            }
+        }
+
+        if (!plotToBuy.getActiveTown().usesBuyablePlots()) {
+            senderWrapper.sendMessage(ERR + "This town's plots aren't buyable.");
+            return;
+        }
+
+        Plot p = plotToBuy.getActivePlot();
+
+        if (!p.isForSale()) {
+            senderWrapper.sendMessage(ERR + "This plot isn't for sale.");
+            return;
+        }
+
+        if (!economy.withdrawPlayer(senderWrapper.getPlayer().getName(), p.getPrice().floatValue()).transactionSuccess()) {
+            senderWrapper.sendMessage(ERR + "Insufficient funds.");
+            return;
+        }
+
+        plotToBuy.getActiveTown().getBank().depositCurrency(p.getPrice());
+
+        p.setPrice(BigDecimal.ZERO);
+        p.setForSale(false);
+        ProtectedRegion plotReg = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
+        p.demolishSign(server);
+
+        plotReg.getOwners().addPlayer(senderWrapper.getPlayer().getName());
+
+        senderWrapper.sendMessage(ChatColor.GREEN + "You are now the proud owner of this plot.");
+        doRegManSave(wgp.getRegionManager(server.getWorld(p.getWorldName())));
+
+
+        if (!townManager.playerIsAlreadyInATown(senderWrapper.getPlayer())) {
+            plotToBuy.getActiveTown().addPlayer(senderWrapper.getPlayer());
+            senderWrapper.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getTownName());
+        }
+
+
     }
 }

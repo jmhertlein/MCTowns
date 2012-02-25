@@ -47,7 +47,6 @@ public class MCTExecutor extends BaseExecutor {
 
         String helpMessage = null;
 
-        MCTowns.logInfo("Command as we see it: " + command);
 
         try {
             if(!command.get(0).equals("mct"))
@@ -78,30 +77,72 @@ public class MCTExecutor extends BaseExecutor {
                     break;
 
                 case "addtown":
+                        helpMessage = "/mct addtown <town name> <mayor name>";
+                        handler.createTown(command.get(2), command.get(3));
+                        softFailure = false;
                     break;
 
                 case "removetown":
+                    helpMessage = "/mct removetown <town name>";
+                    handler.removeTown(command.get(2));
+                    softFailure = false;
                     break;
 
                 case "list":
+                    helpMessage = "/mct list (towns | requests | invites)";
+                    switch(command.get(2)) {
+                        case "towns":
+                            if(command.hasArgAtIndex(3))
+                                handler.listTowns(command.get(3));
+                            else
+                                handler.listTowns();
+                            softFailure = false;
+                            break;
+                        case "requests":
+                            handler.listRequestsForPlayer();
+                            softFailure = false;
+                            break;
+                        case "invites":
+                            handler.listInvitesForPlayer();
+                            softFailure = false;
+                            break;
+                        default:
+                            helpMessage = "/mct list (towns | requests | invites)";
+                    }
+
                     break;
 
                 case "join":
+                    helpMessage = "/mct join <town name>";
+                    handler.requestAdditionToTown(command.get(2));
+                    softFailure = false;
                     break;
 
                 case "refuse":
+                    helpMessage = "/mct refuse <town name>";
+                    handler.rejectInvitation(command.get(2));
+                    softFailure = false;
                     break;
 
                 case "cancel":
+                    helpMessage = "/mct cancel <town name>";
+                    handler.cancelRequest(command.get(2));
+                    softFailure = false;
                     break;
 
                 case "confirm":
+                    handler.confirmPlotPurchase(potentialPlotBuyers);
+                    softFailure = false;
                     break;
 
                 case "convert":
+                    helpMessage = "/mct convert <town name> <region name> <new district name>";
+                    handler.convertRegionToMCTown(command.get(2), command.get(3), command.get(3));
+                    softFailure = false;
                     break;
 
                 case "purge":
+                    cs.sendMessage("Purge is no longer an available command.");
                     break;
             }
             hardFailure = false;
@@ -109,7 +150,6 @@ public class MCTExecutor extends BaseExecutor {
 
 
         } catch(ArgumentCountException ex) {
-            MCTowns.logInfo("Error index: " + ex.getErrorIndex());
             if(ex.getErrorIndex() == 1 )
                 hardFailure = true;
             else {
@@ -124,9 +164,6 @@ public class MCTExecutor extends BaseExecutor {
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);
         }
 
-        MCTowns.logInfo("Hard Failure: " + hardFailure);
-        MCTowns.logInfo("Soft Failure: " + softFailure);
-        MCTowns.logInfo("Message: " + helpMessage);
 
         return !hardFailure;
     }
