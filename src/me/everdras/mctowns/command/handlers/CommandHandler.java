@@ -5,6 +5,7 @@ import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
@@ -279,7 +280,7 @@ public abstract class CommandHandler {
     protected void doRegManSave(RegionManager regMan) {
         try {
             regMan.save();
-        } catch (IOException ex) {
+        } catch (ProtectionDatabaseException ex) {
             MCTowns.logSevere("Issue saving WG region list.");
         }
     }

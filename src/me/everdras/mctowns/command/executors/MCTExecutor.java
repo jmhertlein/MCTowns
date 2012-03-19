@@ -143,6 +143,7 @@ public class MCTExecutor extends BaseExecutor {
 
                 case "purge":
                     cs.sendMessage("Purge is no longer an available command.");
+                    softFailure = false;
                     break;
             }
             hardFailure = false;

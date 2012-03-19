@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.*;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -37,7 +37,6 @@ public class MCTHandler extends CommandHandler {
     public MCTHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, MCTCommand cmd) {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
     }
-
 
     public void checkIfRegionIsManagedByMCTowns() {
     }
@@ -114,10 +113,11 @@ public class MCTHandler extends CommandHandler {
 
         regMan.removeRegion(parent.getId());
 
+
         try {
             regMan.save();
-        } catch (IOException ex) {
-            Logger.getLogger("Minecraft").log(Level.SEVERE, "MCTowns was unable to force a save of WG regions for this world. Some changes may not persist.");
+        } catch (ProtectionDatabaseException ex) {
+            Logger.getLogger(MCTHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         senderWrapper.sendMessage("Done. Your territory should now be set up!");
@@ -146,7 +146,8 @@ public class MCTHandler extends CommandHandler {
         if (townManager.addTown(townName, nuMayor)) {
             senderWrapper.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
-        } else {
+        }
+        else {
             senderWrapper.sendMessage(ERR + "That town already exists!");
         }
 
@@ -170,7 +171,7 @@ public class MCTHandler extends CommandHandler {
 
         try {
             wgp.getRegionManager(server.getWorld(t.getWorldName())).save();
-        } catch (IOException ex) {
+        } catch (ProtectionDatabaseException ex) {
             MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
             MCTowns.logSevere(ex.getMessage());
         } catch (NullPointerException npe) {
@@ -226,7 +227,8 @@ public class MCTHandler extends CommandHandler {
             senderWrapper.sendMessage("Town: None");
             senderWrapper.sendMessage("Is Mayor: n/a");
             senderWrapper.sendMessage("Is Assistant: n/a");
-        } else {
+        }
+        else {
             senderWrapper.sendMessage("Player: " + playerExactName);
             senderWrapper.sendMessage("Town: " + t.getTownName());
             senderWrapper.sendMessage("Is Mayor: " + t.getMayor().equals(playerExactName));
@@ -294,7 +296,8 @@ public class MCTHandler extends CommandHandler {
             addTo.addPlayer(senderWrapper.getPlayer());
             senderWrapper.sendMessage("You have joined " + addTo.getTownName() + "!");
             broadcastTownJoin(addTo, senderWrapper.getPlayer());
-        } else {
+        }
+        else {
             joinManager.submitRequest(infoPair);
             senderWrapper.sendMessage("You have submitted a request to join " + townName + ".");
             addTo.broadcastMessageToTown(server, senderWrapper.getPlayer().getName() + " has submitted a request to join the town.");
@@ -314,7 +317,8 @@ public class MCTHandler extends CommandHandler {
 
         if (!joinManager.removeInvitation(t, p)) {
             senderWrapper.sendMessage(ERR + "No matching invite found.");
-        } else {
+        }
+        else {
             senderWrapper.sendMessage(ChatColor.GOLD + "You have rejected the request to join " + townName);
 
             t.broadcastMessageToTown(server, ERR + p.getName() + " has declined the invitation to join the town.");
@@ -348,7 +352,8 @@ public class MCTHandler extends CommandHandler {
 
         if (joinManager.removeRequest(t, senderWrapper.getPlayer())) {
             senderWrapper.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
-        } else {
+        }
+        else {
             senderWrapper.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
         }
 
