@@ -103,6 +103,12 @@ public abstract class CommandHandler {
 
     }
 
+    /**
+     * Flags the specified type of region with the specified flag and the specified arguments. If no arguments are supplied, the flag is instead cleared.
+     * @param flagName name of the WorldGuard flag to set or clear
+     * @param args the args to set the flag with, or empty if it's meant to be cleared
+     * @param regionType Which region in the ActiveSet hierarchy to apply the flag to.
+     */
     public void flagRegion(String flagName, String[] args, TownLevel regionType) {
         if(!senderWrapper.hasExternalPermissions("mct.flag") && !senderWrapper.hasExternalPermissions("mct.admin")) {
             senderWrapper.notifyInsufPermissions();
@@ -157,6 +163,14 @@ public abstract class CommandHandler {
             return;
         }
 
+
+        //If there are no arguments, clear the flag instead of setting it
+        if(args.length == 0) {
+            wgReg.setFlag(foundFlag, null);
+            senderWrapper.sendMessage(ChatColor.GREEN + "Successfully removed flag.");
+            return;
+        }
+
         String s_stateOfFlag = "";
         if (args.length == 1) {
             s_stateOfFlag = args[0];
@@ -170,24 +184,22 @@ public abstract class CommandHandler {
 
         try {
             setFlag(wgReg, foundFlag, senderWrapper.getSender(), s_stateOfFlag);
+            senderWrapper.sendMessage(ChatColor.GREEN + "Region successfully flagged.");
         } catch (InvalidFlagFormat ex) {
             senderWrapper.sendMessage(ERR + "Error parsing flag arguments: " + ex.getMessage());
             return;
         }
 
-        senderWrapper.sendMessage(ChatColor.GREEN + "Region successfully flagged.");
+
 
         doRegManSave(regMan);
 
     }
 
-    public void unflagRegion(String flagName, TownLevel regionType) {
+    public void listPlayers(TownLevel level) {
         MCTownsRegion reg = null;
 
-        switch (regionType) {
-            case TOWN:
-                senderWrapper.sendMessage(ERR + "Can't apply flags to towns.");
-                return;
+        switch (level) {
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
                 break;
@@ -200,41 +212,45 @@ public abstract class CommandHandler {
         }
 
         if (reg == null) {
-            senderWrapper.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
+            senderWrapper.sendMessage(ERR + "You need to set your active " + level.toString().toLowerCase());
             return;
         }
 
-        RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
+        ProtectedRegion wgReg = wgp.getRegionManager(server.getWorld(reg.getWorldName())).getRegion(reg.getName());
 
-        ProtectedRegion wgReg = regMan.getRegion(reg.getName());
+        String temp = "";
+        int counter;
+        senderWrapper.sendMessage("Players in region: ");
 
-        if (wgReg == null) {
-            MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
-            senderWrapper.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
-            return;
-        }
+        senderWrapper.sendMessage("Owners:");
 
-        wgReg.setFlag(DefaultFlag.CHEST_ACCESS, StateFlag.State.ALLOW); //this is going to be so annoying
-
-        Flag<?> foundFlag = null;
-
-        for (Flag<?> flag : DefaultFlag.getFlags()) {
-            if (flag.getName().replace("-", "").equalsIgnoreCase(flagName.replace("-", ""))) {
-                foundFlag = flag;
-                break;
+        counter = 0;
+        for (String pl : wgReg.getOwners().getPlayers()) {
+            temp += pl + ", ";
+            counter++;
+            if(counter > 4) {
+                senderWrapper.sendMessage(temp);
+                temp = "";
+                counter = 0;
             }
         }
+        if(counter != 0)
+            senderWrapper.sendMessage(temp);
+        temp = "";
 
-        if (foundFlag == null) {
-            senderWrapper.sendMessage(ERR + "Couldn't find a matching flag.");
-            return;
+        senderWrapper.sendMessage("Members:");
+
+        for (String pl : wgReg.getMembers().getPlayers()) {
+            temp += pl + ", ";
+            counter++;
+            if(counter > 4) {
+                senderWrapper.sendMessage(temp);
+                temp = "";
+                counter = 0;
+            }
         }
-
-        wgReg.setFlag(foundFlag, null);
-
-        senderWrapper.sendMessage(ChatColor.GREEN + "Successfully removed flag.");
-
-
+        if(counter != 0)
+            senderWrapper.sendMessage(temp);
 
     }
 

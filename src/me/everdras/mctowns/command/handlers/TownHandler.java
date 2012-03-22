@@ -692,57 +692,6 @@ public class TownHandler extends CommandHandler {
         senderWrapper.sendMessage(t.getTownMOTD());
     }
 
-    public void listPlayers(TownLevel level) {
-        MCTownsRegion reg = null;
-
-        switch (level) {
-            case TERRITORY:
-                reg = senderWrapper.getActiveTerritory();
-                break;
-            case DISTRICT:
-                reg = senderWrapper.getActiveDistrict();
-                break;
-            case PLOT:
-                reg = senderWrapper.getActivePlot();
-                break;
-        }
-
-        if (reg == null) {
-            senderWrapper.sendMessage(ERR + "You need to set your active " + level.toString().toLowerCase());
-            return;
-        }
-
-        ProtectedRegion wgReg = wgp.getRegionManager(server.getWorld(reg.getWorldName())).getRegion(reg.getName());
-
-        String temp = "";
-        senderWrapper.sendMessage("Players in region: ");
-
-        senderWrapper.sendMessage("Owners:");
-        for (String pl : wgReg.getOwners().getPlayers()) {
-            temp += pl + ", ";
-        }
-        if (temp.length() > 3) {
-            temp.substring(0, temp.length() - 3);
-            temp += ".";
-        }
-
-        senderWrapper.sendMessage(temp);
-        temp = "";
-
-        senderWrapper.sendMessage("Members:");
-
-        for (String pl : wgReg.getMembers().getPlayers()) {
-            temp += pl + ", ";
-        }
-        if (temp.length() > 3) {
-            temp.substring(0, temp.length() - 3);
-            temp += ".";
-        }
-
-        senderWrapper.sendMessage(temp);
-
-    }
-
     public void listResidents(int page) {
         Town t = senderWrapper.getActiveTown();
 

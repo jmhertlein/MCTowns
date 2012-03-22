@@ -117,5 +117,19 @@ public class MCTCommand {
         return getArgAtIndex(i);
     }
 
+    /**
+     * Assumes that the command is trying to flag a region (i.e. this.get(0).equals(some town level), get(1).equals("flag"), get(3).equals(some flag name))
+     * and turns arguments at indices in the rage [3, end) into a string array and returns it.
+     * @return arguments for the specified flag
+     */
+    public String[] getFlagArguments() {
+        String[] flagArgs = new String[args.size()-3];
+
+        for(int i = 3; i < args.size(); i++)
+            flagArgs[i] = args.get(i);
+
+        return flagArgs;
+    }
+
 
 }

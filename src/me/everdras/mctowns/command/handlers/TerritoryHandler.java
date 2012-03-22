@@ -221,7 +221,7 @@ public class TerritoryHandler extends CommandHandler {
         senderWrapper.sendMessage("Active territory set to " + nuActive.getName());
     }
 
-    public void listDistricts(int page) {
+    private void listDistricts(int page) {
 
         Territory t = senderWrapper.getActiveTerritory();
 
@@ -238,6 +238,18 @@ public class TerritoryHandler extends CommandHandler {
         for (int i = page - 1; i < dists.length && i < i + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + dists[i].getName());
         }
+    }
+
+    public void listDistricts(String s_page) {
+        int page;
+        try {
+            page = Integer.parseInt(s_page);
+        } catch(NumberFormatException nfex) {
+            senderWrapper.sendMessage(ERR + "Error parsing integer argument. Found \"" + s_page + "\", expected integer.");
+            return;
+        }
+
+        listDistricts(page);
     }
 
     public void listDistricts() {

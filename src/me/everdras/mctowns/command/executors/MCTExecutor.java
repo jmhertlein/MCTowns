@@ -69,9 +69,6 @@ public class MCTExecutor extends BaseExecutor {
                             softFailure = false;
                             break;
 
-                        default:
-                            helpMessage = "/mct info (player | town)";
-
                     }
 
                     break;
@@ -106,8 +103,6 @@ public class MCTExecutor extends BaseExecutor {
                             handler.listInvitesForPlayer();
                             softFailure = false;
                             break;
-                        default:
-                            helpMessage = "/mct list (towns | requests | invites)";
                     }
 
                     break;
