@@ -34,7 +34,7 @@ public class DistrictHandler extends CommandHandler {
     }
 
 
-    public void listPlots(int page) {
+    private void listPlots(int page) {
 
         District d = senderWrapper.getActiveDistrict();
 
@@ -51,6 +51,18 @@ public class DistrictHandler extends CommandHandler {
         for (int i = page - 1; i < plots.length && i < i + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + plots[i].getName());
         }
+    }
+
+    public void listPlots(String s_page) {
+        int page;
+        try {
+            page = Integer.parseInt(s_page);
+        } catch(NumberFormatException nfex) {
+            senderWrapper.sendMessage(ERR + "Error parsing integer argument. Found \"" + s_page + "\", expected integer.");
+            return;
+        }
+
+        listPlots(page);
     }
 
     public void listPlots() {
