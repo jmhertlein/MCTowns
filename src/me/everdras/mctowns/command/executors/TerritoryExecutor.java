@@ -54,7 +54,7 @@ public class TerritoryExecutor extends BaseExecutor {
                             softFailure = false;
                             break;
                         case "district":
-                        case "dist":
+                        case "di":
                             helpMessage = "/territory add district <district name>";
                             handler.addDistrictToTerritory(command.get(3));
                             softFailure = false;
