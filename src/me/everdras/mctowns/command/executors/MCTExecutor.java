@@ -6,8 +6,6 @@ package me.everdras.mctowns.command.executors;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.ArgumentCountException;
@@ -21,7 +19,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /**
  *

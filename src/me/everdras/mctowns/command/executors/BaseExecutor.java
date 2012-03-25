@@ -8,16 +8,12 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.HashMap;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.command.handlers.MCTHandler;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
