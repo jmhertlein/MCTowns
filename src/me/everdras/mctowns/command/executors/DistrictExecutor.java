@@ -113,6 +113,7 @@ public class DistrictExecutor extends BaseExecutor {
                     break;
                 default:
                     hardFailure = true;
+                    softFailure = false;
 
             }
 

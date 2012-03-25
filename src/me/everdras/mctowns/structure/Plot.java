@@ -101,8 +101,7 @@ public class Plot extends MCTownsRegion implements Externalizable {
         sign.setLine(2, name);
         sign.setLine(3, "Price: " + price);
 
-        
-
+        sign.update();
     }
 
     public void demolishSign(Server s) {

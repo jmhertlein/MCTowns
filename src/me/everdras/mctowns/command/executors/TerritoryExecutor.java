@@ -114,6 +114,7 @@ public class TerritoryExecutor extends BaseExecutor {
 
                 default:
                     hardFailure = true;
+                    softFailure = false;
 
             }
 

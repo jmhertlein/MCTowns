@@ -80,8 +80,8 @@ public class PlotExecutor extends BaseExecutor {
 
                     switch (command.get(2).toLowerCase()) {
                         case "players":
-                            softFailure = false;
                             handler.listPlayers(TownLevel.PLOT);
+                            softFailure = false;
                             break;
                     }
 
@@ -137,6 +137,7 @@ public class PlotExecutor extends BaseExecutor {
 
                 default:
                     hardFailure = true;
+                    softFailure = false;
 
             }
 

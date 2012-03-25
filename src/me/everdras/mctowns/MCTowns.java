@@ -293,7 +293,7 @@ public class MCTowns extends JavaPlugin {
      */
     public static void logAssert(boolean bool, String desc) {
         if(!bool) {
-            logSevere("WARNING: ASSERTION FAILED: " + desc);
+            logDebug("WARNING: ASSERTION FAILED: " + desc);
         }
     }
 }

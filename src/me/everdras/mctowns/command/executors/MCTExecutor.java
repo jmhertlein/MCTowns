@@ -76,12 +76,14 @@ public class MCTExecutor extends BaseExecutor {
                     break;
 
                 case "removetown":
+                case "rm":
                     helpMessage = "/mct removetown <town name>";
                     handler.removeTown(command.get(2));
                     softFailure = false;
                     break;
 
                 case "list":
+                case "ls":
                     helpMessage = "/mct list (towns | requests | invites)";
                     switch (command.get(2)) {
                         case "towns":
@@ -140,6 +142,7 @@ public class MCTExecutor extends BaseExecutor {
                     break;
                 default:
                     hardFailure = true;
+                    softFailure = false;
             }
 
 
