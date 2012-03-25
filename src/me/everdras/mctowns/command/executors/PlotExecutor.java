@@ -61,6 +61,7 @@ public class PlotExecutor extends BaseExecutor {
                     break;
 
                 case "remove":
+                case "rm":
                     helpMessage = "/plot remove player <player/guest name>";
                     switch (command.get(2).toLowerCase()) {
                         case "player":
@@ -72,6 +73,7 @@ public class PlotExecutor extends BaseExecutor {
                     }
                     break;
                 case "list":
+                case "ls":
                     helpMessage = "/plot list players";
 
                     switch (command.get(2).toLowerCase()) {

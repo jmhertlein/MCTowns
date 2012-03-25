@@ -692,6 +692,18 @@ public class TownHandler extends CommandHandler {
         senderWrapper.sendMessage(t.getTownMOTD());
     }
 
+    public void listResidents(String s_page) {
+        int i;
+        try {
+            i = Integer.parseInt(s_page);
+        } catch(NumberFormatException ex) {
+            senderWrapper.sendMessage(ERR + "Error parsing token \"" + s_page + "\":" + ex.getMessage());
+            return;
+        }
+
+        listResidents(i);
+    }
+
     public void listResidents(int page) {
         Town t = senderWrapper.getActiveTown();
 
@@ -946,6 +958,18 @@ public class TownHandler extends CommandHandler {
         }
 
         senderWrapper.sendMessage(ChatColor.BLUE + "Amount of currency in bank: " + t.getBank().getCurrencyBalance());
+    }
+
+    public void listTerritories(String s_page) {
+        int i;
+        try {
+            i = Integer.parseInt(s_page);
+        } catch(NumberFormatException ex) {
+            senderWrapper.sendMessage(ERR + "Error parsing token \"" + s_page + "\":" + ex.getMessage());
+            return;
+        }
+
+        listTerritories(i);
     }
 
     public void listTerritories(int page) {

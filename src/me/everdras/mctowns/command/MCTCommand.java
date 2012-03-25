@@ -131,5 +131,17 @@ public class MCTCommand {
         return flagArgs;
     }
 
+    /**
+     * Concatenates and returns all the non-flag arguments with indices in the range [index, END) where END is the index of the last argument.
+     * @param index index to begin concatenation at
+     * @return the constructed String
+     */
+    public String concatAfter(int index) {
+        if(index == args.size()-1)
+            return args.get(index);
+
+        return args.get(index) + " " + concatAfter(index+1);
+    }
+
 
 }

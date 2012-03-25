@@ -62,6 +62,7 @@ public class DistrictExecutor extends BaseExecutor {
                     break;
 
                 case "remove":
+                case "rm":
                     helpMessage = "/territory remove (player | district)";
                     switch (command.get(2)) {
                         case "player":
@@ -78,6 +79,7 @@ public class DistrictExecutor extends BaseExecutor {
                     }
                     break;
                 case "list":
+                case "ls":
                     helpMessage = "/territory list (districts | players)";
 
                     switch (command.get(2)) {
