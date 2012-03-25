@@ -7,7 +7,10 @@ package me.everdras.mctowns.structure;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.math.BigDecimal;
 import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
@@ -38,6 +41,7 @@ public class Plot extends MCTownsRegion implements Externalizable {
 
     /**
      * Creates a new plot.
+     *
      * @param name the name of the plot
      * @param worldName the name of the world in which the plot exists
      */
@@ -84,7 +88,7 @@ public class Plot extends MCTownsRegion implements Externalizable {
 
     public void buildSign(Server s) {
 
-        if(signLoc == null) {
+        if (signLoc == null) {
             MCTowns.logSevere("Sign was built but the location was null.");
         }
 
@@ -168,7 +172,7 @@ public class Plot extends MCTownsRegion implements Externalizable {
             signLoc = (Location) in.readObject();
             //============End of original variables for version 1===============
         }
-        else if(ver == 2) {
+        else if (ver == 2) {
             //============Beginning of original variables for version 2=========
             forSale = in.readBoolean();
             price = (BigDecimal) (in.readObject());
