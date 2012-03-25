@@ -91,7 +91,7 @@ public class DistrictExecutor extends BaseExecutor {
                             break;
                         case "players":
                             softFailure = false;
-                            handler.listPlayers(TownLevel.TERRITORY);
+                            handler.listPlayers(TownLevel.DISTRICT);
                             break;
                     }
 

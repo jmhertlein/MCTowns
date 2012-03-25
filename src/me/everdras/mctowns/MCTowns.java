@@ -32,15 +32,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author joshua
  */
 public class MCTowns extends JavaPlugin {
-
-    /**
-     * The logger for Minecraft.
-     */
     public static final Logger log = Logger.getLogger("Minecraft");
     private static final String MCT_DATA_FOLDER = "plugins" + File.separator + "MCTowns";
     private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
+    private static final boolean DEBUGGING = true;
+
     private TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
@@ -277,5 +275,21 @@ public class MCTowns extends JavaPlugin {
 
     public static void logInfo(String msg) {
         log.log(Level.INFO, "[MCTowns]: " + msg);
+    }
+
+    public static void logDebug(String msg) {
+        if(DEBUGGING)
+            logInfo("[DEBUG]:" + msg);
+    }
+
+    /**
+     * Logged assertion. If the assertion passes, nothing happens. If it fails, a warning is printed to the log.
+     * @param bool the boolean expression to assert
+     * @param desc a description of the assertion to be printed to the log file. i.e. where it is, what it is, what its failure implies, etc
+     */
+    public static void logAssert(boolean bool, String desc) {
+        if(!bool) {
+            logSevere("WARNING: ASSERTION FAILED: " + desc);
+        }
     }
 }

@@ -314,8 +314,10 @@ public class PlotHandler extends CommandHandler {
 
     }
 
-    public void setActivePlot(String plotName, boolean quickSelect) {
+    public void setActivePlot(String plotName) {
         Town t = senderWrapper.getActiveTown();
+
+        boolean quickSelect = cmd.hasFlag("-q");
 
         if (t == null) {
             senderWrapper.notifyActiveTownNotSet();
