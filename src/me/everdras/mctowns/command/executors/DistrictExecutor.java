@@ -7,7 +7,9 @@ package me.everdras.mctowns.command.executors;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.HashMap;
 import me.everdras.mctowns.MCTowns;
-import me.everdras.mctowns.command.*;
+import me.everdras.mctowns.command.ActiveSet;
+import me.everdras.mctowns.command.ArgumentCountException;
+import me.everdras.mctowns.command.MCTCommand;
 import me.everdras.mctowns.command.handlers.DistrictHandler;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.structure.TownLevel;
@@ -86,7 +88,8 @@ public class DistrictExecutor extends BaseExecutor {
                         case "plots":
                             if (command.hasArgAtIndex(3)) {
                                 handler.listPlots(command.get(3));
-                            } else {
+                            }
+                            else {
                                 handler.listPlots();
                             }
                             softFailure = false;
@@ -117,7 +120,8 @@ public class DistrictExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            } else {
+            }
+            else {
                 softFailure = true;
                 hardFailure = false;
             }

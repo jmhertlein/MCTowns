@@ -33,8 +33,6 @@ public class MCTExecutor extends BaseExecutor {
         super(parent, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers);
     }
 
-
-
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         MCTCommand command = new MCTCommand(label, args);
@@ -49,14 +47,15 @@ public class MCTExecutor extends BaseExecutor {
 
 
         try {
-            if(!command.get(0).equals("mct"))
+            if (!command.get(0).equals("mct")) {
                 MCTowns.logSevere("Assertion failed: MCTExecutor.java, the command's first argument was not \"mct\"");
+            }
 
 
-            switch(command.get(1)) {
+            switch (command.get(1)) {
                 case "info":
                     helpMessage = "/mct info (player | town)";
-                    switch(command.get(2)) {
+                    switch (command.get(2)) {
                         case "player":
                             helpMessage = "/mct info player <player name>";
                             handler.queryPlayerInfo(command.get(3));
@@ -74,9 +73,9 @@ public class MCTExecutor extends BaseExecutor {
                     break;
 
                 case "addtown":
-                        helpMessage = "/mct addtown <town name> <mayor name>";
-                        handler.createTown(command.get(2), command.get(3));
-                        softFailure = false;
+                    helpMessage = "/mct addtown <town name> <mayor name>";
+                    handler.createTown(command.get(2), command.get(3));
+                    softFailure = false;
                     break;
 
                 case "removetown":
@@ -87,12 +86,14 @@ public class MCTExecutor extends BaseExecutor {
 
                 case "list":
                     helpMessage = "/mct list (towns | requests | invites)";
-                    switch(command.get(2)) {
+                    switch (command.get(2)) {
                         case "towns":
-                            if(command.hasArgAtIndex(3))
+                            if (command.hasArgAtIndex(3)) {
                                 handler.listTowns(command.get(3));
-                            else
+                            }
+                            else {
                                 handler.listTowns();
+                            }
                             softFailure = false;
                             break;
                         case "requests":
@@ -145,9 +146,10 @@ public class MCTExecutor extends BaseExecutor {
 
 
 
-        } catch(ArgumentCountException ex) {
-            if(ex.getErrorIndex() == 1 )
+        } catch (ArgumentCountException ex) {
+            if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
+            }
             else {
                 softFailure = true;
                 hardFailure = false;
@@ -155,7 +157,7 @@ public class MCTExecutor extends BaseExecutor {
 
         }
 
-        if(!hardFailure  && softFailure && helpMessage != null) {
+        if (!hardFailure && softFailure && helpMessage != null) {
             cs.sendMessage(ChatColor.RED + "Invalid command. Acceptable similar formats are: ");
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);
         }
@@ -163,7 +165,4 @@ public class MCTExecutor extends BaseExecutor {
 
         return !hardFailure;
     }
-
-
-
 }

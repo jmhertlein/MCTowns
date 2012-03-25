@@ -24,6 +24,7 @@ import org.bukkit.plugin.Plugin;
  * @author Joshua
  */
 public abstract class BaseExecutor implements CommandExecutor {
+
     protected MCTowns parent;
     protected TownManager townManager;
     protected TownJoinManager joinManager;
@@ -34,14 +35,17 @@ public abstract class BaseExecutor implements CommandExecutor {
     protected HashMap<Player, ActiveSet> potentialPlotBuyers;
 
     public BaseExecutor(MCTowns parent, WorldGuardPlugin wgp, Economy economy, Config options, TownManager townManager, TownJoinManager joinManager, HashMap<String, ActiveSet> activeSets, HashMap<Player, ActiveSet> potentialPlotBuyers) {
-        if(BaseExecutor.options == null)
+        if (BaseExecutor.options == null) {
             BaseExecutor.options = options;
+        }
 
-        if(BaseExecutor.wgp == null)
+        if (BaseExecutor.wgp == null) {
             BaseExecutor.wgp = wgp;
+        }
 
-        if(BaseExecutor.economy == null)
+        if (BaseExecutor.economy == null) {
             BaseExecutor.economy = economy;
+        }
 
         this.townManager = townManager;
         this.joinManager = joinManager;
@@ -49,11 +53,4 @@ public abstract class BaseExecutor implements CommandExecutor {
         this.potentialPlotBuyers = potentialPlotBuyers;
         this.parent = parent;
     }
-
-
-
-
-
-
-
 }

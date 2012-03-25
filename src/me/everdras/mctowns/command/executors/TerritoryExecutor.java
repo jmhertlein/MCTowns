@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
  */
 public class TerritoryExecutor extends BaseExecutor {
 
-    public TerritoryExecutor (MCTowns parent, WorldGuardPlugin wgp, Economy economy, Config options, TownManager townManager, TownJoinManager joinManager, HashMap<String, ActiveSet> activeSets, HashMap<Player, ActiveSet> potentialPlotBuyers) {
+    public TerritoryExecutor(MCTowns parent, WorldGuardPlugin wgp, Economy economy, Config options, TownManager townManager, TownJoinManager joinManager, HashMap<String, ActiveSet> activeSets, HashMap<Player, ActiveSet> potentialPlotBuyers) {
         super(parent, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers);
     }
 
@@ -44,10 +44,10 @@ public class TerritoryExecutor extends BaseExecutor {
 
 
         try {
-            switch(command.get(1)) {
+            switch (command.get(1)) {
                 case "add":
                     helpMessage = "/territory add (player | district)";
-                    switch(command.get(2)) {
+                    switch (command.get(2)) {
                         case "player":
                             helpMessage = "/territory add player <player name>";
                             handler.addPlayerToTerritory(command.get(3));
@@ -65,7 +65,7 @@ public class TerritoryExecutor extends BaseExecutor {
                 case "remove":
                 case "rm":
                     helpMessage = "/territory remove (player | district)";
-                    switch(command.get(2)) {
+                    switch (command.get(2)) {
                         case "player":
                             helpMessage = "/territory remove player <player name>";
                             handler.removePlayerFromTerritory(command.get(3));
@@ -83,17 +83,19 @@ public class TerritoryExecutor extends BaseExecutor {
                 case "ls":
                     helpMessage = "/territory list (districts | players)";
 
-                    switch(command.get(2)) {
+                    switch (command.get(2)) {
                         case "districts":
-                            if(command.hasArgAtIndex(3))
+                            if (command.hasArgAtIndex(3)) {
                                 handler.listDistricts(command.get(3));
-                            else
+                            }
+                            else {
                                 handler.listDistricts();
+                            }
                             softFailure = false;
                             break;
                         case "players":
                             softFailure = false;
-                                handler.listPlayers(TownLevel.TERRITORY);
+                            handler.listPlayers(TownLevel.TERRITORY);
                             break;
                     }
 
@@ -114,9 +116,10 @@ public class TerritoryExecutor extends BaseExecutor {
 
 
 
-        } catch(ArgumentCountException ex) {
-            if(ex.getErrorIndex() == 1 )
+        } catch (ArgumentCountException ex) {
+            if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
+            }
             else {
                 softFailure = true;
                 hardFailure = false;
@@ -124,7 +127,7 @@ public class TerritoryExecutor extends BaseExecutor {
 
         }
 
-        if(!hardFailure  && softFailure && helpMessage != null) {
+        if (!hardFailure && softFailure && helpMessage != null) {
             cs.sendMessage(ChatColor.RED + "Invalid command. Acceptable similar formats are: ");
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);
         }
@@ -132,5 +135,4 @@ public class TerritoryExecutor extends BaseExecutor {
 
         return !hardFailure;
     }
-
 }

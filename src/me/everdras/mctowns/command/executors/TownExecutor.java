@@ -193,7 +193,7 @@ public class TownExecutor extends BaseExecutor {
 
                         case "check":
                             helpMessage = "/town bank check (currency | <block name>)";
-                            switch(command.get(3)) {
+                            switch (command.get(3)) {
                                 case "currency":
                                     helpMessage = "/town bank check currency";
                                     handler.checkCurrencyBank();
@@ -210,21 +210,24 @@ public class TownExecutor extends BaseExecutor {
                     break;
 
                 case "spawn":
-                    if(command.hasArgAtIndex(2)) {
-                        if(command.getArgAtIndex(2).equals("set"))
+                    if (command.hasArgAtIndex(2)) {
+                        if (command.getArgAtIndex(2).equals("set")) {
                             handler.setTownSpawn();
-                        else
+                        }
+                        else {
                             handler.warpToOtherSpawn(command.get(2));
+                        }
                     }
-                    else
+                    else {
                         handler.warpToSpawn();
+                    }
                     softFailure = false;
                     break;
 
                 case "econ":
                 case "economy":
                     helpMessage = "/town economy (buyableplots)";
-                    switch(command.get(2).toLowerCase()) {
+                    switch (command.get(2).toLowerCase()) {
                         case "buyableplots":
                             helpMessage = "/town economy buyableplots (true/false)";
                             handler.setTownPlotBuyability(command.get(3));
@@ -239,11 +242,12 @@ public class TownExecutor extends BaseExecutor {
                     break;
 
                 case "motd":
-                    if(command.hasArgAtIndex(2)) {
+                    if (command.hasArgAtIndex(2)) {
                         handler.setMOTD(command.concatAfter(3));
                     }
-                    else
+                    else {
                         handler.printMOTD();
+                    }
                     softFailure = false;
                     break;
 
@@ -254,7 +258,7 @@ public class TownExecutor extends BaseExecutor {
                     break;
 
                 case "pvp":
-                    switch(command.get(2).toLowerCase()) {
+                    switch (command.get(2).toLowerCase()) {
                         case "friendlyfire":
                             helpMessage = "/town pvp friendlyfire <true/false>";
                             handler.setTownFriendlyFire(command.get(3));
