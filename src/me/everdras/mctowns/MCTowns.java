@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.handlers.CommandHandler;
 import me.everdras.mctowns.command.MCTCommand;
-import me.everdras.mctowns.command.executors.MCTExecutor;
+import me.everdras.mctowns.command.executors.*;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.listeners.MCTPlayerListener;
 import me.everdras.mctowns.listeners.MCTPvPListener;
@@ -266,6 +266,10 @@ public class MCTowns extends JavaPlugin {
 
 
         getCommand("mct").setExecutor(new MCTExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
+        getCommand("town").setExecutor(new TownExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
+        getCommand("territory").setExecutor(new TerritoryExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
+        getCommand("district").setExecutor(new DistrictExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
+        getCommand("plot").setExecutor(new PlotExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
     }
 
 
