@@ -38,7 +38,7 @@ public class MCTExecutor extends BaseExecutor {
 
         //A hard failure occurs when the failure occurs in the second argument (i.e. the command label was correct but the first argument was off, and so it should be handled by printing the usage listed in the plugin.yml
         //A soft failure occurs when the failure occurs in any argument after the second and should be handled by printing a finer error message. A soft failure will cause command to return true.
-        boolean hardFailure = true, softFailure = true;
+        boolean hardFailure = false, softFailure = true;
 
         String helpMessage = null;
 
@@ -138,8 +138,9 @@ public class MCTExecutor extends BaseExecutor {
                     cs.sendMessage("Purge is no longer an available command.");
                     softFailure = false;
                     break;
+                default:
+                    hardFailure = true;
             }
-            hardFailure = false;
 
 
 
