@@ -119,6 +119,7 @@ public class TownExecutor extends BaseExecutor {
                             else {
                                 handler.listResidents();
                             }
+                            softFailure = false;
                             break;
 
                         case "te":
@@ -129,22 +130,29 @@ public class TownExecutor extends BaseExecutor {
                             else {
                                 handler.listTerritories();
                             }
+                            softFailure = false;
                             break;
 
                         case "requests":
                             handler.listRequestsForTown();
+                            softFailure = false;
                             break;
 
                         case "invites":
                             handler.listInvitesForTown();
+                            softFailure = false;
                             break;
 
                     }
                     break;
 
                 case "active":
-                    helpMessage = "/town active <town name>";
-                    handler.setActiveTown(command.get(2));
+                    helpMessage = "/town active (reset | <town name>)";
+                    if(command.get(2).equalsIgnoreCase("reset"))
+                        handler.resetActiveTown();
+                    else
+                        handler.setActiveTown(command.get(2));
+                    softFailure = false;
                     break;
 
                 case "bank":
@@ -258,7 +266,7 @@ public class TownExecutor extends BaseExecutor {
                 case "pvp":
                     switch (command.get(2).toLowerCase()) {
                         case "friendlyfire":
-                            helpMessage = "/town pvp friendlyfire <true/false>";
+                            helpMessage = "/town pvp friendlyfire <on/off>";
                             handler.setTownFriendlyFire(command.get(3));
                             softFailure = false;
                             break;

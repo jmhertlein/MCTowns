@@ -306,6 +306,10 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void rejectInvitation(String townName) {
+        if(cmd.hasFlag(MCTCommand.ALL)) {
+            rejectAllInvitations();
+            return;
+        }
 
         Player p = senderWrapper.getPlayer();
         Town t = townManager.getTown(townName);
