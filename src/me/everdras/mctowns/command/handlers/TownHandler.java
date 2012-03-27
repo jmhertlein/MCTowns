@@ -249,14 +249,14 @@ public class TownHandler extends CommandHandler {
         }
 
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
-        if (!admin && options.getPricePerXZBlock() > 0) {
+        if (!admin && options.getPricePerXZBlock().compareTo(BigDecimal.ZERO) > 0) {
             assert (options.mayorsCanBuyTerritories());
 
 
 
-            double price = WGUtils.getNumXZBlocksInRegion(region) * options.getPricePerXZBlock();
+            BigDecimal price = options.getPricePerXZBlock().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(region)));
 
-            if (t.getBank().getCurrencyBalance().doubleValue() < price) {
+            if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
                 //If they can't afford it...
                 senderWrapper.sendMessage(ERR + "Your town can't afford that large of a region.");
                 senderWrapper.sendMessage(ERR + "Total Price: " + price);
@@ -264,9 +264,9 @@ public class TownHandler extends CommandHandler {
             }
 
             //otherwise...
-            t.getBank().withdrawCurrency(new BigDecimal(price));
+            t.getBank().withdrawCurrency(price);
 
-            senderWrapper.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + new BigDecimal(price).toString());
+            senderWrapper.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + price.toString());
         }
 
         //IF ALL THE THINGS ARE FINALLY DONE...

@@ -224,7 +224,7 @@ public class Town implements Externalizable {
         return addAssistant(player.getName());
     }
 
-    //TODO: Test this thoroughly to make sure it performs as expected.
+    
     public boolean addAssistant(String playerName) {
         if (assistants.get(playerName) != null && assistants.get(playerName)) {
             return false;

@@ -1,7 +1,10 @@
 package me.everdras.mctowns.util;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -12,11 +15,9 @@ public class Config {
     private String path;
     private boolean economyEnabled;
     private boolean mayorsCanBuyTerritories;
-    private float pricePerXZBlock;
+    private BigDecimal pricePerXZBlock;
     private int minNumPlayersToBuyTerritory;
     private boolean allowTownFriendlyFireManagement;
-
-
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -26,6 +27,13 @@ public class Config {
      * @param configFilePath
      */
     public Config(String configFilePath) {
+        //init defaults
+        economyEnabled = false;
+        mayorsCanBuyTerritories = false;
+        pricePerXZBlock = BigDecimal.ZERO;
+        minNumPlayersToBuyTerritory = 3;
+        allowTownFriendlyFireManagement = false;
+
         failReason = "No fail detected.";
         File configPath = new File(configFilePath);
 
@@ -41,110 +49,87 @@ public class Config {
             parseConfig();
         } catch (Exception ex) {
             failBit = true;
-            failReason = "Generic exception in parsing config.";
+            failReason = "Generic exception in parsing config. (So helpful, amirite?) Message: " + ex.getMessage();
         }
     }
 
     private void parseConfig() throws FileNotFoundException {
         Scanner fileScan = new Scanner(new File(path));
-
-        String curLine = getNextLine(fileScan);
-
-        if (curLine == null) {
-            failBit = true;
-            failReason = "Reached end of config while parsing.";
-            return;
-        }
-        Scanner lineScan = new Scanner(curLine);
-
-        if (!lineScan.hasNextBoolean()) {
-            failBit = true;
-            failReason = "Error on token: \"" + lineScan + "\".";
-            return;
-        }
-        economyEnabled = lineScan.nextBoolean();
-
-
-        //===================================================================
+        String curLine, curToken;
+        Scanner lineScan;
 
         curLine = getNextLine(fileScan);
 
-        if (curLine == null) {
-            failBit = true;
-            failReason = "Reached end of config while parsing.";
-            return;
-        }
-        lineScan = new Scanner(curLine);
+        while (curLine != null) {
+            lineScan = new Scanner(curLine);
+            lineScan.useDelimiter("=");
+            curToken = lineScan.next().trim();
 
+            switch (curToken) {
+                case "allowTownFriendlyFireManagement":
+                    curToken = lineScan.next().trim();
+                    try {
+                        allowTownFriendlyFireManagement = Boolean.parseBoolean(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
 
-        if (!lineScan.hasNextBoolean()) {
-            failBit = true;
-            failReason = "Error on token: \"" + lineScan + "\".";
-            return;
-        }
-        mayorsCanBuyTerritories = lineScan.nextBoolean();
+                    }
+                    break;
 
-        //=================================================================
+                case "economyEnabled":
+                    curToken = lineScan.next().trim();
+                    try {
+                        economyEnabled = Boolean.parseBoolean(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
 
-        curLine = getNextLine(fileScan);
+                    }
+                    break;
 
-        if (curLine == null) {
-            failBit = true;
-            failReason = "Reached end of config while parsing.";
-            return;
-        }
-        lineScan = new Scanner(curLine);
+                case "mayorsCanBuyTerritories":
+                    curToken = lineScan.next().trim();
+                    try {
+                        mayorsCanBuyTerritories = Boolean.parseBoolean(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
 
+                    }
+                    break;
 
-        if (!lineScan.hasNextFloat()) {
-            failBit = true;
-            failReason = "Error on token: \"" + lineScan + "\".";
-            return;
-        }
-        pricePerXZBlock = lineScan.nextFloat();
-        pricePerXZBlock /= (16 * 16);
+                case "minNumPlayersToBuyTerritory":
+                    curToken = lineScan.next().trim();
+                    try {
+                        minNumPlayersToBuyTerritory = Integer.parseInt(curToken);
 
-        //==================================================================
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
 
-        curLine = getNextLine(fileScan);
+                    }
+                    break;
 
-        if (curLine == null) {
-            failBit = true;
-            failReason = "Reached end of config while parsing.";
-            return;
-        }
-        lineScan = new Scanner(curLine);
+                case "pricePerXZBlock":
+                    curToken = lineScan.next().trim();
+                    try {
+                        pricePerXZBlock = new BigDecimal(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
 
+                    }
+                    break;
 
-        if (!lineScan.hasNextInt()) {
-            failBit = true;
-            failReason = "Error on token: \"" + lineScan + "\".";
-            return;
-        }
+                default:
+                    failBit = true;
+                    failReason = "Unknown option \"" + curToken + "\".";
+            }
 
-        minNumPlayersToBuyTerritory = lineScan.nextInt();
-
-        //==================================================================
-
-        curLine = getNextLine(fileScan);
-
-        if (curLine == null) {
-            failBit = true;
-            failReason = "Reached end of config while parsing.";
-            return;
-        }
-        lineScan = new Scanner(curLine);
-
-
-        if (!lineScan.hasNextBoolean()) {
-            failBit = true;
-            failReason = "Error on token: \"" + lineScan + "\".";
-            return;
+            curLine = getNextLine(fileScan);
         }
 
-        allowTownFriendlyFireManagement = lineScan.nextBoolean();
-
-        //==================================================================
 
 
 
@@ -159,7 +144,7 @@ public class Config {
         return mayorsCanBuyTerritories;
     }
 
-    public float getPricePerXZBlock() {
+    public BigDecimal getPricePerXZBlock() {
         return pricePerXZBlock;
     }
 
@@ -170,8 +155,6 @@ public class Config {
     public boolean allowsTownFriendlyFireManagement() {
         return allowTownFriendlyFireManagement;
     }
-
-
 
     /*
      * Returns the next uncommented, non-empty line in the file.
@@ -191,6 +174,7 @@ public class Config {
 
     /**
      * Tests the validity of the config.
+     *
      * @return true if the config is tainted/corrupted, false if it's useable.
      */
     public boolean badConfig() {
@@ -199,42 +183,49 @@ public class Config {
 
     /**
      * Gets the reason for which the config is not useable.
-     * @return the reason the config isn't useabe
+     *
+     * @return the reason the config isn't useable
      */
     public String getFailReason() {
         return failReason;
     }
 
     /**
-     * Attempts to replace the existing config file with the hardcoded default copy.
+     * Attempts to replace the existing config file with the hardcoded default
+     * copy.
+     *
      * @throws IOException
      */
     public static void resetConfigFileToDefault(String path) throws IOException {
         FileOutputStream fos;
         PrintStream ps;
 
+        File f = new File(path);
+        if(!f.exists()) {
+            f.createNewFile();
+        }
 
-        fos = new FileOutputStream(new File(path));
+
+        fos = new FileOutputStream(f);
         ps = new PrintStream(fos);
 
+
+
+
+
+
+
         ps.println("#This is an automatically generated default config file.");
-        ps.println("#Please do NOT alter the order of the config. The only things");
-        ps.println("#that should be uncommented are the actual values to read in.");
         ps.println();
-        ps.println("#Economy is enabled:");
-        ps.println("false");
-        ps.println("#Mayors can buy territories:");
-        ps.println("false");
-        ps.println("#Price per chunk");
-        ps.println("100");
+        ps.println("economyEnabled = false");
+        ps.println("mayorsCanBuyTerritories = false");
+        ps.println("pricePerXZBlock = 0");
 
         ps.println();
 
-        ps.println("#Number of players that a town needs to have for a mayor to be able to add territories");
-        ps.println("0");
+        ps.println("minNumPlayersToBuyTerritory = 3");
         ps.println();
-        ps.println("#Mayors can decide whether or not their towns allow friendly fire. (false causes MCTowns to not interfere with PvP at all.)");
-        ps.println("false");
+        ps.println("allowTownFriendlyFireManagement = false");
 
 
         ps.close();
