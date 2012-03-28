@@ -713,10 +713,10 @@ public class TownHandler extends CommandHandler {
         }
         senderWrapper.sendMessage(ChatColor.AQUA + "Players in " + t.getTownName() + "(page " + page + "):");
 
-        ArrayList<String> players = t.getResidentNames();
+        String[] players = t.getResidentNames();
 
-        for (int i = page - 1; i < players.size() && i < i + 5; i++) {
-            senderWrapper.sendMessage(ChatColor.YELLOW + players.get(i));
+        for (int i = page - 1; i < players.length && i < i + 5; i++) {
+            senderWrapper.sendMessage(ChatColor.YELLOW + players[i]);
         }
     }
 

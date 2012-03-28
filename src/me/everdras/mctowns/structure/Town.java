@@ -55,6 +55,9 @@ public class Town implements Externalizable {
 
     private boolean friendlyFire;
 
+    /**
+     *
+     */
     public Town() {
     }
 
@@ -176,6 +179,10 @@ public class Town implements Externalizable {
         removePlayer(p.getName());
     }
 
+    /**
+     * Removes the player from the town's list of residents and assistants. Does not remove them from regions.
+     * @param playerName
+     */
     public void removePlayer(String playerName) {
         residents.remove(playerName);
         assistants.remove(playerName);
@@ -224,9 +231,14 @@ public class Town implements Externalizable {
         return addAssistant(player.getName());
     }
 
-    
+
+    /**
+     * Promotes the resident to an assistant.
+     * @param playerName
+     * @return true if player was added as assistant, false if they're already an assistant or they're not a resident of the town.
+     */
     public boolean addAssistant(String playerName) {
-        if (assistants.get(playerName) != null && assistants.get(playerName)) {
+        if (assistants.get(playerName) != null && assistants.get(playerName) && residents.get(playerName) != null &&residents.get(playerName)) {
             return false;
         }
 
@@ -275,22 +287,35 @@ public class Town implements Externalizable {
         return p.getName().equals(mayor);
     }
 
+    /**
+     * Returns whether the player is the mayor of the town.
+     * @param playerName
+     * @return
+     */
     public boolean playerIsMayor(String playerName) {
         return playerName.equals(mayor);
+    }
+
+    /**
+     * Returns the list of all
+     * @return
+     */
+    public String[] getResidentNames() {
+        return residentNames.toArray(new String[residentNames.size()]);
     }
 
     /**
      *
      * @return
      */
-    public ArrayList<String> getResidentNames() {
-        return residentNames;
-    }
-
     public boolean allowsFriendlyFire() {
         return friendlyFire;
     }
 
+    /**
+     *
+     * @param friendlyFire
+     */
     public void setFriendlyFire(boolean friendlyFire) {
         this.friendlyFire = friendlyFire;
     }
@@ -324,6 +349,11 @@ public class Town implements Externalizable {
         return residents.containsKey(p);
     }
 
+    /**
+     *
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -351,6 +381,10 @@ public class Town implements Externalizable {
         return Location.convertToBukkitLocation(s, townSpawn);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -434,22 +468,43 @@ public class Town implements Externalizable {
         return Location.convertToBukkitLocation(s, townSpawn);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean usesBuyablePlots() {
         return buyablePlots;
     }
 
+    /**
+     *
+     * @param buyablePlots
+     */
     public void setBuyablePlots(boolean buyablePlots) {
         this.buyablePlots = buyablePlots;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean usesEconomyJoins() {
         return economyJoins;
     }
 
+    /**
+     *
+     * @param economyJoins
+     */
     public void setEconomyJoins(boolean economyJoins) {
         this.economyJoins = economyJoins;
     }
 
+    /**
+     *
+     * @param out
+     * @throws IOException
+     */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(VERSION);
@@ -473,6 +528,12 @@ public class Town implements Externalizable {
 
     }
 
+    /**
+     *
+     * @param in
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int ver = in.readInt();
@@ -559,10 +620,18 @@ public class Town implements Externalizable {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public BigDecimal getDefaultPlotPrice() {
         return defaultPlotPrice;
     }
 
+    /**
+     *
+     * @param defaultPlotPrice
+     */
     public void setDefaultPlotPrice(BigDecimal defaultPlotPrice) {
         this.defaultPlotPrice = defaultPlotPrice;
     }

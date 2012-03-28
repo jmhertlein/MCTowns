@@ -7,21 +7,14 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.command.handlers.CommandHandler;
-import me.everdras.mctowns.command.MCTCommand;
 import me.everdras.mctowns.command.executors.*;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.listeners.MCTPlayerListener;
 import me.everdras.mctowns.listeners.MCTPvPListener;
 import me.everdras.mctowns.permission.Perms;
-import me.everdras.mctowns.structure.TownLevel;
 import me.everdras.mctowns.townjoin.TownJoinManager;
-import me.everdras.mctowns.townjoin.TownJoinMethod;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -196,9 +189,6 @@ public class MCTowns extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(playerListener, this);
-
-        //TODO: Fix this, see ticket no. 13
-        //getServer().getPluginManager().registerEvent(Type.PLAYER_RESPAWN, respawnListener, Priority.Monitor, this);
     }
 
     private void loadConfig() {
@@ -228,13 +218,7 @@ public class MCTowns extends JavaPlugin {
 
         } catch (IOException e) {
             log.log(Level.WARNING, "MCTowns: Error saving the town database.");
-
-
         }
-
-
-
-
     }
 
     private void serializeBackup() {
@@ -268,9 +252,6 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void setCommandExecutors() {
-
-
-
         getCommand("mct").setExecutor(new MCTExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
         getCommand("town").setExecutor(new TownExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
         getCommand("territory").setExecutor(new TerritoryExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
