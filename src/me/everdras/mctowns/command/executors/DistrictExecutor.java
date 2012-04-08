@@ -65,15 +65,15 @@ public class DistrictExecutor extends BaseExecutor {
 
                 case "remove":
                 case "rm":
-                    helpMessage = "/district remove (player | district)";
+                    helpMessage = "/district remove (player | plot)";
                     switch (command.get(2)) {
                         case "player":
                             helpMessage = "/district remove player <player name>";
                             handler.removePlayerFromDistrict(command.get(3));
                             softFailure = false;
                             break;
-                        case "district":
-                        case "dist":
+                        case "plot":
+                        case "pl":
                             helpMessage = "/district remove plot <district name>";
                             handler.removePlotFromDistrict(command.get(3));
                             softFailure = false;
@@ -82,7 +82,7 @@ public class DistrictExecutor extends BaseExecutor {
                     break;
                 case "list":
                 case "ls":
-                    helpMessage = "/district list (plotss | players)";
+                    helpMessage = "/district list (plots | players)";
 
                     switch (command.get(2)) {
                         case "plots":
@@ -102,7 +102,7 @@ public class DistrictExecutor extends BaseExecutor {
 
                     break;
                 case "active":
-                    helpMessage = "/district active <territory name>";
+                    helpMessage = "/district active <district name>";
                     handler.setActiveDistrict(command.get(2));
                     softFailure = false;
                     break;
