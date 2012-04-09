@@ -156,7 +156,10 @@ public class TownHandler extends CommandHandler {
         }
 
         t.setBuyablePlots(buyability);
-        senderWrapper.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots can now be sold and new plots are buyable by default.");
+        if(buyability)
+            senderWrapper.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots can now be sold and new plots are buyable by default.");
+        else
+            senderWrapper.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots are no longer for sale.");
 
 
     }
