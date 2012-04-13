@@ -13,7 +13,7 @@ import java.util.Scanner;
  * @author Joshua
  */
 public class MCTCommand {
-    public static final String DISABLE_AUTOACTIVE = "-na", RECURSIVE = "-r", ADMIN = "-admin", ALL = "-A";
+    public static final String DISABLE_AUTOACTIVE = "-na", RECURSIVE = "-r", ADMIN = "-admin", ALL = "-A", NO_AUTOBUILD_PLOT_SIGN = "-nosign";
     private ArrayList<String> args, flags;
 
 

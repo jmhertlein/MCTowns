@@ -139,7 +139,9 @@ public class DistrictHandler extends CommandHandler {
 
         if (options.isEconomyEnabled() && senderWrapper.getActiveTown().usesBuyablePlots()) {
             p.setForSale(true);
-            p.buildSign(server);
+
+            if(!cmd.hasFlag(MCTCommand.NO_AUTOBUILD_PLOT_SIGN))
+                p.buildSign(server);
         }
     }
 
