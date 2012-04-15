@@ -126,7 +126,7 @@ public class MCTCommand {
         String[] flagArgs = new String[args.size()-3];
 
         for(int i = 3; i < args.size(); i++)
-            flagArgs[i] = args.get(i);
+            flagArgs[i-3] = args.get(i);
 
         return flagArgs;
     }
