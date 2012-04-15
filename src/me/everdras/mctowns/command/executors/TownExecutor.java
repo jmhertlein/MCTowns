@@ -163,7 +163,7 @@ public class TownExecutor extends BaseExecutor {
                             switch (command.get(3)) {
                                 case "currency":
                                     helpMessage = "/town bank deposit currency <quantity>";
-                                    handler.depositCurrencyBank(command.get(3));
+                                    handler.depositCurrencyBank(command.get(4));
                                     softFailure = false;
                                     break;
 
@@ -185,7 +185,7 @@ public class TownExecutor extends BaseExecutor {
                             switch (command.get(3)) {
                                 case "currency":
                                     helpMessage = "/town bank withdraw currency <quantity>";
-                                    handler.withdrawCurrencyBank(command.get(3));
+                                    handler.withdrawCurrencyBank(command.get(4));
                                     softFailure = false;
                                     break;
 
