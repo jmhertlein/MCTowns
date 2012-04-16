@@ -196,8 +196,6 @@ public class MCTowns extends JavaPlugin {
 
         if (options.badConfig()) {
             logSevere(options.getFailReason());
-            logSevere("Couldn't load the config! DISABLING MCTOWNS.");
-            this.getPluginLoader().disablePlugin(this);
         }
     }
 
