@@ -448,6 +448,9 @@ public class TownHandler extends CommandHandler {
         if (t.removeAssistant(p)) {
             senderWrapper.sendMessage(p.getName() + " has been demoted.");
             p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
+            for(Territory rm : t.getTerritoriesCollection()) {
+                rm.removePlayerFromWGRegion(wgp, p.getName());
+            }
         } else {
             senderWrapper.sendMessage(ERR + p.getName() + " is not an assistant in this town.");
         }
