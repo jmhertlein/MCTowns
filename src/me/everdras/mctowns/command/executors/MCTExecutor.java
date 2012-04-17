@@ -136,8 +136,8 @@ public class MCTExecutor extends BaseExecutor {
                     softFailure = false;
                     break;
 
-                case "purge":
-                    cs.sendMessage("Purge is no longer an available command.");
+                case "togglesave":
+                    handler.toggleAbortSave();
                     softFailure = false;
                     break;
                 default:

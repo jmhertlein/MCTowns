@@ -40,13 +40,21 @@ public class MCTowns extends JavaPlugin {
     private static Config options;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
 
+    private boolean abortSave;
+
     /**
      * Persist any data that needs to be persisted.
      */
     @Override
     public void onDisable() {
-        serializeTownManager();
-        serializeBackup();
+
+        if(!abortSave) {
+            serializeTownManager();
+            serializeBackup();
+        } else {
+            logInfo("The save was aborted manually, so nothing was saved.");
+        }
+
         log.info("[MCTowns]: MCTowns has been successfully disabled.");
 
         //release as much memory as I can, to make reloads suck less.
@@ -92,6 +100,8 @@ public class MCTowns extends JavaPlugin {
         regEventListeners();
 
         setCommandExecutors();
+
+        abortSave = false;
 
         log.info("MCTowns is now fully loaded.");
 
@@ -151,6 +161,7 @@ public class MCTowns extends JavaPlugin {
 
         } catch (Exception e) {
             log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
+            logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
             townManager = new TownManager();
         }
 
@@ -281,4 +292,14 @@ public class MCTowns extends JavaPlugin {
             logDebug("WARNING: ASSERTION FAILED: " + desc);
         }
     }
+
+    public boolean willAbortSave() {
+        return abortSave;
+    }
+
+    public void setAbortSave(boolean abortSave) {
+        this.abortSave = abortSave;
+    }
+    
+    
 }

@@ -464,4 +464,10 @@ public class MCTHandler extends CommandHandler {
 
 
     }
+
+    public void toggleAbortSave() {
+        plugin.setAbortSave(!plugin.willAbortSave());
+        senderWrapper.sendMessage(SUCC + "MCTowns will " +(plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
+        
+    }
 }
