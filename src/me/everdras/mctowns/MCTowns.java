@@ -3,6 +3,7 @@ package me.everdras.mctowns;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.io.*;
 import java.util.ArrayDeque;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -231,8 +232,11 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void serializeBackup() {
-
-        File path = new File(BACKUP_TOWN_DATABASE_SAVE_PATH);
+        Calendar cal = Calendar.getInstance();
+        String dateStamp = "(" + (cal.get(Calendar.MONTH)+1) + cal.get(Calendar.DAY_OF_MONTH) + ")";
+        
+        File path = new File(dateStamp + "." + BACKUP_TOWN_DATABASE_SAVE_PATH);
+        logInfo("Backup saving as: " + path.getAbsolutePath());
 
         FileOutputStream fos;
         ObjectOutputStream oos;
