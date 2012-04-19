@@ -63,7 +63,7 @@ public class PlotExecutor extends BaseExecutor {
                     break;
 
                 case "redefine":
-                    handler.redefineActiveRegion(TownLevel.TERRITORY);
+                    handler.redefineActiveRegion(TownLevel.PLOT);
                     softFailure = false;
                     break;
 
@@ -159,7 +159,7 @@ public class PlotExecutor extends BaseExecutor {
         }
 
 
-        MCTowns.logAssert(helpMessage != null, "In PlotExecutor, the helpMessage was null.");
+        
         if (!hardFailure && softFailure && helpMessage != null) {
             cs.sendMessage(ChatColor.RED + "Invalid command. Acceptable similar formats are: ");
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);

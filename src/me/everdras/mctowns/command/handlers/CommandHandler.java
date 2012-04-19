@@ -373,6 +373,8 @@ public abstract class CommandHandler {
             return;
         }
 
+        MCTowns.logDebug("Redefining " + reg.getName());
+
         RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
 
         Selection nuRegionBounds = wep.getSelection(senderWrapper.getPlayer());
@@ -385,11 +387,15 @@ public abstract class CommandHandler {
         ProtectedRegion oldWGReg, nuWGRegion;
         oldWGReg = regMan.getRegion(reg.getName());
 
-        
+
         nuWGRegion = new ProtectedCuboidRegion(oldWGReg.getId(),
                 nuRegionBounds.getNativeMaximumPoint().toBlockVector(),
                 nuRegionBounds.getNativeMinimumPoint().toBlockVector());
 
+
+        MCTowns.logDebug("Comparing:");
+        MCTowns.logDebug("New: " + nuWGRegion.getMaximumPoint().toString() + " | " + nuWGRegion.getMinimumPoint());
+        MCTowns.logDebug("Old: " + oldWGReg.getMaximumPoint().toString() + " | " + oldWGReg.getMinimumPoint());
         //To make sure that we can't accidentally "orphan" districts or plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.
         if (!(nuWGRegion.contains(oldWGReg.getMaximumPoint()) && nuWGRegion.contains(oldWGReg.getMinimumPoint()))) {

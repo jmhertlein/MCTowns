@@ -31,7 +31,7 @@ public class MCTowns extends JavaPlugin {
     private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
-    private static final boolean DEBUGGING = false;
+    private static final boolean DEBUGGING = true;
 
     private TownManager townManager;
     private TownJoinManager joinManager;
@@ -234,8 +234,15 @@ public class MCTowns extends JavaPlugin {
     private void serializeBackup() {
         Calendar cal = Calendar.getInstance();
         String dateStamp = "(" + (cal.get(Calendar.MONTH)+1) + cal.get(Calendar.DAY_OF_MONTH) + ")";
-        
+
         File path = new File(dateStamp + "." + BACKUP_TOWN_DATABASE_SAVE_PATH);
+
+        if(!path.exists()) {
+            try {
+                path.createNewFile();
+            } catch(Exception ignore) {}
+        }
+
         logInfo("Backup saving as: " + path.getAbsolutePath());
 
         FileOutputStream fos;
@@ -304,6 +311,6 @@ public class MCTowns extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
-    
-    
+
+
 }

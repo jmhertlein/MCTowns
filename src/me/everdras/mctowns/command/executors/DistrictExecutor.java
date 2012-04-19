@@ -64,7 +64,7 @@ public class DistrictExecutor extends BaseExecutor {
                     break;
 
                 case "redefine":
-                    handler.redefineActiveRegion(TownLevel.TERRITORY);
+                    handler.redefineActiveRegion(TownLevel.DISTRICT);
                     softFailure = false;
                     break;
 
