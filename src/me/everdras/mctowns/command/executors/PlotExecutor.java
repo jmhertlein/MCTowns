@@ -62,6 +62,11 @@ public class PlotExecutor extends BaseExecutor {
                     }
                     break;
 
+                case "redefine":
+                    handler.redefineActiveRegion(TownLevel.TERRITORY);
+                    softFailure = false;
+                    break;
+
                 case "remove":
                 case "rm":
                     helpMessage = "/plot remove player <player/guest name>";
@@ -146,8 +151,7 @@ public class PlotExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            }
-            else {
+            } else {
                 softFailure = true;
                 hardFailure = false;
             }

@@ -62,6 +62,11 @@ public class TerritoryExecutor extends BaseExecutor {
                             break;
                     }
                     break;
+                    
+                case "redefine":
+                    handler.redefineActiveRegion(TownLevel.TERRITORY);
+                    softFailure = false;
+                    break;
 
                 case "remove":
                 case "rm":

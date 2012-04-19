@@ -2,6 +2,7 @@ package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -53,7 +54,6 @@ public abstract class CommandHandler {
             WARN = ChatColor.YELLOW,
             SUCC = ChatColor.GREEN,
             INFO = ChatColor.LIGHT_PURPLE;
-
     protected MCTowns plugin;
     protected CommandSenderWrapper senderWrapper;
     protected TownManager townManager;
@@ -104,13 +104,18 @@ public abstract class CommandHandler {
     }
 
     /**
-     * Flags the specified type of region with the specified flag and the specified arguments. If no arguments are supplied, the flag is instead cleared.
+     * Flags the specified type of region with the specified flag and the
+     * specified arguments. If no arguments are supplied, the flag is instead
+     * cleared.
+     *
      * @param flagName name of the WorldGuard flag to set or clear
-     * @param args the args to set the flag with, or empty if it's meant to be cleared
-     * @param regionType Which region in the ActiveSet hierarchy to apply the flag to.
+     * @param args the args to set the flag with, or empty if it's meant to be
+     * cleared
+     * @param regionType Which region in the ActiveSet hierarchy to apply the
+     * flag to.
      */
     public void flagRegion(String flagName, String[] args, TownLevel regionType) {
-        if(!senderWrapper.hasExternalPermissions("mct.flag") && !senderWrapper.hasExternalPermissions("mct.admin")) {
+        if (!senderWrapper.hasExternalPermissions("mct.flag") && !senderWrapper.hasExternalPermissions("mct.admin")) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
@@ -165,7 +170,7 @@ public abstract class CommandHandler {
 
 
         //If there are no arguments, clear the flag instead of setting it
-        if(args.length == 0) {
+        if (args.length == 0) {
             wgReg.setFlag(foundFlag, null);
             senderWrapper.sendMessage(ChatColor.GREEN + "Successfully removed flag.");
             return;
@@ -228,14 +233,15 @@ public abstract class CommandHandler {
         for (String pl : wgReg.getOwners().getPlayers()) {
             temp += pl + ", ";
             counter++;
-            if(counter > 4) {
+            if (counter > 4) {
                 senderWrapper.sendMessage(temp);
                 temp = "";
                 counter = 0;
             }
         }
-        if(counter != 0)
+        if (counter != 0) {
             senderWrapper.sendMessage(temp);
+        }
         temp = "";
 
         senderWrapper.sendMessage("Members:");
@@ -243,14 +249,15 @@ public abstract class CommandHandler {
         for (String pl : wgReg.getMembers().getPlayers()) {
             temp += pl + ", ";
             counter++;
-            if(counter > 4) {
+            if (counter > 4) {
                 senderWrapper.sendMessage(temp);
                 temp = "";
                 counter = 0;
             }
         }
-        if(counter != 0)
+        if (counter != 0) {
             senderWrapper.sendMessage(temp);
+        }
 
     }
 
@@ -334,5 +341,78 @@ public abstract class CommandHandler {
 
     protected void runCommandAsConsole(String command) {
         server.dispatchCommand(server.getConsoleSender(), command);
+    }
+
+    public void redefineActiveRegion(TownLevel regType) {
+        if (!senderWrapper.hasMayoralPermissions()) {
+            senderWrapper.notifyInsufPermissions();
+            return;
+        }
+
+        MCTownsRegion reg;
+
+        switch (regType) {
+            case TOWN:
+                senderWrapper.sendMessage(ERR + "Can't redefine towns.");
+                return;
+            case TERRITORY:
+                reg = senderWrapper.getActiveTerritory();
+                break;
+            case DISTRICT:
+                reg = senderWrapper.getActiveDistrict();
+                break;
+            case PLOT:
+                reg = senderWrapper.getActivePlot();
+                break;
+            default:
+                reg = null;
+        }
+
+        if (reg == null) {
+            senderWrapper.sendMessage(ERR + "Your active " + regType.toString() + " is not set.");
+            return;
+        }
+
+        RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
+
+        Selection nuRegionBounds = wep.getSelection(senderWrapper.getPlayer());
+
+        if (nuRegionBounds == null) {
+            senderWrapper.sendMessage(ERR + "You need to select what you want the region's boundaries to be updated to.");
+            return;
+        }
+
+        ProtectedRegion oldWGReg, nuWGRegion;
+        oldWGReg = regMan.getRegion(reg.getName());
+
+        
+        nuWGRegion = new ProtectedCuboidRegion(oldWGReg.getId(),
+                nuRegionBounds.getNativeMaximumPoint().toBlockVector(),
+                nuRegionBounds.getNativeMinimumPoint().toBlockVector());
+
+        //To make sure that we can't accidentally "orphan" districts or plots outside the region, only allow
+        //new boundaries if the old region is a subset of the new region.
+        if (!(nuWGRegion.contains(oldWGReg.getMaximumPoint()) && nuWGRegion.contains(oldWGReg.getMinimumPoint()))) {
+            senderWrapper.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
+            return;
+        }
+
+        //if everything is all clear...
+        //copy over everything important
+        nuWGRegion.setMembers(oldWGReg.getMembers());
+        nuWGRegion.setOwners(oldWGReg.getOwners());
+        nuWGRegion.setFlags(oldWGReg.getFlags());
+        nuWGRegion.setPriority(oldWGReg.getPriority());
+
+        //apparently, this will replace the old region by the same name while preserving parent/child relationships
+        //Conjecture: RegionManager uses hashes based on the name of the region, and the children only ever store a string (paren't ID) that
+        //            maps to the hash of the parent
+        //sounds_legit_to_me.jpg
+        regMan.addRegion(nuWGRegion);
+
+        doRegManSave(regMan);
+
+        senderWrapper.sendMessage(SUCC + "The region \"" + nuWGRegion.getId() + "\" has been updated.");
+
     }
 }

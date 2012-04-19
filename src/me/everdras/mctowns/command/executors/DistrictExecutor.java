@@ -63,6 +63,11 @@ public class DistrictExecutor extends BaseExecutor {
                     }
                     break;
 
+                case "redefine":
+                    handler.redefineActiveRegion(TownLevel.TERRITORY);
+                    softFailure = false;
+                    break;
+
                 case "remove":
                 case "rm":
                     helpMessage = "/district remove (player | plot)";
@@ -88,8 +93,7 @@ public class DistrictExecutor extends BaseExecutor {
                         case "plots":
                             if (command.hasArgAtIndex(3)) {
                                 handler.listPlots(command.get(3));
-                            }
-                            else {
+                            } else {
                                 handler.listPlots();
                             }
                             softFailure = false;
@@ -122,8 +126,7 @@ public class DistrictExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            }
-            else {
+            } else {
                 softFailure = true;
                 hardFailure = false;
             }
