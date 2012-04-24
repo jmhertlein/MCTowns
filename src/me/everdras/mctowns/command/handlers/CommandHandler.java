@@ -2,7 +2,6 @@ package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -10,19 +9,19 @@ import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
+import static me.everdras.core.chat.DefaultMessageColors.ERR;
+import static me.everdras.core.chat.DefaultMessageColors.SUCC;
+import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.command.CommandSenderWrapper;
-import me.everdras.mctowns.command.MCTCommand;
+import me.everdras.mctowns.command.MCTCommandSenderWrapper;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Town;
@@ -49,13 +48,8 @@ public abstract class CommandHandler {
     protected static final String TERRITORY_INFIX = "_territ_";
     protected static final String DISTRICT_INFIX = "_dist_";
     protected static final String PLOT_INFIX = "_plot_";
-    protected static final ChatColor FATAL = ChatColor.DARK_RED,
-            ERR = ChatColor.RED,
-            WARN = ChatColor.YELLOW,
-            SUCC = ChatColor.GREEN,
-            INFO = ChatColor.LIGHT_PURPLE;
     protected MCTowns plugin;
-    protected CommandSenderWrapper senderWrapper;
+    protected MCTCommandSenderWrapper senderWrapper;
     protected TownManager townManager;
     protected TownJoinManager joinManager;
     protected WorldGuardPlugin wgp;
@@ -63,7 +57,7 @@ public abstract class CommandHandler {
     protected Economy economy;
     protected Server server;
     protected Config options;
-    protected MCTCommand cmd;
+    protected ECommand cmd;
 
     /**
      * Wraps the command sender.
@@ -74,13 +68,13 @@ public abstract class CommandHandler {
      * @param p the command sender
      * @param activeSets the map of active sets
      */
-    public CommandHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, MCTCommand cmd) {
+    public CommandHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
         townManager = t;
         joinManager = j;
         server = p.getServer();
         plugin = parent;
 
-        senderWrapper = new CommandSenderWrapper(t, p, activeSets);
+        senderWrapper = new MCTCommandSenderWrapper(t, p, activeSets);
         wgp = wg;
         economy = econ;
 
@@ -262,7 +256,7 @@ public abstract class CommandHandler {
     }
 
     //====================================PRIVATE===========================
-    protected WorldGuardPlugin getWGPFromSenderWrapper(CommandSenderWrapper csw) {
+    protected WorldGuardPlugin getWGPFromSenderWrapper(MCTCommandSenderWrapper csw) {
         return (WorldGuardPlugin) csw.getSender().getServer().getPluginManager().getPlugin("WorldGuard");
     }
 

@@ -4,7 +4,6 @@
  */
 
 package me.everdras.mctowns.command.handlers;
-
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -12,11 +11,16 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static me.everdras.core.chat.DefaultMessageColors.ERR;
+import static me.everdras.core.chat.DefaultMessageColors.SUCC;
+import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.command.MCTCommand;
 import me.everdras.mctowns.database.TownManager;
-import me.everdras.mctowns.structure.*;
+import me.everdras.mctowns.structure.District;
+import me.everdras.mctowns.structure.Plot;
+import me.everdras.mctowns.structure.Territory;
+import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
@@ -29,7 +33,7 @@ import org.bukkit.entity.Player;
  */
 public class DistrictHandler extends CommandHandler {
 
-    public DistrictHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, MCTCommand cmd) {
+    public DistrictHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
     }
 
@@ -75,7 +79,7 @@ public class DistrictHandler extends CommandHandler {
             return;
         }
 
-        boolean autoActive = !cmd.hasFlag(MCTCommand.DISABLE_AUTOACTIVE);
+        boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
 
         Town t = senderWrapper.getActiveTown();
 
@@ -140,7 +144,7 @@ public class DistrictHandler extends CommandHandler {
         if (options.isEconomyEnabled() && senderWrapper.getActiveTown().usesBuyablePlots()) {
             p.setForSale(true);
 
-            if(!cmd.hasFlag(MCTCommand.NO_AUTOBUILD_PLOT_SIGN))
+            if(!cmd.hasFlag(ECommand.NO_AUTOBUILD_PLOT_SIGN))
                 p.buildSign(server);
         }
     }
@@ -208,7 +212,7 @@ public class DistrictHandler extends CommandHandler {
             return;
         }
 
-        boolean recursive = cmd.hasFlag(MCTCommand.RECURSIVE);
+        boolean recursive = cmd.hasFlag(ECommand.RECURSIVE);
 
         District dist = senderWrapper.getActiveDistrict();
 

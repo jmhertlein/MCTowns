@@ -6,10 +6,10 @@ package me.everdras.mctowns.command.executors;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.HashMap;
+import me.everdras.core.command.ArgumentCountException;
+import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.command.ArgumentCountException;
-import me.everdras.mctowns.command.MCTCommand;
 import me.everdras.mctowns.command.handlers.TownHandler;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.townjoin.TownJoinManager;
@@ -32,7 +32,7 @@ public class TownExecutor extends BaseExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
-        MCTCommand command = new MCTCommand(label, args);
+        ECommand command = new ECommand(label, args);
 
         TownHandler handler = new TownHandler(parent, townManager, joinManager, cs, activeSets, wgp, economy, options, command);
 

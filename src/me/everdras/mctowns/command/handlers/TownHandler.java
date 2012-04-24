@@ -8,21 +8,18 @@ package me.everdras.mctowns.command.handlers;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import static me.everdras.core.chat.DefaultMessageColors.*;
+import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.banking.BlockBank;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.command.MCTCommand;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.permission.Perms;
-import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
-import me.everdras.mctowns.structure.TownLevel;
 import me.everdras.mctowns.townjoin.TownJoinInfoPair;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.townjoin.TownJoinMethod;
@@ -42,7 +39,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class TownHandler extends CommandHandler {
 
-    public TownHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, MCTCommand cmd) {
+    public TownHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
     }
 
@@ -193,8 +190,8 @@ public class TownHandler extends CommandHandler {
     }
 
     public void addTerritorytoTown(String territName) {
-        boolean autoActive = !cmd.hasFlag(MCTCommand.DISABLE_AUTOACTIVE);
-        boolean admin = cmd.hasFlag(MCTCommand.ADMIN);
+        boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
+        boolean admin = cmd.hasFlag(ECommand.ADMIN);
         if (!senderWrapper.hasExternalPermissions(Perms.ADMIN.toString()) && admin) {
             senderWrapper.sendMessage(ChatColor.DARK_RED + "You're not permitted to run this command with administrative priviliges!");
             return;

@@ -43,7 +43,6 @@ public enum Perms {
      * The message to be displayed when a player attempts to perform an action
      * for which they do not have permission.
      */
-    public static final String INSUF_PERM_MSG = "Insufficient permission.";
 
     @Override
     public String toString() {
