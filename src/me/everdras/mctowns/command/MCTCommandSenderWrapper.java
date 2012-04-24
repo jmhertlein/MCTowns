@@ -31,6 +31,7 @@ public class MCTCommandSenderWrapper extends CommandSenderWrapper {
      * @param activeSets the database of active sets as a hashmap
      */
     public MCTCommandSenderWrapper(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
+        super(sender);
         this.sender = sender;
         manager = tMan;
 

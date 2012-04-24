@@ -26,13 +26,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author joshua
  */
 public class MCTowns extends JavaPlugin {
+
     public static final Logger log = Logger.getLogger("Minecraft");
     private static final String MCT_DATA_FOLDER = "plugins" + File.separator + "MCTowns";
     private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
     private static final boolean DEBUGGING = true;
-
     private TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
@@ -40,7 +40,6 @@ public class MCTowns extends JavaPlugin {
     private static Economy economy;
     private static Config options;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
-
     private boolean abortSave;
 
     /**
@@ -49,10 +48,11 @@ public class MCTowns extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        if(!abortSave) {
+        if (!abortSave) {
             serializeTownManager();
             serializeBackup();
-        } else {
+        }
+        else {
             logInfo("The save was aborted manually, so nothing was saved.");
         }
 
@@ -107,7 +107,6 @@ public class MCTowns extends JavaPlugin {
         log.info("MCTowns is now fully loaded.");
 
     }
-
 
     private void checkFiles() {
 
@@ -233,14 +232,15 @@ public class MCTowns extends JavaPlugin {
 
     private void serializeBackup() {
         Calendar cal = Calendar.getInstance();
-        String dateStamp = "(" + (cal.get(Calendar.MONTH)+1) + cal.get(Calendar.DAY_OF_MONTH) + ")";
+        String dateStamp = "(" + (cal.get(Calendar.MONTH) + 1) + cal.get(Calendar.DAY_OF_MONTH) + ")";
 
-        File path = new File(dateStamp + "." + BACKUP_TOWN_DATABASE_SAVE_PATH);
+        File path = new File(BACKUP_TOWN_DATABASE_SAVE_PATH + dateStamp);
 
-        if(!path.exists()) {
+        if (!path.exists()) {
             try {
                 path.createNewFile();
-            } catch(Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
 
         logInfo("Backup saving as: " + path.getAbsolutePath());
@@ -279,7 +279,6 @@ public class MCTowns extends JavaPlugin {
         getCommand("plot").setExecutor(new PlotExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
     }
 
-
     public static void logSevere(String msg) {
         log.log(Level.SEVERE, "[MCTowns]: " + msg);
     }
@@ -289,17 +288,21 @@ public class MCTowns extends JavaPlugin {
     }
 
     public static void logDebug(String msg) {
-        if(DEBUGGING)
+        if (DEBUGGING) {
             logInfo("[DEBUG]:" + msg);
+        }
     }
 
     /**
-     * Logged assertion. If the assertion passes, nothing happens. If it fails, a warning is printed to the log.
+     * Logged assertion. If the assertion passes, nothing happens. If it fails,
+     * a warning is printed to the log.
+     *
      * @param bool the boolean expression to assert
-     * @param desc a description of the assertion to be printed to the log file. i.e. where it is, what it is, what its failure implies, etc
+     * @param desc a description of the assertion to be printed to the log file.
+     * i.e. where it is, what it is, what its failure implies, etc
      */
     public static void logAssert(boolean bool, String desc) {
-        if(!bool) {
+        if (!bool) {
             logDebug("WARNING: ASSERTION FAILED: " + desc);
         }
     }
@@ -311,6 +314,4 @@ public class MCTowns extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
-
-
 }
