@@ -11,7 +11,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
-import static me.everdras.core.chat.DefaultMessageColors.*;
+import static me.everdras.core.chat.ChatUtil.*;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.banking.BlockBank;

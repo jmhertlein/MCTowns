@@ -2,8 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package me.everdras.mctowns.command.handlers;
+
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -11,8 +11,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static me.everdras.core.chat.DefaultMessageColors.ERR;
-import static me.everdras.core.chat.DefaultMessageColors.SUCC;
+import static me.everdras.core.chat.ChatUtil.ERR;
+import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
@@ -37,7 +37,6 @@ public class DistrictHandler extends CommandHandler {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
     }
 
-
     private void listPlots(int page) {
 
         District d = senderWrapper.getActiveDistrict();
@@ -52,8 +51,12 @@ public class DistrictHandler extends CommandHandler {
 
         Plot[] plots = d.getPlotsCollection().toArray(new Plot[d.getPlotsCollection().size()]);
 
-        for (int i = page - 1; i < plots.length && i < i + 5; i++) {
-            senderWrapper.sendMessage(ChatColor.YELLOW + plots[i].getName());
+        if (cmd.hasFlag(ECommand.VERBOSE)) {
+            
+        } else {
+            for (int i = page - 1; i < plots.length && i < i + 5; i++) {
+                senderWrapper.sendMessage(ChatColor.YELLOW + plots[i].getName());
+            }
         }
     }
 
@@ -61,7 +64,7 @@ public class DistrictHandler extends CommandHandler {
         int page;
         try {
             page = Integer.parseInt(s_page);
-        } catch(NumberFormatException nfex) {
+        } catch (NumberFormatException nfex) {
             senderWrapper.sendMessage(ERR + "Error parsing integer argument. Found \"" + s_page + "\", expected integer.");
             return;
         }
@@ -144,8 +147,9 @@ public class DistrictHandler extends CommandHandler {
         if (options.isEconomyEnabled() && senderWrapper.getActiveTown().usesBuyablePlots()) {
             p.setForSale(true);
 
-            if(!cmd.hasFlag(ECommand.NO_AUTOBUILD_PLOT_SIGN))
+            if (!cmd.hasFlag(ECommand.NO_AUTOBUILD_PLOT_SIGN)) {
                 p.buildSign(server);
+            }
         }
     }
 
@@ -279,5 +283,4 @@ public class DistrictHandler extends CommandHandler {
         senderWrapper.setActiveDistrict(nuActive);
         senderWrapper.sendMessage("Active district set to " + nuActive.getName());
     }
-
 }

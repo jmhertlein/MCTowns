@@ -12,7 +12,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static me.everdras.core.chat.DefaultMessageColors.*;
+import static me.everdras.core.chat.ChatUtil.*;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
