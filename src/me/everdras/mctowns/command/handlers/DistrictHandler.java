@@ -11,6 +11,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.everdras.core.chat.ChatUtil;
 import static me.everdras.core.chat.ChatUtil.ERR;
 import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
@@ -38,6 +39,7 @@ public class DistrictHandler extends CommandHandler {
     }
 
     private void listPlots(int page) {
+        page--;
 
         District d = senderWrapper.getActiveDistrict();
 
@@ -52,9 +54,32 @@ public class DistrictHandler extends CommandHandler {
         Plot[] plots = d.getPlotsCollection().toArray(new Plot[d.getPlotsCollection().size()]);
 
         if (cmd.hasFlag(ECommand.VERBOSE)) {
+            String[][] rawOutputTable = new String[plots.length+1][4];
+            rawOutputTable[0][0] = "Plot Name";
+            rawOutputTable[0][1] = "Plot Owner(s)";
+            rawOutputTable[0][2] = "Plot's for Sale:";
+            rawOutputTable[0][3] = "Plot Member(s)";
+            int index = 1;
+            for(Plot p : plots) {
+                rawOutputTable[index][0] = p.getAbstractName(); //plot name
+                //All the owners of the plot
+                rawOutputTable[index][1] = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName()).getOwners().toUserFriendlyString();
+                rawOutputTable[index][2] = p.isForSale() ? "True" : "False";
+                //All members of the plot
+                rawOutputTable[index][3] = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName()).getMembers().toUserFriendlyString();
+                index++;
+            }
+            
+            String[] formattedOutputTable = ChatUtil.formatStringsForColumns(rawOutputTable, true);
+            
+            senderWrapper.sendMessage(ChatColor.AQUA + formattedOutputTable[0]); //header row
+            senderWrapper.sendMessage(ChatColor.DARK_AQUA + formattedOutputTable[1]); //seperator = signs
+            for(int i = 2 + (page * 5); i < formattedOutputTable.length && i < (page*5) + 5; i++) {
+                senderWrapper.sendMessage(ChatColor.YELLOW + formattedOutputTable[i]);
+            }
             
         } else {
-            for (int i = page - 1; i < plots.length && i < i + 5; i++) {
+            for (int i = (page*5); i < plots.length && i < (page*5) + 5; i++) {
                 senderWrapper.sendMessage(ChatColor.YELLOW + plots[i].getName());
             }
         }
