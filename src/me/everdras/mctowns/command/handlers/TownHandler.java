@@ -640,7 +640,7 @@ public class TownHandler extends CommandHandler {
     }
 
     public void setTownFriendlyFire(String sFriendlyFire) {
-        if (senderWrapper.hasMayoralPermissions()) {
+        if (!senderWrapper.hasMayoralPermissions()) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
