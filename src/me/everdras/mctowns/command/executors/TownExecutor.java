@@ -264,6 +264,7 @@ public class TownExecutor extends BaseExecutor {
                     break;
 
                 case "pvp":
+                    helpMessage = "/town pvp (friendlyfire)";
                     switch (command.get(2).toLowerCase()) {
                         case "friendlyfire":
                             helpMessage = "/town pvp friendlyfire <on/off>";
