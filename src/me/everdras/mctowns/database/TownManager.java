@@ -4,6 +4,7 @@
  */
 package me.everdras.mctowns.database;
 
+import me.everdras.core.location.Location;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.*;

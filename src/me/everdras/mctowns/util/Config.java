@@ -3,8 +3,6 @@ package me.everdras.mctowns.util;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

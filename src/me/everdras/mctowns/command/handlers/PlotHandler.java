@@ -269,11 +269,11 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        me.everdras.mctowns.structure.Location mctLoc;
+        me.everdras.core.location.Location mctLoc;
 
         Player player = senderWrapper.getPlayer();
 
-        mctLoc = me.everdras.mctowns.structure.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
+        mctLoc = me.everdras.core.location.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
 
         if (mctLoc == null) {
             senderWrapper.sendMessage(ERR + "Couldn't get the location you're looking at.");
