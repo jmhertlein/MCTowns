@@ -261,7 +261,9 @@ public class MCTHandler extends CommandHandler {
     }
 
     private void listTowns(int page) {
-        if (page <= 0) {
+        page--; //shift to 0-indexing
+        
+        if(page < 0) {
             senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
         }
@@ -271,7 +273,7 @@ public class MCTHandler extends CommandHandler {
 
         Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
 
-        for (int i = page - 1; i < towns.length && i < i + 5; i++) {
+        for (int i = page*5; i < towns.length && i < page*5 + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + towns[i].getTownName());
         }
 
