@@ -226,6 +226,12 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     private void listDistricts(int page) {
+        page--; //shift to 0-indexing
+        
+        if(page < 0) {
+            senderWrapper.sendMessage(ERR + "Invalid page.");
+            return;
+        }
 
         Territory t = senderWrapper.getActiveTerritory();
 
@@ -239,7 +245,7 @@ public class TerritoryHandler extends CommandHandler {
 
         District[] dists = t.getDistrictsCollection().toArray(new District[t.getDistrictsCollection().size()]);
 
-        for (int i = page - 1; i < dists.length && i < i + 5; i++) {
+        for (int i = page*5; i < dists.length && i < page*5 + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + dists[i].getName());
         }
     }

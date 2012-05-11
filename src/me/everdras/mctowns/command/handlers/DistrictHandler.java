@@ -39,8 +39,12 @@ public class DistrictHandler extends CommandHandler {
     }
 
     private void listPlots(int page) {
-        page--; //switch from 1-indexing to 0-indexing, since apparently
-        //non-programmers are confused by the concept of a "page 0".
+        page--; //shift to 0-indexing
+        
+        if(page < 0) {
+            senderWrapper.sendMessage(ERR + "Invalid page.");
+            return;
+        }
 
         District d = senderWrapper.getActiveDistrict();
 

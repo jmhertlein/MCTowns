@@ -708,6 +708,13 @@ public class TownHandler extends CommandHandler {
     }
 
     public void listResidents(int page) {
+        page--; //shift to 0-indexing
+        
+        if(page < 0) {
+            senderWrapper.sendMessage(ERR + "Invalid page.");
+            return;
+        }
+        
         Town t = senderWrapper.getActiveTown();
 
         if (t == null) {
@@ -718,7 +725,7 @@ public class TownHandler extends CommandHandler {
 
         String[] players = t.getResidentNames();
 
-        for (int i = page - 1; i < players.length && i < i + 5; i++) {
+        for (int i = page*5; i < players.length && i < page*5 + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + players[i]);
         }
     }
@@ -976,6 +983,12 @@ public class TownHandler extends CommandHandler {
     }
 
     public void listTerritories(int page) {
+        page--; //shift to 0-indexing
+        
+        if(page < 0) {
+            senderWrapper.sendMessage(ERR + "Invalid page.");
+            return;
+        }
 
         Town t = senderWrapper.getActiveTown();
 
@@ -989,7 +1002,7 @@ public class TownHandler extends CommandHandler {
 
         Territory[] territs = t.getTerritoriesCollection().toArray(new Territory[t.getTerritoriesCollection().size()]);
 
-        for (int i = page - 1; i < territs.length && i < i + 5; i++) {
+        for (int i = page*5; i < territs.length && i < page*5 + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + territs[i].getName());
         }
     }
