@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -42,8 +41,6 @@ public class TownHandler extends CommandHandler {
     public TownHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
     }
-
-
 
     public void setActiveTown(String townName) {
         if (!senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
@@ -153,10 +150,11 @@ public class TownHandler extends CommandHandler {
         }
 
         t.setBuyablePlots(buyability);
-        if(buyability)
+        if (buyability) {
             senderWrapper.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots can now be sold and new plots are buyable by default.");
-        else
+        } else {
             senderWrapper.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots are no longer for sale.");
+        }
 
 
     }
@@ -318,24 +316,7 @@ public class TownHandler extends CommandHandler {
             senderWrapper.notifyInsufPermissions();
             return;
         }
-
-
-
-
-
-        Player p = server.getPlayer(invitee);
-
-        if (townManager.playerIsAlreadyInATown(invitee)) {
-            senderWrapper.sendMessage(ERR + p.getName() + " is already in a town.");
-            return;
-        }
-
-
         Town t = senderWrapper.getActiveTown();
-
-        if (p == null) {
-            senderWrapper.sendMessage(INFO + "\"" + invitee + "\" is not online. The invitation will be sent, but please double-check their name.");
-        }
 
         if (t == null) {
             senderWrapper.notifyActiveTownNotSet();
@@ -347,9 +328,20 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
+        Player p = server.getPlayer(invitee);
+
+        if (townManager.playerIsAlreadyInATown(invitee)) {
+            senderWrapper.sendMessage(ERR + p.getName() + " is already in a town.");
+            return;
+        }
+
+        if (p == null) {
+            senderWrapper.sendMessage(INFO + "\"" + invitee + "\" is not online. The invitation will be sent, but please double-check their name.");
+        } else {
+            invitee = p.getName(); //let's use that sexy name-completion
+        }
+
         TownJoinInfoPair infoPair = new TownJoinInfoPair(t, invitee);
-
-
 
         if (joinManager.matchInviteToRequestAndDiscard(infoPair)) {
             t.addPlayer(invitee);
@@ -357,12 +349,10 @@ public class TownHandler extends CommandHandler {
             broadcastTownJoin(t, invitee);
         } else {
             joinManager.submitInvitation(infoPair);
-            senderWrapper.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
+            senderWrapper.sendMessage(SUCC + (p == null ? invitee : p.getName()) + " has been invited to join " + t.getTownName() + ".");
             p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
             p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
-
         }
-
     }
 
     public void promoteToAssistant(String playerName) {
@@ -444,7 +434,7 @@ public class TownHandler extends CommandHandler {
         if (t.removeAssistant(p)) {
             senderWrapper.sendMessage(p.getName() + " has been demoted.");
             p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
-            for(Territory rm : t.getTerritoriesCollection()) {
+            for (Territory rm : t.getTerritoriesCollection()) {
                 rm.removePlayerFromWGRegion(wgp, p.getName());
             }
         } else {
@@ -698,7 +688,7 @@ public class TownHandler extends CommandHandler {
         int i;
         try {
             i = Integer.parseInt(s_page);
-        } catch(NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             senderWrapper.sendMessage(ERR + "Error parsing token \"" + s_page + "\":" + ex.getMessage());
             return;
         }
@@ -708,12 +698,12 @@ public class TownHandler extends CommandHandler {
 
     public void listResidents(int page) {
         page--; //shift to 0-indexing
-        
-        if(page < 0) {
+
+        if (page < 0) {
             senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
         }
-        
+
         Town t = senderWrapper.getActiveTown();
 
         if (t == null) {
@@ -724,7 +714,7 @@ public class TownHandler extends CommandHandler {
 
         String[] players = t.getResidentNames();
 
-        for (int i = page*5; i < players.length && i < page*5 + 5; i++) {
+        for (int i = page * 5; i < players.length && i < page * 5 + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + players[i]);
         }
     }
@@ -973,7 +963,7 @@ public class TownHandler extends CommandHandler {
         int i;
         try {
             i = Integer.parseInt(s_page);
-        } catch(NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             senderWrapper.sendMessage(ERR + "Error parsing token \"" + s_page + "\":" + ex.getMessage());
             return;
         }
@@ -983,8 +973,8 @@ public class TownHandler extends CommandHandler {
 
     public void listTerritories(int page) {
         page--; //shift to 0-indexing
-        
-        if(page < 0) {
+
+        if (page < 0) {
             senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
         }
@@ -1001,7 +991,7 @@ public class TownHandler extends CommandHandler {
 
         Territory[] territs = t.getTerritoriesCollection().toArray(new Territory[t.getTerritoriesCollection().size()]);
 
-        for (int i = page*5; i < territs.length && i < page*5 + 5; i++) {
+        for (int i = page * 5; i < territs.length && i < page * 5 + 5; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + territs[i].getName());
         }
     }
@@ -1009,8 +999,4 @@ public class TownHandler extends CommandHandler {
     public void listTerritories() {
         listTerritories(1);
     }
-
-    
-
-
 }
