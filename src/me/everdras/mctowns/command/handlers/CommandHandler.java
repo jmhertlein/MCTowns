@@ -303,12 +303,15 @@ public abstract class CommandHandler {
     }
 
     protected void broadcastTownJoin(Town t, Player whoJoined) {
+        broadcastTownJoin(t, whoJoined.getName());
+    }
+    
+    protected void broadcastTownJoin(Town t, String s_playerWhoJoined) {
         for (String pl : t.getResidentNames()) {
             try {
-
-                (server.getPlayer(pl).equals(whoJoined) ? null : server.getPlayer(pl)).sendMessage(whoJoined.getName() + " just joined " + t.getTownName() + "!");
-            } catch (NullPointerException npe) {
-            }
+                //broadcast the join to everyone BUT the player who joined.
+                (pl.equals(s_playerWhoJoined) ? null : server.getPlayer(pl)).sendMessage(s_playerWhoJoined + " just joined " + t.getTownName() + "!");
+            } catch (NullPointerException ignore) {}
         }
     }
 

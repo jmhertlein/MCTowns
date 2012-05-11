@@ -62,7 +62,7 @@ public class TownManager implements Externalizable {
      * @return true if the player is already in any town, false otherwise
      */
     public boolean playerIsAlreadyInATown(Player p) {
-        return matchPlayerToTown(p) != null;
+        return playerIsAlreadyInATown(p.getName());
     }
 
     /**
@@ -207,25 +207,19 @@ public class TownManager implements Externalizable {
      * @return the town of which the player is a member, or null if player has no town
      */
     public Town matchPlayerToTown(Player p) {
+        return matchPlayerToTown(p.getName());
 
-        for (Town town : towns.values()) {
-            if (town.playerIsResident(p)) {
-                return town;
-            }
-        }
-
-        return null;
     }
 
     /**
-     * Matches a possibly nonlive player to a town
+     * Matches a possibly non-live player to a town
      * @param playerName the name of the player to match for
      * @return the Town the player is a member of, or null if player is not a member of any town
      */
     public Town matchPlayerToTown(String playerName) {
-        for (Town t : towns.values()) {
-            if (t.playerIsResident(playerName)) {
-                return t;
+        for (Town town : towns.values()) {
+            if (town.playerIsResident(playerName)) {
+                return town;
             }
         }
 
@@ -364,5 +358,9 @@ public class TownManager implements Externalizable {
         else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Town.");
         }
+    }
+
+    public boolean playerIsAlreadyInATown(String invitee) {
+        return matchPlayerToTown(invitee) != null;
     }
 }

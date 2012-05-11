@@ -325,7 +325,7 @@ public class TownHandler extends CommandHandler {
 
         Player p = server.getPlayer(invitee);
 
-        if (townManager.playerIsAlreadyInATown(p)) {
+        if (townManager.playerIsAlreadyInATown(invitee)) {
             senderWrapper.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
@@ -334,8 +334,7 @@ public class TownHandler extends CommandHandler {
         Town t = senderWrapper.getActiveTown();
 
         if (p == null) {
-            senderWrapper.sendMessage(ERR + "That player is not online.");
-            return;
+            senderWrapper.sendMessage(INFO + "\"" + invitee + "\" is not online. The invitation will be sent, but please double-check their name.");
         }
 
         if (t == null) {
@@ -348,14 +347,14 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        TownJoinInfoPair infoPair = new TownJoinInfoPair(t, p);
+        TownJoinInfoPair infoPair = new TownJoinInfoPair(t, invitee);
 
 
 
         if (joinManager.matchInviteToRequestAndDiscard(infoPair)) {
-            t.addPlayer(p);
+            t.addPlayer(invitee);
             p.sendMessage("You have joined " + t.getTownName() + "!");
-            broadcastTownJoin(t, p);
+            broadcastTownJoin(t, invitee);
         } else {
             joinManager.submitInvitation(infoPair);
             senderWrapper.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
@@ -1010,6 +1009,8 @@ public class TownHandler extends CommandHandler {
     public void listTerritories() {
         listTerritories(1);
     }
+
+    
 
 
 }

@@ -161,12 +161,16 @@ public class Town implements Externalizable {
      * @return false if player was not added because player is already added, true otherwise
      */
     public boolean addPlayer(Player p) {
-        if (residents.containsKey(p.getName())) {
+        return addPlayer(p.getName());
+    }
+    
+    public boolean addPlayer(String playerName) {
+        if (residents.containsKey(playerName)) {
             return false;
         }
 
-        residents.put(p.getName(), true);
-        residentNames.add(p.getName());
+        residents.put(playerName, true);
+        residentNames.add(playerName);
         return true;
     }
 
@@ -636,6 +640,8 @@ public class Town implements Externalizable {
     public void setDefaultPlotPrice(BigDecimal defaultPlotPrice) {
         this.defaultPlotPrice = defaultPlotPrice;
     }
+
+    
 
 
 }
