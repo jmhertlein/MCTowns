@@ -245,7 +245,7 @@ public class TerritoryHandler extends CommandHandler {
 
         District[] dists = t.getDistrictsCollection().toArray(new District[t.getDistrictsCollection().size()]);
 
-        for (int i = page*5; i < dists.length && i < page*5 + 5; i++) {
+        for (int i = page*RESULTS_PER_PAGE; i < dists.length && i < page*RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + dists[i].getName());
         }
     }

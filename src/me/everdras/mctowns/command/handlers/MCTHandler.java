@@ -273,7 +273,7 @@ public class MCTHandler extends CommandHandler {
 
         Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
 
-        for (int i = page*5; i < towns.length && i < page*5 + 5; i++) {
+        for (int i = page*RESULTS_PER_PAGE; i < towns.length && i < page*RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + towns[i].getTownName());
         }
 

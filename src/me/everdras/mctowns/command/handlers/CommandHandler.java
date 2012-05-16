@@ -48,6 +48,9 @@ public abstract class CommandHandler {
     protected static final String TERRITORY_INFIX = "_territ_";
     protected static final String DISTRICT_INFIX = "_dist_";
     protected static final String PLOT_INFIX = "_plot_";
+    
+    protected static final int RESULTS_PER_PAGE = 10;
+    
     protected MCTowns plugin;
     protected MCTCommandSenderWrapper senderWrapper;
     protected TownManager townManager;

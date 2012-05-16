@@ -79,12 +79,12 @@ public class DistrictHandler extends CommandHandler {
             
             senderWrapper.sendMessage(ChatColor.AQUA + formattedOutputTable[0]); //header row
             senderWrapper.sendMessage(ChatColor.DARK_AQUA + formattedOutputTable[1]); //seperator = signs
-            for(int i = 2 + (page * 5); i < formattedOutputTable.length && i < (page*5) + 5; i++) {
+            for(int i = 2 + (page * RESULTS_PER_PAGE); i < formattedOutputTable.length && i < (page*RESULTS_PER_PAGE) + RESULTS_PER_PAGE; i++) {
                 senderWrapper.sendMessage(ChatColor.YELLOW + formattedOutputTable[i]);
             }
             
         } else {
-            for (int i = (page*5); i < plots.length && i < (page*5) + 5; i++) {
+            for (int i = (page*RESULTS_PER_PAGE); i < plots.length && i < (page*RESULTS_PER_PAGE) + RESULTS_PER_PAGE; i++) {
                 senderWrapper.sendMessage(ChatColor.YELLOW + plots[i].getName());
             }
         }
