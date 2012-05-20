@@ -314,4 +314,8 @@ public class MCTowns extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
+    
+    public Config getOptions() {
+        return options;
+    }
 }
