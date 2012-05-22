@@ -203,7 +203,7 @@ public class DistrictHandler extends CommandHandler {
 
         d.removePlot(plotName);
 
-        townManager.unregisterPlotFromWorldGuard(wgp, removeMe);
+        TownManager.unregisterPlotFromWorldGuard(wgp, removeMe);
 
         senderWrapper.sendMessage(SUCC + "Plot removed.");
     }

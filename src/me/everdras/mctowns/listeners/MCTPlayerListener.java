@@ -153,22 +153,6 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-        if (economy == null) {
-            MCTowns.log.log(Level.SEVERE, "Economy was null!");
-        }
-
-        if (event == null) {
-            MCTowns.log.log(Level.SEVERE, "Event was null!");
-        }
-
-        if (plotToBuy == null) {
-            MCTowns.log.log(Level.SEVERE, "PlotToBuy was null!");
-        }
-
-        if (plotToBuy.getActivePlot() == null) {
-            MCTowns.log.log(Level.SEVERE, "PlotToBuy's active plot was null!");
-        }
-
 
         if (!economy.has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice().floatValue())) {
             event.getPlayer().sendMessage(ChatColor.RED + "Insufficient funds (costs " + plotToBuy.getActivePlot().getPrice() + ").");

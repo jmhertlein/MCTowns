@@ -306,7 +306,7 @@ public class TownHandler extends CommandHandler {
 
         to.removeTerritory(territName);
 
-        townManager.unregisterTerritoryFromWorldGuard(wgp, removeMe);
+        TownManager.unregisterTerritoryFromWorldGuard(wgp, removeMe);
 
         senderWrapper.sendMessage(SUCC + "Territory removed.");
     }

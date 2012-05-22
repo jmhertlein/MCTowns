@@ -4,18 +4,27 @@
  */
 package me.everdras.mctowns.database;
 
-import me.everdras.core.location.Location;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
+
+import me.everdras.core.location.Location;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.structure.*;
-import org.bukkit.Server;
+import me.everdras.mctowns.structure.District;
+import me.everdras.mctowns.structure.MCTownsRegion;
+import me.everdras.mctowns.structure.Plot;
+import me.everdras.mctowns.structure.Territory;
+import me.everdras.mctowns.structure.Town;
+
 import org.bukkit.entity.Player;
+
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 /**
  *
@@ -135,11 +144,11 @@ public class TownManager implements Externalizable {
      * @param t the town to remove
      * @return false if the town was null, true otherwise
      */
-    public boolean unregisterTownFromWorldGuard(WorldGuardPlugin wgp, Town t) {
+    public static boolean unregisterTownFromWorldGuard(WorldGuardPlugin wgp, Town t) {
         if (t == null) {
             return false;
         }
-        for (Territory territ : t.getTerritories().values()) {
+        for (Territory territ : t.getTerritoriesCollection()) {
             unregisterTerritoryFromWorldGuard(wgp, territ);
         }
         return true;
@@ -151,11 +160,11 @@ public class TownManager implements Externalizable {
      * @param t the territory to remove
      * @return false if t was null, true otherwise
      */
-    public boolean unregisterTerritoryFromWorldGuard(WorldGuardPlugin wgp, Territory t) {
+    public static boolean unregisterTerritoryFromWorldGuard(WorldGuardPlugin wgp, Territory t) {
         if (t == null) {
             return false;
         }
-        for (District d : t.getDistricts().values()) {
+        for (District d : t.getDistrictsCollection()) {
             unregisterDistrictFromWorldGuard(wgp, d);
         }
 
@@ -170,13 +179,13 @@ public class TownManager implements Externalizable {
      * @param d the district to remove
      * @return false if d is null, true otherwise
      */
-    public boolean unregisterDistrictFromWorldGuard(WorldGuardPlugin wgp, District d) {
+    public static boolean unregisterDistrictFromWorldGuard(WorldGuardPlugin wgp, District d) {
 
         if (d == null) {
             return false;
         }
 
-        for (Plot p : d.getPlots().values()) {
+        for (Plot p : d.getPlotsCollection()) {
             unregisterPlotFromWorldGuard(wgp, p);
         }
 
@@ -193,7 +202,7 @@ public class TownManager implements Externalizable {
      * @param p the plot to remove
      * @return false if p is null, true otherwise
      */
-    public boolean unregisterPlotFromWorldGuard(WorldGuardPlugin wgp, Plot p) {
+    public static boolean unregisterPlotFromWorldGuard(WorldGuardPlugin wgp, Plot p) {
         if (p == null) {
             return false;
         }
@@ -251,16 +260,6 @@ public class TownManager implements Externalizable {
     }
 
     /**
-     * Does "stuff" that needs to be "done" before the manager is "saved".
-     * As of v0.5.2, this method does nothing. You lose, good day sir.
-     * @param server the server instance
-     * @param wgp the server's WorldGuard instance
-     * @throws IOException whoops something happened that was bad.
-     */
-    public void prepToSave(Server server, WorldGuardPlugin wgp) throws IOException {
-    }
-
-    /**
      * Removes the player from every WG region associated with this town.
      * @param wgp the server's WorldGuard instance
      * @param town
@@ -282,9 +281,9 @@ public class TownManager implements Externalizable {
      * @param territ
      * @param p
      */
-    public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, Player p) {
-        removePlayerFromTerritorysWGRegions(wgp, territ, p.getName());
-    }
+//    public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, Player p) {
+//        removePlayerFromTerritorysWGRegions(wgp, territ, p.getName());
+//    }
 
     public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, String playerName) {
         removePlayerFromWorldGuardRegion(wgp, territ, playerName);
@@ -329,7 +328,8 @@ public class TownManager implements Externalizable {
 
     }
 
-    private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, Player p) {
+    @SuppressWarnings("unused")
+	private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, Player p) {
         removePlayerFromWorldGuardRegion(wgp, mctRegion, p.getName());
     }
 
@@ -346,7 +346,8 @@ public class TownManager implements Externalizable {
         out.writeObject(towns);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int ver = in.readInt();
 

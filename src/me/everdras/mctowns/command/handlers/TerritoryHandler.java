@@ -122,7 +122,7 @@ public class TerritoryHandler extends CommandHandler {
 
         t.removeDistrict(districtName);
 
-        townManager.unregisterDistrictFromWorldGuard(wgp, removeMe);
+        TownManager.unregisterDistrictFromWorldGuard(wgp, removeMe);
         senderWrapper.sendMessage(SUCC + "District removed.");
     }
 
