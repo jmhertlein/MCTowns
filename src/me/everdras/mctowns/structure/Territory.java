@@ -22,8 +22,12 @@ public class Territory extends MCTownsRegion implements Externalizable {
     private HashMap<String, District> districts;
 
 
-
+    /**
+     * Required constructor for Externalization
+     */
     public Territory() {}
+    
+    
     /**
      * Constructs a new territory
      * @param name the desired name of the territory
@@ -92,7 +96,8 @@ public class Territory extends MCTownsRegion implements Externalizable {
         out.writeObject(districts);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
 
