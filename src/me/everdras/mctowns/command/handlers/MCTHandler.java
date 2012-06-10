@@ -39,9 +39,11 @@ import org.bukkit.entity.Player;
  * @author Everdras
  */
 public class MCTHandler extends CommandHandler {
-
+    private HashMap<String, ActiveSet> activeSets;
+    
     public MCTHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
+        this.activeSets = activeSets;
     }
 
     public void checkIfRegionIsManagedByMCTowns() {
@@ -190,6 +192,9 @@ public class MCTHandler extends CommandHandler {
             MCTowns.logSevere("Town's world was null: " + (server.getWorld(t.getWorldName()) == null));
         }
 
+        //clear active sets to remove pointers to deleted town
+        activeSets.clear();
+        
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
 
