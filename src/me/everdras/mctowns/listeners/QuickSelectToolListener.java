@@ -15,6 +15,7 @@ import me.everdras.mctowns.structure.Town;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -47,8 +48,15 @@ public class QuickSelectToolListener implements Listener {
         }
         
     	MCTowns.logDebug("Item was tool.");
+    	Player player = e.getPlayer();
         
         ActiveSet actives = mctp.getActiveSets().get(e.getPlayer().getName());
+        
+        if (actives == null) {
+            mctp.getActiveSets().put(player.getName(), new ActiveSet());
+            actives = mctp.getActiveSets().get(player.getName());
+            actives.setActiveTown(mctp.getTownManager().matchPlayerToTown(player));
+        }
         
         if(actives.getActiveTown() == null) {
         	e.getPlayer().sendMessage(me.everdras.core.chat.ChatUtil.ERR + "Error selecting region, your active town is not set.");
