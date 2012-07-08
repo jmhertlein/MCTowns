@@ -4,6 +4,8 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
+import org.bukkit.Material;
+
 /**
  *
  * @author Joshua
@@ -16,6 +18,8 @@ public class Config {
     private BigDecimal pricePerXZBlock;
     private int minNumPlayersToBuyTerritory;
     private boolean allowTownFriendlyFireManagement;
+    private Material qsTool;
+    
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -31,6 +35,7 @@ public class Config {
         pricePerXZBlock = BigDecimal.ZERO;
         minNumPlayersToBuyTerritory = 3;
         allowTownFriendlyFireManagement = false;
+        qsTool = Material.getMaterial(290);
 
         failReason = "No fail detected.";
         File configPath = new File(configFilePath);
@@ -119,6 +124,16 @@ public class Config {
 
                     }
                     break;
+                    
+                case "quickSelectTool":
+                	curToken = lineScan.next().trim();
+                	try {
+                		qsTool = Material.getMaterial(Integer.parseInt(curToken));
+                	} catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                	break;
 
                 default:
                     failBit = true;
@@ -154,7 +169,11 @@ public class Config {
         return allowTownFriendlyFireManagement;
     }
 
-    /*
+    public Material getQsTool() {
+		return qsTool;
+	}
+
+	/*
      * Returns the next uncommented, non-empty line in the file.
      */
     private String getNextLine(Scanner fileScan) {
@@ -180,9 +199,9 @@ public class Config {
     }
 
     /**
-     * Gets the reason for which the config is not useable.
+     * Gets the reason for which the config is not usable.
      *
-     * @return the reason the config isn't useable
+     * @return the reason the config isn't usable
      */
     public String getFailReason() {
         return failReason;
@@ -224,6 +243,10 @@ public class Config {
         ps.println("minNumPlayersToBuyTerritory = 3");
         ps.println();
         ps.println("allowTownFriendlyFireManagement = false");
+        
+        ps.println();
+        ps.println("#Default is wooden hoe (ID 290)");
+        ps.println("quickSelectTool = 290");
 
 
         ps.close();

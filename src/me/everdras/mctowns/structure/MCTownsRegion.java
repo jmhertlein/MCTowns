@@ -132,4 +132,9 @@ public abstract class MCTownsRegion implements Externalizable {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of MCTownsRegion.");
         }
     }
+    
+    @Override
+    public String toString() {
+    	return name;
+    }
 }

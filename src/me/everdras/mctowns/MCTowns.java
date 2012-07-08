@@ -12,6 +12,7 @@ import me.everdras.mctowns.command.executors.*;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.listeners.MCTPlayerListener;
 import me.everdras.mctowns.listeners.MCTPvPListener;
+import me.everdras.mctowns.listeners.QuickSelectToolListener;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
@@ -194,12 +195,17 @@ public class MCTowns extends JavaPlugin {
     private void regEventListeners() {
         MCTPlayerListener playerListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
+        QuickSelectToolListener qsToolListener = new QuickSelectToolListener(wgp, this);
+        
+        //configure the tool listener as per the config
+        QuickSelectToolListener.SELECT_TOOL = options.getQsTool();
 
         if (options.allowsTownFriendlyFireManagement()) {
             getServer().getPluginManager().registerEvents(townPvPListener, this);
         }
 
         getServer().getPluginManager().registerEvents(playerListener, this);
+        getServer().getPluginManager().registerEvents(qsToolListener, this);
     }
 
     private void loadConfig() {
@@ -314,4 +320,30 @@ public class MCTowns extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
+    
+    public Config getOptions() {
+        return options;
+    }
+
+	public TownManager getTownManager() {
+		return townManager;
+	}
+
+	public TownJoinManager getJoinManager() {
+		return joinManager;
+	}
+
+	public HashMap<String, ActiveSet> getActiveSets() {
+		return activeSets;
+	}
+
+	public static Economy getEconomy() {
+		return economy;
+	}
+
+	public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
+		return potentialPlotBuyers;
+	}
+    
+    
 }

@@ -97,6 +97,11 @@ public class ActiveSet {
     public void setActiveTown(Town activeTown) {
         this.activeTown = activeTown;
     }
+    
+    @Override
+    public String toString() {
+    	return "Town: " + activeTown + " Territ: " + activeTerritory + " Dist: " + activeDistrict + " Plot: " + activePlot;
+    }
 
 
 }

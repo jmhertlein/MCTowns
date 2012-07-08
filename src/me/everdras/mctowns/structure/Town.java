@@ -640,6 +640,11 @@ public class Town implements Externalizable {
     public void setDefaultPlotPrice(BigDecimal defaultPlotPrice) {
         this.defaultPlotPrice = defaultPlotPrice;
     }
+    
+    @Override
+    public String toString() {
+    	return this.townName;
+    }
 
     
 
