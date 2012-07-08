@@ -12,6 +12,7 @@ import me.everdras.mctowns.command.executors.*;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.listeners.MCTPlayerListener;
 import me.everdras.mctowns.listeners.MCTPvPListener;
+import me.everdras.mctowns.listeners.QuickSelectToolListener;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
@@ -32,7 +33,7 @@ public class MCTowns extends JavaPlugin {
     private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
-    private static final boolean DEBUGGING = true;
+    private static final boolean DEBUGGING = false;
     private TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
@@ -194,12 +195,17 @@ public class MCTowns extends JavaPlugin {
     private void regEventListeners() {
         MCTPlayerListener playerListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
+        QuickSelectToolListener qsToolListener = new QuickSelectToolListener(wgp, this);
+        
+        //configure the tool listener as per the config
+        QuickSelectToolListener.SELECT_TOOL = options.getQsTool();
 
         if (options.allowsTownFriendlyFireManagement()) {
             getServer().getPluginManager().registerEvents(townPvPListener, this);
         }
 
         getServer().getPluginManager().registerEvents(playerListener, this);
+        getServer().getPluginManager().registerEvents(qsToolListener, this);
     }
 
     private void loadConfig() {
@@ -318,4 +324,26 @@ public class MCTowns extends JavaPlugin {
     public Config getOptions() {
         return options;
     }
+
+	public TownManager getTownManager() {
+		return townManager;
+	}
+
+	public TownJoinManager getJoinManager() {
+		return joinManager;
+	}
+
+	public HashMap<String, ActiveSet> getActiveSets() {
+		return activeSets;
+	}
+
+	public static Economy getEconomy() {
+		return economy;
+	}
+
+	public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
+		return potentialPlotBuyers;
+	}
+    
+    
 }
