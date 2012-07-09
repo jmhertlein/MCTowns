@@ -16,6 +16,7 @@ import me.everdras.mctowns.listeners.QuickSelectToolListener;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
+import me.everdras.mctowns.util.metrics.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -343,6 +344,17 @@ public class MCTowns extends JavaPlugin {
 
 	public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
 		return potentialPlotBuyers;
+	}
+	
+	public void startMetricsCollection() {
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
+		}
+		
+		MCTowns.logInfo("Metrics reporting started.");
 	}
     
     
