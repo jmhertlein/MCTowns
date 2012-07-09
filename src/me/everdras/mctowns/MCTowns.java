@@ -105,6 +105,8 @@ public class MCTowns extends JavaPlugin {
         setCommandExecutors();
 
         abortSave = false;
+        
+        startMetricsCollection();
 
         log.info("MCTowns is now fully loaded.");
 
@@ -346,7 +348,7 @@ public class MCTowns extends JavaPlugin {
 		return potentialPlotBuyers;
 	}
 	
-	public void startMetricsCollection() {
+	private void startMetricsCollection() {
 		try {
 		    Metrics metrics = new Metrics(this);
 		    metrics.start();
