@@ -25,28 +25,16 @@ public abstract class BaseExecutor implements CommandExecutor {
     protected TownManager townManager;
     protected TownJoinManager joinManager;
     protected HashMap<String, ActiveSet> activeSets;
-    protected static WorldGuardPlugin wgp;
-    protected static Economy economy;
-    protected static Config options;
+    protected static WorldGuardPlugin wgp = MCTowns.getWgp();
+    protected static Economy economy = MCTowns.getEconomy();
+    protected static Config options = MCTowns.getOptions();
     protected HashMap<Player, ActiveSet> potentialPlotBuyers;
 
-    public BaseExecutor(MCTowns parent, WorldGuardPlugin wgp, Economy economy, Config options, TownManager townManager, TownJoinManager joinManager, HashMap<String, ActiveSet> activeSets, HashMap<Player, ActiveSet> potentialPlotBuyers) {
-        if (BaseExecutor.options == null) {
-            BaseExecutor.options = options;
-        }
-
-        if (BaseExecutor.wgp == null) {
-            BaseExecutor.wgp = wgp;
-        }
-
-        if (BaseExecutor.economy == null) {
-            BaseExecutor.economy = economy;
-        }
-
-        this.townManager = townManager;
-        this.joinManager = joinManager;
-        this.activeSets = activeSets;
-        this.potentialPlotBuyers = potentialPlotBuyers;
+    public BaseExecutor(MCTowns parent) {
         this.parent = parent;
+        this.townManager = parent.getTownManager();
+        this.joinManager = parent.getJoinManager();
+        this.activeSets = parent.getActiveSets();
+        this.potentialPlotBuyers = parent.getPotentialPlotBuyers();
     }
 }

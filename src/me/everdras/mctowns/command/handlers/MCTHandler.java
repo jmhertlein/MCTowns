@@ -4,7 +4,6 @@
  */
 package me.everdras.mctowns.command.handlers;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -21,29 +20,22 @@ import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.townjoin.TownJoinInfoPair;
-import me.everdras.mctowns.townjoin.TownJoinManager;
-import me.everdras.mctowns.util.Config;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * @author Everdras
  */
 public class MCTHandler extends CommandHandler {
-    private HashMap<String, ActiveSet> activeSets;
     
-    public MCTHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
-        super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
-        this.activeSets = activeSets;
+    public MCTHandler(MCTowns parent) {
+        super(parent);
     }
 
     public void checkIfRegionIsManagedByMCTowns() {
@@ -193,7 +185,7 @@ public class MCTHandler extends CommandHandler {
         }
 
         //clear active sets to remove pointers to deleted town
-        activeSets.clear();
+        plugin.getActiveSets().clear();
         
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");

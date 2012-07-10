@@ -5,27 +5,20 @@
 
 package me.everdras.mctowns.command.handlers;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static me.everdras.core.chat.ChatUtil.*;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
-import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
-import me.everdras.mctowns.townjoin.TownJoinManager;
-import me.everdras.mctowns.util.Config;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -33,8 +26,8 @@ import org.bukkit.entity.Player;
  */
 public class TerritoryHandler extends CommandHandler {
 
-    public TerritoryHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
-        super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
+    public TerritoryHandler(MCTowns parent) {
+        super(parent);
     }
 
 

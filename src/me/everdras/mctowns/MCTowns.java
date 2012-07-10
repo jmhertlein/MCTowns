@@ -35,6 +35,7 @@ public class MCTowns extends JavaPlugin {
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
+    
     private TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
@@ -67,6 +68,7 @@ public class MCTowns extends JavaPlugin {
         economy = null;
         options = null;
         potentialPlotBuyers = null;
+        wgp = null;
     }
 
     /**
@@ -76,10 +78,6 @@ public class MCTowns extends JavaPlugin {
     @Override
     public void onEnable() {
         log.log(Level.INFO, "MCTowns is now setting up...");
-
-        logDebug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        logDebug("!!!!!!!!!!!!!!!!  NOTICE  !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        logDebug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         logDebug("NOTICE: MCTowns is currently running in debug mode. This means a lot of extra info will probably be printed to the console, but nothing else will change.");
         logDebug("Debug Mode is a hardcoded option, and it is not possible to disable. If you are using a dev build, this is INTENTIONAL. Since Dev Builds are about getting bugs fixed, this extra information is valuable.");
 
@@ -281,11 +279,11 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void setCommandExecutors() {
-        getCommand("mct").setExecutor(new MCTExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
-        getCommand("town").setExecutor(new TownExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
-        getCommand("territory").setExecutor(new TerritoryExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
-        getCommand("district").setExecutor(new DistrictExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
-        getCommand("plot").setExecutor(new PlotExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
+        getCommand("mct").setExecutor(new MCTExecutor(this));
+        getCommand("town").setExecutor(new TownExecutor(this));
+        getCommand("territory").setExecutor(new TerritoryExecutor(this));
+        getCommand("district").setExecutor(new DistrictExecutor(this));
+        getCommand("plot").setExecutor(new PlotExecutor(this));
     }
 
     public static void logSevere(String msg) {
@@ -324,7 +322,7 @@ public class MCTowns extends JavaPlugin {
         this.abortSave = abortSave;
     }
     
-    public Config getOptions() {
+    public static Config getOptions() {
         return options;
     }
 
@@ -347,6 +345,12 @@ public class MCTowns extends JavaPlugin {
 	public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
 		return potentialPlotBuyers;
 	}
+
+    public static WorldGuardPlugin getWgp() {
+        return wgp;
+    }
+        
+        
 	
 	private void startMetricsCollection() {
 		try {

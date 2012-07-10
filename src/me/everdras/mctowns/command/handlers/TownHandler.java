@@ -4,32 +4,25 @@
  */
 package me.everdras.mctowns.command.handlers;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedList;
 import static me.everdras.core.chat.ChatUtil.*;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.banking.BlockBank;
-import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.townjoin.TownJoinInfoPair;
-import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.townjoin.TownJoinMethod;
 import me.everdras.mctowns.townjoin.TownJoinMethodFormatException;
 import me.everdras.mctowns.util.BlockDataValueTranslator;
-import me.everdras.mctowns.util.Config;
 import me.everdras.mctowns.util.WGUtils;
-import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,8 +31,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class TownHandler extends CommandHandler {
 
-    public TownHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
-        super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
+    public TownHandler(MCTowns parent) {
+        super(parent);
     }
 
     public void setActiveTown(String townName) {

@@ -34,8 +34,8 @@ import org.bukkit.entity.Player;
  */
 public class DistrictHandler extends CommandHandler {
 
-    public DistrictHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
-        super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
+    public DistrictHandler(MCTowns parent) {
+        super(parent);
     }
 
     private void listPlots(int page) {

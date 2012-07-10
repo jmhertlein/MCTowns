@@ -44,7 +44,6 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public abstract class CommandHandler {
-
     protected static final String TERRITORY_INFIX = "_territ_";
     protected static final String DISTRICT_INFIX = "_dist_";
     protected static final String PLOT_INFIX = "_plot_";
@@ -52,52 +51,31 @@ public abstract class CommandHandler {
     protected static final int RESULTS_PER_PAGE = 10;
     
     protected MCTowns plugin;
-    protected MCTCommandSenderWrapper senderWrapper;
     protected TownManager townManager;
     protected TownJoinManager joinManager;
-    protected WorldGuardPlugin wgp;
-    protected WorldEditPlugin wep;
-    protected Economy economy;
+    protected static WorldGuardPlugin wgp = MCTowns.getWgp();
+    protected static Economy economy = MCTowns.getEconomy();
     protected Server server;
-    protected Config options;
+    protected static Config options = MCTowns.getOptions();
+    
+    protected MCTCommandSenderWrapper senderWrapper;
     protected ECommand cmd;
 
     /**
      * Wraps the command sender.
      *
      * @param parent the parent plugin
-     * @param t the town manager
-     * @param j the join manager
-     * @param p the command sender
-     * @param activeSets the map of active sets
      */
-    public CommandHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
-        townManager = t;
-        joinManager = j;
-        server = p.getServer();
+    public CommandHandler(MCTowns parent) {
         plugin = parent;
-
-        senderWrapper = new MCTCommandSenderWrapper(t, p, activeSets);
-        wgp = wg;
-        economy = econ;
-
-        options = opt;
-
-        this.cmd = cmd;
-
-
-
-
-        try {
-            wep = wgp.getWorldEdit();
-        } catch (CommandException ex) {
-            wep = null;
-        }
-
-        if (wgp == null || wep == null) {
-            MCTowns.log.log(Level.SEVERE, "[MCTowns] !!!!!YOU DO NOT HAVE WORLDGUARD INSTALLED. WORLDGUARD IS A REQUIRED DEPENDENCY OF MCTOWNS!!!!!");
-        }
-
+        townManager = parent.getTownManager();
+        joinManager = parent.getJoinManager();
+        server = parent.getServer();
+    }
+    
+    public void setNewCommand(CommandSender sender, ECommand c) {
+        cmd = c;
+        senderWrapper = new MCTCommandSenderWrapper(townManager, sender, plugin.getActiveSets());
     }
 
     /**
@@ -259,6 +237,7 @@ public abstract class CommandHandler {
     }
 
     //====================================PRIVATE===========================
+    @Deprecated
     protected WorldGuardPlugin getWGPFromSenderWrapper(MCTCommandSenderWrapper csw) {
         return (WorldGuardPlugin) csw.getSender().getServer().getPluginManager().getPlugin("WorldGuard");
     }
@@ -266,13 +245,17 @@ public abstract class CommandHandler {
     protected ProtectedCuboidRegion getSelectedRegion(String desiredName) {
         Selection selection;
         try {
-            selection = wep.getSelection((Player) senderWrapper.getSender());
+            selection = wgp.getWorldEdit().getSelection((Player) senderWrapper.getSender());
             if (selection == null) {
                 throw new NullPointerException();
             }
         } catch (NullPointerException npe) {
 
             senderWrapper.sendMessage("Error getting your WorldEdit selection. Did you forget to make a selection?");
+            return null;
+        } catch(CommandException ce) {
+            senderWrapper.sendMessage("Error hooking the WorldEdit plugin. Please tell your server owner.");
+            ce.printStackTrace();
             return null;
         }
 
@@ -321,7 +304,7 @@ public abstract class CommandHandler {
     protected ArrayList<String> getOutputFriendlyTownJoinListMessages(boolean forTown, LinkedList<TownJoinInfoPair> list) {
 
         ArrayList<String> msgs = new ArrayList<>();
-        String temp = "";
+        String temp;
         for (int i = 0; i < list.size(); i += 3) {
             temp = "";
             for (int j = i; j < list.size() && j < i + 3; j++) {
@@ -377,7 +360,14 @@ public abstract class CommandHandler {
 
         RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
 
-        Selection nuRegionBounds = wep.getSelection(senderWrapper.getPlayer());
+        Selection nuRegionBounds;
+        try {
+            nuRegionBounds = wgp.getWorldEdit().getSelection(senderWrapper.getPlayer());
+        } catch(CommandException ce) {
+            senderWrapper.sendMessage("Error hooking the world edit plugn. Please inform your server owner.");
+            ce.printStackTrace();
+            return;
+        }
 
         if (nuRegionBounds == null) {
             senderWrapper.sendMessage(ERR + "You need to select what you want the region's boundaries to be updated to.");
