@@ -360,7 +360,7 @@ public class MCTowns extends JavaPlugin {
 		    logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
 		}
 		
-		MCTowns.logInfo("Metrics reporting started.");
+		MCTowns.logDebug("Metrics reporting started.");
 	}
     
     

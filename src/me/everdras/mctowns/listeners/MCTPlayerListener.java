@@ -142,13 +142,13 @@ public class MCTPlayerListener implements Listener {
         ActiveSet plotToBuy = townManager.getPlotFromSignLocation(event.getClickedBlock().getLocation());
 
         if (plotToBuy == null) {
-            MCTowns.log.log(Level.SEVERE, "Sign was an MCT plot sign, but no matching plot was found.");
-            MCTowns.log.log(Level.SEVERE, "Sign's location was: " + event.getClickedBlock().getLocation().toString());
+            MCTowns.logSevere("Sign was an MCT plot sign, but no matching plot was found.");
+            MCTowns.logSevere("Sign's location was: " + event.getClickedBlock().getLocation().toString());
             return;
         }
 
 
-        if (!plotToBuy.getActivePlot().isForSale()) {
+        if (! plotToBuy.getActivePlot().isForSale()) {
             event.getPlayer().sendMessage(ChatColor.DARK_AQUA + "That plot is not for sale.");
             return;
         }
@@ -162,6 +162,7 @@ public class MCTPlayerListener implements Listener {
         //if it succeeds...
         potentialPlotBuyers.put(event.getPlayer(), plotToBuy);
         event.getPlayer().sendMessage(ChatColor.YELLOW + "Type \"/mct confirm\" to finish buying this plot.)");
+        event.getPlayer().sendMessage(ChatColor.YELLOW + "Please note, this plot costs " + ChatColor.DARK_RED.toString() + economy.format(plotToBuy.getActivePlot().getPrice().floatValue()) + " and typing \"/mct confirm\" will deduct this amount from your holdings.");
 
 
     }

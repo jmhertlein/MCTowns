@@ -12,10 +12,12 @@ import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import static me.everdras.core.chat.ChatUtil.ERR;
 import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
@@ -23,6 +25,7 @@ import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.MCTCommandSenderWrapper;
 import me.everdras.mctowns.database.TownManager;
+import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.structure.TownLevel;
@@ -270,9 +273,13 @@ public abstract class CommandHandler {
         return region;
     }
 
-    protected boolean selectionIsWithinParent(ProtectedCuboidRegion reg, MCTownsRegion parent) {
-        ProtectedCuboidRegion parentReg = (ProtectedCuboidRegion) wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
+    protected boolean selectionIsWithinParent(ProtectedRegion reg, MCTownsRegion parent) {
+        ProtectedRegion parentReg = wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
 
+        return selectionIsWithinParent(reg, parentReg);
+    }
+    
+    protected boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
         if (parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint())) {
             return true;
         }
@@ -350,6 +357,11 @@ public abstract class CommandHandler {
             default:
                 reg = null;
         }
+        
+        if(regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
+            senderWrapper.notifyInsufPermissions();
+            return;
+        }
 
         if (reg == null) {
             senderWrapper.sendMessage(ERR + "Your active " + regType.toString() + " is not set.");
@@ -392,6 +404,11 @@ public abstract class CommandHandler {
             senderWrapper.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
             return;
         }
+        
+        if(!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
+            senderWrapper.sendMessage(ERR + "Your new selection must be within its parent region.");
+            return;
+        }
 
         //if everything is all clear...
         //copy over everything important
@@ -399,6 +416,13 @@ public abstract class CommandHandler {
         nuWGRegion.setOwners(oldWGReg.getOwners());
         nuWGRegion.setFlags(oldWGReg.getFlags());
         nuWGRegion.setPriority(oldWGReg.getPriority());
+        try {
+            nuWGRegion.setParent(oldWGReg.getParent());
+        } catch (CircularInheritanceException ex) {
+            MCTowns.logSevere("Error copying parent during redefine: " + ex.getMessage());
+            ex.printStackTrace();
+            return;
+        }
 
         //apparently, this will replace the old region by the same name while preserving parent/child relationships
         //Conjecture: RegionManager uses hashes based on the name of the region, and the children only ever store a string (paren't ID) that
