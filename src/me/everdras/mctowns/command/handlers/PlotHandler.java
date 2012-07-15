@@ -200,6 +200,7 @@ public class PlotHandler extends CommandHandler {
         }
 
         p.setPrice(price);
+        p.buildSign(server);
         senderWrapper.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
     }
 
@@ -273,8 +274,9 @@ public class PlotHandler extends CommandHandler {
 
         //use the block ABOVE the one the player is staring at.
         mctLoc.setY(mctLoc.getY() + 1);
-
+        p.demolishSign(server);
         p.setSignLoc(mctLoc);
+        p.buildSign(server);
 
         senderWrapper.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
 

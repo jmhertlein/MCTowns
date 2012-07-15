@@ -120,16 +120,8 @@ public class Plot extends MCTownsRegion implements Externalizable {
 
 
         org.bukkit.Location loc = new org.bukkit.Location(wgp.getServer().getWorld(worldName), middle.getBlockX(), middle.getBlockY(), middle.getBlockZ());
-
-
-        for (int i = 128; i > 0; i--) {
-            loc.setY(i - 1);
-
-            if (loc.getBlock().getType() != Material.AIR) {
-                loc.setY(i);
-                break;
-            }
-        }
+        
+        loc.setY(loc.getWorld().getHighestBlockYAt(loc));
 
         signLoc = Location.convertFromBukkitLocation(loc);
     }
