@@ -162,7 +162,7 @@ public class MCTPlayerListener implements Listener {
         //if it succeeds...
         potentialPlotBuyers.put(event.getPlayer(), plotToBuy);
         event.getPlayer().sendMessage(ChatColor.YELLOW + "Type \"/mct confirm\" to finish buying this plot.)");
-        event.getPlayer().sendMessage(ChatColor.YELLOW + "Please note, this plot costs " + economy.format(plotToBuy.getActivePlot().getPrice().floatValue()) + " and typing \"/mct confirm\" will deduct this amount from your holdings.");
+        event.getPlayer().sendMessage(ChatColor.YELLOW + "Please note, this plot costs " + ChatColor.DARK_RED.toString() + economy.format(plotToBuy.getActivePlot().getPrice().floatValue()) + " and typing \"/mct confirm\" will deduct this amount from your holdings.");
 
 
     }
