@@ -25,6 +25,7 @@ import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.MCTCommandSenderWrapper;
 import me.everdras.mctowns.database.TownManager;
+import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.structure.TownLevel;
@@ -289,9 +290,13 @@ public abstract class CommandHandler {
         return region;
     }
 
-    protected boolean selectionIsWithinParent(ProtectedCuboidRegion reg, MCTownsRegion parent) {
-        ProtectedCuboidRegion parentReg = (ProtectedCuboidRegion) wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
+    protected boolean selectionIsWithinParent(ProtectedRegion reg, MCTownsRegion parent) {
+        ProtectedRegion parentReg = wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
 
+        return selectionIsWithinParent(reg, parentReg);
+    }
+    
+    protected boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
         if (parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint())) {
             return true;
         }
@@ -369,6 +374,11 @@ public abstract class CommandHandler {
             default:
                 reg = null;
         }
+        
+        if(regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
+            senderWrapper.notifyInsufPermissions();
+            return;
+        }
 
         if (reg == null) {
             senderWrapper.sendMessage(ERR + "Your active " + regType.toString() + " is not set.");
@@ -402,6 +412,11 @@ public abstract class CommandHandler {
         //new boundaries if the old region is a subset of the new region.
         if (!(nuWGRegion.contains(oldWGReg.getMaximumPoint()) && nuWGRegion.contains(oldWGReg.getMinimumPoint()))) {
             senderWrapper.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
+            return;
+        }
+        
+        if(!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
+            senderWrapper.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
         }
 
