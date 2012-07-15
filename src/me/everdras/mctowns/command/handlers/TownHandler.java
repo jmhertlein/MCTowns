@@ -248,7 +248,7 @@ public class TownHandler extends CommandHandler {
 
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
         if (!admin && options.getPricePerXZBlock().compareTo(BigDecimal.ZERO) > 0) {
-            assert (options.mayorsCanBuyTerritories());
+            MCTowns.logAssert(options.mayorsCanBuyTerritories(), "Mayers are unable to buy territories, but a player has managed to do so.");
 
 
 
@@ -256,8 +256,9 @@ public class TownHandler extends CommandHandler {
 
             if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
                 //If they can't afford it...
-                senderWrapper.sendMessage(ERR + "Your town can't afford that large of a region.");
+                senderWrapper.sendMessage(ERR + "There is not enough money in your " + INFO + "town's bank account" + ERR + " to buy a region that large.");
                 senderWrapper.sendMessage(ERR + "Total Price: " + price);
+                senderWrapper.sendMessage(INFO + "Add money to your town's bank with: /town bank deposit currency <amount>");
                 return;
             }
 
