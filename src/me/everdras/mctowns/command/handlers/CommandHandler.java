@@ -12,10 +12,12 @@ import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import static me.everdras.core.chat.ChatUtil.ERR;
 import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
@@ -409,6 +411,13 @@ public abstract class CommandHandler {
         nuWGRegion.setOwners(oldWGReg.getOwners());
         nuWGRegion.setFlags(oldWGReg.getFlags());
         nuWGRegion.setPriority(oldWGReg.getPriority());
+        try {
+            nuWGRegion.setParent(oldWGReg.getParent());
+        } catch (CircularInheritanceException ex) {
+            MCTowns.logSevere("Error copying parent during redefine: " + ex.getMessage());
+            ex.printStackTrace();
+            return;
+        }
 
         //apparently, this will replace the old region by the same name while preserving parent/child relationships
         //Conjecture: RegionManager uses hashes based on the name of the region, and the children only ever store a string (paren't ID) that
