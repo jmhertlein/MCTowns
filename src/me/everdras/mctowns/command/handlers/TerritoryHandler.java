@@ -111,6 +111,7 @@ public class TerritoryHandler extends CommandHandler {
 
         if (removeMe == null) {
             senderWrapper.sendMessage(ERR + "That district doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
+            return;
         }
 
         t.removeDistrict(districtName);

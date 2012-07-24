@@ -296,6 +296,7 @@ public class TownHandler extends CommandHandler {
 
         if (removeMe == null) {
             senderWrapper.sendMessage(ERR + "That territory doesn't exist. Make sure you're using the full name of the territory (townname_territory_territoryshortname).");
+            return;
         }
 
         to.removeTerritory(territName);

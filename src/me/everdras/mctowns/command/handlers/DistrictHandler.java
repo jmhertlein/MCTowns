@@ -199,6 +199,7 @@ public class DistrictHandler extends CommandHandler {
 
         if (removeMe == null) {
             senderWrapper.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the plot (townname_plot_plotshortname).");
+            return;
         }
 
         d.removePlot(plotName);
