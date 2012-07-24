@@ -12,6 +12,7 @@ import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
+import me.everdras.mctowns.structure.Town;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -53,20 +54,19 @@ public class QuickSelectToolListener implements Listener {
             actives.setActiveTown(mctp.getTownManager().matchPlayerToTown(player));
         }
 
-        if (actives.getActiveTown() == null) {
-            e.getPlayer().sendMessage(me.everdras.core.chat.ChatUtil.ERR + "Error selecting regions, your active town is not set.");
-            return;
-        }
-
         Location spotClicked = e.getClickedBlock().getLocation();
 
         ApplicableRegionSet regs = wgp.getRegionManager(e.getPlayer().getWorld()).getApplicableRegions(spotClicked);
 
+        Town town = null;
         Territory territ = null;
         for (ProtectedRegion pr : regs) {
-            territ = actives.getActiveTown().getTerritory(pr.getId());
-            if (territ != null) {
-                break;
+            for(Town to : mctp.getTownManager().getTownsCollection()) {
+                town = to;
+                territ = town.getTerritory(pr.getId());
+                if (territ != null) {
+                    break;
+                }
             }
         }
 
@@ -90,6 +90,7 @@ public class QuickSelectToolListener implements Listener {
             }
         }
 
+        actives.setActiveTown(town);
         actives.setActiveTerritory(territ);
         actives.setActiveDistrict(dist);
         actives.setActivePlot(plot);
