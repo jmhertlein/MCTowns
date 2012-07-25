@@ -6,12 +6,10 @@ package me.everdras.mctowns.listeners;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.structure.Town;
-import me.everdras.mctowns.townjoin.TownJoinInfoPair;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
