@@ -7,6 +7,7 @@ package me.everdras.mctowns.structure;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import java.io.*;
+import java.util.Objects;
 import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
 import org.bukkit.entity.Player;
@@ -137,4 +138,32 @@ public abstract class MCTownsRegion implements Externalizable {
     public String toString() {
     	return name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MCTownsRegion other = (MCTownsRegion) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.worldName, other.worldName)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.name);
+        hash = 79 * hash + Objects.hashCode(this.worldName);
+        return hash;
+    }
+    
+    
 }
