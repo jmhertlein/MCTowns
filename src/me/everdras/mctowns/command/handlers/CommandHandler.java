@@ -2,7 +2,6 @@ package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
@@ -14,22 +13,17 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static me.everdras.core.chat.ChatUtil.ERR;
 import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
-import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.MCTCommandSenderWrapper;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.structure.TownLevel;
-import me.everdras.mctowns.townjoin.TownJoinInfoPair;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
@@ -308,15 +302,15 @@ public abstract class CommandHandler {
         }
     }
 
-    protected ArrayList<String> getOutputFriendlyTownJoinListMessages(boolean forTown, LinkedList<TownJoinInfoPair> list) {
+    protected ArrayList<String> getOutputFriendlyTownJoinListMessages(String[] list) {
 
         ArrayList<String> msgs = new ArrayList<>();
         String temp;
-        for (int i = 0; i < list.size(); i += 3) {
+        for (int i = 0; i < list.length; i += 3) {
             temp = "";
-            for (int j = i; j < list.size() && j < i + 3; j++) {
+            for (int j = i; j < list.length && j < i + 3; j++) {
 
-                temp += (forTown ? list.get(j).getPlayer() : list.get(j).getTown());
+                temp += list[j];
                 temp += " ";
             }
             msgs.add(temp);

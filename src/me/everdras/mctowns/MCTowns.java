@@ -86,7 +86,7 @@ public class MCTowns extends JavaPlugin {
 
         setupTownManager();
 
-        joinManager = new TownJoinManager(townManager);
+        joinManager = new TownJoinManager();
 
         activeSets = new HashMap<>();
 

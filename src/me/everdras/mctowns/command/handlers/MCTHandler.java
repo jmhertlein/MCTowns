@@ -25,7 +25,6 @@ import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
-import me.everdras.mctowns.townjoin.TownJoinInfoPair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -284,6 +283,7 @@ public class MCTHandler extends CommandHandler {
         }
 
         Town addTo = townManager.getTown(townName);
+        String pName = senderWrapper.getPlayer().getName();
 
         if (addTo == null) {
             senderWrapper.sendMessage(ERR + "\"" + townName + "\" doesn't exist.");
@@ -295,15 +295,19 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        TownJoinInfoPair infoPair = new TownJoinInfoPair(addTo, senderWrapper.getPlayer());
-
-        if (joinManager.matchRequestToInivteAndDiscard(infoPair)) {
+        
+        
+        if(joinManager.playerIsInvitedToTown(pName, addTo)) {
             addTo.addPlayer(senderWrapper.getPlayer());
             senderWrapper.sendMessage("You have joined " + addTo.getTownName() + "!");
             broadcastTownJoin(addTo, senderWrapper.getPlayer());
+            
+            joinManager.clearInvitationForPlayerFromTown(pName, addTo);
         }
+        
+        
         else {
-            joinManager.submitRequest(infoPair);
+            joinManager.requestJoinToTown(addTo, pName);
             senderWrapper.sendMessage("You have submitted a request to join " + townName + ".");
             addTo.broadcastMessageToTown(server, senderWrapper.getPlayer().getName() + " has submitted a request to join the town.");
 
