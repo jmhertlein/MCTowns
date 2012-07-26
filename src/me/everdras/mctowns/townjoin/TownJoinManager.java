@@ -42,8 +42,12 @@ public class TownJoinManager {
         return ret == null ? false : ret;
     }
     
-    public void clearRequestForTownFromPlayer(Town t, String playerName) {
-        joinRequests.get(t).remove(playerName);
+    public boolean clearRequestForTownFromPlayer(Town t, String playerName) {
+        return joinRequests.get(t).remove(playerName);
+    }
+    
+    public void clearInvitationForPlayer(String playerName) {
+        joinInvitations.remove(playerName);
     }
     
     public boolean clearInvitationForPlayerFromTown(String playerName, Town t) {

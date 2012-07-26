@@ -16,8 +16,8 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static me.everdras.core.chat.ChatUtil.ERR;
+import static me.everdras.core.chat.ChatUtil.INFO_ALT;
 import static me.everdras.core.chat.ChatUtil.SUCC;
-import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.permission.Perms;
@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
  * @author Everdras
  */
 public class MCTHandler extends CommandHandler {
-    
+
     public MCTHandler(MCTowns parent) {
         super(parent);
     }
@@ -145,8 +145,7 @@ public class MCTHandler extends CommandHandler {
         if (townManager.addTown(townName, nuMayor)) {
             senderWrapper.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
-        }
-        else {
+        } else {
             senderWrapper.sendMessage(ERR + "That town already exists!");
         }
 
@@ -185,7 +184,7 @@ public class MCTHandler extends CommandHandler {
 
         //clear active sets to remove pointers to deleted town
         plugin.getActiveSets().clear();
-        
+
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
 
@@ -229,8 +228,7 @@ public class MCTHandler extends CommandHandler {
             senderWrapper.sendMessage("Town: None");
             senderWrapper.sendMessage("Is Mayor: n/a");
             senderWrapper.sendMessage("Is Assistant: n/a");
-        }
-        else {
+        } else {
             senderWrapper.sendMessage("Player: " + playerExactName);
             senderWrapper.sendMessage("Town: " + t.getTownName());
             senderWrapper.sendMessage("Is Mayor: " + t.getMayor().equals(playerExactName));
@@ -258,8 +256,8 @@ public class MCTHandler extends CommandHandler {
 
     private void listTowns(int page) {
         page--; //shift to 0-indexing
-        
-        if(page < 0) {
+
+        if (page < 0) {
             senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
         }
@@ -269,7 +267,7 @@ public class MCTHandler extends CommandHandler {
 
         Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
 
-        for (int i = page*RESULTS_PER_PAGE; i < towns.length && i < page*RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
+        for (int i = page * RESULTS_PER_PAGE; i < towns.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + towns[i].getTownName());
         }
 
@@ -295,18 +293,15 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        
-        
-        if(joinManager.playerIsInvitedToTown(pName, addTo)) {
+
+
+        if (joinManager.playerIsInvitedToTown(pName, addTo)) {
             addTo.addPlayer(senderWrapper.getPlayer());
             senderWrapper.sendMessage("You have joined " + addTo.getTownName() + "!");
             broadcastTownJoin(addTo, senderWrapper.getPlayer());
-            
+
             joinManager.clearInvitationForPlayerFromTown(pName, addTo);
-        }
-        
-        
-        else {
+        } else {
             joinManager.requestJoinToTown(addTo, pName);
             senderWrapper.sendMessage("You have submitted a request to join " + townName + ".");
             addTo.broadcastMessageToTown(server, senderWrapper.getPlayer().getName() + " has submitted a request to join the town.");
@@ -314,40 +309,20 @@ public class MCTHandler extends CommandHandler {
         }
     }
 
-    public void rejectInvitation(String townName) {
-        if(cmd.hasFlag(ECommand.ALL)) {
-            rejectAllInvitations();
-            return;
-        }
+    public void rejectInvitation() {
 
-        Player p = senderWrapper.getPlayer();
-        Town t = townManager.getTown(townName);
+        String pName = senderWrapper.getPlayer().getName();
+
+        Town t = joinManager.getCurrentInviteForPlayer(pName);
 
         if (t == null) {
-            senderWrapper.sendMessage(ERR + "\"" + townName + "\" doesn't exist.");
-            return;
+            senderWrapper.sendMessage(ERR + "You're not invited to any towns right now.");
+        } else {
+            joinManager.clearInvitationForPlayer(pName);
+            senderWrapper.sendMessage(ChatColor.GOLD + "You have rejected the invitation to join " + t.getTownName());
+            t.broadcastMessageToTown(server, ERR + pName + " has declined the invitation to join the town.");
         }
 
-        if (!joinManager.removeInvitation(t, p)) {
-            senderWrapper.sendMessage(ERR + "No matching invite found.");
-        }
-        else {
-            senderWrapper.sendMessage(ChatColor.GOLD + "You have rejected the request to join " + townName);
-
-            t.broadcastMessageToTown(server, ERR + p.getName() + " has declined the invitation to join the town.");
-        }
-
-    }
-
-    public void rejectAllInvitations() {
-        LinkedList<TownJoinInfoPair> invs = joinManager.getInvitesForPlayer(senderWrapper.getPlayer());
-        int count = 0;
-        for (TownJoinInfoPair tjip : invs) {
-            count++;
-            joinManager.removeInvitation(townManager.getTown(tjip.getTown()), server.getPlayerExact(tjip.getPlayer()));
-        }
-
-        senderWrapper.sendMessage(ChatColor.LIGHT_PURPLE + "All invitations rejected. " + count + " rejected total this sweep.");
     }
 
     public void cancelRequest(String townName) {
@@ -363,50 +338,20 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.removeRequest(t, senderWrapper.getPlayer())) {
+        if (joinManager.clearRequestForTownFromPlayer(t, senderWrapper.getPlayer().getName())) {
             senderWrapper.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
-        }
-        else {
+        } else {
             senderWrapper.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
         }
 
     }
 
-    public void listInvitesForPlayer() {
-        LinkedList<TownJoinInfoPair> invs = joinManager.getInvitesForPlayer(senderWrapper.getPlayer());
 
-        senderWrapper.sendMessage(ChatColor.DARK_BLUE + "There are pending invites from the following towns:");
-
-
-        for (String s : getOutputFriendlyTownJoinListMessages(false, invs)) {
-            senderWrapper.sendMessage(ChatColor.YELLOW + s);
-        }
-
-    }
-
-    public void listRequestsForPlayer() {
-        LinkedList<TownJoinInfoPair> reqs = joinManager.getRequestsForPlayer(senderWrapper.getPlayer());
-
-        senderWrapper.sendMessage(ChatColor.DARK_BLUE + "You have requested to join the following towns:");
-
-        for (String s : getOutputFriendlyTownJoinListMessages(false, reqs)) {
-            senderWrapper.sendMessage(ChatColor.YELLOW + s);
-        }
-    }
 
     public void checkPendingInvites() {
-        LinkedList<TownJoinInfoPair> invs = joinManager.getInvitesForPlayer(senderWrapper.getPlayer());
+        Town t = joinManager.getCurrentInviteForPlayer(senderWrapper.getPlayer().getName());
 
-        senderWrapper.sendMessage(ChatColor.BLUE + "You have pending invitations from:");
-        String temp = "";
-        for (TownJoinInfoPair tjip : invs) {
-            temp += tjip.getTown();
-            temp += " ";
-        }
-        temp = ChatColor.AQUA + temp;
-
-        senderWrapper.sendMessage(temp);
-        senderWrapper.sendMessage(ChatColor.BLUE + "Type /mct join <townname> to join one, or /mct refuse <town name> to refuse.");
+        senderWrapper.sendMessage(INFO_ALT + "You are currently " + (t == null ? " not invited to a town." : "invited to " + t.getTownName() + "."));
     }
 
     public void confirmPlotPurchase(HashMap<Player, ActiveSet> buyers) {
@@ -476,7 +421,7 @@ public class MCTHandler extends CommandHandler {
 
     public void toggleAbortSave() {
         plugin.setAbortSave(!plugin.willAbortSave());
-        senderWrapper.sendMessage(SUCC + "MCTowns will " +(plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
-        
+        senderWrapper.sendMessage(SUCC + "MCTowns will " + (plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
+
     }
 }

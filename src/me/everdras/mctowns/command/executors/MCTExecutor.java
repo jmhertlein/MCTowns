@@ -78,7 +78,7 @@ public class MCTExecutor extends BaseExecutor {
 
                 case "list":
                 case "ls":
-                    helpMessage = "/mct list (towns | requests | invites)";
+                    helpMessage = "/mct list (towns | invites)";
                     switch (command.get(2)) {
                         case "towns":
                             if (command.hasArgAtIndex(3)) {
@@ -89,12 +89,8 @@ public class MCTExecutor extends BaseExecutor {
                             }
                             softFailure = false;
                             break;
-                        case "requests":
-                            handler.listRequestsForPlayer();
-                            softFailure = false;
-                            break;
                         case "invites":
-                            handler.listInvitesForPlayer();
+                            handler.checkPendingInvites();
                             softFailure = false;
                             break;
                     }
@@ -108,8 +104,8 @@ public class MCTExecutor extends BaseExecutor {
                     break;
 
                 case "refuse":
-                    helpMessage = "/mct refuse <town name>";
-                    handler.rejectInvitation(command.get(2));
+                    helpMessage = "/mct refuse";
+                    handler.rejectInvitation();
                     softFailure = false;
                     break;
 
