@@ -4,12 +4,11 @@
  */
 package me.everdras.mctowns.command;
 
-import me.everdras.core.command.CommandSenderWrapper;
 import java.util.HashMap;
+import me.everdras.core.command.CommandSenderWrapper;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.*;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -63,24 +62,6 @@ public class MCTCommandSenderWrapper extends CommandSenderWrapper {
      */
     public Town getActiveTown() {
         return activeSet.getActiveTown();
-    }
-
-    /**
-     * Returns the currently active district
-     *
-     * @return
-     */
-    public District getActiveDistrict() {
-        return activeSet.getActiveDistrict();
-    }
-
-    /**
-     * Sets activeDistrict to be the currently active district
-     *
-     * @param activeDistrict
-     */
-    public void setActiveDistrict(District activeDistrict) {
-        activeSet.setActiveDistrict(activeDistrict);
     }
 
     /**
@@ -177,13 +158,6 @@ public class MCTCommandSenderWrapper extends CommandSenderWrapper {
      */
     public void notifyActiveTerritoryNotSet() {
         notifyActiveNotSet(TownLevel.TERRITORY);
-    }
-
-    /**
-     *
-     */
-    public void notifyActiveDistrictNotSet() {
-        notifyActiveNotSet(TownLevel.DISTRICT);
     }
 
     /**

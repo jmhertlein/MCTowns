@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -15,7 +14,6 @@ import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
-import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
@@ -34,7 +32,6 @@ public class PlotHandler extends CommandHandler {
     public PlotHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
     }
-
 
     public void printPlotInfo() {
         Plot p = senderWrapper.getActivePlot();
@@ -338,23 +335,10 @@ public class PlotHandler extends CommandHandler {
                 return;
             }
 
-            District d = senderWrapper.getActiveDistrict();
-
-            if (d == null) {
-                senderWrapper.notifyActiveDistrictNotSet();
-            }
-
-
-
-            nuActive = d.getPlot(plotName);
+            nuActive = te.getPlot(plotName);
 
             if (nuActive == null) {
-                nuActive = d.getPlot((t.getTownName() + PLOT_INFIX + plotName).toLowerCase());
-            }
-
-            if (nuActive == null) {
-                senderWrapper.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
-                return;
+                nuActive = te.getPlot((t.getTownName() + PLOT_INFIX + plotName).toLowerCase());
             }
         } else {
             plotName = t.getTownName() + PLOT_INFIX + plotName;
@@ -362,24 +346,21 @@ public class PlotHandler extends CommandHandler {
 
             territloop:
             for (Territory territ : t.getTerritoriesCollection()) {
-                for (District dist : territ.getDistrictsCollection()) {
-                    if (dist.getPlot(plotName) != null) {
-                        nuActive = dist.getPlot(plotName);
-                        senderWrapper.setActiveDistrict(dist);
-                        senderWrapper.setActiveTerritory(territ);
-                        break territloop;
-                    }
+                if (territ.getPlot(plotName) != null) {
+                    nuActive = territ.getPlot(plotName);
+                    senderWrapper.setActiveTerritory(territ);
+                    break territloop;
                 }
-            }
 
-            if (nuActive == null) {
-                senderWrapper.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
-                return;
             }
+        }
+
+        if (nuActive == null) {
+            senderWrapper.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
+            return;
         }
 
         senderWrapper.setActivePlot(nuActive);
         senderWrapper.sendMessage("Active plot set to " + nuActive.getName());
     }
-
 }

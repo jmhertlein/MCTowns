@@ -15,10 +15,6 @@ public enum TownLevel {
      */
     TERRITORY,
     /**
-     * a district
-     */
-    DISTRICT,
-    /**
      * a plot
      */
     PLOT;
@@ -30,8 +26,6 @@ public enum TownLevel {
                 return "TOWN";
             case TERRITORY:
                 return "TERRITORY";
-            case DISTRICT:
-                return "DISTRICT";
             case PLOT:
                 return "PLOT";
             default:

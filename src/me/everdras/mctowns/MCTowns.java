@@ -105,7 +105,7 @@ public class MCTowns extends JavaPlugin {
         setCommandExecutors();
 
         abortSave = false;
-        
+
         startMetricsCollection();
 
         log.info("MCTowns is now fully loaded.");
@@ -163,7 +163,7 @@ public class MCTowns extends JavaPlugin {
             ois.close();
             fis.close();
 
-        } catch (Exception e) {
+        } catch (IOException | ClassNotFoundException e) {
             log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
             townManager = new TownManager();
@@ -199,7 +199,7 @@ public class MCTowns extends JavaPlugin {
         MCTPlayerListener playerListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
         QuickSelectToolListener qsToolListener = new QuickSelectToolListener(wgp, this);
-        
+
         //configure the tool listener as per the config
         QuickSelectToolListener.SELECT_TOOL = options.getQsTool();
 
@@ -284,7 +284,6 @@ public class MCTowns extends JavaPlugin {
         getCommand("mct").setExecutor(new MCTExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
         getCommand("town").setExecutor(new TownExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
         getCommand("territory").setExecutor(new TerritoryExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
-        getCommand("district").setExecutor(new DistrictExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
         getCommand("plot").setExecutor(new PlotExecutor(this, wgp, economy, options, townManager, joinManager, activeSets, potentialPlotBuyers));
     }
 
@@ -323,7 +322,7 @@ public class MCTowns extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
-    
+
     public Config getOptions() {
         return options;
     }
@@ -347,7 +346,7 @@ public class MCTowns extends JavaPlugin {
 	public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
 		return potentialPlotBuyers;
 	}
-	
+
 	private void startMetricsCollection() {
 		try {
 		    Metrics metrics = new Metrics(this);
@@ -355,9 +354,9 @@ public class MCTowns extends JavaPlugin {
 		} catch (IOException e) {
 		    logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
 		}
-		
+
 		MCTowns.logDebug("Metrics reporting started.");
 	}
-    
-    
+
+
 }

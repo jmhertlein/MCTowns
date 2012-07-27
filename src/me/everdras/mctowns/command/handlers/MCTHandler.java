@@ -6,26 +6,17 @@ package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static me.everdras.core.chat.ChatUtil.ERR;
 import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
-import me.everdras.mctowns.permission.Perms;
-import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
-import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
 import me.everdras.mctowns.townjoin.TownJoinInfoPair;
 import me.everdras.mctowns.townjoin.TownJoinManager;
@@ -40,97 +31,13 @@ import org.bukkit.entity.Player;
  */
 public class MCTHandler extends CommandHandler {
     private HashMap<String, ActiveSet> activeSets;
-    
+
     public MCTHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
         this.activeSets = activeSets;
     }
 
     public void checkIfRegionIsManagedByMCTowns() {
-    }
-
-    public void convertRegionToMCTown(String townName, String regionName, String desiredDistrictName) {
-        if (!senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
-            senderWrapper.notifyInsufPermissions();
-            return;
-        }
-
-        Town t = townManager.getTown(townName);
-
-        if (t == null) {
-            senderWrapper.sendMessage(townName + " doesn't exist.");
-            return;
-        }
-
-        RegionManager regMan;
-        regMan = wgp.getRegionManager(senderWrapper.getPlayer().getWorld());
-
-        ProtectedRegion parent = regMan.getRegion(regionName);
-
-        if (parent == null) {
-            senderWrapper.sendMessage(regionName + " is not an existing region in this world.");
-            return;
-        }
-
-        Stack<ProtectedRegion> children = new Stack<>();
-
-        Collection<ProtectedRegion> regs = regMan.getRegions().values();
-
-
-        senderWrapper.sendMessage("MCTowns is now searching through every single WG region that is in this world to find children plots. This may take anywhere from less than a second to over a minute depending on how many regions you have.");
-        for (ProtectedRegion protReg : regs) {
-            if (protReg.getParent() != null && protReg.getParent().equals(parent)) {
-                children.push(protReg);
-            }
-        }
-
-        Territory nuTerrit = new Territory(t.getTownName() + "_territ_" + parent.getId(), t.getWorldName());
-
-
-        ProtectedCuboidRegion nuParent = new ProtectedCuboidRegion(nuTerrit.getName(), parent.getMinimumPoint(), parent.getMaximumPoint());
-        nuParent.setOwners(parent.getOwners());
-        nuParent.setMembers(parent.getMembers());
-        nuParent.setFlags(parent.getFlags());
-        regMan.addRegion(nuParent);
-
-        District nuDist = new District(t.getTownName() + "_dist_" + desiredDistrictName, t.getWorldName());
-
-        ProtectedCuboidRegion nuDistReg = new ProtectedCuboidRegion(nuDist.getName(), parent.getMinimumPoint(), parent.getMaximumPoint());
-
-        regMan.addRegion(nuDistReg);
-        try {
-            nuDistReg.setParent(nuParent);
-        } catch (ProtectedRegion.CircularInheritanceException ex) {
-            ex.printStackTrace(System.err);
-        }
-
-        t.addTerritory(nuTerrit);
-        nuTerrit.addDistrict(nuDist);
-
-        Plot p = null;
-        for (ProtectedRegion plotReg : children) {
-            p = new Plot(plotReg.getId(), t.getWorldName());
-            nuDist.addPlot(p);
-
-            try {
-                plotReg.setParent(nuDistReg);
-            } catch (ProtectedRegion.CircularInheritanceException ex) {
-                senderWrapper.sendMessage(ChatColor.DARK_RED + "Something bad happened. Please tell everdras that there was a Circular Inheritance Exception in /mct convert");
-            }
-        }
-
-        regMan.removeRegion(parent.getId());
-
-
-        try {
-            regMan.save();
-        } catch (ProtectionDatabaseException ex) {
-            Logger.getLogger(MCTHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        senderWrapper.sendMessage("Done. Your territory should now be set up!");
-
-
     }
 
     public void createTown(String townName, String mayorName) {
@@ -194,7 +101,7 @@ public class MCTHandler extends CommandHandler {
 
         //clear active sets to remove pointers to deleted town
         activeSets.clear();
-        
+
         senderWrapper.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
 
@@ -254,7 +161,7 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void listTowns(String page) {
-        int intPage = 0;
+        int intPage;
         try {
             intPage = Integer.parseInt(page);
         } catch (Exception e) {
@@ -267,7 +174,7 @@ public class MCTHandler extends CommandHandler {
 
     private void listTowns(int page) {
         page--; //shift to 0-indexing
-        
+
         if(page < 0) {
             senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
@@ -481,6 +388,6 @@ public class MCTHandler extends CommandHandler {
     public void toggleAbortSave() {
         plugin.setAbortSave(!plugin.willAbortSave());
         senderWrapper.sendMessage(SUCC + "MCTowns will " +(plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
-        
+
     }
 }

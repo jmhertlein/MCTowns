@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -17,7 +16,6 @@ import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
-import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
@@ -37,9 +35,7 @@ public class TerritoryHandler extends CommandHandler {
         super(parent, t, j, p, activeSets, wg, econ, opt, cmd);
     }
 
-
-
-    public void addDistrictToTerritory(String distName) {
+    public void addPlotToTerritory(String plotName) {
         if (!senderWrapper.hasMayoralPermissions()) {
             senderWrapper.notifyInsufPermissions();
             return;
@@ -47,10 +43,10 @@ public class TerritoryHandler extends CommandHandler {
 
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
 
-        distName = senderWrapper.getActiveTown().getTownName() + DISTRICT_INFIX + distName;
+        plotName = senderWrapper.getActiveTown().getTownName() + PLOT_INFIX + plotName;
 
         String worldName = senderWrapper.getActiveTown().getWorldName();
-        District d = new District(distName, worldName);
+        Plot p = new Plot(plotName, worldName);
         Territory parTerr = senderWrapper.getActiveTerritory();
 
         if (parTerr == null) {
@@ -60,7 +56,7 @@ public class TerritoryHandler extends CommandHandler {
 
 
 
-        ProtectedCuboidRegion region = getSelectedRegion(d.getName());
+        ProtectedCuboidRegion region = getSelectedRegion(p.getName());
 
         if (region == null) {
             return;
@@ -76,32 +72,32 @@ public class TerritoryHandler extends CommandHandler {
         try {
             region.setParent(parent);
         } catch (ProtectedRegion.CircularInheritanceException ex) {
-            Logger.getLogger("Minecraft").log(Level.WARNING, "Circular Inheritence in addDistrictToTown.");
+            Logger.getLogger("Minecraft").log(Level.WARNING, "Circular Inheritence in addPlotToTerritory.");
         }
         RegionManager regMan = wgp.getRegionManager(wgp.getServer().getWorld(worldName));
 
-        if (regMan.hasRegion(distName)) {
+        if (regMan.hasRegion(plotName)) {
             senderWrapper.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
 
         regMan.addRegion(region);
 
-        parTerr.addDistrict(d);
+        parTerr.addPlot(p);
 
-        senderWrapper.sendMessage("District added.");
+        senderWrapper.sendMessage("Plot added.");
 
         doRegManSave(regMan);
 
         if (autoActive) {
-            senderWrapper.setActiveDistrict(d);
-            senderWrapper.sendMessage(INFO + "Active district set to newly created district.");
+            senderWrapper.setActivePlot(p);
+            senderWrapper.sendMessage(INFO + "Active plot set to newly created plot.");
 
         }
 
     }
 
-    public void removeDistrictFromTerritory(String districtName) {
+    public void removePlotFromTerritory(String plotName) {
         if (!senderWrapper.hasMayoralPermissions()) {
             senderWrapper.notifyInsufPermissions();
             return;
@@ -114,16 +110,16 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        District removeMe = t.getDistrict(districtName);
+        Plot removeMe = t.getPlot(plotName);
 
         if (removeMe == null) {
-            senderWrapper.sendMessage(ERR + "That district doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
+            senderWrapper.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the plot (townname_plot_plotshortname).");
         }
 
-        t.removeDistrict(districtName);
+        t.removePlot(plotName);
 
-        TownManager.unregisterDistrictFromWorldGuard(wgp, removeMe);
-        senderWrapper.sendMessage(SUCC + "District removed.");
+        TownManager.unregisterPlotFromWorldGuard(wgp, removeMe);
+        senderWrapper.sendMessage(SUCC + "Plot removed.");
     }
 
     public void addPlayerToTerritory(String playerName) {
@@ -182,13 +178,10 @@ public class TerritoryHandler extends CommandHandler {
                 return;
             }
 
-
-            for (District d : territ.getDistrictsCollection()) {
-                d.removePlayerFromWGRegion(wgp, player);
-                for (Plot p : d.getPlotsCollection()) {
-                    p.removePlayerFromWGRegion(wgp, player);
-                }
+            for (Plot p : territ.getPlotsCollection()) {
+                p.removePlayerFromWGRegion(wgp, player);
             }
+
             senderWrapper.sendMessage("Player removed from territory.");
 
         } else {
@@ -225,10 +218,10 @@ public class TerritoryHandler extends CommandHandler {
         senderWrapper.sendMessage("Active territory set to " + nuActive.getName());
     }
 
-    private void listDistricts(int page) {
+    private void listPlots(int page) {
         page--; //shift to 0-indexing
-        
-        if(page < 0) {
+
+        if (page < 0) {
             senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
         }
@@ -239,30 +232,30 @@ public class TerritoryHandler extends CommandHandler {
             senderWrapper.notifyActiveTerritoryNotSet();
             return;
         }
-        senderWrapper.sendMessage(ChatColor.AQUA + "Existing districts (page " + page + "):");
+        senderWrapper.sendMessage(ChatColor.AQUA + "Existing plots (page " + page + "):");
 
 
 
-        District[] dists = t.getDistrictsCollection().toArray(new District[t.getDistrictsCollection().size()]);
+        Plot[] plots = t.getPlotsCollection().toArray(new Plot[t.getPlotsCollection().size()]);
 
-        for (int i = page*RESULTS_PER_PAGE; i < dists.length && i < page*RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
-            senderWrapper.sendMessage(ChatColor.YELLOW + dists[i].getName());
+        for (int i = page * RESULTS_PER_PAGE; i < plots.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
+            senderWrapper.sendMessage(ChatColor.YELLOW + plots[i].getName());
         }
     }
 
-    public void listDistricts(String s_page) {
+    public void listPlots(String s_page) {
         int page;
         try {
             page = Integer.parseInt(s_page);
-        } catch(NumberFormatException nfex) {
+        } catch (NumberFormatException nfex) {
             senderWrapper.sendMessage(ERR + "Error parsing integer argument. Found \"" + s_page + "\", expected integer.");
             return;
         }
 
-        listDistricts(page);
+        listPlots(page);
     }
 
-    public void listDistricts() {
-        listDistricts(1);
+    public void listPlots() {
+        listPlots(1);
     }
 }

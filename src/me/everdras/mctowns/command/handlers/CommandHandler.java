@@ -49,11 +49,10 @@ import org.bukkit.entity.Player;
 public abstract class CommandHandler {
 
     protected static final String TERRITORY_INFIX = "_territ_";
-    protected static final String DISTRICT_INFIX = "_dist_";
     protected static final String PLOT_INFIX = "_plot_";
-    
+
     protected static final int RESULTS_PER_PAGE = 10;
-    
+
     protected MCTowns plugin;
     protected MCTCommandSenderWrapper senderWrapper;
     protected TownManager townManager;
@@ -128,9 +127,6 @@ public abstract class CommandHandler {
                 return;
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
-                break;
-            case DISTRICT:
-                reg = senderWrapper.getActiveDistrict();
                 break;
             case PLOT:
                 reg = senderWrapper.getActivePlot();
@@ -207,9 +203,6 @@ public abstract class CommandHandler {
         switch (level) {
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
-                break;
-            case DISTRICT:
-                reg = senderWrapper.getActiveDistrict();
                 break;
             case PLOT:
                 reg = senderWrapper.getActivePlot();
@@ -295,7 +288,7 @@ public abstract class CommandHandler {
 
         return selectionIsWithinParent(reg, parentReg);
     }
-    
+
     protected boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
         if (parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint())) {
             return true;
@@ -315,7 +308,7 @@ public abstract class CommandHandler {
     protected void broadcastTownJoin(Town t, Player whoJoined) {
         broadcastTownJoin(t, whoJoined.getName());
     }
-    
+
     protected void broadcastTownJoin(Town t, String s_playerWhoJoined) {
         for (String pl : t.getResidentNames()) {
             try {
@@ -365,16 +358,13 @@ public abstract class CommandHandler {
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
                 break;
-            case DISTRICT:
-                reg = senderWrapper.getActiveDistrict();
-                break;
             case PLOT:
                 reg = senderWrapper.getActivePlot();
                 break;
             default:
                 reg = null;
         }
-        
+
         if(regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
             senderWrapper.notifyInsufPermissions();
             return;
@@ -408,13 +398,13 @@ public abstract class CommandHandler {
         MCTowns.logDebug("Comparing:");
         MCTowns.logDebug("New: " + nuWGRegion.getMaximumPoint().toString() + " | " + nuWGRegion.getMinimumPoint());
         MCTowns.logDebug("Old: " + oldWGReg.getMaximumPoint().toString() + " | " + oldWGReg.getMinimumPoint());
-        //To make sure that we can't accidentally "orphan" districts or plots outside the region, only allow
+        //To make sure that we can't accidentally "orphan" plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.
         if (!(nuWGRegion.contains(oldWGReg.getMaximumPoint()) && nuWGRegion.contains(oldWGReg.getMinimumPoint()))) {
             senderWrapper.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
             return;
         }
-        
+
         if(!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
             senderWrapper.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;

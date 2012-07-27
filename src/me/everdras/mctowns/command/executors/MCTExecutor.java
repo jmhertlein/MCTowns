@@ -129,13 +129,7 @@ public class MCTExecutor extends BaseExecutor {
                     handler.confirmPlotPurchase(potentialPlotBuyers);
                     softFailure = false;
                     break;
-
-                case "convert":
-                    helpMessage = "/mct convert <town name> <region name> <new district name>";
-                    handler.convertRegionToMCTown(command.get(2), command.get(3), command.get(3));
-                    softFailure = false;
-                    break;
-
+                    
                 case "togglesave":
                     handler.toggleAbortSave();
                     softFailure = false;
