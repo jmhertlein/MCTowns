@@ -28,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author joshua
  */
 public class MCTowns extends JavaPlugin {
+    public static MCTowns plugin;
 
     public static final Logger log = Logger.getLogger("Minecraft");
     private static final String MCT_DATA_FOLDER = "plugins" + File.separator + "MCTowns";
@@ -75,6 +76,8 @@ public class MCTowns extends JavaPlugin {
     @Override
     public void onEnable() {
         log.log(Level.INFO, "MCTowns is now setting up...");
+
+        plugin = this;
 
         logDebug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         logDebug("!!!!!!!!!!!!!!!!  NOTICE  !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -195,7 +198,7 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void regEventListeners() {
-        MCTPlayerListener playerListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
+        MCTPlayerListener playerListener = new MCTPlayerListener(this);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
         QuickSelectToolListener qsToolListener = new QuickSelectToolListener(wgp, this);
 

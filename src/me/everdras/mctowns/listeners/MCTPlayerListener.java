@@ -23,13 +23,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 
 /**
  *
  * @author Joshua
  */
 public class MCTPlayerListener implements Listener {
+    private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
 
     private TownManager townManager;
     private TownJoinManager joinManager;
@@ -42,12 +42,12 @@ public class MCTPlayerListener implements Listener {
      * @param townManager
      * @param joinManager
      */
-    public MCTPlayerListener(TownManager townManager, TownJoinManager joinManager, Config opt, Economy econ, HashMap<Player, ActiveSet> buyers) {
-        options = opt;
-        this.townManager = townManager;
-        this.joinManager = joinManager;
-        economy = econ;
-        potentialPlotBuyers = buyers;
+    public MCTPlayerListener(MCTowns plugin) {
+        options = plugin.getOptions();
+        this.townManager = plugin.getTownManager();
+        this.joinManager = plugin.getJoinManager();
+        economy = MCTowns.getEconomy();
+        potentialPlotBuyers = plugin.getPotentialPlotBuyers();
     }
 
     /**
@@ -100,26 +100,26 @@ public class MCTPlayerListener implements Listener {
 
     }
 
-    /**
-     *
-     * @param event
-     */
+//    /**
+//     *
+//     * @param event
+//     */
+//    @EventHandler(priority = EventPriority.NORMAL)
+//    public void onPlayerRespawn(PlayerRespawnEvent event) {
+//        Player p = event.getPlayer();
+//
+//        Town t = townManager.matchPlayerToTown(p);
+//
+//        if (t == null) {
+//            return;
+//        }
+//
+//        p.teleport(t.getTownSpawn(p.getServer()));
+//
+//    }
+
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        Player p = event.getPlayer();
-
-        Town t = townManager.matchPlayerToTown(p);
-
-        if (t == null) {
-            return;
-        }
-
-        p.teleport(t.getTownSpawn(p.getServer()));
-
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerInteract(PlayerInteractEvent event) {
+    public void onPlayerClickPurchaseSign(PlayerInteractEvent event) {
 
         if (!options.isEconomyEnabled()) {
             //if economy isn't enabled, do nothing
@@ -161,6 +161,37 @@ public class MCTPlayerListener implements Listener {
         potentialPlotBuyers.put(event.getPlayer(), plotToBuy);
         event.getPlayer().sendMessage(ChatColor.YELLOW + "Type \"/mct confirm\" to finish buying this plot.)");
         event.getPlayer().sendMessage(ChatColor.YELLOW + "Please note, this plot costs " + ChatColor.DARK_RED.toString() + economy.format(plotToBuy.getActivePlot().getPrice().floatValue()) + " and typing \"/mct confirm\" will deduct this amount from your holdings.");
+    }
+
+    @EventHandler
+    public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.BlockPlaceEvent e) {
+        if(e.getBlock().getType() != Material.SIGN_POST)
+            return;
+
+        CraftSign sign = (CraftSign) e.getBlock().getState();
+
+        if(! sign.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
+            return;
+
+
+        Player p = e.getPlayer();
+        Town t = townManager.matchPlayerToTown(p);
+        boolean isMayor;
+        try {
+            isMayor = t.playerIsMayor(p);
+        } catch (NullPointerException npe) {
+            isMayor = false;
+        }
+
+        if(!isMayor) {
+            p.sendMessage(ChatColor.RED + "Insufficient permission.");
+            return;
+        }
+
+        
+
+
+
 
 
     }
