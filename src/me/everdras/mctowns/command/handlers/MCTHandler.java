@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
  * @author Everdras
  */
 public class MCTHandler extends CommandHandler {
+
     private HashMap<String, ActiveSet> activeSets;
 
     public MCTHandler(MCTowns parent, TownManager t, TownJoinManager j, CommandSender p, HashMap<String, ActiveSet> activeSets, WorldGuardPlugin wg, Economy econ, Config opt, ECommand cmd) {
@@ -61,8 +62,7 @@ public class MCTHandler extends CommandHandler {
         if (townManager.addTown(townName, nuMayor)) {
             senderWrapper.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
-        }
-        else {
+        } else {
             senderWrapper.sendMessage(ERR + "That town already exists!");
         }
 
@@ -145,8 +145,7 @@ public class MCTHandler extends CommandHandler {
             senderWrapper.sendMessage("Town: None");
             senderWrapper.sendMessage("Is Mayor: n/a");
             senderWrapper.sendMessage("Is Assistant: n/a");
-        }
-        else {
+        } else {
             senderWrapper.sendMessage("Player: " + playerExactName);
             senderWrapper.sendMessage("Town: " + t.getTownName());
             senderWrapper.sendMessage("Is Mayor: " + t.getMayor().equals(playerExactName));
@@ -175,7 +174,7 @@ public class MCTHandler extends CommandHandler {
     private void listTowns(int page) {
         page--; //shift to 0-indexing
 
-        if(page < 0) {
+        if (page < 0) {
             senderWrapper.sendMessage(ERR + "Invalid page.");
             return;
         }
@@ -185,7 +184,7 @@ public class MCTHandler extends CommandHandler {
 
         Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
 
-        for (int i = page*RESULTS_PER_PAGE; i < towns.length && i < page*RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
+        for (int i = page * RESULTS_PER_PAGE; i < towns.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             senderWrapper.sendMessage(ChatColor.YELLOW + towns[i].getTownName());
         }
 
@@ -216,8 +215,7 @@ public class MCTHandler extends CommandHandler {
             addTo.addPlayer(senderWrapper.getPlayer());
             senderWrapper.sendMessage("You have joined " + addTo.getTownName() + "!");
             broadcastTownJoin(addTo, senderWrapper.getPlayer());
-        }
-        else {
+        } else {
             joinManager.submitRequest(infoPair);
             senderWrapper.sendMessage("You have submitted a request to join " + townName + ".");
             addTo.broadcastMessageToTown(server, senderWrapper.getPlayer().getName() + " has submitted a request to join the town.");
@@ -226,7 +224,7 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void rejectInvitation(String townName) {
-        if(cmd.hasFlag(ECommand.ALL)) {
+        if (cmd.hasFlag(ECommand.ALL)) {
             rejectAllInvitations();
             return;
         }
@@ -241,8 +239,7 @@ public class MCTHandler extends CommandHandler {
 
         if (!joinManager.removeInvitation(t, p)) {
             senderWrapper.sendMessage(ERR + "No matching invite found.");
-        }
-        else {
+        } else {
             senderWrapper.sendMessage(ChatColor.GOLD + "You have rejected the request to join " + townName);
 
             t.broadcastMessageToTown(server, ERR + p.getName() + " has declined the invitation to join the town.");
@@ -276,8 +273,7 @@ public class MCTHandler extends CommandHandler {
 
         if (joinManager.removeRequest(t, senderWrapper.getPlayer())) {
             senderWrapper.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
-        }
-        else {
+        } else {
             senderWrapper.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
         }
 
@@ -387,7 +383,7 @@ public class MCTHandler extends CommandHandler {
 
     public void toggleAbortSave() {
         plugin.setAbortSave(!plugin.willAbortSave());
-        senderWrapper.sendMessage(SUCC + "MCTowns will " +(plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
+        senderWrapper.sendMessage(SUCC + "MCTowns will " + (plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
 
     }
 }

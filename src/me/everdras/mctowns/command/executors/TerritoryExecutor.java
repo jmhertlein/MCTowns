@@ -93,8 +93,7 @@ public class TerritoryExecutor extends BaseExecutor {
                         case "plots":
                             if (command.hasArgAtIndex(3)) {
                                 handler.listPlots(command.get(3));
-                            }
-                            else {
+                            } else {
                                 handler.listPlots();
                             }
                             softFailure = false;
@@ -128,8 +127,7 @@ public class TerritoryExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            }
-            else {
+            } else {
                 softFailure = true;
                 hardFailure = false;
             }

@@ -16,7 +16,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
- *  intended to stop PvP between townmates.
+ * intended to stop PvP between townmates.
  *
  * @author Joshua
  */
@@ -31,11 +31,10 @@ public class MCTPvPListener implements Listener {
 
     }
 
-
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamage(EntityDamageEvent event) {
 
-        if(!(event instanceof EntityDamageByEntityEvent)) {
+        if (!(event instanceof EntityDamageByEntityEvent)) {
             return;
         }
 
@@ -48,17 +47,16 @@ public class MCTPvPListener implements Listener {
         damagee = (pvpEvent.getEntity() instanceof Player ? (Player) pvpEvent.getEntity() : null);
 
         //if it's not player versus player, return
-        if(damager == null || damagee == null) {
+        if (damager == null || damagee == null) {
             return;
         }
 
         Town damagerTown = manager.matchPlayerToTown(damager);
-        if(damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
+        if (damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
             event.setCancelled(true);
             damager.sendMessage(ChatColor.RED + "That player is in your town! Don't attack him!");
         }
 
 
     }
-
 }

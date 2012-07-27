@@ -6,7 +6,6 @@ package me.everdras.mctowns.listeners;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.database.TownManager;
@@ -93,8 +92,7 @@ public class MCTPlayerListener implements Listener {
             if (count > 0) {
                 p.sendMessage(ChatColor.LIGHT_PURPLE + t.getTownName() + " has " + joinManager.getPendingRequestsForTown(t).size() + " pending player join requests.");
             }
-        }
-        else {
+        } else {
             //nothing else to really do for people on logging in if they're not the mayor... i'll keep this here
             //just in case.
         }
@@ -148,7 +146,7 @@ public class MCTPlayerListener implements Listener {
         }
 
 
-        if (! plotToBuy.getActivePlot().isForSale()) {
+        if (!plotToBuy.getActivePlot().isForSale()) {
             event.getPlayer().sendMessage(ChatColor.DARK_AQUA + "That plot is not for sale.");
             return;
         }

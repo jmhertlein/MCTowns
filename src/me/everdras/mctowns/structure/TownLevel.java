@@ -2,6 +2,7 @@ package me.everdras.mctowns.structure;
 
 /**
  * A simple enum to hold what sort of town-y thing something is.
+ *
  * @author Joshua
  */
 public enum TownLevel {

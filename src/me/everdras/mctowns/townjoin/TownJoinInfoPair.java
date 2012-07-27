@@ -15,10 +15,9 @@ import org.bukkit.entity.Player;
 public class TownJoinInfoPair {
 
     private String town, player;
-    
-    
+
     /**
-     * 
+     *
      * @param t
      * @param p
      */
@@ -26,9 +25,9 @@ public class TownJoinInfoPair {
         town = t;
         player = p;
     }
-    
+
     /**
-     * 
+     *
      * @param t
      * @param p
      */
@@ -60,20 +59,21 @@ public class TownJoinInfoPair {
         hash = 29 * hash + Objects.hashCode(this.player);
         return hash;
     }
-    
+
     /**
      * Makes a new town join info pair, to re
+     *
      * @param town
-     * @param player 
+     * @param player
      */
     public TownJoinInfoPair(Town town, Player player) {
         this.town = town.getTownName();
         this.player = player.getName();
-        
+
     }
 
     /**
-     * 
+     *
      * @param other
      * @return
      */
@@ -82,7 +82,7 @@ public class TownJoinInfoPair {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public String getPlayer() {
@@ -90,7 +90,7 @@ public class TownJoinInfoPair {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public String getTown() {

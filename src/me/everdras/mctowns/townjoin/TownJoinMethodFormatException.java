@@ -13,5 +13,4 @@ public class TownJoinMethodFormatException extends Exception {
     public TownJoinMethodFormatException(String msg) {
         super(msg);
     }
-
 }

@@ -6,10 +6,10 @@ package me.everdras.mctowns.command.executors;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.HashMap;
-import me.everdras.mctowns.MCTowns;
-import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.core.command.ArgumentCountException;
 import me.everdras.core.command.ECommand;
+import me.everdras.mctowns.MCTowns;
+import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.handlers.MCTHandler;
 import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.townjoin.TownJoinManager;
@@ -89,8 +89,7 @@ public class MCTExecutor extends BaseExecutor {
                         case "towns":
                             if (command.hasArgAtIndex(3)) {
                                 handler.listTowns(command.get(3));
-                            }
-                            else {
+                            } else {
                                 handler.listTowns();
                             }
                             softFailure = false;
@@ -129,7 +128,7 @@ public class MCTExecutor extends BaseExecutor {
                     handler.confirmPlotPurchase(potentialPlotBuyers);
                     softFailure = false;
                     break;
-                    
+
                 case "togglesave":
                     handler.toggleAbortSave();
                     softFailure = false;
@@ -144,8 +143,7 @@ public class MCTExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            }
-            else {
+            } else {
                 softFailure = true;
                 hardFailure = false;
             }

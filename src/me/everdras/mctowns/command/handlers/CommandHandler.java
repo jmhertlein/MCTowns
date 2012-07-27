@@ -7,7 +7,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -54,9 +53,7 @@ public abstract class CommandHandler {
 
     protected static final String TERRITORY_INFIX = "_territ_";
     protected static final String PLOT_INFIX = "_plot_";
-
     protected static final int RESULTS_PER_PAGE = 10;
-
     protected MCTowns plugin;
     protected MCTCommandSenderWrapper senderWrapper;
     protected TownManager townManager;
@@ -277,11 +274,11 @@ public abstract class CommandHandler {
         }
 
         ProtectedRegion region;
-        if(selection instanceof Polygonal2DSelection) {
+        if (selection instanceof Polygonal2DSelection) {
             Polygonal2DSelection sel = (Polygonal2DSelection) selection;
 
             region = new ProtectedPolygonalRegion(desiredName, sel.getNativePoints(), sel.getMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY());
-        } else if(selection instanceof CuboidSelection) {
+        } else if (selection instanceof CuboidSelection) {
             CuboidSelection sel = (CuboidSelection) selection;
 
             Location min = sel.getMinimumPoint(), max = sel.getMaximumPoint();
@@ -305,17 +302,18 @@ public abstract class CommandHandler {
     }
 
     protected boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
-        if(reg instanceof ProtectedCuboidRegion) {
+        if (reg instanceof ProtectedCuboidRegion) {
             return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
-        } else if(reg instanceof ProtectedPolygonalRegion) {
+        } else if (reg instanceof ProtectedPolygonalRegion) {
             ProtectedPolygonalRegion ppr = (ProtectedPolygonalRegion) reg;
 
-            for(BlockVector2D pt : ppr.getPoints()) {
-                if(! parentReg.contains(pt))
+            for (BlockVector2D pt : ppr.getPoints()) {
+                if (!parentReg.contains(pt)) {
                     return false;
+                }
             }
 
-            if(! ( parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint() ) )) {
+            if (!(parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint()))) {
                 return false;
             }
 
@@ -342,7 +340,8 @@ public abstract class CommandHandler {
             try {
                 //broadcast the join to everyone BUT the player who joined.
                 (pl.equals(s_playerWhoJoined) ? null : server.getPlayer(pl)).sendMessage(s_playerWhoJoined + " just joined " + t.getTownName() + "!");
-            } catch (NullPointerException ignore) {}
+            } catch (NullPointerException ignore) {
+            }
         }
     }
 
@@ -393,7 +392,7 @@ public abstract class CommandHandler {
                 reg = null;
         }
 
-        if(regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
+        if (regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
@@ -433,7 +432,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        if(!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
+        if (!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
             senderWrapper.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
         }

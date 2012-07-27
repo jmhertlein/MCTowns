@@ -165,23 +165,20 @@ public class Plot extends MCTownsRegion implements Externalizable {
             forSale = false;
             price = BigDecimal.ZERO;
             signLoc = null;
-        }
-        else if (ver == 1) {
+        } else if (ver == 1) {
             //============Beginning of original variables for version 1=========
             forSale = in.readBoolean();
             price = new BigDecimal(in.readFloat());
             signLoc = (Location) in.readObject();
             //============End of original variables for version 1===============
-        }
-        else if (ver == 2) {
+        } else if (ver == 2) {
             //============Beginning of original variables for version 2=========
             forSale = in.readBoolean();
             price = (BigDecimal) (in.readObject());
             signLoc = (Location) in.readObject();
             //============End of original variables for version 2===============
 
-        }
-        else {
+        } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Plot.");
         }
     }

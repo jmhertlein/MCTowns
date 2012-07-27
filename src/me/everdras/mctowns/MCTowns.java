@@ -53,8 +53,7 @@ public class MCTowns extends JavaPlugin {
         if (!abortSave) {
             serializeTownManager();
             serializeBackup();
-        }
-        else {
+        } else {
             logInfo("The save was aborted manually, so nothing was saved.");
         }
 
@@ -327,36 +326,34 @@ public class MCTowns extends JavaPlugin {
         return options;
     }
 
-	public TownManager getTownManager() {
-		return townManager;
-	}
+    public TownManager getTownManager() {
+        return townManager;
+    }
 
-	public TownJoinManager getJoinManager() {
-		return joinManager;
-	}
+    public TownJoinManager getJoinManager() {
+        return joinManager;
+    }
 
-	public HashMap<String, ActiveSet> getActiveSets() {
-		return activeSets;
-	}
+    public HashMap<String, ActiveSet> getActiveSets() {
+        return activeSets;
+    }
 
-	public static Economy getEconomy() {
-		return economy;
-	}
+    public static Economy getEconomy() {
+        return economy;
+    }
 
-	public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
-		return potentialPlotBuyers;
-	}
+    public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
+        return potentialPlotBuyers;
+    }
 
-	private void startMetricsCollection() {
-		try {
-		    Metrics metrics = new Metrics(this);
-		    metrics.start();
-		} catch (IOException e) {
-		    logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
-		}
+    private void startMetricsCollection() {
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+            logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
+        }
 
-		MCTowns.logDebug("Metrics reporting started.");
-	}
-
-
+        MCTowns.logDebug("Metrics reporting started.");
+    }
 }

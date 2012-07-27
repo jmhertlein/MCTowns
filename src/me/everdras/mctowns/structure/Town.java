@@ -4,7 +4,6 @@
  */
 package me.everdras.mctowns.structure;
 
-import me.everdras.core.location.Location;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -13,6 +12,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
+import me.everdras.core.location.Location;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.banking.BlockBank;
 import org.bukkit.ChatColor;
@@ -53,7 +53,6 @@ public class Town implements Externalizable {
     //member of the town in order to buy plots.
     private boolean economyJoins;
     private BigDecimal defaultPlotPrice;
-
     private boolean friendlyFire;
 
     /**
@@ -63,9 +62,10 @@ public class Town implements Externalizable {
     }
 
     /**
-     * Creates a new town, setting the name to townName, the mayor to the
-     *  player passed as mayor, and adds the mayor to the list of residents.
-     *  The MOTD is set to a default motd.
+     * Creates a new town, setting the name to townName, the mayor to the player
+     * passed as mayor, and adds the mayor to the list of residents. The MOTD is
+     * set to a default motd.
+     *
      * @param townName the desired name of the town
      * @param mayor the player to be made the mayor of the town
      *
@@ -109,7 +109,8 @@ public class Town implements Externalizable {
 
     /**
      * Sets the motd to the specified MOTD
-     * @param townMOTD -  the new MOTD
+     *
+     * @param townMOTD - the new MOTD
      */
     public void setTownMOTD(String townMOTD) {
         this.townMOTD = townMOTD;
@@ -117,6 +118,7 @@ public class Town implements Externalizable {
 
     /**
      * Gets the name of the mayor of the town.
+     *
      * @return the name of the town's mayor
      */
     public String getMayor() {
@@ -125,6 +127,7 @@ public class Town implements Externalizable {
 
     /**
      * Sets the town's mayor to the given name
+     *
      * @param mayor the new mayor's name
      */
     public void setMayor(String mayor) {
@@ -133,6 +136,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns the town MOTD, with color formatting
+     *
      * @return the town MOTD
      */
     public String getTownMOTD() {
@@ -141,6 +145,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns the town's name
+     *
      * @return the town's name
      */
     public String getTownName() {
@@ -149,6 +154,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns the name of the world in which this town resides
+     *
      * @return the name of the world
      */
     public String getWorldName() {
@@ -157,13 +163,15 @@ public class Town implements Externalizable {
 
     /**
      * Adds a player as a resident of the town
+     *
      * @param p the player to be added
-     * @return false if player was not added because player is already added, true otherwise
+     * @return false if player was not added because player is already added,
+     * true otherwise
      */
     public boolean addPlayer(Player p) {
         return addPlayer(p.getName());
     }
-    
+
     public boolean addPlayer(String playerName) {
         if (residents.containsKey(playerName)) {
             return false;
@@ -175,9 +183,10 @@ public class Town implements Externalizable {
     }
 
     /**
-     * Removes a player from the town.
-     * Postcondition: Player is not a resident of the town, regardless of whether or not they were before.
-     * Note: Player must still be removed from the WG regions associated with the town
+     * Removes a player from the town. Postcondition: Player is not a resident
+     * of the town, regardless of whether or not they were before. Note: Player
+     * must still be removed from the WG regions associated with the town
+     *
      * @param p - the player to be removed
      */
     public void removePlayer(Player p) {
@@ -185,7 +194,9 @@ public class Town implements Externalizable {
     }
 
     /**
-     * Removes the player from the town's list of residents and assistants. Does not remove them from regions.
+     * Removes the player from the town's list of residents and assistants. Does
+     * not remove them from regions.
+     *
      * @param playerName
      */
     public void removePlayer(String playerName) {
@@ -195,9 +206,12 @@ public class Town implements Externalizable {
     }
 
     /**
-     * Adds the territory to the town. The region of the territory will need to be handled separately.
+     * Adds the territory to the town. The region of the territory will need to
+     * be handled separately.
+     *
      * @param territ the territory to be added
-     * @return false if territ was not added because it is already added, true otherwise
+     * @return false if territ was not added because it is already added, true
+     * otherwise
      */
     public boolean addTerritory(Territory territ) {
         if (territories.containsKey(territ.getName())) {
@@ -209,10 +223,14 @@ public class Town implements Externalizable {
     }
 
     /**
-     * Removes the territory from the town. Removal of the territ's region will need to be handled elsewhere.
+     * Removes the territory from the town. Removal of the territ's region will
+     * need to be handled elsewhere.
+     *
      * @param territName the name of the territory to remove
      * @return the removed territory
-     * @see me.everdras.mctowns.database.TownManager.unregisterTownFromWorldGuard(WorldGuardPlugin wgp, Town t)
+     * @see
+     * me.everdras.mctowns.database.TownManager.unregisterTownFromWorldGuard(WorldGuardPlugin
+     * wgp, Town t)
      */
     public Territory removeTerritory(String territName) {
         return territories.remove(territName);
@@ -220,6 +238,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns the territory whose name is the same as name
+     *
      * @param name the name of the territory to be gotten
      * @return the territory whose name is name
      */
@@ -229,21 +248,24 @@ public class Town implements Externalizable {
 
     /**
      * Adds a player as an assistant to the town
+     *
      * @param player the player to be added
-     * @return false if player was not added because player was already added, true otherwise
+     * @return false if player was not added because player was already added,
+     * true otherwise
      */
     public boolean addAssistant(Player player) {
         return addAssistant(player.getName());
     }
 
-
     /**
      * Promotes the resident to an assistant.
+     *
      * @param playerName
-     * @return true if player was added as assistant, false if they're already an assistant or they're not a resident of the town.
+     * @return true if player was added as assistant, false if they're already
+     * an assistant or they're not a resident of the town.
      */
     public boolean addAssistant(String playerName) {
-        if (assistants.get(playerName) != null && assistants.get(playerName) && residents.get(playerName) != null &&residents.get(playerName)) {
+        if (assistants.get(playerName) != null && assistants.get(playerName) && residents.get(playerName) != null && residents.get(playerName)) {
             return false;
         }
 
@@ -253,8 +275,10 @@ public class Town implements Externalizable {
 
     /**
      * Removes the assistant from his position as an assistant
+     *
      * @param player the player to be demoted
-     * @return false if the player was not removed because the player is not an assistant, true otherwise
+     * @return false if the player was not removed because the player is not an
+     * assistant, true otherwise
      */
     public boolean removeAssistant(Player player) {
         if (!assistants.containsKey(player.getName())) {
@@ -268,6 +292,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns a hashmap of the territories
+     *
      * @return the hashmap of territories
      * @deprecated use getTerritoriesCollection()
      */
@@ -277,6 +302,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns the territories this town has.
+     *
      * @return the town's territories
      */
     public Collection<Territory> getTerritoriesCollection() {
@@ -285,6 +311,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns whether the player is the mayor or not
+     *
      * @param p the player to be checked
      * @return whether the player is mayor or not
      */
@@ -294,6 +321,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns whether the player is the mayor of the town.
+     *
      * @param playerName
      * @return
      */
@@ -303,6 +331,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns the list of all
+     *
      * @return
      */
     public String[] getResidentNames() {
@@ -325,10 +354,9 @@ public class Town implements Externalizable {
         this.friendlyFire = friendlyFire;
     }
 
-
-
     /**
      * Returns whether or not the player is an assistant in the town
+     *
      * @param p the player to be checked
      * @return if the player is an assistant or not
      */
@@ -338,6 +366,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns whether or not the player is a resident of the town
+     *
      * @param p the player to be checked
      * @return if the player is a resident or not
      */
@@ -410,6 +439,7 @@ public class Town implements Externalizable {
 
     /**
      * Returns the current number of residents in the town.
+     *
      * @return the number of residents in the town
      */
     public int getSize() {
@@ -562,8 +592,7 @@ public class Town implements Externalizable {
             economyJoins = false;
             defaultPlotPrice = BigDecimal.TEN;
             friendlyFire = false;
-        }
-        else if (ver == 1) {
+        } else if (ver == 1) {
             //============Beginning of original variables for version 1=========
             townName = in.readUTF();
             worldName = in.readUTF();
@@ -581,8 +610,7 @@ public class Town implements Externalizable {
             defaultPlotPrice = new BigDecimal(in.readFloat());
             //============End of original variables for version 1===============
             friendlyFire = false;
-        }
-        else if(ver == 2) {
+        } else if (ver == 2) {
             townName = in.readUTF();
             worldName = in.readUTF();
             townMOTD = in.readUTF();
@@ -599,8 +627,7 @@ public class Town implements Externalizable {
             defaultPlotPrice = new BigDecimal(in.readFloat());
             friendlyFire = in.readBoolean();
             //============End of original variables for version 2===============
-        }
-        else if(ver == 3) {
+        } else if (ver == 3) {
             townName = in.readUTF();
             worldName = in.readUTF();
             townMOTD = in.readUTF();
@@ -618,8 +645,7 @@ public class Town implements Externalizable {
             friendlyFire = in.readBoolean();
             //============End of original variables for version 3===============
 
-        }
-        else {
+        } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Town.");
         }
 
@@ -640,13 +666,9 @@ public class Town implements Externalizable {
     public void setDefaultPlotPrice(BigDecimal defaultPlotPrice) {
         this.defaultPlotPrice = defaultPlotPrice;
     }
-    
+
     @Override
     public String toString() {
-    	return this.townName;
+        return this.townName;
     }
-
-    
-
-
 }

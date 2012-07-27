@@ -4,6 +4,8 @@
  */
 package me.everdras.mctowns.database;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -11,7 +13,6 @@ import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
-
 import me.everdras.core.location.Location;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
@@ -19,11 +20,7 @@ import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
-
 import org.bukkit.entity.Player;
-
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 /**
  *

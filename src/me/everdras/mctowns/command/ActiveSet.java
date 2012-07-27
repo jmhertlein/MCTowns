@@ -8,6 +8,7 @@ import me.everdras.mctowns.structure.*;
 
 /**
  * The set of active objects for a player.
+ *
  * @author joshua
  */
 public class ActiveSet {
@@ -81,8 +82,6 @@ public class ActiveSet {
 
     @Override
     public String toString() {
-    	return "Town: " + activeTown + " Territ: " + activeTerritory + " Plot: " + activePlot;
+        return "Town: " + activeTown + " Territ: " + activeTerritory + " Plot: " + activePlot;
     }
-
-
 }

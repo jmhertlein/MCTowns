@@ -18,18 +18,17 @@ public class Territory extends MCTownsRegion implements Externalizable {
 
     private static final long serialVersionUID = "TERRITORY".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
-
     private HashMap<String, Plot> plots;
-
 
     /**
      * Required constructor for Externalization
      */
-    public Territory() {}
-
+    public Territory() {
+    }
 
     /**
      * Constructs a new territory
+     *
      * @param name the desired name of the territory
      * @param worldName the name of the world in which the territory exists
      */
@@ -39,9 +38,12 @@ public class Territory extends MCTownsRegion implements Externalizable {
     }
 
     /**
-     * Adds a plot to the territory. Registering the WG region of the territory needs to be done elsewhere.
+     * Adds a plot to the territory. Registering the WG region of the territory
+     * needs to be done elsewhere.
+     *
      * @param dist the plot to be added
-     * @return false if the plot was not added because it is already added, true otherwise
+     * @return false if the plot was not added because it is already added, true
+     * otherwise
      */
     public boolean addPlot(Plot plot) {
         if (plots.containsKey(plot.getName())) {
@@ -56,14 +58,13 @@ public class Territory extends MCTownsRegion implements Externalizable {
 
     /**
      * Returns the plot whose name is name
+     *
      * @param name the name of the plot to be returned
      * @return the plot whose name is name
      */
     public Plot getPlot(String name) {
         return plots.get(name);
     }
-
-
 
     /**
      *
@@ -75,6 +76,7 @@ public class Territory extends MCTownsRegion implements Externalizable {
 
     /**
      * Removes the plot from the territory
+     *
      * @param plotName the name of the plot to be removed
      * @return the removed plot
      */
@@ -91,21 +93,18 @@ public class Territory extends MCTownsRegion implements Externalizable {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
 
         int ver = in.readInt();
 
-        if(ver == 0) {
+        if (ver == 0) {
             //============Beginning of original variables for version 0=========
             plots = (HashMap<String, Plot>) in.readObject();
             //============End of original variables for version 0===============
-        }
-        else {
+        } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Territory.");
         }
     }
-
-
 }
