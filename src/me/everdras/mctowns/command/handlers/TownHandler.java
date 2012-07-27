@@ -7,6 +7,7 @@ package me.everdras.mctowns.command.handlers;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -230,7 +231,7 @@ public class TownHandler extends CommandHandler {
         String worldName = t.getWorldName();
         Territory nuTerrit = new Territory(territName, worldName);
 
-        ProtectedCuboidRegion region = this.getSelectedRegion(nuTerrit.getName());
+        ProtectedRegion region = this.getSelectedRegion(nuTerrit.getName());
 
 
 

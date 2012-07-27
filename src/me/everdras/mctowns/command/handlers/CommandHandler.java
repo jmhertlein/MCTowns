@@ -2,8 +2,12 @@ package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
+import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -11,13 +15,13 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import static me.everdras.core.chat.ChatUtil.ERR;
 import static me.everdras.core.chat.ChatUtil.SUCC;
 import me.everdras.core.command.ECommand;
@@ -259,7 +263,7 @@ public abstract class CommandHandler {
         return (WorldGuardPlugin) csw.getSender().getServer().getPluginManager().getPlugin("WorldGuard");
     }
 
-    protected ProtectedCuboidRegion getSelectedRegion(String desiredName) {
+    protected ProtectedRegion getSelectedRegion(String desiredName) {
         Selection selection;
         try {
             selection = wep.getSelection((Player) senderWrapper.getSender());
@@ -272,13 +276,24 @@ public abstract class CommandHandler {
             return null;
         }
 
+        ProtectedRegion region;
+        if(selection instanceof Polygonal2DSelection) {
+            Polygonal2DSelection sel = (Polygonal2DSelection) selection;
 
+            region = new ProtectedPolygonalRegion(desiredName, sel.getNativePoints(), sel.getMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY());
+        } else if(selection instanceof CuboidSelection) {
+            CuboidSelection sel = (CuboidSelection) selection;
 
-        Location min = selection.getMinimumPoint(), max = selection.getMaximumPoint();
-        BlockVector minVect = new BlockVector(min.getBlockX(), min.getBlockY(), min.getBlockZ());
-        BlockVector maxVect = new BlockVector(max.getBlockX(), max.getBlockY(), max.getBlockZ());
+            Location min = sel.getMinimumPoint(), max = sel.getMaximumPoint();
 
-        ProtectedCuboidRegion region = new ProtectedCuboidRegion(desiredName, minVect, maxVect);
+            BlockVector minVect = new BlockVector(min.getBlockX(), min.getBlockY(), min.getBlockZ());
+            BlockVector maxVect = new BlockVector(max.getBlockX(), max.getBlockY(), max.getBlockZ());
+
+            region = new ProtectedCuboidRegion(desiredName, minVect, maxVect);
+        } else {
+            MCTowns.logDebug("Error: The selection was neither a polygon nor a cuboid");
+            throw new RuntimeException("Error: The selection was neither a poly nor a cube.");
+        }
 
         return region;
     }
@@ -290,7 +305,20 @@ public abstract class CommandHandler {
     }
 
     protected boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
-        if (parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint())) {
+        if(reg instanceof ProtectedCuboidRegion) {
+            return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
+        } else if(reg instanceof ProtectedPolygonalRegion) {
+            ProtectedPolygonalRegion ppr = (ProtectedPolygonalRegion) reg;
+
+            for(BlockVector2D pt : ppr.getPoints()) {
+                if(! parentReg.contains(pt))
+                    return false;
+            }
+
+            if(! ( parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint() ) )) {
+                return false;
+            }
+
             return true;
         }
 
@@ -321,7 +349,7 @@ public abstract class CommandHandler {
     protected ArrayList<String> getOutputFriendlyTownJoinListMessages(boolean forTown, LinkedList<TownJoinInfoPair> list) {
 
         ArrayList<String> msgs = new ArrayList<>();
-        String temp = "";
+        String temp;
         for (int i = 0; i < list.size(); i += 3) {
             temp = "";
             for (int j = i; j < list.size() && j < i + 3; j++) {

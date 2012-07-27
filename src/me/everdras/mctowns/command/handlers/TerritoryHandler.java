@@ -56,7 +56,7 @@ public class TerritoryHandler extends CommandHandler {
 
 
 
-        ProtectedCuboidRegion region = getSelectedRegion(p.getName());
+        ProtectedRegion region = getSelectedRegion(p.getName());
 
         if (region == null) {
             return;
