@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 public class Town implements Externalizable {
 
     private static final long serialVersionUID = "TOWN".hashCode(); // DO NOT CHANGE
-    private static final int VERSION = 3;
+    private static final int VERSION = 0;
     //the town name
     private String townName;
     private String worldName;
@@ -452,7 +452,7 @@ public class Town implements Externalizable {
      * @param message
      */
     public void broadcastMessageToTown(Server server, String message) {
-        Player temp = null;
+        Player temp;
         message = ChatColor.GOLD + message;
 
         for (String playerName : residentNames) {
@@ -473,7 +473,7 @@ public class Town implements Externalizable {
         org.bukkit.Location playerLoc = p.getLocation();
         RegionManager regMan = wgp.getRegionManager(p.getWorld());
 
-        ProtectedRegion tempReg = null;
+        ProtectedRegion tempReg;
         for (Territory territ : getTerritoriesCollection()) {
             tempReg = regMan.getRegion(territ.getName());
             if (tempReg != null) {
@@ -586,65 +586,11 @@ public class Town implements Externalizable {
             residentNames = (ArrayList<String>) in.readObject();
             mayor = in.readUTF();
             assistants = (HashMap<String, Boolean>) in.readObject();
-            //============End of original variables for version 0===============
-
-            buyablePlots = false;
-            economyJoins = false;
-            defaultPlotPrice = BigDecimal.TEN;
-            friendlyFire = false;
-        } else if (ver == 1) {
-            //============Beginning of original variables for version 1=========
-            townName = in.readUTF();
-            worldName = in.readUTF();
-            townMOTD = in.readUTF();
-            motdColor = (ChatColor) in.readObject();
-            townSpawn = (Location) in.readObject();
-            bank = (BlockBank) in.readObject();
-            territories = (HashMap<String, Territory>) in.readObject();
-            residents = (HashMap<String, Boolean>) in.readObject();
-            residentNames = (ArrayList<String>) in.readObject();
-            mayor = in.readUTF();
-            assistants = (HashMap<String, Boolean>) in.readObject();
-            buyablePlots = in.readBoolean();
-            economyJoins = in.readBoolean();
-            defaultPlotPrice = new BigDecimal(in.readFloat());
-            //============End of original variables for version 1===============
-            friendlyFire = false;
-        } else if (ver == 2) {
-            townName = in.readUTF();
-            worldName = in.readUTF();
-            townMOTD = in.readUTF();
-            motdColor = (ChatColor) in.readObject();
-            townSpawn = (Location) in.readObject();
-            bank = (BlockBank) in.readObject();
-            territories = (HashMap<String, Territory>) in.readObject();
-            residents = (HashMap<String, Boolean>) in.readObject();
-            residentNames = (ArrayList<String>) in.readObject();
-            mayor = in.readUTF();
-            assistants = (HashMap<String, Boolean>) in.readObject();
-            buyablePlots = in.readBoolean();
-            economyJoins = in.readBoolean();
-            defaultPlotPrice = new BigDecimal(in.readFloat());
-            friendlyFire = in.readBoolean();
-            //============End of original variables for version 2===============
-        } else if (ver == 3) {
-            townName = in.readUTF();
-            worldName = in.readUTF();
-            townMOTD = in.readUTF();
-            motdColor = (ChatColor) in.readObject();
-            townSpawn = (Location) in.readObject();
-            bank = (BlockBank) in.readObject();
-            territories = (HashMap<String, Territory>) in.readObject();
-            residents = (HashMap<String, Boolean>) in.readObject();
-            residentNames = (ArrayList<String>) in.readObject();
-            mayor = in.readUTF();
-            assistants = (HashMap<String, Boolean>) in.readObject();
             buyablePlots = in.readBoolean();
             economyJoins = in.readBoolean();
             defaultPlotPrice = (BigDecimal) in.readObject();
             friendlyFire = in.readBoolean();
-            //============End of original variables for version 3===============
-
+            //============End of original variables for version 0===============
         } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Town.");
         }

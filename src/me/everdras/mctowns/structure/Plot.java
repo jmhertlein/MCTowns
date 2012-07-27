@@ -4,7 +4,6 @@
  */
 package me.everdras.mctowns.structure;
 
-import me.everdras.core.location.Location;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -14,6 +13,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.math.BigDecimal;
 import java.util.logging.Level;
+import me.everdras.core.location.Location;
 import me.everdras.mctowns.MCTowns;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -30,7 +30,7 @@ public class Plot extends MCTownsRegion implements Externalizable {
     /*
      *
      */
-    private static final int VERSION = 2;
+    private static final int VERSION = 0;
     private boolean forSale;
     private BigDecimal price;
     private Location signLoc;
@@ -160,24 +160,10 @@ public class Plot extends MCTownsRegion implements Externalizable {
 
         if (ver == 0) {
             //============Beginning of original variables for version 0=========
-            //Plot did not originally have any variables
-            //============End of original variables for version 0===============
-            forSale = false;
-            price = BigDecimal.ZERO;
-            signLoc = null;
-        } else if (ver == 1) {
-            //============Beginning of original variables for version 1=========
-            forSale = in.readBoolean();
-            price = new BigDecimal(in.readFloat());
-            signLoc = (Location) in.readObject();
-            //============End of original variables for version 1===============
-        } else if (ver == 2) {
-            //============Beginning of original variables for version 2=========
             forSale = in.readBoolean();
             price = (BigDecimal) (in.readObject());
             signLoc = (Location) in.readObject();
-            //============End of original variables for version 2===============
-
+            //============End of original variables for version 0===============
         } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Plot.");
         }
