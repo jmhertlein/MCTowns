@@ -68,33 +68,27 @@ public class MCTPlayerListener implements Listener {
 
 
         if (t == null) { //if player doesn't belong to a town...
-            LinkedList<TownJoinInfoPair> invs = joinManager.getInvitesForPlayer(p);
-
-            if (invs.size() != 0) {
-                p.sendMessage(ChatColor.LIGHT_PURPLE + "You have " + invs.size() + " pending town invitations! Type /mct list invites");
+            if (joinManager.getCurrentInviteForPlayer(p.getName()) != null) {
+                p.sendMessage(ChatColor.LIGHT_PURPLE + "You have a pending town invitation! To check, type /mct list invite");
 
             }
-            return;
+            return; //TODO: this return makes flow of control confusing, refactor it out
         }
 
-
+        //after this point, we know the player belongs to a town
         p.sendMessage(t.getTownMOTD());
 
         if (isMayor) {
 
-            count = joinManager.getPendingInvitesForTown(t).size();
+            count = joinManager.getIssuedInvitesForTown(t).length;
             if (count > 0) {
                 p.sendMessage(ChatColor.LIGHT_PURPLE + t.getTownName() + " has " + count + " pending player join invitations.");
             }
 
-            count = joinManager.getPendingRequestsForTown(t).size();
+            count = joinManager.getCurrentRequestsForTown(t).length;
             if (count > 0) {
-                p.sendMessage(ChatColor.LIGHT_PURPLE + t.getTownName() + " has " + joinManager.getPendingRequestsForTown(t).size() + " pending player join requests.");
+                p.sendMessage(ChatColor.LIGHT_PURPLE + t.getTownName() + " has " + count + " pending player join requests.");
             }
-        }
-        else {
-            //nothing else to really do for people on logging in if they're not the mayor... i'll keep this here
-            //just in case.
         }
 
 

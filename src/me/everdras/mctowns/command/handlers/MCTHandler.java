@@ -302,7 +302,7 @@ public class MCTHandler extends CommandHandler {
 
             joinManager.clearInvitationForPlayerFromTown(pName, addTo);
         } else {
-            joinManager.requestJoinToTown(addTo, pName);
+            joinManager.addPlayerRequestForTown(addTo, pName);
             senderWrapper.sendMessage("You have submitted a request to join " + townName + ".");
             addTo.broadcastMessageToTown(server, senderWrapper.getPlayer().getName() + " has submitted a request to join the town.");
 
@@ -348,7 +348,7 @@ public class MCTHandler extends CommandHandler {
 
 
 
-    public void checkPendingInvites() {
+    public void checkPendingInvite() {
         Town t = joinManager.getCurrentInviteForPlayer(senderWrapper.getPlayer().getName());
 
         senderWrapper.sendMessage(INFO_ALT + "You are currently " + (t == null ? " not invited to a town." : "invited to " + t.getTownName() + "."));

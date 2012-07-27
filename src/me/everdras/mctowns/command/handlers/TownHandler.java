@@ -7,7 +7,6 @@ package me.everdras.mctowns.command.handlers;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import java.math.BigDecimal;
-import java.util.LinkedList;
 import static me.everdras.core.chat.ChatUtil.*;
 import me.everdras.core.command.ECommand;
 import me.everdras.mctowns.MCTowns;
@@ -334,7 +333,7 @@ public class TownHandler extends CommandHandler {
         } else {
             invitee = p.getName(); //let's use that sexy name-completion
         }
-        
+
         if(joinManager.townHasRequestFromPlayer(t, invitee)) {
             t.addPlayer(invitee);
             p.sendMessage("You have joined " + t.getTownName() + "!");
@@ -477,7 +476,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.removeInvitation(t, playerName)) {
+        if (joinManager.clearInvitationForPlayerFromTown(playerName, t)) {
             senderWrapper.sendMessage(ChatColor.GOLD + "The invitation for " + playerName + " has been withdrawn.");
         } else {
             senderWrapper.sendMessage(ERR + playerName + " does not have any pending invitations from " + t.getTownName() + ".");
@@ -503,7 +502,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!joinManager.removeRequest(t, (p == null ? playerName : p.getName()))) {
+        if (!joinManager.clearRequestForTownFromPlayer(t, (p == null ? playerName : p.getName()))) {
             senderWrapper.sendMessage(ERR + "No matching request found.");
         } else {
             senderWrapper.sendMessage(ChatColor.GOLD + (p == null ? playerName : p.getName()) + "'s request has been rejected.");
@@ -527,11 +526,11 @@ public class TownHandler extends CommandHandler {
             senderWrapper.notifyActiveTownNotSet();
             return;
         }
-        LinkedList<TownJoinInfoPair> reqs = joinManager.getPendingRequestsForTown(t);
+        String[] reqs = joinManager.getCurrentRequestsForTown(t);
 
         senderWrapper.sendMessage(ChatColor.DARK_BLUE + "There are pending requests from:");
 
-        for (String s : getOutputFriendlyTownJoinListMessages(true, reqs)) {
+        for (String s : getOutputFriendlyTownJoinListMessages(reqs)) {
             senderWrapper.sendMessage(ChatColor.YELLOW + s);
         }
 
@@ -549,12 +548,13 @@ public class TownHandler extends CommandHandler {
             senderWrapper.notifyActiveTownNotSet();
             return;
         }
-        LinkedList<TownJoinInfoPair> invs = joinManager.getPendingInvitesForTown(t);
+
+        String[] invs = joinManager.getIssuedInvitesForTown(t);
 
         senderWrapper.sendMessage(ChatColor.DARK_BLUE + "There are pending invites for:");
 
 
-        for (String s : getOutputFriendlyTownJoinListMessages(true, invs)) {
+        for (String s : getOutputFriendlyTownJoinListMessages(invs)) {
             senderWrapper.sendMessage(ChatColor.YELLOW + s);
         }
 
@@ -852,7 +852,7 @@ public class TownHandler extends CommandHandler {
     }
 
     public void depositHeldItem(String quantity) {
-        String blockName = null;
+        String blockName;
 
         if (senderWrapper.getPlayer().getItemInHand() == null) {
             senderWrapper.sendMessage(ERR + "There is no item in your hand!");

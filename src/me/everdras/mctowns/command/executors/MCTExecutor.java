@@ -18,7 +18,7 @@ import org.bukkit.command.CommandSender;
  */
 public class MCTExecutor extends BaseExecutor {
     private MCTHandler handler;
-    
+
     public MCTExecutor(MCTowns parent) {
         super(parent);
         handler = new MCTHandler(parent);
@@ -78,7 +78,7 @@ public class MCTExecutor extends BaseExecutor {
 
                 case "list":
                 case "ls":
-                    helpMessage = "/mct list (towns | invites)";
+                    helpMessage = "/mct list (towns | invite)";
                     switch (command.get(2)) {
                         case "towns":
                             if (command.hasArgAtIndex(3)) {
@@ -89,8 +89,8 @@ public class MCTExecutor extends BaseExecutor {
                             }
                             softFailure = false;
                             break;
-                        case "invites":
-                            handler.checkPendingInvites();
+                        case "invite":
+                            handler.checkPendingInvite();
                             softFailure = false;
                             break;
                     }
