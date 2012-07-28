@@ -279,17 +279,21 @@ public abstract class CommandHandler {
 
     public static boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
         if (reg instanceof ProtectedCuboidRegion) {
+            MCTowns.logDebug("Test region was cuboid");
             return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
         } else if (reg instanceof ProtectedPolygonalRegion) {
+            MCTowns.logDebug("Test region was polygon");
             ProtectedPolygonalRegion ppr = (ProtectedPolygonalRegion) reg;
 
             for (BlockVector2D pt : ppr.getPoints()) {
                 if (!parentReg.contains(pt)) {
+                    MCTowns.logDebug("A point was outside.");
                     return false;
                 }
             }
 
             if (!(parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint()))) {
+                MCTowns.logDebug("Test region was too tall vertically.");
                 return false;
             }
 
@@ -415,7 +419,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        if (!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
+        if (regType != TownLevel.TERRITORY && !selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
             senderWrapper.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
         }

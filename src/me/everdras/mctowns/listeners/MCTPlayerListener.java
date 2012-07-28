@@ -5,6 +5,7 @@
 package me.everdras.mctowns.listeners;
 
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -173,19 +174,32 @@ public class MCTPlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.BlockPlaceEvent e) {
+    public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.SignChangeEvent e) {
+        MCTowns.logDebug("Block placed. SCE");
+
         if(e.getBlock().getType() != Material.SIGN_POST)
             return;
 
+        MCTowns.logDebug("Material was signpost");
+
         CraftSign sign = (CraftSign) e.getBlock().getState();
 
-        if(! sign.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
+        System.out.println("First line: " + e.getLine(0));
+
+        if(! e.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
             return;
 
+        MCTowns.logDebug("Had our prefix");
 
+        MCTowns.logDebug("Doing shit.");
         Player p = e.getPlayer();
 
         ActiveSet pActive = plugin.getActiveSets().get(p.getName());
+
+        if(pActive == null) {
+            p.sendMessage(ChatColor.RED + "Your active town is not set.");
+            return;
+        }
 
         Town t = pActive.getActiveTown();
 
@@ -213,7 +227,7 @@ public class MCTPlayerListener implements Listener {
 
         String nuName;
         try {
-            nuName = sign.getLine(1);
+            nuName = e.getLine(1);
         } catch(IndexOutOfBoundsException ioobe) {
             p.sendMessage(ChatColor.RED + "Error: The second line must contain a name for the new plot.");
             return;
@@ -232,6 +246,8 @@ public class MCTPlayerListener implements Listener {
             count ++;
         }
 
+        MCTowns.logDebug("Found fence at " + signLoc.toString());
+
         if(count >= 100) {
             p.sendMessage(ChatColor.RED + "Error: couldn't find a fence within 100 blocks, aborting.");
             return;
@@ -239,31 +255,32 @@ public class MCTPlayerListener implements Listener {
 
         ProtectedFenceRegion fencedReg;
         try {
-            fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(nuName, signLoc);
+            fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), signLoc);
         } catch (IncompleteFenceException ex) {
             p.sendMessage(ChatColor.RED + "Error: Fence was not complete. Fence must be a complete polygon.");
             return;
         }
 
-
-        pActive.getActiveTerritory().addPlot(plot);
-
-        
         if(! CommandHandler.selectionIsWithinParent(fencedReg, pActive.getActiveTerritory())) {
             p.sendMessage(ChatColor.RED + "Error: The selected region is not within your active territory.");
             return;
         }
 
-        //the the new plot's parent to the active territory
+        pActive.getActiveTerritory().addPlot(plot);
+
+        RegionManager regMan = MCTowns.getWgp().getRegionManager(p.getWorld());
+        regMan.addRegion(fencedReg);
+
+        //set the new plot's parent to the active territory
         try {
-            fencedReg.setParent(MCTowns.getWgp().getRegionManager(p.getWorld()).getRegion(pActive.getActiveTerritory().getName()));
+            fencedReg.setParent(regMan.getRegion(pActive.getActiveTerritory().getName()));
         } catch (CircularInheritanceException ex) {
             Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         //force a save of the region database
         try {
-            MCTowns.getWgp().getRegionManager(p.getWorld()).save();
+            regMan.save();
         } catch (ProtectionDatabaseException ex) {
             Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
         }

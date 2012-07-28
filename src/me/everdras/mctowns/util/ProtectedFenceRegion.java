@@ -8,6 +8,7 @@ import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import java.util.LinkedList;
 import java.util.List;
+import me.everdras.mctowns.MCTowns;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -33,26 +34,32 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
         cameFrom = NONE;
         do {
             dirToNext = getDirToNextFence(cameFrom, cur);
+            System.out.println("Dir to next:" + dirToNext);
 
             //if there was a corner in the fence...
-            if(cameFrom != dirToNext) {
+            if(getOppositeDir(cameFrom) != dirToNext) {
                 //add it to the polygon
                 points.add(new BlockVector2D(cur.getBlockX(), cur.getBlockZ()));
+                MCTowns.logDebug("Added a new point: " + "(" + cur.getBlockX() + "," + cur.getBlockZ() + ")");
             }
 
-            cameFrom = dirToNext;
+
             switch (dirToNext) {
                 case NORTH:
-                    cur = cur.add(0, 0, 1);
+                    cur.add(0, 0, 1);
+                    cameFrom = SOUTH;
                     break;
                 case SOUTH:
-                    cur = cur.add(0, 0, -1);
+                    cur.add(0, 0, -1);
+                    cameFrom = NORTH;
                     break;
                 case EAST:
-                    cur = cur.add(1, 0, 0);
+                    cur.add(1, 0, 0);
+                    cameFrom = WEST;
                     break;
                 case WEST:
-                    cur = cur.add(-1, 0, 0);
+                    cur.add(-1, 0, 0);
+                    cameFrom = EAST;
                     break;
                 case NONE:
                     throw new IncompleteFenceException();
@@ -60,32 +67,32 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
         } while (!cur.equals(l));
 
 
-        return new ProtectedFenceRegion(id, points, 0, l.getWorld().getMaxHeight());
+        return new ProtectedFenceRegion(id, points, 0, l.getWorld().getMaxHeight()-1);
     }
 
     private static final int getDirToNextFence(int cameFrom, Location l) {
-        Location temp = l.clone();
+        System.out.println("Came from: " + cameFrom);
 
         if (cameFrom != SOUTH) {
-            if (temp.subtract(0, 0, 1).getBlock().getType() == Material.FENCE) {
+            if (l.clone().add(0, 0, -1).getBlock().getType() == Material.FENCE) {
                 return SOUTH;
             }
         }
 
         if (cameFrom != NORTH) {
-            if (temp.subtract(0, 0, -1).getBlock().getType() == Material.FENCE) {
+            if (l.clone().add(0, 0, 1).getBlock().getType() == Material.FENCE) {
                 return NORTH;
             }
         }
 
         if (cameFrom != EAST) {
-            if (temp.subtract(-1, 0, 0).getBlock().getType() == Material.FENCE) {
+            if (l.clone().add(1, 0, 0).getBlock().getType() == Material.FENCE) {
                 return EAST;
             }
         }
 
         if (cameFrom != WEST) {
-            if (temp.subtract(1, 0, 0).getBlock().getType() == Material.FENCE) {
+            if (l.clone().add(-1, 0, 0).getBlock().getType() == Material.FENCE) {
                 return WEST;
             }
         }
@@ -97,6 +104,21 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
 
         public IncompleteFenceException() {
             super("The fence was not a complete loop.");
+        }
+    }
+
+    private static int getOppositeDir(int dir) {
+        switch(dir) {
+            case NORTH:
+                return SOUTH;
+            case SOUTH:
+                return NORTH;
+            case EAST:
+                return WEST;
+            case WEST:
+                return EAST;
+            default:
+                return -1;
         }
     }
 }

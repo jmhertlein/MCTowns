@@ -167,7 +167,7 @@ public abstract class MCTownsRegion implements Externalizable {
 
     public static final String formatRegionName(Town owner, TownLevel type, String plotName) {
         plotName = plotName.toLowerCase();
-        
+
         String infix;
         if(type == TownLevel.PLOT)
             infix = TownLevel.PLOT_INFIX;
@@ -176,7 +176,7 @@ public abstract class MCTownsRegion implements Externalizable {
         else
             infix = "";
 
-        return owner.getTownName() + infix + plotName;
+        return (owner.getTownName() + infix + plotName).toLowerCase();
     }
 
 
