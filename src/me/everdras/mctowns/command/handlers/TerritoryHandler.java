@@ -15,6 +15,7 @@ import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
+import me.everdras.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -35,7 +36,7 @@ public class TerritoryHandler extends CommandHandler {
 
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
 
-        plotName = senderWrapper.getActiveTown().getTownName() + PLOT_INFIX + plotName;
+        plotName = senderWrapper.getActiveTown().getTownName() + TownLevel.PLOT_INFIX + plotName;
 
         String worldName = senderWrapper.getActiveTown().getWorldName();
         Plot p = new Plot(plotName, worldName);
@@ -199,7 +200,7 @@ public class TerritoryHandler extends CommandHandler {
         Territory nuActive = t.getTerritory(territName);
 
         if (nuActive == null) {
-            nuActive = t.getTerritory((t.getTownName() + TERRITORY_INFIX + territName).toLowerCase());
+            nuActive = t.getTerritory((t.getTownName() + TownLevel.TERRITORY_INFIX + territName).toLowerCase());
         }
 
         if (nuActive == null) {

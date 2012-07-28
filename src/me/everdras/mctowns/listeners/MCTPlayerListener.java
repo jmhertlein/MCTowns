@@ -4,16 +4,28 @@
  */
 package me.everdras.mctowns.listeners;
 
+import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
+import me.everdras.mctowns.command.handlers.CommandHandler;
 import me.everdras.mctowns.database.TownManager;
+import me.everdras.mctowns.structure.MCTownsRegion;
+import me.everdras.mctowns.structure.Plot;
+import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
+import me.everdras.mctowns.structure.TownLevel;
 import me.everdras.mctowns.townjoin.TownJoinManager;
 import me.everdras.mctowns.util.Config;
+import me.everdras.mctowns.util.ProtectedFenceRegion;
+import me.everdras.mctowns.util.ProtectedFenceRegion.IncompleteFenceException;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.entity.Player;
@@ -22,6 +34,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -30,6 +43,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class MCTPlayerListener implements Listener {
     private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
 
+    private MCTowns plugin;
     private TownManager townManager;
     private TownJoinManager joinManager;
     private Config options;
@@ -47,6 +61,7 @@ public class MCTPlayerListener implements Listener {
         this.joinManager = plugin.getJoinManager();
         economy = MCTowns.getEconomy();
         potentialPlotBuyers = plugin.getPotentialPlotBuyers();
+        this.plugin = plugin;
     }
 
     /**
@@ -169,7 +184,16 @@ public class MCTPlayerListener implements Listener {
 
 
         Player p = e.getPlayer();
-        Town t = townManager.matchPlayerToTown(p);
+
+        ActiveSet pActive = plugin.getActiveSets().get(p.getName());
+
+        Town t = pActive.getActiveTown();
+
+        if(t == null) {
+            p.sendMessage(ChatColor.RED + "Your active town is not set.");
+            return;
+        }
+
         boolean isMayor;
         try {
             isMayor = t.playerIsMayor(p);
@@ -182,9 +206,72 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
+        if(pActive.getActiveTerritory() == null) {
+            p.sendMessage(ChatColor.RED + "You need to set your active territory if you want to add a plot.");
+            return;
+        }
+
+        String nuName;
+        try {
+            nuName = sign.getLine(1);
+        } catch(IndexOutOfBoundsException ioobe) {
+            p.sendMessage(ChatColor.RED + "Error: The second line must contain a name for the new plot.");
+            return;
+        }
+
+        Plot plot = new Plot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld().getName());
+
+        //now, prepare the WG region
+        Location signLoc = sign.getLocation();
+
+        Vector deltaVector = signLoc.getDirection().multiply(-1);
+
+        int count = 0;
+        while(signLoc.getBlock().getType() != Material.FENCE && count < 100) {
+            signLoc = signLoc.add(deltaVector);
+            count ++;
+        }
+
+        if(count >= 100) {
+            p.sendMessage(ChatColor.RED + "Error: couldn't find a fence within 100 blocks, aborting.");
+            return;
+        }
+
+        ProtectedFenceRegion fencedReg;
+        try {
+            fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(nuName, signLoc);
+        } catch (IncompleteFenceException ex) {
+            p.sendMessage(ChatColor.RED + "Error: Fence was not complete. Fence must be a complete polygon.");
+            return;
+        }
+
+
+        pActive.getActiveTerritory().addPlot(plot);
+
         
+        if(! CommandHandler.selectionIsWithinParent(fencedReg, pActive.getActiveTerritory())) {
+            p.sendMessage(ChatColor.RED + "Error: The selected region is not within your active territory.");
+            return;
+        }
 
+        //the the new plot's parent to the active territory
+        try {
+            fencedReg.setParent(MCTowns.getWgp().getRegionManager(p.getWorld()).getRegion(pActive.getActiveTerritory().getName()));
+        } catch (CircularInheritanceException ex) {
+            Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+        //force a save of the region database
+        try {
+            MCTowns.getWgp().getRegionManager(p.getWorld()).save();
+        } catch (ProtectionDatabaseException ex) {
+            Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        p.sendMessage(ChatColor.GREEN + "Plot created.");
+
+        pActive.setActivePlot(plot);
+        p.sendMessage(ChatColor.LIGHT_PURPLE + "Active plot set to newly created plot.");
 
 
 

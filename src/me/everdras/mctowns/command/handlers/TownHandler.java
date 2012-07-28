@@ -15,6 +15,7 @@ import me.everdras.mctowns.database.TownManager;
 import me.everdras.mctowns.permission.Perms;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
+import me.everdras.mctowns.structure.TownLevel;
 import me.everdras.mctowns.townjoin.TownJoinMethod;
 import me.everdras.mctowns.townjoin.TownJoinMethodFormatException;
 import me.everdras.mctowns.util.BlockDataValueTranslator;
@@ -216,7 +217,7 @@ public class TownHandler extends CommandHandler {
         }
 
 
-        territName = t.getTownName() + TERRITORY_INFIX + territName;
+        territName = t.getTownName() + TownLevel.TERRITORY_INFIX + territName;
 
         String worldName = t.getWorldName();
         Territory nuTerrit = new Territory(territName, worldName);

@@ -12,6 +12,7 @@ import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
+import me.everdras.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -331,10 +332,10 @@ public class PlotHandler extends CommandHandler {
             nuActive = te.getPlot(plotName);
 
             if (nuActive == null) {
-                nuActive = te.getPlot((t.getTownName() + PLOT_INFIX + plotName).toLowerCase());
+                nuActive = te.getPlot((t.getTownName() + TownLevel.PLOT_INFIX + plotName).toLowerCase());
             }
         } else {
-            plotName = t.getTownName() + PLOT_INFIX + plotName;
+            plotName = t.getTownName() + TownLevel.PLOT_INFIX + plotName;
             plotName = plotName.toLowerCase();
 
             territloop:

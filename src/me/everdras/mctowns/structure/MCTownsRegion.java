@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public abstract class MCTownsRegion implements Externalizable {
-
     private static final long serialVersionUID = "MCTOWNSREGION".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
     /**
@@ -165,6 +164,20 @@ public abstract class MCTownsRegion implements Externalizable {
         hash = 79 * hash + Objects.hashCode(this.worldName);
         return hash;
     }
-    
-    
+
+    public static final String formatRegionName(Town owner, TownLevel type, String plotName) {
+        plotName = plotName.toLowerCase();
+        
+        String infix;
+        if(type == TownLevel.PLOT)
+            infix = TownLevel.PLOT_INFIX;
+        else if(type == TownLevel.TERRITORY)
+            infix = TownLevel.TERRITORY_INFIX;
+        else
+            infix = "";
+
+        return owner.getTownName() + infix + plotName;
+    }
+
+
 }

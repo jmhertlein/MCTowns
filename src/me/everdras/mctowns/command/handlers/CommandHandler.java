@@ -45,8 +45,6 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public abstract class CommandHandler {
-    protected static final String TERRITORY_INFIX = "_territ_";
-    protected static final String PLOT_INFIX = "_plot_";
     protected static final int RESULTS_PER_PAGE = 10;
     protected MCTowns plugin;
     protected TownManager townManager;
@@ -273,13 +271,13 @@ public abstract class CommandHandler {
         return region;
     }
 
-    protected boolean selectionIsWithinParent(ProtectedRegion reg, MCTownsRegion parent) {
+    public static boolean selectionIsWithinParent(ProtectedRegion reg, MCTownsRegion parent) {
         ProtectedRegion parentReg = wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
 
         return selectionIsWithinParent(reg, parentReg);
     }
 
-    protected boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
+    public static boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
         if (reg instanceof ProtectedCuboidRegion) {
             return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
         } else if (reg instanceof ProtectedPolygonalRegion) {
