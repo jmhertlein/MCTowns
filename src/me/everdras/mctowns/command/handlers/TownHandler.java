@@ -5,7 +5,7 @@
 package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import static me.everdras.core.chat.ChatUtil.*;
 import me.everdras.core.command.ECommand;
@@ -221,7 +221,7 @@ public class TownHandler extends CommandHandler {
         String worldName = t.getWorldName();
         Territory nuTerrit = new Territory(territName, worldName);
 
-        ProtectedCuboidRegion region = this.getSelectedRegion(nuTerrit.getName());
+        ProtectedRegion region = this.getSelectedRegion(nuTerrit.getName());
 
 
 

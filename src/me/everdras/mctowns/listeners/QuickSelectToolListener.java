@@ -9,7 +9,6 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
@@ -70,20 +69,10 @@ public class QuickSelectToolListener implements Listener {
             }
         }
 
-        District dist = null;
+        Plot plot = null;
         if (territ != null) {
             for (ProtectedRegion pr : regs) {
-                dist = territ.getDistrict(pr.getId());
-                if (dist != null) {
-                    break;
-                }
-            }
-        }
-
-        Plot plot = null;
-        if (dist != null) {
-            for (ProtectedRegion pr : regs) {
-                plot = dist.getPlot(pr.getId());
+                plot = territ.getPlot(pr.getId());
                 if (plot != null) {
                     break;
                 }
@@ -92,7 +81,6 @@ public class QuickSelectToolListener implements Listener {
 
         actives.setActiveTown(town);
         actives.setActiveTerritory(territ);
-        actives.setActiveDistrict(dist);
         actives.setActivePlot(plot);
         MCTowns.logDebug("Active set is now:" + actives);
         e.getPlayer().sendMessage(me.everdras.core.chat.ChatUtil.INFO + "Active set is now: " + actives);

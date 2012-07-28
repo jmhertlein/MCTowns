@@ -2,6 +2,9 @@ package me.everdras.mctowns.command.handlers;
 
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.BlockVector2D;
+import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
+import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
@@ -10,6 +13,7 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.ArrayList;
@@ -42,11 +46,8 @@ import org.bukkit.entity.Player;
  */
 public abstract class CommandHandler {
     protected static final String TERRITORY_INFIX = "_territ_";
-    protected static final String DISTRICT_INFIX = "_dist_";
     protected static final String PLOT_INFIX = "_plot_";
-    
     protected static final int RESULTS_PER_PAGE = 10;
-    
     protected MCTowns plugin;
     protected TownManager townManager;
     protected TownJoinManager joinManager;
@@ -54,7 +55,7 @@ public abstract class CommandHandler {
     protected static Economy economy = MCTowns.getEconomy();
     protected Server server;
     protected static Config options = MCTowns.getOptions();
-    
+
     protected MCTCommandSenderWrapper senderWrapper;
     protected ECommand cmd;
 
@@ -69,7 +70,7 @@ public abstract class CommandHandler {
         joinManager = parent.getJoinManager();
         server = parent.getServer();
     }
-    
+
     public void setNewCommand(CommandSender sender, ECommand c) {
         cmd = c;
         senderWrapper = new MCTCommandSenderWrapper(townManager, sender, plugin.getActiveSets());
@@ -100,9 +101,6 @@ public abstract class CommandHandler {
                 return;
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
-                break;
-            case DISTRICT:
-                reg = senderWrapper.getActiveDistrict();
                 break;
             case PLOT:
                 reg = senderWrapper.getActivePlot();
@@ -180,9 +178,6 @@ public abstract class CommandHandler {
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
                 break;
-            case DISTRICT:
-                reg = senderWrapper.getActiveDistrict();
-                break;
             case PLOT:
                 reg = senderWrapper.getActivePlot();
                 break;
@@ -239,7 +234,7 @@ public abstract class CommandHandler {
         return (WorldGuardPlugin) csw.getSender().getServer().getPluginManager().getPlugin("WorldGuard");
     }
 
-    protected ProtectedCuboidRegion getSelectedRegion(String desiredName) {
+    protected ProtectedRegion getSelectedRegion(String desiredName) {
         Selection selection;
         try {
             selection = wgp.getWorldEdit().getSelection((Player) senderWrapper.getSender());
@@ -256,13 +251,24 @@ public abstract class CommandHandler {
             return null;
         }
 
+        ProtectedRegion region;
+        if (selection instanceof Polygonal2DSelection) {
+            Polygonal2DSelection sel = (Polygonal2DSelection) selection;
 
+            region = new ProtectedPolygonalRegion(desiredName, sel.getNativePoints(), sel.getMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY());
+        } else if (selection instanceof CuboidSelection) {
+            CuboidSelection sel = (CuboidSelection) selection;
 
-        Location min = selection.getMinimumPoint(), max = selection.getMaximumPoint();
-        BlockVector minVect = new BlockVector(min.getBlockX(), min.getBlockY(), min.getBlockZ());
-        BlockVector maxVect = new BlockVector(max.getBlockX(), max.getBlockY(), max.getBlockZ());
+            Location min = sel.getMinimumPoint(), max = sel.getMaximumPoint();
 
-        ProtectedCuboidRegion region = new ProtectedCuboidRegion(desiredName, minVect, maxVect);
+            BlockVector minVect = new BlockVector(min.getBlockX(), min.getBlockY(), min.getBlockZ());
+            BlockVector maxVect = new BlockVector(max.getBlockX(), max.getBlockY(), max.getBlockZ());
+
+            region = new ProtectedCuboidRegion(desiredName, minVect, maxVect);
+        } else {
+            MCTowns.logDebug("Error: The selection was neither a polygon nor a cuboid");
+            throw new RuntimeException("Error: The selection was neither a poly nor a cube.");
+        }
 
         return region;
     }
@@ -272,9 +278,23 @@ public abstract class CommandHandler {
 
         return selectionIsWithinParent(reg, parentReg);
     }
-    
+
     protected boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
-        if (parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint())) {
+        if (reg instanceof ProtectedCuboidRegion) {
+            return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
+        } else if (reg instanceof ProtectedPolygonalRegion) {
+            ProtectedPolygonalRegion ppr = (ProtectedPolygonalRegion) reg;
+
+            for (BlockVector2D pt : ppr.getPoints()) {
+                if (!parentReg.contains(pt)) {
+                    return false;
+                }
+            }
+
+            if (!(parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint()))) {
+                return false;
+            }
+
             return true;
         }
 
@@ -292,13 +312,14 @@ public abstract class CommandHandler {
     protected void broadcastTownJoin(Town t, Player whoJoined) {
         broadcastTownJoin(t, whoJoined.getName());
     }
-    
+
     protected void broadcastTownJoin(Town t, String s_playerWhoJoined) {
         for (String pl : t.getResidentNames()) {
             try {
                 //broadcast the join to everyone BUT the player who joined.
                 (pl.equals(s_playerWhoJoined) ? null : server.getPlayer(pl)).sendMessage(s_playerWhoJoined + " just joined " + t.getTownName() + "!");
-            } catch (NullPointerException ignore) {}
+            } catch (NullPointerException ignore) {
+            }
         }
     }
 
@@ -342,17 +363,14 @@ public abstract class CommandHandler {
             case TERRITORY:
                 reg = senderWrapper.getActiveTerritory();
                 break;
-            case DISTRICT:
-                reg = senderWrapper.getActiveDistrict();
-                break;
             case PLOT:
                 reg = senderWrapper.getActivePlot();
                 break;
             default:
                 reg = null;
         }
-        
-        if(regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
+
+        if (regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
             senderWrapper.notifyInsufPermissions();
             return;
         }
@@ -392,14 +410,14 @@ public abstract class CommandHandler {
         MCTowns.logDebug("Comparing:");
         MCTowns.logDebug("New: " + nuWGRegion.getMaximumPoint().toString() + " | " + nuWGRegion.getMinimumPoint());
         MCTowns.logDebug("Old: " + oldWGReg.getMaximumPoint().toString() + " | " + oldWGReg.getMinimumPoint());
-        //To make sure that we can't accidentally "orphan" districts or plots outside the region, only allow
+        //To make sure that we can't accidentally "orphan" plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.
         if (!(nuWGRegion.contains(oldWGReg.getMaximumPoint()) && nuWGRegion.contains(oldWGReg.getMinimumPoint()))) {
             senderWrapper.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
             return;
         }
-        
-        if(!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
+
+        if (!selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
             senderWrapper.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
         }

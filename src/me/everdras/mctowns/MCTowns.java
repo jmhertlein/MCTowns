@@ -28,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author joshua
  */
 public class MCTowns extends JavaPlugin {
+    public static MCTowns plugin;
 
     public static final Logger log = Logger.getLogger("Minecraft");
     private static final String MCT_DATA_FOLDER = "plugins" + File.separator + "MCTowns";
@@ -35,7 +36,7 @@ public class MCTowns extends JavaPlugin {
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
-    
+
     private TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
@@ -54,8 +55,7 @@ public class MCTowns extends JavaPlugin {
         if (!abortSave) {
             serializeTownManager();
             serializeBackup();
-        }
-        else {
+        } else {
             logInfo("The save was aborted manually, so nothing was saved.");
         }
 
@@ -103,7 +103,7 @@ public class MCTowns extends JavaPlugin {
         setCommandExecutors();
 
         abortSave = false;
-        
+
         startMetricsCollection();
 
         log.info("MCTowns is now fully loaded.");
@@ -161,7 +161,7 @@ public class MCTowns extends JavaPlugin {
             ois.close();
             fis.close();
 
-        } catch (Exception e) {
+        } catch (IOException | ClassNotFoundException e) {
             log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
             townManager = new TownManager();
@@ -194,10 +194,10 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void regEventListeners() {
-        MCTPlayerListener playerListener = new MCTPlayerListener(townManager, joinManager, options, economy, potentialPlotBuyers);
+        MCTPlayerListener playerListener = new MCTPlayerListener(this);
         MCTPvPListener townPvPListener = new MCTPvPListener(townManager, options);
         QuickSelectToolListener qsToolListener = new QuickSelectToolListener(wgp, this);
-        
+
         //configure the tool listener as per the config
         QuickSelectToolListener.SELECT_TOOL = options.getQsTool();
 
@@ -282,7 +282,6 @@ public class MCTowns extends JavaPlugin {
         getCommand("mct").setExecutor(new MCTExecutor(this));
         getCommand("town").setExecutor(new TownExecutor(this));
         getCommand("territory").setExecutor(new TerritoryExecutor(this));
-        getCommand("district").setExecutor(new DistrictExecutor(this));
         getCommand("plot").setExecutor(new PlotExecutor(this));
     }
 
@@ -321,7 +320,7 @@ public class MCTowns extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
-    
+
     public static Config getOptions() {
         return options;
     }
@@ -349,9 +348,9 @@ public class MCTowns extends JavaPlugin {
     public static WorldGuardPlugin getWgp() {
         return wgp;
     }
-        
-        
-	
+
+
+
 	private void startMetricsCollection() {
 		try {
 		    Metrics metrics = new Metrics(this);
@@ -359,9 +358,9 @@ public class MCTowns extends JavaPlugin {
 		} catch (IOException e) {
 		    logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
 		}
-		
+
 		MCTowns.logDebug("Metrics reporting started.");
 	}
-    
-    
+
+
 }

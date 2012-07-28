@@ -4,6 +4,8 @@
  */
 package me.everdras.mctowns.database;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -11,20 +13,14 @@ import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
-
 import me.everdras.core.location.Location;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.mctowns.command.ActiveSet;
-import me.everdras.mctowns.structure.District;
 import me.everdras.mctowns.structure.MCTownsRegion;
 import me.everdras.mctowns.structure.Plot;
 import me.everdras.mctowns.structure.Territory;
 import me.everdras.mctowns.structure.Town;
-
 import org.bukkit.entity.Player;
-
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 /**
  *
@@ -47,11 +43,13 @@ public class TownManager implements Externalizable {
     }
 
     /**
-     * Attempts to add a town to the town manager (effectively creating a new town as far as the TownManager
-     * is concerned).
+     * Attempts to add a town to the town manager (effectively creating a new
+     * town as far as the TownManager is concerned).
+     *
      * @param townName the desired name of the new town
      * @param mayor the live player to be made the mayor of the new town
-     * @return true if town was added, false if town was not because it was already existing
+     * @return true if town was added, false if town was not because it was
+     * already existing
      */
     public boolean addTown(String townName, Player mayor) {
         Town t = new Town(townName, mayor);
@@ -67,6 +65,7 @@ public class TownManager implements Externalizable {
 
     /**
      * Checks to see if a live player is in a town
+     *
      * @param p the live player to be checked
      * @return true if the player is already in any town, false otherwise
      */
@@ -77,6 +76,7 @@ public class TownManager implements Externalizable {
     /**
      * Removes the town from the manager and unregisters everything it owns from
      * world guard
+     *
      * @param wgp the server's WorldGuard instance
      * @param townName the name of the town to be removed
      */
@@ -87,6 +87,7 @@ public class TownManager implements Externalizable {
 
     /**
      * Removes the Territory from the manager and unregisters it from worldguard
+     *
      * @param wgp the server's WorldGuard instance
      * @param parent the town who is the owner of the territory
      * @param territName the name of the territory to remove
@@ -98,24 +99,13 @@ public class TownManager implements Externalizable {
     }
 
     /**
-     * Removes the District from the manager and unregisters it from worldguard
-     * @param wgp the server's WorldGuard instance
-     * @param parent the Territory which is the parent of the district
-     * @param distName the name of the district to be removed
-     */
-    public void removeDistrict(WorldGuardPlugin wgp, Territory parent, String distName) {
-        District deleteMe = parent.removeDistrict(distName);
-
-        unregisterDistrictFromWorldGuard(wgp, deleteMe);
-    }
-
-    /**
      * Removes the Plot from the manager and unregisters it from worldguard
+     *
      * @param wgp the server's WorldGuard instance
-     * @param parent the District which is the parent of the plot
+     * @param parent the Territory which is the parent of the plot
      * @param plotName the name of the plot to be removed
      */
-    public void removePlot(WorldGuardPlugin wgp, District parent, String plotName) {
+    public void removePlot(WorldGuardPlugin wgp, Territory parent, String plotName) {
         Plot deleteMe = parent.removePlot(plotName);
 
         unregisterPlotFromWorldGuard(wgp, deleteMe);
@@ -123,6 +113,7 @@ public class TownManager implements Externalizable {
 
     /**
      * Gets a town by its name
+     *
      * @param townName the name of the town
      * @return the town, or null is no town by that name exists
      */
@@ -132,6 +123,7 @@ public class TownManager implements Externalizable {
 
     /**
      * Returns the towns that this manager manages
+     *
      * @return the towns
      */
     public Collection<Town> getTownsCollection() {
@@ -140,6 +132,7 @@ public class TownManager implements Externalizable {
 
     /**
      * Removes every single region associated with this Town from worldguard
+     *
      * @param wgp the server's WorldGuard instance
      * @param t the town to remove
      * @return false if the town was null, true otherwise
@@ -155,7 +148,9 @@ public class TownManager implements Externalizable {
     }
 
     /**
-     * Removes every single region associated with this Territory from worldguard
+     * Removes every single region associated with this Territory from
+     * worldguard
+     *
      * @param wgp the server's WorldGuard instance
      * @param t the territory to remove
      * @return false if t was null, true otherwise
@@ -164,8 +159,8 @@ public class TownManager implements Externalizable {
         if (t == null) {
             return false;
         }
-        for (District d : t.getDistrictsCollection()) {
-            unregisterDistrictFromWorldGuard(wgp, d);
+        for (Plot p : t.getPlotsCollection()) {
+            unregisterPlotFromWorldGuard(wgp, p);
         }
 
         wgp.getRegionManager(wgp.getServer().getWorld(t.getWorldName())).removeRegion(t.getName());
@@ -174,30 +169,11 @@ public class TownManager implements Externalizable {
     }
 
     /**
-     * Removes evert region associated with the district from worldguard
-     * @param wgp the server's WorldGuard instance
-     * @param d the district to remove
-     * @return false if d is null, true otherwise
-     */
-    public static boolean unregisterDistrictFromWorldGuard(WorldGuardPlugin wgp, District d) {
-
-        if (d == null) {
-            return false;
-        }
-
-        for (Plot p : d.getPlotsCollection()) {
-            unregisterPlotFromWorldGuard(wgp, p);
-        }
-
-        wgp.getRegionManager(wgp.getServer().getWorld(d.getWorldName())).removeRegion(d.getName());
-
-        return true;
-    }
-
-    /**
-     * Removes every region associated with this plot from worldguard.
-     * This is usually just the plot itself, since a plot has no children.
-     * But if it has children because its region was manually changed, the children will be removed.
+     * Removes every region associated with this plot from worldguard. This is
+     * usually just the plot itself, since a plot has no children. But if it has
+     * children because its region was manually changed, the children will be
+     * removed.
+     *
      * @param wgp the server's WorldGuard instance
      * @param p the plot to remove
      * @return false if p is null, true otherwise
@@ -212,8 +188,10 @@ public class TownManager implements Externalizable {
 
     /**
      * Matches a live player to his town
+     *
      * @param p the player to match to a town
-     * @return the town of which the player is a member, or null if player has no town
+     * @return the town of which the player is a member, or null if player has
+     * no town
      */
     public Town matchPlayerToTown(Player p) {
         return matchPlayerToTown(p.getName());
@@ -222,8 +200,10 @@ public class TownManager implements Externalizable {
 
     /**
      * Matches a possibly non-live player to a town
+     *
      * @param playerName the name of the player to match for
-     * @return the Town the player is a member of, or null if player is not a member of any town
+     * @return the Town the player is a member of, or null if player is not a
+     * member of any town
      */
     public Town matchPlayerToTown(String playerName) {
         for (Town town : towns.values()) {
@@ -238,18 +218,17 @@ public class TownManager implements Externalizable {
     /**
      *
      * @param bukkitLoc
-     * @return an ActiveSet pointing to the plot to be bought, or null if the sign isn't associated with a town.
+     * @return an ActiveSet pointing to the plot to be bought, or null if the
+     * sign isn't associated with a town.
      */
     public ActiveSet getPlotFromSignLocation(org.bukkit.Location bukkitLoc) {
         Location mctLoc = Location.convertFromBukkitLocation(bukkitLoc);
 
         for (Town to : getTownsCollection()) {
             for (Territory te : to.getTerritoriesCollection()) {
-                for (District d : te.getDistrictsCollection()) {
-                    for (Plot p : d.getPlotsCollection()) {
-                        if (p.getSignLoc() != null && p.getSignLoc().equals(mctLoc)) {
-                            return new ActiveSet(to, te, d, p);
-                        }
+                for (Plot p : te.getPlotsCollection()) {
+                    if (p.getSignLoc() != null && p.getSignLoc().equals(mctLoc)) {
+                        return new ActiveSet(to, te, p);
                     }
                 }
             }
@@ -261,6 +240,7 @@ public class TownManager implements Externalizable {
 
     /**
      * Removes the player from every WG region associated with this town.
+     *
      * @param wgp the server's WorldGuard instance
      * @param town
      * @param p
@@ -277,6 +257,7 @@ public class TownManager implements Externalizable {
 
     /**
      * Removes the player from the Territory's WG region
+     *
      * @param wgp the server's WorldGuard instance
      * @param territ
      * @param p
@@ -284,37 +265,17 @@ public class TownManager implements Externalizable {
 //    public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, Player p) {
 //        removePlayerFromTerritorysWGRegions(wgp, territ, p.getName());
 //    }
-
     public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, String playerName) {
         removePlayerFromWorldGuardRegion(wgp, territ, playerName);
 
-        for (District dist : territ.getDistrictsCollection()) {
-            removePlayerFromDistrictsWGRegions(wgp, dist, playerName);
+        for (Plot p : territ.getPlotsCollection()) {
+            removePlayerFromPlotsWGRegion(wgp, p, playerName);
         }
-    }
-
-    /**
-     * Removes the player from the district's WG region
-     * @param wgp the server's WorldGuard instance
-     * @param dist
-     * @param p
-     */
-    public void removePlayerFromDistrictsWGRegions(WorldGuardPlugin wgp, District dist, Player p) {
-        removePlayerFromDistrictsWGRegions(wgp, dist, p.getName());
-
-    }
-
-    public void removePlayerFromDistrictsWGRegions(WorldGuardPlugin wgp, District dist, String playerName) {
-        removePlayerFromWorldGuardRegion(wgp, dist, playerName);
-
-        for (Plot plot : dist.getPlotsCollection()) {
-            removePlayerFromPlotsWGRegion(wgp, plot, playerName);
-        }
-
     }
 
     /**
      * Removes the player from the plot's WG region.
+     *
      * @param wgp the server's WorldGuard instance
      * @param plot the plot to remove the player from
      * @param p the player to be removed from the plot
@@ -329,7 +290,7 @@ public class TownManager implements Externalizable {
     }
 
     @SuppressWarnings("unused")
-	private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, Player p) {
+    private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, Player p) {
         removePlayerFromWorldGuardRegion(wgp, mctRegion, p.getName());
     }
 
@@ -347,7 +308,7 @@ public class TownManager implements Externalizable {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int ver = in.readInt();
 
@@ -355,8 +316,7 @@ public class TownManager implements Externalizable {
             //============Beginning of original variables for version 0=========
             towns = (HashMap<String, Town>) in.readObject();
             //============End of original variables for version 0===============
-        }
-        else {
+        } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Town.");
         }
     }

@@ -1,6 +1,6 @@
 name: MCTowns
 main: me.everdras.mctowns.MCTowns
-version: 1.1.0
+version: 1.1.1
 depend: [WorldGuard, Vault]
 commands:
     mct:
@@ -15,10 +15,6 @@ commands:
         description: base command for all territory-based commands
         usage: /territory (add | remove | active | list | flag)
         aliases: te
-    district:
-        description: base command for all district-based commands
-        usage: /district (add | remove | active | list | flag)
-        aliases: di
     plot:
         description: base command for all plot-based commands
         usage: /plot (add | remove | active | list | sign | info | flag | economy)

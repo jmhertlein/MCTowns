@@ -36,14 +36,15 @@ public enum Perms {
      */
     WARP_FOREIGN,
     /**
-     * allow the player to withdraw from their town bank outside their town's borders
+     * allow the player to withdraw from their town bank outside their town's
+     * borders
      */
     WITHDRAW_BANK_OUTSIDE_BORDERS;
+
     /**
      * The message to be displayed when a player attempts to perform an action
      * for which they do not have permission.
      */
-
     @Override
     public String toString() {
         switch (this) {
@@ -66,6 +67,7 @@ public enum Perms {
 
     /**
      * Registers all permissions in the plugin manager
+     *
      * @param pm the plugin manager in which to register permissions
      */
     public static void registerPermNodes(PluginManager pm) {

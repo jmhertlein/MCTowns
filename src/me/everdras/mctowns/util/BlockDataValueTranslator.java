@@ -8,6 +8,7 @@ import org.bukkit.Material;
 
 /**
  * Provides translator functionalities for the names and IDs of blocks.
+ *
  * @author joshua
  */
 public class BlockDataValueTranslator {

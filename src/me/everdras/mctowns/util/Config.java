@@ -3,7 +3,6 @@ package me.everdras.mctowns.util;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.Scanner;
-
 import org.bukkit.Material;
 
 /**
@@ -19,7 +18,6 @@ public class Config {
     private int minNumPlayersToBuyTerritory;
     private boolean allowTownFriendlyFireManagement;
     private Material qsTool;
-    
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -124,16 +122,16 @@ public class Config {
 
                     }
                     break;
-                    
+
                 case "quickSelectTool":
-                	curToken = lineScan.next().trim();
-                	try {
-                		qsTool = Material.getMaterial(Integer.parseInt(curToken));
-                	} catch (Exception e) {
+                    curToken = lineScan.next().trim();
+                    try {
+                        qsTool = Material.getMaterial(Integer.parseInt(curToken));
+                    } catch (Exception e) {
                         failBit = true;
                         failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
                     }
-                	break;
+                    break;
 
                 default:
                     failBit = true;
@@ -170,10 +168,10 @@ public class Config {
     }
 
     public Material getQsTool() {
-		return qsTool;
-	}
+        return qsTool;
+    }
 
-	/*
+    /*
      * Returns the next uncommented, non-empty line in the file.
      */
     private String getNextLine(Scanner fileScan) {
@@ -218,7 +216,7 @@ public class Config {
         PrintStream ps;
 
         File f = new File(path);
-        if(!f.exists()) {
+        if (!f.exists()) {
             f.createNewFile();
         }
 
@@ -243,7 +241,7 @@ public class Config {
         ps.println("minNumPlayersToBuyTerritory = 3");
         ps.println();
         ps.println("allowTownFriendlyFireManagement = false");
-        
+
         ps.println();
         ps.println("#Default is wooden hoe (ID 290)");
         ps.println("quickSelectTool = 290");

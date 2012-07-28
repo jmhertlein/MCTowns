@@ -29,7 +29,9 @@ public abstract class MCTownsRegion implements Externalizable {
     }
 
     /**
-     * creates a new region with the name name, and sets its world to be worldname
+     * creates a new region with the name name, and sets its world to be
+     * worldname
+     *
      * @param name the name of the new region
      * @param worldName the world of the new region
      */
@@ -128,15 +130,14 @@ public abstract class MCTownsRegion implements Externalizable {
             name = in.readUTF();
             worldName = in.readUTF();
             //============End of original variables for version 0===============
-        }
-        else {
+        } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of MCTownsRegion.");
         }
     }
-    
+
     @Override
     public String toString() {
-    	return name;
+        return name;
     }
 
     @Override

@@ -8,13 +8,13 @@ import me.everdras.mctowns.structure.*;
 
 /**
  * The set of active objects for a player.
+ *
  * @author joshua
  */
 public class ActiveSet {
 
     private Town activeTown;
     private Territory activeTerritory;
-    private District activeDistrict;
     private Plot activePlot;
 
     /**
@@ -23,31 +23,13 @@ public class ActiveSet {
     public ActiveSet() {
         activeTown = null;
         activeTerritory = null;
-        activeDistrict = null;
         activePlot = null;
     }
 
-    public ActiveSet(Town activeTown, Territory activeTerritory, District activeDistrict, Plot activePlot) {
+    public ActiveSet(Town activeTown, Territory activeTerritory, Plot activePlot) {
         this.activeTown = activeTown;
         this.activeTerritory = activeTerritory;
-        this.activeDistrict = activeDistrict;
         this.activePlot = activePlot;
-    }
-
-    /**
-     *
-     * @return the active district
-     */
-    public District getActiveDistrict() {
-        return activeDistrict;
-    }
-
-    /**
-     *
-     * @param activeDistrict the new active district
-     */
-    public void setActiveDistrict(District activeDistrict) {
-        this.activeDistrict = activeDistrict;
     }
 
     /**
@@ -97,11 +79,9 @@ public class ActiveSet {
     public void setActiveTown(Town activeTown) {
         this.activeTown = activeTown;
     }
-    
+
     @Override
     public String toString() {
-    	return "Town: " + activeTown + " Territ: " + activeTerritory + " Dist: " + activeDistrict + " Plot: " + activePlot;
+        return "Town: " + activeTown + " Territ: " + activeTerritory + " Plot: " + activePlot;
     }
-
-
 }

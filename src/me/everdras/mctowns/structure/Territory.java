@@ -18,74 +18,70 @@ public class Territory extends MCTownsRegion implements Externalizable {
 
     private static final long serialVersionUID = "TERRITORY".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
-
-    private HashMap<String, District> districts;
-
+    private HashMap<String, Plot> plots;
 
     /**
      * Required constructor for Externalization
      */
-    public Territory() {}
-    
-    
+    public Territory() {
+    }
+
     /**
      * Constructs a new territory
+     *
      * @param name the desired name of the territory
      * @param worldName the name of the world in which the territory exists
      */
     public Territory(String name, String worldName) {
         super(name, worldName);
-        districts = new HashMap<String, District>();
+        plots = new HashMap<>();
     }
 
     /**
-     * Adds a district to the territory. Registering the WG region of the territory needs to be done elsewhere.
-     * @param dist the district to be added
-     * @return false if the district was not added because it is already added, true otherwise
+     * Adds a plot to the territory. Registering the WG region of the territory
+     * needs to be done elsewhere.
+     *
+     * @param dist the plot to be added
+     * @return false if the plot was not added because it is already added, true
+     * otherwise
      */
-    public boolean addDistrict(District dist) {
-        if (districts.containsKey(dist.getName())) {
+    public boolean addPlot(Plot plot) {
+        if (plots.containsKey(plot.getName())) {
             return false;
         }
 
-        districts.put(dist.getName(), dist);
+        plots.put(plot.getName(), plot);
         return true;
 
 
     }
 
     /**
-     * Returns the district whose name is name
-     * @param name the name of the district to be returned
-     * @return the district whose name is name
+     * Returns the plot whose name is name
+     *
+     * @param name the name of the plot to be returned
+     * @return the plot whose name is name
      */
-    public District getDistrict(String name) {
-        return districts.get(name);
-    }
-
-    /**
-     * @deprecated
-     * @return
-     */
-    public HashMap<String, District> getDistricts() {
-        return districts;
+    public Plot getPlot(String name) {
+        return plots.get(name);
     }
 
     /**
      *
-     * @return the districts owned by this territory
+     * @return the plots owned by this territory
      */
-    public Collection<District> getDistrictsCollection() {
-        return districts.values();
+    public Collection<Plot> getPlotsCollection() {
+        return plots.values();
     }
 
     /**
-     * Removed the district from the territory
-     * @param distName the name of the district to be removed
-     * @return the removed district
+     * Removes the plot from the territory
+     *
+     * @param plotName the name of the plot to be removed
+     * @return the removed plot
      */
-    public District removeDistrict(String distName) {
-        return districts.remove(distName);
+    public Plot removePlot(String plotName) {
+        return plots.remove(plotName);
     }
 
     @Override
@@ -93,25 +89,22 @@ public class Territory extends MCTownsRegion implements Externalizable {
         super.writeExternal(out);
 
         out.writeInt(VERSION);
-        out.writeObject(districts);
+        out.writeObject(plots);
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
 
         int ver = in.readInt();
 
-        if(ver == 0) {
+        if (ver == 0) {
             //============Beginning of original variables for version 0=========
-            districts = (HashMap<String, District>) in.readObject();
+            plots = (HashMap<String, Plot>) in.readObject();
             //============End of original variables for version 0===============
-        }
-        else {
+        } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Territory.");
         }
     }
-
-
 }

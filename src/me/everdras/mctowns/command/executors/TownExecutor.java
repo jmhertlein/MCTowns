@@ -109,8 +109,7 @@ public class TownExecutor extends BaseExecutor {
                         case "players":
                             if (command.hasArgAtIndex(3)) {
                                 handler.listResidents(command.get(3));
-                            }
-                            else {
+                            } else {
                                 handler.listResidents();
                             }
                             softFailure = false;
@@ -120,8 +119,7 @@ public class TownExecutor extends BaseExecutor {
                         case "territories":
                             if (command.hasArgAtIndex(3)) {
                                 handler.listTerritories(command.get(3));
-                            }
-                            else {
+                            } else {
                                 handler.listTerritories();
                             }
                             softFailure = false;
@@ -142,10 +140,11 @@ public class TownExecutor extends BaseExecutor {
 
                 case "active":
                     helpMessage = "/town active (reset | <town name>)";
-                    if(command.get(2).equalsIgnoreCase("reset"))
+                    if (command.get(2).equalsIgnoreCase("reset")) {
                         handler.resetActiveTown();
-                    else
+                    } else {
                         handler.setActiveTown(command.get(2));
+                    }
                     softFailure = false;
                     break;
 
@@ -213,12 +212,10 @@ public class TownExecutor extends BaseExecutor {
                     if (command.hasArgAtIndex(2)) {
                         if (command.getArgAtIndex(2).equals("set")) {
                             handler.setTownSpawn();
-                        }
-                        else {
+                        } else {
                             handler.warpToOtherSpawn(command.get(2));
                         }
-                    }
-                    else {
+                    } else {
                         handler.warpToSpawn();
                     }
                     softFailure = false;
@@ -244,8 +241,7 @@ public class TownExecutor extends BaseExecutor {
                 case "motd":
                     if (command.hasArgAtIndex(2)) {
                         handler.setMOTD(command.concatAfter(2));
-                    }
-                    else {
+                    } else {
                         handler.printMOTD();
                     }
                     softFailure = false;
@@ -276,8 +272,7 @@ public class TownExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            }
-            else {
+            } else {
                 softFailure = true;
                 hardFailure = false;
             }

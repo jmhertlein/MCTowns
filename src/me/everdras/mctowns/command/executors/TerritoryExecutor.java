@@ -7,6 +7,8 @@ package me.everdras.mctowns.command.executors;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.core.command.ArgumentCountException;
 import me.everdras.core.command.ECommand;
+import me.everdras.mctowns.MCTowns;
+import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.handlers.TerritoryHandler;
 import me.everdras.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
@@ -41,22 +43,22 @@ public class TerritoryExecutor extends BaseExecutor {
         try {
             switch (command.get(1)) {
                 case "add":
-                    helpMessage = "/territory add (player | district)";
+                    helpMessage = "/territory add (player | plot)";
                     switch (command.get(2)) {
                         case "player":
                             helpMessage = "/territory add player <player name>";
                             handler.addPlayerToTerritory(command.get(3));
                             softFailure = false;
                             break;
-                        case "district":
-                        case "di":
-                            helpMessage = "/territory add district <district name>";
-                            handler.addDistrictToTerritory(command.get(3));
+                        case "plot":
+                        case "pl":
+                            helpMessage = "/territory add plot <plot name>";
+                            handler.addPlotToTerritory(command.get(3));
                             softFailure = false;
                             break;
                     }
                     break;
-                    
+
                 case "redefine":
                     handler.redefineActiveRegion(TownLevel.TERRITORY);
                     softFailure = false;
@@ -64,32 +66,31 @@ public class TerritoryExecutor extends BaseExecutor {
 
                 case "remove":
                 case "rm":
-                    helpMessage = "/territory remove (player | district)";
+                    helpMessage = "/territory remove (player | plot)";
                     switch (command.get(2)) {
                         case "player":
                             helpMessage = "/territory remove player <player name>";
                             handler.removePlayerFromTerritory(command.get(3));
                             softFailure = false;
                             break;
-                        case "district":
-                        case "dist":
-                            helpMessage = "/territory remove district <district name>";
-                            handler.removeDistrictFromTerritory(command.get(3));
+                        case "plot":
+                        case "pl":
+                            helpMessage = "/territory remove plot <plot name>";
+                            handler.removePlotFromTerritory(command.get(3));
                             softFailure = false;
                             break;
                     }
                     break;
                 case "list":
                 case "ls":
-                    helpMessage = "/territory list (districts | players)";
+                    helpMessage = "/territory list (plots | players)";
 
                     switch (command.get(2)) {
-                        case "districts":
+                        case "plots":
                             if (command.hasArgAtIndex(3)) {
-                                handler.listDistricts(command.get(3));
-                            }
-                            else {
-                                handler.listDistricts();
+                                handler.listPlots(command.get(3));
+                            } else {
+                                handler.listPlots();
                             }
                             softFailure = false;
                             break;
@@ -122,8 +123,7 @@ public class TerritoryExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            }
-            else {
+            } else {
                 softFailure = true;
                 hardFailure = false;
             }

@@ -7,6 +7,8 @@ package me.everdras.mctowns.command.executors;
 import me.everdras.mctowns.MCTowns;
 import me.everdras.core.command.ArgumentCountException;
 import me.everdras.core.command.ECommand;
+import me.everdras.mctowns.MCTowns;
+import me.everdras.mctowns.command.ActiveSet;
 import me.everdras.mctowns.command.handlers.MCTHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -83,8 +85,7 @@ public class MCTExecutor extends BaseExecutor {
                         case "towns":
                             if (command.hasArgAtIndex(3)) {
                                 handler.listTowns(command.get(3));
-                            }
-                            else {
+                            } else {
                                 handler.listTowns();
                             }
                             softFailure = false;
@@ -120,12 +121,6 @@ public class MCTExecutor extends BaseExecutor {
                     softFailure = false;
                     break;
 
-                case "convert":
-                    helpMessage = "/mct convert <town name> <region name> <new district name>";
-                    handler.convertRegionToMCTown(command.get(2), command.get(3), command.get(3));
-                    softFailure = false;
-                    break;
-
                 case "togglesave":
                     handler.toggleAbortSave();
                     softFailure = false;
@@ -140,8 +135,7 @@ public class MCTExecutor extends BaseExecutor {
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
-            }
-            else {
+            } else {
                 softFailure = true;
                 hardFailure = false;
             }
