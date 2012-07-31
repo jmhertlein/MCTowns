@@ -9,9 +9,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
-import static net.jmhertlein.core.chat.ChatUtil.ERR;
-import static net.jmhertlein.core.chat.ChatUtil.INFO_ALT;
-import static net.jmhertlein.core.chat.ChatUtil.SUCC;
+import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.permission.Perms;
@@ -53,6 +51,9 @@ public class MCTHandler extends CommandHandler {
         if (townManager.addTown(townName, nuMayor)) {
             senderWrapper.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
+            
+            senderWrapper.setActiveTown(townManager.matchPlayerToTown(nuMayor));
+            senderWrapper.sendMessage(INFO + "Active town set to newly created town.");
         } else {
             senderWrapper.sendMessage(ERR + "That town already exists!");
         }
