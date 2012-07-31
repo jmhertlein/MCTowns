@@ -228,6 +228,10 @@ public class MCTPlayerListener implements Listener {
         String nuName;
         try {
             nuName = e.getLine(1);
+            
+            if(nuName.isEmpty())
+                throw new IndexOutOfBoundsException();
+
         } catch(IndexOutOfBoundsException ioobe) {
             p.sendMessage(ChatColor.RED + "Error: The second line must contain a name for the new plot.");
             return;
