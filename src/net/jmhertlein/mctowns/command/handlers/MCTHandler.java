@@ -51,9 +51,11 @@ public class MCTHandler extends CommandHandler {
         if (townManager.addTown(townName, nuMayor)) {
             senderWrapper.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
-            
+
             senderWrapper.setActiveTown(townManager.matchPlayerToTown(nuMayor));
             senderWrapper.sendMessage(INFO + "Active town set to newly created town.");
+
+            senderWrapper.sendMessage(INFO_ALT + "The town's spawn has been set to your current location. Change it with /town spawn set.");
         } else {
             senderWrapper.sendMessage(ERR + "That town already exists!");
         }
