@@ -66,7 +66,7 @@ public class PlotHandler extends CommandHandler {
 
 
 
-        if (p.removePlayerFromWGRegion(wgp, player)) {
+        if (p.removePlayer(player)) {
             senderWrapper.sendMessage("Player removed from plot.");
         } else {
             senderWrapper.sendMessage(ERR + player + " is not a member of this region.");
@@ -99,7 +99,7 @@ public class PlotHandler extends CommandHandler {
             senderWrapper.sendMessage(ERR + playerName + " is not online. Make sure you typed their name correctly!");
         }
 
-        if (p.addPlayerToWGRegion(wgp, playerName)) {
+        if (p.addPlayer(playerName)) {
             senderWrapper.sendMessage("Player added to plot.");
         } else {
             senderWrapper.sendMessage(ERR + "That player is already in that plot.");

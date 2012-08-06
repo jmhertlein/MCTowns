@@ -135,7 +135,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        if (territ.addPlayerToWGRegion(wgp, playerName)) {
+        if (territ.addPlayer(playerName)) {
             senderWrapper.sendMessage("Player added to territory.");
         } else {
             senderWrapper.sendMessage(ERR + "That player is already in that territory.");
@@ -163,19 +163,19 @@ public class TerritoryHandler extends CommandHandler {
         }
 
         if (recursive) {
-            if (!territ.removePlayerFromWGRegion(wgp, player)) {
+            if (!territ.removePlayer(player)) {
                 senderWrapper.sendMessage(ERR + "That player is not in this territory.");
                 return;
             }
 
             for (Plot p : territ.getPlotsCollection()) {
-                p.removePlayerFromWGRegion(wgp, player);
+                p.removePlayer(player);
             }
 
             senderWrapper.sendMessage("Player removed from territory.");
 
         } else {
-            if (!territ.removePlayerFromWGRegion(wgp, player)) {
+            if (!territ.removePlayer(player)) {
                 senderWrapper.sendMessage(ERR + "That player is not in this territory.");
                 return;
             }

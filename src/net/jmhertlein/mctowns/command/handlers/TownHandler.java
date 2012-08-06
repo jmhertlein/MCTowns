@@ -379,7 +379,7 @@ public class TownHandler extends CommandHandler {
 
         if (t.addAssistant(playerName)) {
             for (Territory territ : t.getTerritoriesCollection()) {
-                territ.addPlayerToWGRegion(wgp, playerName);
+                territ.addPlayer(playerName);
             }
 
             senderWrapper.sendMessage(playerName + " has been promoted to an assistant of " + t.getTownName() + ".");
@@ -427,7 +427,7 @@ public class TownHandler extends CommandHandler {
             senderWrapper.sendMessage(p.getName() + " has been demoted.");
             p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
             for (Territory rm : t.getTerritoriesCollection()) {
-                rm.removePlayerFromWGRegion(wgp, p.getName());
+                rm.removePlayer(p.getName());
             }
         } else {
             senderWrapper.sendMessage(ERR + p.getName() + " is not an assistant in this town.");

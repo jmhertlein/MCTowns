@@ -6,10 +6,12 @@ package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.*;
 import java.util.Objects;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.MCTowns;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -19,6 +21,8 @@ import org.bukkit.entity.Player;
 public abstract class MCTownsRegion implements Externalizable {
     private static final long serialVersionUID = "MCTOWNSREGION".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
+    protected static WorldGuardPlugin wgp = MCTowns.getWgp();
+
     /**
      * The name of the region, the name of the world in which the region exists
      */
@@ -61,7 +65,7 @@ public abstract class MCTownsRegion implements Externalizable {
      * @param p
      * @return
      */
-    public boolean removePlayerFromWGRegion(WorldGuardPlugin wgp, String p) {
+    public boolean removePlayer(String p) {
         DefaultDomain members, owners;
         boolean removed = false;
 
@@ -87,11 +91,11 @@ public abstract class MCTownsRegion implements Externalizable {
      * @param p
      * @return
      */
-    public boolean addPlayerToWGRegion(WorldGuardPlugin wgp, Player p) {
-        return addPlayerToWGRegion(wgp, p.getName());
+    public boolean addPlayer(Player p) {
+        return addPlayer(p.getName());
     }
 
-    public boolean addPlayerToWGRegion(WorldGuardPlugin wgp, String playerName) {
+    public boolean addPlayer(String playerName) {
         DefaultDomain dd = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getOwners();
 
         if (!dd.getPlayers().contains(playerName)) {
@@ -101,7 +105,7 @@ public abstract class MCTownsRegion implements Externalizable {
         return false;
     }
 
-    public boolean addGuestToWGRegion(WorldGuardPlugin wgp, String playerName) {
+    public boolean addGuest(String playerName) {
         DefaultDomain members = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getMembers();
 
         if (!members.getPlayers().contains(playerName)) {
@@ -110,6 +114,10 @@ public abstract class MCTownsRegion implements Externalizable {
         }
 
         return false;
+    }
+
+    public ProtectedRegion getWGRegion() {
+        return wgp.getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegionExact(name);
     }
 
     @Override
