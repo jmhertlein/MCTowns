@@ -40,6 +40,9 @@ public class TownJoinManager {
     }
 
     public boolean townHasRequestFromPlayer(Town t, String playerName) {
+        if(joinRequests.get(t) == null)
+            return false;
+        
         Boolean ret = joinRequests.get(t).get(playerName);
         return ret == null ? false : ret;
     }
