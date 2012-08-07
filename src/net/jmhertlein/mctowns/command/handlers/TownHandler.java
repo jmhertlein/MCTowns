@@ -18,10 +18,10 @@ import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
-import net.jmhertlein.mctowns.util.BlockDataValueTranslator;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -761,12 +761,14 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!BlockDataValueTranslator.blockExists(blockName)) {
+        Material block = Material.matchMaterial(blockName);
+
+        if (block == null) {
             senderWrapper.sendMessage(ERR + "That block doesn't exist.");
             return;
         }
 
-        int numBlocks = t.getBank().queryBlocks(BlockDataValueTranslator.getBlockID(blockName));
+        int numBlocks = t.getBank().queryBlocks(block.getId());
 
         senderWrapper.sendMessage(ChatColor.DARK_AQUA + "There are " + (numBlocks == -1 ? "0" : numBlocks) + " blocks of " + blockName + " in the bank.");
     }
@@ -798,15 +800,16 @@ public class TownHandler extends CommandHandler {
 
 
         BlockBank bank = t.getBank();
+        Material block = Material.matchMaterial(blockName);
 
-        if (BlockDataValueTranslator.getBlockID(blockName) == -1) {
+        if (block == null) {
             senderWrapper.sendMessage(ERR + blockName + " is not a valid block name.");
             return;
         }
 
-        if (bank.withdrawBlocks(BlockDataValueTranslator.getBlockID(blockName), quantity)) {
+        if (bank.withdrawBlocks(block.getId(), quantity)) {
             Player p = senderWrapper.getPlayer();
-            p.getInventory().addItem(new ItemStack(BlockDataValueTranslator.getBlockID(blockName), quantity));
+            p.getInventory().addItem(new ItemStack(block.getId(), quantity));
             senderWrapper.sendMessage("Blocks withdrawn.");
         } else {
             senderWrapper.sendMessage(ERR + "Number out of valid range. Enter a number between 1 and the number of blocks in your bank.");
@@ -831,20 +834,21 @@ public class TownHandler extends CommandHandler {
         }
 
         BlockBank bank = t.getBank();
+        Material block = Material.matchMaterial(blockName);
 
-        if (BlockDataValueTranslator.getBlockID(blockName) == -1) {
+        if (block == null) {
             senderWrapper.sendMessage(ERR + blockName + " is not a valid block name.");
             return;
         }
 
-        if (!senderWrapper.getPlayer().getInventory().contains(BlockDataValueTranslator.getBlockID(blockName), quantity)) {
+        if (!senderWrapper.getPlayer().getInventory().contains(block.getId(), quantity)) {
             senderWrapper.sendMessage(ERR + "You do not have enough " + blockName + " to deposit that much.");
             return;
         }
 
-        if (bank.depositBlocks(BlockDataValueTranslator.getBlockID(blockName), quantity)) {
+        if (bank.depositBlocks(block.getId(), quantity)) {
             Player p = senderWrapper.getPlayer();
-            p.getInventory().removeItem(new ItemStack(BlockDataValueTranslator.getBlockID(blockName), quantity));
+            p.getInventory().removeItem(new ItemStack(block.getId(), quantity));
             senderWrapper.sendMessage("Blocks deposited.");
         } else {
             senderWrapper.sendMessage(ERR + "Invalid quantity. Please input a number greater than 0.");

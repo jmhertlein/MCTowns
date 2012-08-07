@@ -78,7 +78,6 @@ public class TownManager implements Externalizable {
      * Removes the town from the manager and unregisters everything it owns from
      * world guard
      *
-     * @param wgp the server's WorldGuard instance
      * @param townName the name of the town to be removed
      */
     public void removeTown(String townName) {
@@ -89,7 +88,6 @@ public class TownManager implements Externalizable {
     /**
      * Removes the Territory from the manager and unregisters it from worldguard
      *
-     * @param wgp the server's WorldGuard instance
      * @param parent the town who is the owner of the territory
      * @param territName the name of the territory to remove
      */
@@ -102,7 +100,6 @@ public class TownManager implements Externalizable {
     /**
      * Removes the Plot from the manager and unregisters it from worldguard
      *
-     * @param wgp the server's WorldGuard instance
      * @param parent the Territory which is the parent of the plot
      * @param plotName the name of the plot to be removed
      */
@@ -134,7 +131,6 @@ public class TownManager implements Externalizable {
     /**
      * Removes every single region associated with this Town from worldguard
      *
-     * @param wgp the server's WorldGuard instance
      * @param t the town to remove
      * @return false if the town was null, true otherwise
      */
@@ -152,7 +148,6 @@ public class TownManager implements Externalizable {
      * Removes every single region associated with this Territory from
      * worldguard
      *
-     * @param wgp the server's WorldGuard instance
      * @param t the territory to remove
      * @return false if t was null, true otherwise
      */
@@ -175,7 +170,6 @@ public class TownManager implements Externalizable {
      * children because its region was manually changed, the children will be
      * removed.
      *
-     * @param wgp the server's WorldGuard instance
      * @param p the plot to remove
      * @return false if p is null, true otherwise
      */
