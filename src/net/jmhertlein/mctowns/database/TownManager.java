@@ -238,67 +238,7 @@ public class TownManager implements Externalizable {
         //throw new RuntimeException("Couldn't find a match for this plot.");
     }
 
-    /**
-     * Removes the player from every WG region associated with this town.
-     *
-     * @param wgp the server's WorldGuard instance
-     * @param town
-     * @param p
-     */
-    public void removePlayerFromTownsWGRegions(WorldGuardPlugin wgp, Town town, Player p) {
-        removePlayerFromTownsWGRegions(wgp, town, p.getName());
-    }
 
-    public void removePlayerFromTownsWGRegions(WorldGuardPlugin wgp, Town town, String playerName) {
-        for (Territory territ : town.getTerritoriesCollection()) {
-            removePlayerFromTerritorysWGRegions(wgp, territ, playerName);
-        }
-    }
-
-    /**
-     * Removes the player from the Territory's WG region
-     *
-     * @param wgp the server's WorldGuard instance
-     * @param territ
-     * @param p
-     */
-//    public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, Player p) {
-//        removePlayerFromTerritorysWGRegions(wgp, territ, p.getName());
-//    }
-    public void removePlayerFromTerritorysWGRegions(WorldGuardPlugin wgp, Territory territ, String playerName) {
-        removePlayerFromWorldGuardRegion(wgp, territ, playerName);
-
-        for (Plot p : territ.getPlotsCollection()) {
-            removePlayerFromPlotsWGRegion(wgp, p, playerName);
-        }
-    }
-
-    /**
-     * Removes the player from the plot's WG region.
-     *
-     * @param wgp the server's WorldGuard instance
-     * @param plot the plot to remove the player from
-     * @param p the player to be removed from the plot
-     */
-    public void removePlayerFromPlotsWGRegion(WorldGuardPlugin wgp, Plot plot, Player p) {
-        removePlayerFromWorldGuardRegion(wgp, plot, p.getName());
-    }
-
-    public void removePlayerFromPlotsWGRegion(WorldGuardPlugin wgp, Plot plot, String playerName) {
-        removePlayerFromWorldGuardRegion(wgp, plot, playerName);
-
-    }
-
-    @SuppressWarnings("unused")
-    private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, Player p) {
-        removePlayerFromWorldGuardRegion(wgp, mctRegion, p.getName());
-    }
-
-    private void removePlayerFromWorldGuardRegion(WorldGuardPlugin wgp, MCTownsRegion mctRegion, String playerName) {
-        ProtectedRegion reg = wgp.getRegionManager(wgp.getServer().getWorld(mctRegion.getWorldName())).getRegion(mctRegion.getName());
-        reg.getMembers().removePlayer(playerName);
-        reg.getOwners().removePlayer(playerName);
-    }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {

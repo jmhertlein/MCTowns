@@ -594,7 +594,7 @@ public class TownHandler extends CommandHandler {
 
         senderWrapper.getActiveTown().removePlayer(playerName);
 
-        townManager.removePlayerFromTownsWGRegions(wgp, removeFrom, playerName);
+        removeFrom.removePlayer(playerName);
 
         senderWrapper.sendMessage("\"" + playerName + "\" was removed from the town.");
         if (removeMe != null) {
