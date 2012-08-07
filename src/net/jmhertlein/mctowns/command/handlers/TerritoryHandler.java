@@ -102,13 +102,11 @@ public class TerritoryHandler extends CommandHandler {
         Plot removeMe = t.getPlot(plotName);
 
         if (removeMe == null) {
-            senderWrapper.sendMessage(ERR + "That district doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
+            senderWrapper.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
             return;
         }
 
-        t.removePlot(plotName);
-
-        TownManager.unregisterPlotFromWorldGuard(wgp, removeMe);
+        TownManager.removePlot(t, plotName);
         senderWrapper.sendMessage(SUCC + "Plot removed.");
     }
 

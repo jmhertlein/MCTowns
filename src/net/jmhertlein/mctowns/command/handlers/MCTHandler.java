@@ -74,7 +74,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        townManager.removeTown(wgp, townName);
+        townManager.removeTown(townName);
 
         try {
             wgp.getRegionManager(server.getWorld(t.getWorldName())).save();

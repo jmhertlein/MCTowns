@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class TownManager implements Externalizable {
+    private static WorldGuardPlugin wgp = MCTowns.getWgp();
 
     private static final long serialVersionUID = "TOWNMANAGER".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
@@ -80,7 +81,7 @@ public class TownManager implements Externalizable {
      * @param wgp the server's WorldGuard instance
      * @param townName the name of the town to be removed
      */
-    public void removeTown(WorldGuardPlugin wgp, String townName) {
+    public void removeTown(String townName) {
         Town deleteMe = towns.remove(townName);
         unregisterTownFromWorldGuard(wgp, deleteMe);
     }
@@ -92,7 +93,7 @@ public class TownManager implements Externalizable {
      * @param parent the town who is the owner of the territory
      * @param territName the name of the territory to remove
      */
-    public void removeTerritory(WorldGuardPlugin wgp, Town parent, String territName) {
+    public static void removeTerritory(Town parent, String territName) {
         Territory deleteMe = parent.removeTerritory(territName);
 
         unregisterTerritoryFromWorldGuard(wgp, deleteMe);
@@ -105,7 +106,7 @@ public class TownManager implements Externalizable {
      * @param parent the Territory which is the parent of the plot
      * @param plotName the name of the plot to be removed
      */
-    public void removePlot(WorldGuardPlugin wgp, Territory parent, String plotName) {
+    public static void removePlot(Territory parent, String plotName) {
         Plot deleteMe = parent.removePlot(plotName);
 
         unregisterPlotFromWorldGuard(wgp, deleteMe);
@@ -137,7 +138,7 @@ public class TownManager implements Externalizable {
      * @param t the town to remove
      * @return false if the town was null, true otherwise
      */
-    public static boolean unregisterTownFromWorldGuard(WorldGuardPlugin wgp, Town t) {
+    private static boolean unregisterTownFromWorldGuard(WorldGuardPlugin wgp, Town t) {
         if (t == null) {
             return false;
         }
@@ -155,7 +156,7 @@ public class TownManager implements Externalizable {
      * @param t the territory to remove
      * @return false if t was null, true otherwise
      */
-    public static boolean unregisterTerritoryFromWorldGuard(WorldGuardPlugin wgp, Territory t) {
+    private static boolean unregisterTerritoryFromWorldGuard(WorldGuardPlugin wgp, Territory t) {
         if (t == null) {
             return false;
         }
@@ -178,7 +179,7 @@ public class TownManager implements Externalizable {
      * @param p the plot to remove
      * @return false if p is null, true otherwise
      */
-    public static boolean unregisterPlotFromWorldGuard(WorldGuardPlugin wgp, Plot p) {
+    private static boolean unregisterPlotFromWorldGuard(WorldGuardPlugin wgp, Plot p) {
         if (p == null) {
             return false;
         }
