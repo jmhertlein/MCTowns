@@ -25,21 +25,21 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void addPlotToTerritory(String plotName) {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
 
-        plotName = senderWrapper.getActiveTown().getTownName() + TownLevel.PLOT_INFIX + plotName;
+        plotName = localSender.getActiveTown().getTownName() + TownLevel.PLOT_INFIX + plotName;
 
-        String worldName = senderWrapper.getActiveTown().getWorldName();
+        String worldName = localSender.getActiveTown().getWorldName();
         Plot p = new Plot(plotName, worldName);
-        Territory parTerr = senderWrapper.getActiveTerritory();
+        Territory parTerr = localSender.getActiveTerritory();
 
         if (parTerr == null) {
-            senderWrapper.notifyActiveTerritoryNotSet();
+            localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
@@ -51,13 +51,13 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        if (!this.selectionIsWithinParent(region, senderWrapper.getActiveTerritory())) {
-            senderWrapper.sendMessage(ERR + "Selection is not in territory!");
+        if (!this.selectionIsWithinParent(region, localSender.getActiveTerritory())) {
+            localSender.sendMessage(ERR + "Selection is not in territory!");
             return;
         }
 
 
-        ProtectedRegion parent = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(senderWrapper.getActiveTerritory().getName());
+        ProtectedRegion parent = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(localSender.getActiveTerritory().getName());
         try {
             region.setParent(parent);
         } catch (ProtectedRegion.CircularInheritanceException ex) {
@@ -66,7 +66,7 @@ public class TerritoryHandler extends CommandHandler {
         RegionManager regMan = wgp.getRegionManager(wgp.getServer().getWorld(worldName));
 
         if (regMan.hasRegion(plotName)) {
-            senderWrapper.sendMessage(ERR + "That name is already in use. Please pick a different one.");
+            localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
 
@@ -74,95 +74,95 @@ public class TerritoryHandler extends CommandHandler {
 
         parTerr.addPlot(p);
 
-        senderWrapper.sendMessage("Plot added.");
+        localSender.sendMessage("Plot added.");
 
         doRegManSave(regMan);
 
         if (autoActive) {
-            senderWrapper.setActivePlot(p);
-            senderWrapper.sendMessage(INFO + "Active plot set to newly created plot.");
+            localSender.setActivePlot(p);
+            localSender.sendMessage(INFO + "Active plot set to newly created plot.");
 
         }
 
     }
 
     public void removePlotFromTerritory(String plotName) {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
-        Territory t = senderWrapper.getActiveTerritory();
+        Territory t = localSender.getActiveTerritory();
 
         if (t == null) {
-            senderWrapper.notifyActiveTerritoryNotSet();
+            localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         Plot removeMe = t.getPlot(plotName);
 
         if (removeMe == null) {
-            senderWrapper.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
+            localSender.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
             return;
         }
 
         TownManager.removePlot(t, plotName);
-        senderWrapper.sendMessage(SUCC + "Plot removed.");
+        localSender.sendMessage(SUCC + "Plot removed.");
     }
 
     public void addPlayerToTerritory(String playerName) {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
-        Territory territ = senderWrapper.getActiveTerritory();
+        Territory territ = localSender.getActiveTerritory();
         Player player = server.getPlayer(playerName);
 
         if (player == null) {
-            senderWrapper.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
+            localSender.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
         }
 
-        if (!senderWrapper.getActiveTown().playerIsResident(player)) {
-            senderWrapper.sendMessage(ERR + "That player is not a member of the town.");
+        if (!localSender.getActiveTown().playerIsResident(player)) {
+            localSender.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
         if (territ == null) {
-            senderWrapper.notifyActiveTerritoryNotSet();
+            localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         if (territ.addPlayer(playerName)) {
-            senderWrapper.sendMessage("Player added to territory.");
+            localSender.sendMessage("Player added to territory.");
         } else {
-            senderWrapper.sendMessage(ERR + "That player is already in that territory.");
+            localSender.sendMessage(ERR + "That player is already in that territory.");
         }
     }
 
     public void removePlayerFromTerritory(String player) {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
         boolean recursive = cmd.hasFlag(ECommand.RECURSIVE);
 
-        Territory territ = senderWrapper.getActiveTerritory();
+        Territory territ = localSender.getActiveTerritory();
 
         if (territ == null) {
-            senderWrapper.notifyActiveTerritoryNotSet();
+            localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         if (player == null) {
-            senderWrapper.sendMessage(ERR + "That player is not online.");
+            localSender.sendMessage(ERR + "That player is not online.");
             return;
         }
 
         if (recursive) {
             if (!territ.removePlayer(player)) {
-                senderWrapper.sendMessage(ERR + "That player is not in this territory.");
+                localSender.sendMessage(ERR + "That player is not in this territory.");
                 return;
             }
 
@@ -170,22 +170,22 @@ public class TerritoryHandler extends CommandHandler {
                 p.removePlayer(player);
             }
 
-            senderWrapper.sendMessage("Player removed from territory.");
+            localSender.sendMessage("Player removed from territory.");
 
         } else {
             if (!territ.removePlayer(player)) {
-                senderWrapper.sendMessage(ERR + "That player is not in this territory.");
+                localSender.sendMessage(ERR + "That player is not in this territory.");
                 return;
             }
-            senderWrapper.sendMessage("Player removed from territory.");
+            localSender.sendMessage("Player removed from territory.");
         }
     }
 
     public void setActiveTerritory(String territName) {
-        Town t = senderWrapper.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
-            senderWrapper.notifyActiveTownNotSet();
+            localSender.notifyActiveTownNotSet();
             return;
         }
 
@@ -198,36 +198,36 @@ public class TerritoryHandler extends CommandHandler {
         }
 
         if (nuActive == null) {
-            senderWrapper.sendMessage(ERR + "The territory \"" + territName + "\" does not exist.");
+            localSender.sendMessage(ERR + "The territory \"" + territName + "\" does not exist.");
             return;
         }
 
-        senderWrapper.setActiveTerritory(nuActive);
-        senderWrapper.sendMessage("Active territory set to " + nuActive.getName());
+        localSender.setActiveTerritory(nuActive);
+        localSender.sendMessage("Active territory set to " + nuActive.getName());
     }
 
     private void listPlots(int page) {
         page--; //shift to 0-indexing
 
         if (page < 0) {
-            senderWrapper.sendMessage(ERR + "Invalid page.");
+            localSender.sendMessage(ERR + "Invalid page.");
             return;
         }
 
-        Territory t = senderWrapper.getActiveTerritory();
+        Territory t = localSender.getActiveTerritory();
 
         if (t == null) {
-            senderWrapper.notifyActiveTerritoryNotSet();
+            localSender.notifyActiveTerritoryNotSet();
             return;
         }
-        senderWrapper.sendMessage(ChatColor.AQUA + "Existing plots (page " + page + "):");
+        localSender.sendMessage(ChatColor.AQUA + "Existing plots (page " + page + "):");
 
 
 
         Plot[] plots = t.getPlotsCollection().toArray(new Plot[t.getPlotsCollection().size()]);
 
         for (int i = page * RESULTS_PER_PAGE; i < plots.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
-            senderWrapper.sendMessage(ChatColor.YELLOW + plots[i].getName());
+            localSender.sendMessage(ChatColor.YELLOW + plots[i].getName());
         }
     }
 
@@ -236,7 +236,7 @@ public class TerritoryHandler extends CommandHandler {
         try {
             page = Integer.parseInt(s_page);
         } catch (NumberFormatException nfex) {
-            senderWrapper.sendMessage(ERR + "Error parsing integer argument. Found \"" + s_page + "\", expected integer.");
+            localSender.sendMessage(ERR + "Error parsing integer argument. Found \"" + s_page + "\", expected integer.");
             return;
         }
 

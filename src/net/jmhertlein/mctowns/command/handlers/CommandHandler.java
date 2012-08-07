@@ -22,7 +22,7 @@ import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.command.MCTCommandSenderWrapper;
+import net.jmhertlein.mctowns.command.MCTLocalSender;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
@@ -54,7 +54,7 @@ public abstract class CommandHandler {
     protected Server server;
     protected static Config options = MCTowns.getOptions();
 
-    protected MCTCommandSenderWrapper senderWrapper;
+    protected MCTLocalSender localSender;
     protected ECommand cmd;
 
     /**
@@ -71,7 +71,7 @@ public abstract class CommandHandler {
 
     public void setNewCommand(CommandSender sender, ECommand c) {
         cmd = c;
-        senderWrapper = new MCTCommandSenderWrapper(townManager, sender, plugin.getActiveSets());
+        localSender = new MCTLocalSender(townManager, sender, plugin.getActiveSets());
     }
 
     /**
@@ -86,8 +86,8 @@ public abstract class CommandHandler {
      * flag to.
      */
     public void flagRegion(String flagName, String[] args, TownLevel regionType) {
-        if (!senderWrapper.hasExternalPermissions("mct.flag") && !senderWrapper.hasExternalPermissions("mct.admin")) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasExternalPermissions("mct.flag") && !localSender.hasExternalPermissions("mct.admin")) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
@@ -95,18 +95,18 @@ public abstract class CommandHandler {
 
         switch (regionType) {
             case TOWN:
-                senderWrapper.sendMessage(ERR + "Can't apply flags to towns.");
+                localSender.sendMessage(ERR + "Can't apply flags to towns.");
                 return;
             case TERRITORY:
-                reg = senderWrapper.getActiveTerritory();
+                reg = localSender.getActiveTerritory();
                 break;
             case PLOT:
-                reg = senderWrapper.getActivePlot();
+                reg = localSender.getActivePlot();
                 break;
         }
 
         if (reg == null) {
-            senderWrapper.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
+            localSender.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
             return;
         }
 
@@ -116,7 +116,7 @@ public abstract class CommandHandler {
 
         if (wgReg == null) {
             MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
-            senderWrapper.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
+            localSender.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
             return;
         }
 
@@ -132,7 +132,7 @@ public abstract class CommandHandler {
         }
 
         if (foundFlag == null) {
-            senderWrapper.sendMessage(ERR + "Couldn't find a matching flag.");
+            localSender.sendMessage(ERR + "Couldn't find a matching flag.");
             return;
         }
 
@@ -140,7 +140,7 @@ public abstract class CommandHandler {
         //If there are no arguments, clear the flag instead of setting it
         if (args.length == 0) {
             wgReg.setFlag(foundFlag, null);
-            senderWrapper.sendMessage(ChatColor.GREEN + "Successfully removed flag.");
+            localSender.sendMessage(ChatColor.GREEN + "Successfully removed flag.");
             return;
         }
 
@@ -156,10 +156,10 @@ public abstract class CommandHandler {
         }
 
         try {
-            setFlag(wgReg, foundFlag, senderWrapper.getSender(), s_stateOfFlag);
-            senderWrapper.sendMessage(ChatColor.GREEN + "Region successfully flagged.");
+            setFlag(wgReg, foundFlag, localSender.getSender(), s_stateOfFlag);
+            localSender.sendMessage(ChatColor.GREEN + "Region successfully flagged.");
         } catch (InvalidFlagFormat ex) {
-            senderWrapper.sendMessage(ERR + "Error parsing flag arguments: " + ex.getMessage());
+            localSender.sendMessage(ERR + "Error parsing flag arguments: " + ex.getMessage());
             return;
         }
 
@@ -174,15 +174,15 @@ public abstract class CommandHandler {
 
         switch (level) {
             case TERRITORY:
-                reg = senderWrapper.getActiveTerritory();
+                reg = localSender.getActiveTerritory();
                 break;
             case PLOT:
-                reg = senderWrapper.getActivePlot();
+                reg = localSender.getActivePlot();
                 break;
         }
 
         if (reg == null) {
-            senderWrapper.sendMessage(ERR + "You need to set your active " + level.toString().toLowerCase());
+            localSender.sendMessage(ERR + "You need to set your active " + level.toString().toLowerCase());
             return;
         }
 
@@ -190,61 +190,61 @@ public abstract class CommandHandler {
 
         String temp = "";
         int counter;
-        senderWrapper.sendMessage("Players in region: ");
+        localSender.sendMessage("Players in region: ");
 
-        senderWrapper.sendMessage("Owners:");
+        localSender.sendMessage("Owners:");
 
         counter = 0;
         for (String pl : wgReg.getOwners().getPlayers()) {
             temp += pl + ", ";
             counter++;
             if (counter > 4) {
-                senderWrapper.sendMessage(temp);
+                localSender.sendMessage(temp);
                 temp = "";
                 counter = 0;
             }
         }
         if (counter != 0) {
-            senderWrapper.sendMessage(temp);
+            localSender.sendMessage(temp);
         }
         temp = "";
 
-        senderWrapper.sendMessage("Members:");
+        localSender.sendMessage("Members:");
 
         for (String pl : wgReg.getMembers().getPlayers()) {
             temp += pl + ", ";
             counter++;
             if (counter > 4) {
-                senderWrapper.sendMessage(temp);
+                localSender.sendMessage(temp);
                 temp = "";
                 counter = 0;
             }
         }
         if (counter != 0) {
-            senderWrapper.sendMessage(temp);
+            localSender.sendMessage(temp);
         }
 
     }
 
     //====================================PRIVATE===========================
     @Deprecated
-    protected WorldGuardPlugin getWGPFromSenderWrapper(MCTCommandSenderWrapper csw) {
+    protected WorldGuardPlugin getWGPFromSenderWrapper(MCTLocalSender csw) {
         return (WorldGuardPlugin) csw.getSender().getServer().getPluginManager().getPlugin("WorldGuard");
     }
 
     protected ProtectedRegion getSelectedRegion(String desiredName) {
         Selection selection;
         try {
-            selection = wgp.getWorldEdit().getSelection((Player) senderWrapper.getSender());
+            selection = wgp.getWorldEdit().getSelection((Player) localSender.getSender());
             if (selection == null) {
                 throw new NullPointerException();
             }
         } catch (NullPointerException npe) {
 
-            senderWrapper.sendMessage("Error getting your WorldEdit selection. Did you forget to make a selection?");
+            localSender.sendMessage("Error getting your WorldEdit selection. Did you forget to make a selection?");
             return null;
         } catch(CommandException ce) {
-            senderWrapper.sendMessage("Error hooking the WorldEdit plugin. Please tell your server owner.");
+            localSender.sendMessage("Error hooking the WorldEdit plugin. Please tell your server owner.");
             ce.printStackTrace();
             return null;
         }
@@ -351,8 +351,8 @@ public abstract class CommandHandler {
     }
 
     public void redefineActiveRegion(TownLevel regType) {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
@@ -360,25 +360,25 @@ public abstract class CommandHandler {
 
         switch (regType) {
             case TOWN:
-                senderWrapper.sendMessage(ERR + "Can't redefine towns.");
+                localSender.sendMessage(ERR + "Can't redefine towns.");
                 return;
             case TERRITORY:
-                reg = senderWrapper.getActiveTerritory();
+                reg = localSender.getActiveTerritory();
                 break;
             case PLOT:
-                reg = senderWrapper.getActivePlot();
+                reg = localSender.getActivePlot();
                 break;
             default:
                 reg = null;
         }
 
-        if (regType == TownLevel.TERRITORY && !senderWrapper.hasExternalPermissions(Perms.ADMIN.toString())) {
-            senderWrapper.notifyInsufPermissions();
+        if (regType == TownLevel.TERRITORY && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
         if (reg == null) {
-            senderWrapper.sendMessage(ERR + "Your active " + regType.toString() + " is not set.");
+            localSender.sendMessage(ERR + "Your active " + regType.toString() + " is not set.");
             return;
         }
 
@@ -388,15 +388,15 @@ public abstract class CommandHandler {
 
         Selection nuRegionBounds;
         try {
-            nuRegionBounds = wgp.getWorldEdit().getSelection(senderWrapper.getPlayer());
+            nuRegionBounds = wgp.getWorldEdit().getSelection(localSender.getPlayer());
         } catch(CommandException ce) {
-            senderWrapper.sendMessage("Error hooking the world edit plugn. Please inform your server owner.");
+            localSender.sendMessage("Error hooking the world edit plugn. Please inform your server owner.");
             ce.printStackTrace();
             return;
         }
 
         if (nuRegionBounds == null) {
-            senderWrapper.sendMessage(ERR + "You need to select what you want the region's boundaries to be updated to.");
+            localSender.sendMessage(ERR + "You need to select what you want the region's boundaries to be updated to.");
             return;
         }
 
@@ -415,12 +415,12 @@ public abstract class CommandHandler {
         //To make sure that we can't accidentally "orphan" plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.
         if (!(nuWGRegion.contains(oldWGReg.getMaximumPoint()) && nuWGRegion.contains(oldWGReg.getMinimumPoint()))) {
-            senderWrapper.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
+            localSender.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
             return;
         }
 
         if (regType != TownLevel.TERRITORY && !selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
-            senderWrapper.sendMessage(ERR + "Your new selection must be within its parent region.");
+            localSender.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
         }
 
@@ -446,7 +446,7 @@ public abstract class CommandHandler {
 
         doRegManSave(regMan);
 
-        senderWrapper.sendMessage(SUCC + "The region \"" + nuWGRegion.getId() + "\" has been updated.");
+        localSender.sendMessage(SUCC + "The region \"" + nuWGRegion.getId() + "\" has been updated.");
 
     }
 }

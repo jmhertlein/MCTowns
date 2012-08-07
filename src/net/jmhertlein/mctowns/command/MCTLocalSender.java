@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public class MCTCommandSenderWrapper extends CommandSenderWrapper {
+public class MCTLocalSender extends CommandSenderWrapper {
 
     private TownManager manager;
     private ActiveSet activeSet;
@@ -32,7 +32,7 @@ public class MCTCommandSenderWrapper extends CommandSenderWrapper {
      * @param sender the sender to be wrapped
      * @param activeSets the database of active sets as a hashmap
      */
-    public MCTCommandSenderWrapper(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
+    public MCTLocalSender(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
         super(sender);
         this.sender = sender;
         manager = tMan;

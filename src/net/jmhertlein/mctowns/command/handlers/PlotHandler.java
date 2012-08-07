@@ -26,18 +26,18 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void printPlotInfo() {
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
         ChatColor c = ChatColor.AQUA;
-        senderWrapper.sendMessage(c + "Plot name: " + p.getAbstractName());
-        senderWrapper.sendMessage(c + "Corresponding WG Region name: " + p.getName());
-        senderWrapper.sendMessage(c + "World name: " + p.getWorldName());
-        senderWrapper.sendMessage(c + "Plot is for sale: " + p.isForSale());
-        senderWrapper.sendMessage(c + "Plot price: " + p.getPrice());
+        localSender.sendMessage(c + "Plot name: " + p.getAbstractName());
+        localSender.sendMessage(c + "Corresponding WG Region name: " + p.getName());
+        localSender.sendMessage(c + "World name: " + p.getWorldName());
+        localSender.sendMessage(c + "Plot is for sale: " + p.isForSale());
+        localSender.sendMessage(c + "Plot price: " + p.getPrice());
 
     }
 
@@ -46,11 +46,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void removePlayerFromPlot(String player) {
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
         player = player.toLowerCase();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
@@ -59,17 +59,17 @@ public class PlotHandler extends CommandHandler {
         ProtectedRegion wg_plot = regMan.getRegion(p.getName());
 
         //if they are neither mayor nor owner
-        if (!(senderWrapper.hasMayoralPermissions() || wg_plot.getOwners().contains(wgp.wrapPlayer(senderWrapper.getPlayer())))) {
-            senderWrapper.notifyInsufPermissions();
+        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(wgp.wrapPlayer(localSender.getPlayer())))) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
 
 
         if (p.removePlayer(player)) {
-            senderWrapper.sendMessage("Player removed from plot.");
+            localSender.sendMessage("Player removed from plot.");
         } else {
-            senderWrapper.sendMessage(ERR + player + " is not a member of this region.");
+            localSender.sendMessage(ERR + player + " is not a member of this region.");
         }
 
 
@@ -77,41 +77,41 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void addPlayerToPlot(String playerName) {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
         Player player = server.getPlayer(playerName);
 
-        if (!senderWrapper.getActiveTown().playerIsResident(player)) {
-            senderWrapper.sendMessage(ERR + "That player is not a member of the town.");
+        if (!localSender.getActiveTown().playerIsResident(player)) {
+            localSender.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
         if (player == null) {
-            senderWrapper.sendMessage(ERR + playerName + " is not online. Make sure you typed their name correctly!");
+            localSender.sendMessage(ERR + playerName + " is not online. Make sure you typed their name correctly!");
         }
 
         if (p.addPlayer(playerName)) {
-            senderWrapper.sendMessage("Player added to plot.");
+            localSender.sendMessage("Player added to plot.");
         } else {
-            senderWrapper.sendMessage(ERR + "That player is already in that plot.");
+            localSender.sendMessage(ERR + "That player is already in that plot.");
         }
 
     }
 
     public void addPlayerToPlotAsGuest(String playername) {
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
@@ -120,36 +120,36 @@ public class PlotHandler extends CommandHandler {
         ProtectedRegion wg_plot = regMan.getRegion(p.getName());
 
         //if they are neither mayor nor owner
-        if (!(senderWrapper.hasMayoralPermissions() || wg_plot.getOwners().contains(wgp.wrapPlayer(senderWrapper.getPlayer())))) {
-            senderWrapper.notifyInsufPermissions();
+        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(wgp.wrapPlayer(localSender.getPlayer())))) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
         if (server.getPlayer(playername) == null) {
-            senderWrapper.sendMessage(ChatColor.GOLD + "The player " + playername + " is not online! Make sure their name is spelled correctly!");
+            localSender.sendMessage(ChatColor.GOLD + "The player " + playername + " is not online! Make sure their name is spelled correctly!");
         }
 
         wg_plot.getMembers().addPlayer(playername);
 
-        senderWrapper.sendMessage(ChatColor.GREEN + "Successfully added " + playername + " to the plot as a guest.");
+        localSender.sendMessage(ChatColor.GREEN + "Successfully added " + playername + " to the plot as a guest.");
     }
 
     public void setPlotBuyability(String s_forSale) {
 
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
-        Town t = senderWrapper.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
-            senderWrapper.notifyActiveTownNotSet();
+            localSender.notifyActiveTownNotSet();
             return;
         }
 
         if (!t.usesBuyablePlots()) {
-            senderWrapper.sendMessage(ERR + t.getTownName() + " does not allow the sale of plots.");
+            localSender.sendMessage(ERR + t.getTownName() + " does not allow the sale of plots.");
             return;
         }
 
@@ -157,27 +157,27 @@ public class PlotHandler extends CommandHandler {
         try {
             forSale = Boolean.parseBoolean(s_forSale);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ERR + "Error parsing boolean on token: " + s_forSale);
+            localSender.sendMessage(ERR + "Error parsing boolean on token: " + s_forSale);
             return;
         }
 
 
 
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
         p.setForSale(forSale);
-        senderWrapper.sendMessage(ChatColor.GREEN + "The plot " + p.getName() + " is " + (forSale ? "now" : "no longer") + " for sale!");
+        localSender.sendMessage(ChatColor.GREEN + "The plot " + p.getName() + " is " + (forSale ? "now" : "no longer") + " for sale!");
 
     }
 
     public void setPlotPrice(String s_price) {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
@@ -186,87 +186,87 @@ public class PlotHandler extends CommandHandler {
         try {
             price = new BigDecimal(s_price);
         } catch (Exception e) {
-            senderWrapper.sendMessage(ERR + "Error parsing float on token: " + s_price);
+            localSender.sendMessage(ERR + "Error parsing float on token: " + s_price);
             return;
         }
 
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
         p.setPrice(price);
         p.buildSign(server);
-        senderWrapper.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
+        localSender.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
     }
 
     public void buildSign() {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
+            localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
         p.buildSign(server);
-        senderWrapper.sendMessage("Sign built!");
+        localSender.sendMessage("Sign built!");
     }
 
     public void demolishSign() {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
         if (!options.isEconomyEnabled()) {
-            senderWrapper.sendMessage(ERR + "The economy isn't enabled for your server.");
+            localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
         p.demolishSign(server);
-        senderWrapper.sendMessage("Sign demolished.");
+        localSender.sendMessage("Sign demolished.");
     }
 
     public void setPlotSignPosition() {
-        if (!senderWrapper.hasMayoralPermissions()) {
-            senderWrapper.notifyInsufPermissions();
+        if (!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
         net.jmhertlein.core.location.Location mctLoc;
 
-        Player player = senderWrapper.getPlayer();
+        Player player = localSender.getPlayer();
 
         mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
 
         if (mctLoc == null) {
-            senderWrapper.sendMessage(ERR + "Couldn't get the location you're looking at.");
+            localSender.sendMessage(ERR + "Couldn't get the location you're looking at.");
             return;
         }
 
@@ -276,26 +276,26 @@ public class PlotHandler extends CommandHandler {
         p.setSignLoc(mctLoc);
         p.buildSign(server);
 
-        senderWrapper.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
+        localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
 
 
     }
 
     public void surrenderPlot() {
-        Plot p = senderWrapper.getActivePlot();
+        Plot p = localSender.getActivePlot();
         if (p == null) {
-            senderWrapper.notifyActivePlotNotSet();
+            localSender.notifyActivePlotNotSet();
             return;
         }
 
         ProtectedRegion reg = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
 
-        if (!reg.isOwner(wgp.wrapPlayer(senderWrapper.getPlayer()))) {
-            senderWrapper.sendMessage(ERR + "You don't own this plot, so you can't surrender it!");
+        if (!reg.isOwner(wgp.wrapPlayer(localSender.getPlayer()))) {
+            localSender.sendMessage(ERR + "You don't own this plot, so you can't surrender it!");
             return;
         }
 
-        reg.getOwners().removePlayer(senderWrapper.getPlayer().getName());
+        reg.getOwners().removePlayer(localSender.getPlayer().getName());
 
         for (String name : reg.getMembers().getPlayers()) {
             reg.getMembers().removePlayer(name);
@@ -310,22 +310,22 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setActivePlot(String plotName) {
-        Town t = senderWrapper.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         boolean quickSelect = cmd.hasFlag("-q");
 
         if (t == null) {
-            senderWrapper.notifyActiveTownNotSet();
+            localSender.notifyActiveTownNotSet();
             return;
         }
 
         Plot nuActive = null;
 
         if (!quickSelect) {
-            Territory te = senderWrapper.getActiveTerritory();
+            Territory te = localSender.getActiveTerritory();
 
             if (te == null) {
-                senderWrapper.notifyActiveTerritoryNotSet();
+                localSender.notifyActiveTerritoryNotSet();
                 return;
             }
 
@@ -342,7 +342,7 @@ public class PlotHandler extends CommandHandler {
             for (Territory territ : t.getTerritoriesCollection()) {
                 if (territ.getPlot(plotName) != null) {
                     nuActive = territ.getPlot(plotName);
-                    senderWrapper.setActiveTerritory(territ);
+                    localSender.setActiveTerritory(territ);
                     break territloop;
                 }
 
@@ -350,11 +350,11 @@ public class PlotHandler extends CommandHandler {
         }
 
         if (nuActive == null) {
-            senderWrapper.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
+            localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
             return;
         }
 
-        senderWrapper.setActivePlot(nuActive);
-        senderWrapper.sendMessage("Active plot set to " + nuActive.getName());
+        localSender.setActivePlot(nuActive);
+        localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
 }
