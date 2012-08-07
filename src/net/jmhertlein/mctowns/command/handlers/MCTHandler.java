@@ -333,4 +333,11 @@ public class MCTHandler extends CommandHandler {
         localSender.sendMessage(SUCC + "MCTowns will " + (plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
 
     }
+
+    public void printDonationPlug() {
+        localSender.sendMessage(ChatColor.LIGHT_PURPLE + "MCTowns is Free & Open Source Software.");
+        localSender.sendMessage(ChatColor.AQUA + "I develop MCTowns in my free time, as a hobby. If you enjoy MCTowns, you might consider making a small donation to fund its continued development.");
+        localSender.sendMessage(ChatColor.AQUA + "Donate however much you feel comfortable donating, no matter how small the amount.");
+        localSender.sendMessage(ChatColor.GREEN + "To donate, just go to MCTowns' BukkitDev homepage ( http://dev.bukkit.org/server-mods/mctowns/ ) and click \"Donate\" in the top right-hand corner.");
+    }
 }

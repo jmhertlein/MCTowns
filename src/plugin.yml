@@ -5,7 +5,7 @@ depend: [WorldGuard, Vault]
 commands:
     mct:
         description: Base command for plugin-wide config or generic commands
-        usage: /mct (addtown | removetown | info | join | list | refuse | cancel)
+        usage: /mct (addtown | removetown | info | join | list | refuse | cancel | donate)
         aliases:
     town:
         description: base command for all town-based commands

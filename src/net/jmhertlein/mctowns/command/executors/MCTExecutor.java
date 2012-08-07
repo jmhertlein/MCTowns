@@ -125,6 +125,10 @@ public class MCTExecutor extends BaseExecutor {
                     handler.toggleAbortSave();
                     softFailure = false;
                     break;
+                case "donate":
+                    handler.printDonationPlug();
+                    softFailure = false;
+                    break;
                 default:
                     hardFailure = true;
                     softFailure = false;
