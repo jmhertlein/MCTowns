@@ -41,7 +41,6 @@ public class Town implements Externalizable {
     private HashMap<String, Territory> territories;
     //the players in it
     private HashMap<String, Boolean> residents;
-    private ArrayList<String> residentNames;
     //its mayor (string)
     private String mayor;
     //the assistants (strings)
@@ -82,7 +81,6 @@ public class Town implements Externalizable {
         residents = new HashMap<>();
         assistants = new HashMap<>();
         territories = new HashMap<>();
-        residentNames = new ArrayList<>();
 
         buyablePlots = false;
         economyJoins = false;
@@ -92,7 +90,6 @@ public class Town implements Externalizable {
 
 
         residents.put(mayor.getName(), Boolean.TRUE);
-        residentNames.add(mayor.getName());
 
         motdColor = ChatColor.GOLD;
 
@@ -178,7 +175,6 @@ public class Town implements Externalizable {
         }
 
         residents.put(playerName, true);
-        residentNames.add(playerName);
         return true;
     }
 
@@ -202,7 +198,6 @@ public class Town implements Externalizable {
     public void removePlayer(String playerName) {
         residents.remove(playerName);
         assistants.remove(playerName);
-        residentNames.remove(playerName);
     }
 
     /**
@@ -335,7 +330,7 @@ public class Town implements Externalizable {
      * @return
      */
     public String[] getResidentNames() {
-        return residentNames.toArray(new String[residentNames.size()]);
+        return residents.keySet().toArray(new String[residents.keySet().size()]);
     }
 
     /**
@@ -455,7 +450,7 @@ public class Town implements Externalizable {
         Player temp;
         message = ChatColor.GOLD + message;
 
-        for (String playerName : residentNames) {
+        for (String playerName : residents.keySet()) {
             temp = server.getPlayerExact(playerName);
             if (temp != null) {
                 temp.sendMessage(message);
@@ -552,7 +547,6 @@ public class Town implements Externalizable {
         out.writeObject(bank);
         out.writeObject(territories);
         out.writeObject(residents);
-        out.writeObject(residentNames);
         out.writeUTF(mayor);
         out.writeObject(assistants);
         out.writeBoolean(buyablePlots);
@@ -583,7 +577,6 @@ public class Town implements Externalizable {
             bank = (BlockBank) in.readObject();
             territories = (HashMap<String, Territory>) in.readObject();
             residents = (HashMap<String, Boolean>) in.readObject();
-            residentNames = (ArrayList<String>) in.readObject();
             mayor = in.readUTF();
             assistants = (HashMap<String, Boolean>) in.readObject();
             buyablePlots = in.readBoolean();
