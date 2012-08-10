@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 /**
@@ -187,5 +188,9 @@ public abstract class MCTownsRegion implements Externalizable {
         return (owner.getTownName() + infix + plotName).toLowerCase();
     }
 
+    public void writeYAML(FileConfiguration f) {
+        f.set("name", name);
+        f.set("worldName", worldName);
+    }
 
 }

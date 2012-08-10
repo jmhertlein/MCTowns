@@ -7,8 +7,11 @@ package net.jmhertlein.mctowns.structure;
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.MCTowns;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
@@ -106,5 +109,22 @@ public class Territory extends MCTownsRegion implements Externalizable {
         } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Territory.");
         }
+    }
+
+    @Override
+    public void writeYAML(FileConfiguration f) {
+        super.writeYAML(f);
+        f.set("plots", getPlotNameList());
+
+    }
+
+    private List<String> getPlotNameList() {
+        LinkedList<String> ret = new LinkedList<>();
+
+        for(Plot p : plots.values()) {
+            ret.add(p.getAbstractName());
+        }
+
+        return ret;
     }
 }

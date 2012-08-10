@@ -17,6 +17,7 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 /**
@@ -609,5 +610,26 @@ public class Town implements Externalizable {
     @Override
     public String toString() {
         return this.townName;
+    }
+
+    public void writeYAML(FileConfiguration f) {
+        f.set("townName", townName);
+        f.set("worldName", worldName);
+        f.set("motd", townMOTD);
+        f.set("motdColor", motdColor.toString());
+        f.set("spawnLocation", townSpawn.toList());
+        f.set("mayor", mayor);
+        f.set("territs", getTerritoryNames());
+    }
+
+    private List<String> getTerritoryNames() {
+        LinkedList<String> ret = new LinkedList<>();
+
+        for(Territory t : territories.values()) {
+            ret.add(t.getName());
+        }
+
+        return ret;
+
     }
 }

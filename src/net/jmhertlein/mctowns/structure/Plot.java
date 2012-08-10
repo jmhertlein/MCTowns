@@ -12,11 +12,15 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.block.CraftSign;
 
 /**
@@ -160,4 +164,14 @@ public class Plot extends MCTownsRegion implements Externalizable {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Plot.");
         }
     }
+
+    @Override
+    public void writeYAML(FileConfiguration f) {
+        super.writeYAML(f);
+        f.set("forSale", forSale);
+        f.set("price", price.toString());
+        f.set("signLoc", signLoc.toList());
+    }
+
+
 }

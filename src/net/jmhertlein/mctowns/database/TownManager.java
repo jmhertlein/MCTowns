@@ -5,8 +5,8 @@
 package net.jmhertlein.mctowns.database;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.Externalizable;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -16,10 +16,10 @@ import java.util.logging.Level;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 /**
@@ -258,5 +258,42 @@ public class TownManager implements Externalizable {
 
     public boolean playerIsAlreadyInATown(String invitee) {
         return matchPlayerToTown(invitee) != null;
+    }
+
+    public void writeYAML(String rootDirPath) throws IOException {
+        File townFile, territFile;
+        YamlConfiguration townConf, territConf, plotConf;
+
+        for(Town t : towns.values()) {
+            townFile = new File(rootDirPath + File.separator + t.getTownName());
+
+            if(!townFile.exists())
+                townFile.mkdir();
+
+            townConf = new YamlConfiguration();
+            t.writeYAML(townConf);
+            townConf.save(townFile.getPath() + File.separator + "town.yml");
+
+            for(Territory territ : t.getTerritoriesCollection()) {
+                territFile = new File(townFile.getPath() + File.separator + territ.getName());
+                if(!territFile.exists())
+                    territFile.mkdir();
+
+                territConf = new YamlConfiguration();
+                territ.writeYAML(territConf);
+                territConf.save(territFile.getPath() + File.separator + "territ.yml");
+
+                for(Plot p : territ.getPlotsCollection()) {
+                    plotConf = new YamlConfiguration();
+                    p.writeYAML(plotConf);
+                    plotConf.save(territFile.getPath() + File.separator + p.getAbstractName());
+                }
+            }
+        }
+
+
+
+
+
     }
 }
