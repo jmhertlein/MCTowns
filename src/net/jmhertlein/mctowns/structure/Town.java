@@ -620,6 +620,8 @@ public class Town implements Externalizable {
         f.set("spawnLocation", townSpawn.toList());
         f.set("mayor", mayor);
         f.set("territs", getTerritoryNames());
+
+        bank.writeYAML(f);
     }
 
     private List<String> getTerritoryNames() {

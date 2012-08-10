@@ -6,9 +6,14 @@ package net.jmhertlein.mctowns.banking;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.MCTowns;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
@@ -151,5 +156,17 @@ public class BlockBank implements Externalizable {
         } else {
             MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of BlockBank.");
         }
+    }
+
+    public void writeYAML(FileConfiguration f) {
+        f.set("bank.townFunds", townFunds.toString());
+
+        List<String> l = new LinkedList<>();
+
+        for(Entry<Integer, Integer> e : bank.entrySet()) {
+            l.add(Material.getMaterial(e.getKey()).name() + "|" + e.getValue().toString());
+        }
+
+        f.set("bank.contents", l);
     }
 }
