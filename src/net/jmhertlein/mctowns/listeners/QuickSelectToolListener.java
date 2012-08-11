@@ -60,9 +60,9 @@ public class QuickSelectToolListener implements Listener {
         Town town = null;
         Territory territ = null;
         for (ProtectedRegion pr : regs) {
-            for(Town to : mctp.getTownManager().getTownsCollection()) {
+            for(Town to : MCTowns.getTownManager().getTownsCollection()) {
                 town = to;
-                territ = town.getTerritory(pr.getId());
+                territ = MCTowns.getTownManager().getTerritory(pr.getId());
                 if (territ != null) {
                     break;
                 }
@@ -72,7 +72,7 @@ public class QuickSelectToolListener implements Listener {
         Plot plot = null;
         if (territ != null) {
             for (ProtectedRegion pr : regs) {
-                plot = territ.getPlot(pr.getId());
+                plot = MCTowns.getTownManager().getPlot(pr.getId());
                 if (plot != null) {
                     break;
                 }

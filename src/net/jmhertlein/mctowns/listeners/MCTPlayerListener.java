@@ -235,7 +235,7 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-        Plot plot = new Plot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld().getName());
+        //Plot plot = new Plot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld().getName());
 
         //now, prepare the WG region
         Location signLoc = sign.getLocation();
@@ -268,28 +268,11 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-        pActive.getActiveTerritory().addPlot(plot);
-
-        RegionManager regMan = MCTowns.getWgp().getRegionManager(p.getWorld());
-        regMan.addRegion(fencedReg);
-
-        //set the new plot's parent to the active territory
-        try {
-            fencedReg.setParent(regMan.getRegion(pActive.getActiveTerritory().getName()));
-        } catch (CircularInheritanceException ex) {
-            Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        //force a save of the region database
-        try {
-            regMan.save();
-        } catch (ProtectionDatabaseException ex) {
-            Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        townManager.addPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
 
         p.sendMessage(ChatColor.GREEN + "Plot created.");
 
-        pActive.setActivePlot(plot);
+        pActive.setActivePlot(townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName)));
         p.sendMessage(ChatColor.LIGHT_PURPLE + "Active plot set to newly created plot.");
 
 

@@ -13,6 +13,7 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
+import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
@@ -20,8 +21,10 @@ import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -74,7 +77,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!t.playerIsInsideTownBorders(wgp, localSender.getPlayer())) {
+        if (!t.playerIsInsideTownBorders(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You need to be inside your town borders to do that.");
             return;
         }
@@ -217,12 +220,11 @@ public class TownHandler extends CommandHandler {
         }
 
 
-        territName = t.getTownName() + TownLevel.TERRITORY_INFIX + territName;
+        territName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, territName);
 
-        String worldName = t.getWorldName();
-        Territory nuTerrit = new Territory(territName, worldName);
+        World w = Bukkit.getWorld(t.getWorldName());
 
-        ProtectedRegion region = this.getSelectedRegion(nuTerrit.getName());
+        ProtectedRegion region = this.getSelectedRegion(territName);
 
 
 
@@ -231,12 +233,8 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        RegionManager regMan = wgp.getRegionManager(wgp.getServer().getWorld(worldName));
 
-        if (regMan.hasRegion(territName)) {
-            localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
-            return;
-        }
+
 
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
         if (!admin && options.getPricePerXZBlock().compareTo(BigDecimal.ZERO) > 0) {
@@ -260,19 +258,18 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + price.toString());
         }
 
+        if (! townManager.addTerritory(territName, w, region, t)) {
+            localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
+            return;
+        }
+
         //IF ALL THE THINGS ARE FINALLY DONE...
         region.getOwners().addPlayer(t.getMayor());
 
-        regMan.addRegion(region);
 
-        doRegManSave(regMan);
-
-
-        localSender.getActiveTown().addTerritory(nuTerrit);
-        localSender.sendMessage("Territory added.");
 
         if (autoActive) {
-            localSender.setActiveTerritory(nuTerrit);
+            localSender.setActiveTerritory(townManager.getTerritory(territName));
             localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
 
         }
@@ -291,18 +288,11 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        Territory removeMe = to.getTerritory(territName);
-
-        if (removeMe == null) {
-            localSender.sendMessage(ERR + "That territory doesn't exist. Make sure you're using the full name of the territory (townname_territory_territoryshortname).");
-            return;
+        if(! townManager.removeTerritory(territName)) {
+            localSender.sendMessage(ERR + "Error: Territory \"" + territName + "\" does not exist and was not removed (because it doesn't exist!)");
+        } else {
+            localSender.sendMessage(SUCC + "Territory removed.");
         }
-
-        to.removeTerritory(territName);
-
-        TownManager.removeTerritory(to, territName);
-
-        localSender.sendMessage(SUCC + "Territory removed.");
     }
 
     public void invitePlayerToTown(String invitee) {
@@ -378,8 +368,9 @@ public class TownHandler extends CommandHandler {
         }
 
         if (t.addAssistant(playerName)) {
-            for (Territory territ : t.getTerritoriesCollection()) {
-                territ.addPlayer(playerName);
+            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
+                if(reg instanceof Territory && ((Territory)reg).getParentTown().equals(t.getTownName()))
+                    ((Territory) reg).addPlayer(playerName);
             }
 
             localSender.sendMessage(playerName + " has been promoted to an assistant of " + t.getTownName() + ".");
@@ -413,8 +404,7 @@ public class TownHandler extends CommandHandler {
         }
 
         if (p == null) {
-            localSender.sendMessage(ERR + playerName + " doesn't exist or is not online.");
-            return;
+            localSender.sendMessage(INFO + playerName + " doesn't exist or is not online, so their name could not be verified for correctness. Proceeding, but make sure you typed the player's name correctly just in case.");
         }
 
 
@@ -426,8 +416,13 @@ public class TownHandler extends CommandHandler {
         if (t.removeAssistant(p)) {
             localSender.sendMessage(p.getName() + " has been demoted.");
             p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
-            for (Territory rm : t.getTerritoriesCollection()) {
-                rm.removePlayer(p.getName());
+            Territory rmFrom;
+            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
+                if(reg instanceof Territory) {
+                    rmFrom = (Territory) reg;
+                    if(rmFrom.getParentTown().equals(t.getTownName()))
+                        rmFrom.removePlayer(p.getName());
+                }
             }
         } else {
             localSender.sendMessage(ERR + p.getName() + " is not an assistant in this town.");
@@ -793,7 +788,7 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
         }
 
-        if (!t.playerIsInsideTownBorders(wgp, localSender.getPlayer()) && !localSender.hasExternalPermissions(Perms.WITHDRAW_BANK_OUTSIDE_BORDERS.toString())) {
+        if (!t.playerIsInsideTownBorders(localSender.getPlayer()) && !localSender.hasExternalPermissions(Perms.WITHDRAW_BANK_OUTSIDE_BORDERS.toString())) {
             localSender.sendMessage(ERR + "You must be within the borders of your town to withdraw from the bank.");
             return;
         }

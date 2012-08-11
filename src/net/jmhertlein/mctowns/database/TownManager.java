@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
+import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
@@ -87,20 +89,38 @@ public class TownManager {
 
     }
 
-    public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, String parentTownName) {
-        Territory t = new Territory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTownName);
+    public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) {
+        Territory t = new Territory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
 
-        return addMCTRegion(t, worldTerritoryIsIn, reg);
+        if(! addMCTRegion(fullTerritoryName, t, worldTerritoryIsIn, reg))
+            return false;
+
+        parentTown.addTerritory(t);
+        return true;
     }
 
-    public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, String parentTownName, String parentTerritoryName) {
-        Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(), parentTerritoryName, parentTownName);
+    public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) {
+        Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
 
-        return addMCTRegion(p, worldPlotIsIn, reg);
+        if(! addMCTRegion(fullPlotName, p, worldPlotIsIn, reg))
+            return false;
+
+        parentTerritory.addPlot(p);
+
+        RegionManager regMan = wgp.getRegionManager(worldPlotIsIn);
+
+        try {
+            reg.setParent(regMan.getRegion(parentTerritory.getName()));
+        } catch (ProtectedRegion.CircularInheritanceException ex) {
+            Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
-    private boolean addMCTRegion(MCTownsRegion mctReg, World w, ProtectedRegion reg) {
+    private boolean addMCTRegion(String fullPlotName, MCTownsRegion mctReg, World w, ProtectedRegion reg) {
         RegionManager regMan = wgp.getRegionManager(w);
+        if(! reg.getId().equals(mctReg.getName()))
+            throw new InvalidWorldGuardRegionNameException(fullPlotName, reg.getId());
 
         if(regMan.hasRegion(mctReg.getName())) //checking regMan should always return the same value as checking regions, since the regions in regions are a subset of those in regMan... so no need to check regions
             return false;
@@ -258,5 +278,11 @@ public class TownManager {
 
     public void writeYAML(String rootDirPath) throws IOException {
 
+    }
+
+    public class InvalidWorldGuardRegionNameException extends RuntimeException {
+        public InvalidWorldGuardRegionNameException(String invalidName, String shouldMatchButDoesnt) {
+            super("Problem: Attempted to create a new MCTownsRegion, but the MCTownsRegion name and WorldGuard region name did not match. (" + invalidName + " should match " + shouldMatchButDoesnt + ").");
+        }
     }
 }
