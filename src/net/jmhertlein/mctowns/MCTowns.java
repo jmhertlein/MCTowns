@@ -212,7 +212,11 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void persistTownManager() {
-        File path = new File(TOWN_DATABASE_SAVE_PATH);
+        try {
+            townManager.writeYAML(MCT_DATA_FOLDER);
+        } catch (IOException ex) {
+            MCTowns.logSevere("Error saving town database.");
+        }
     }
 
     private void persistTownManagerBackup() {

@@ -142,8 +142,8 @@ public class Plot extends MCTownsRegion {
     public void writeYAML(FileConfiguration f) {
         super.writeYAML(f);
         f.set("forSale", forSale);
-        f.set("price", price.toString());
-        f.set("signLoc", signLoc.toList());
+        f.set("price", (price == null) ? "null" : price.toString());
+        f.set("signLoc", (signLoc == null) ? "null" : signLoc.toList());
         f.set("parentTownName", parTownName);
         f.set("parentTerritoryName", parTerrName);
     }

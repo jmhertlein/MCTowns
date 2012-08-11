@@ -8,6 +8,8 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +25,8 @@ import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 /**
@@ -107,6 +111,12 @@ public class TownManager {
             return false;
 
         parentTerritory.addPlot(p);
+        RegionManager regMan = wgp.getRegionManager(worldPlotIsIn);
+        try {
+            reg.setParent(regMan.getRegion(parentTerritory.getName()));
+        } catch (CircularInheritanceException ex) {
+            Logger.getLogger(TownManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return false;
     }
 
@@ -300,7 +310,23 @@ public class TownManager {
     }
 
     public void writeYAML(String rootDirPath) throws IOException {
+        FileConfiguration f;
 
+        for(Town t : towns.values()) {
+            f = new YamlConfiguration();
+            t.writeYAML(f);
+            f.save(new File(rootDirPath + File.separator + t.getTownName() + ".yml"));
+        }
+
+        for(MCTownsRegion reg : regions.values()) {
+            f = new YamlConfiguration();
+            if(reg instanceof Territory) {
+                ((Territory) reg).writeYAML(f);
+            } else {
+                ((Plot) reg).writeYAML(f);
+            }
+            f.save(new File(rootDirPath + File.separator + reg.getName() + ".yml"));
+        }
     }
 
     public class InvalidWorldGuardRegionNameException extends RuntimeException {
