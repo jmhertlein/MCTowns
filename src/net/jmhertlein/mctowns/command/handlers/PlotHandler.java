@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
@@ -68,7 +69,8 @@ public class PlotHandler extends CommandHandler {
 
         if (p.removePlayer(player)) {
             localSender.sendMessage("Player removed from plot.");
-        } else {
+        }
+        else {
             localSender.sendMessage(ERR + player + " is not a member of this region.");
         }
 
@@ -101,7 +103,8 @@ public class PlotHandler extends CommandHandler {
 
         if (p.addPlayer(playerName)) {
             localSender.sendMessage("Player added to plot.");
-        } else {
+        }
+        else {
             localSender.sendMessage(ERR + "That player is already in that plot.");
         }
 
@@ -320,6 +323,7 @@ public class PlotHandler extends CommandHandler {
         }
 
         Plot nuActive = null;
+        Territory nuActiveTerrit = null;
 
         if (!quickSelect) {
             Territory te = localSender.getActiveTerritory();
@@ -329,23 +333,23 @@ public class PlotHandler extends CommandHandler {
                 return;
             }
 
-            nuActive = te.getPlot(plotName);
+            nuActive = townManager.getPlot(plotName);
 
             if (nuActive == null) {
-                nuActive = te.getPlot((t.getTownName() + TownLevel.PLOT_INFIX + plotName).toLowerCase());
+                nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
             }
-        } else {
-            plotName = t.getTownName() + TownLevel.PLOT_INFIX + plotName;
-            plotName = plotName.toLowerCase();
+        }
+        else {
+            plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
 
-            territloop:
-            for (Territory territ : t.getTerritoriesCollection()) {
-                if (territ.getPlot(plotName) != null) {
-                    nuActive = territ.getPlot(plotName);
-                    localSender.setActiveTerritory(territ);
-                    break territloop;
+            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
+                if (reg instanceof Territory) {
+                    nuActiveTerrit = (Territory) reg;
+                    if (nuActiveTerrit.getPlotsCollection().contains(plotName)) {
+                        nuActive = townManager.getPlot(plotName);
+                        break;
+                    }
                 }
-
             }
         }
 
@@ -354,7 +358,14 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
+        if(!nuActive.getParentTownName().equals(t.getTownName())) {
+            localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist in your town.");
+            return;
+        }
+
         localSender.setActivePlot(nuActive);
+        if(nuActiveTerrit != null)
+            localSender.setActiveTerritory(nuActiveTerrit);
         localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
 }

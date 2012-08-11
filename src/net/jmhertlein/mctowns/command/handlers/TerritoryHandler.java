@@ -8,11 +8,13 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
@@ -32,10 +34,18 @@ public class TerritoryHandler extends CommandHandler {
 
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
 
-        plotName = localSender.getActiveTown().getTownName() + TownLevel.PLOT_INFIX + plotName;
+        Town t = localSender.getActiveTown();
 
-        String worldName = localSender.getActiveTown().getWorldName();
-        Plot p = new Plot(plotName, worldName);
+        if(t == null) {
+            localSender.notifyActiveTownNotSet();
+            return;
+        }
+
+        plotName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, plotName);
+
+        World w = localSender.getPlayer().getWorld();
+        String worldName = w.getName();
+
         Territory parTerr = localSender.getActiveTerritory();
 
         if (parTerr == null) {
@@ -45,41 +55,25 @@ public class TerritoryHandler extends CommandHandler {
 
 
 
-        ProtectedRegion region = getSelectedRegion(p.getName());
+        ProtectedRegion region = getSelectedRegion(plotName);
 
         if (region == null) {
+            localSender.sendMessage(ERR + "You need to make a WorldEdit selection first.");
             return;
         }
 
-        if (!this.selectionIsWithinParent(region, localSender.getActiveTerritory())) {
+        if (! selectionIsWithinParent(region, localSender.getActiveTerritory())) {
             localSender.sendMessage(ERR + "Selection is not in territory!");
             return;
         }
 
 
-        ProtectedRegion parent = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(localSender.getActiveTerritory().getName());
-        try {
-            region.setParent(parent);
-        } catch (ProtectedRegion.CircularInheritanceException ex) {
-            Logger.getLogger("Minecraft").log(Level.WARNING, "Circular Inheritence in addPlotToTerritory.");
-        }
-        RegionManager regMan = wgp.getRegionManager(wgp.getServer().getWorld(worldName));
-
-        if (regMan.hasRegion(plotName)) {
-            localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
-            return;
-        }
-
-        regMan.addRegion(region);
-
-        parTerr.addPlot(p);
+        townManager.addPlot(plotName, w, region, t, parTerr);
 
         localSender.sendMessage("Plot added.");
 
-        doRegManSave(regMan);
-
         if (autoActive) {
-            localSender.setActivePlot(p);
+            localSender.setActivePlot(townManager.getPlot(plotName));
             localSender.sendMessage(INFO + "Active plot set to newly created plot.");
 
         }
@@ -99,14 +93,11 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        Plot removeMe = t.getPlot(plotName);
-
-        if (removeMe == null) {
+        if (! townManager.removePlot(plotName)) {
             localSender.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
             return;
         }
 
-        TownManager.removePlot(t, plotName);
         localSender.sendMessage(SUCC + "Plot removed.");
     }
 
@@ -166,8 +157,14 @@ public class TerritoryHandler extends CommandHandler {
                 return;
             }
 
-            for (Plot p : territ.getPlotsCollection()) {
-                p.removePlayer(player);
+
+            Plot p;
+            for(MCTownsRegion reg : townManager.getRegionsCollection()) {
+                if(reg instanceof Plot) {
+                    p = (Plot) reg;
+                    if(p.getParentTerritoryName().equals(territ.getName()))
+                        p.removePlayer(player);
+                }
             }
 
             localSender.sendMessage("Player removed from territory.");
@@ -191,14 +188,19 @@ public class TerritoryHandler extends CommandHandler {
 
 
 
-        Territory nuActive = t.getTerritory(territName);
+        Territory nuActive = townManager.getTerritory(territName);
 
         if (nuActive == null) {
-            nuActive = t.getTerritory((t.getTownName() + TownLevel.TERRITORY_INFIX + territName).toLowerCase());
+            nuActive = townManager.getTerritory(MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, territName));
         }
 
         if (nuActive == null) {
             localSender.sendMessage(ERR + "The territory \"" + territName + "\" does not exist.");
+            return;
+        }
+
+        if(! nuActive.getParentTown().equals(t.getTownName())) {
+            localSender.sendMessage(ERR + "The territory \"" + territName + "\" does not exist in your town.");
             return;
         }
 

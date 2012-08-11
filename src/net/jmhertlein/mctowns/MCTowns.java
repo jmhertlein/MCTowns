@@ -56,8 +56,8 @@ public class MCTowns extends JavaPlugin {
     public void onDisable() {
 
         if (!abortSave) {
-            serializeTownManager();
-            serializeBackup();
+            persistTownManager();
+            persistTownManagerBackup();
         } else {
             logInfo("The save was aborted manually, so nothing was saved.");
         }
@@ -151,24 +151,13 @@ public class MCTowns extends JavaPlugin {
     private void setupTownManager() {
         File path = new File(TOWN_DATABASE_SAVE_PATH);
 
-        FileInputStream fis;
-        ObjectInputStream ois;
-
-        try {
-            fis = new FileInputStream(path);
-            ois = new ObjectInputStream(fis);
-
-            townManager = new TownManager();
-            townManager.readExternal(ois);
-
-            ois.close();
-            fis.close();
-
-        } catch (IOException | ClassNotFoundException e) {
-            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
-            logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
-            townManager = new TownManager();
-        }
+//        try {
+//
+//        } catch (IOException | ClassNotFoundException e) {
+//            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
+//            logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
+//            townManager = new TownManager();
+//        }
 
 
 
@@ -220,27 +209,11 @@ public class MCTowns extends JavaPlugin {
         }
     }
 
-    private void serializeTownManager() {
+    private void persistTownManager() {
         File path = new File(TOWN_DATABASE_SAVE_PATH);
-
-        FileOutputStream fos;
-        ObjectOutputStream oos;
-
-        try {
-            fos = new FileOutputStream(path);
-            oos = new ObjectOutputStream(fos);
-
-            townManager.writeExternal(oos);
-
-            oos.close();
-            fos.close();
-
-        } catch (IOException e) {
-            log.log(Level.WARNING, "MCTowns: Error saving the town database.");
-        }
     }
 
-    private void serializeBackup() {
+    private void persistTownManagerBackup() {
         Calendar cal = Calendar.getInstance();
         String dateStamp = "(" + (cal.get(Calendar.MONTH) + 1) + cal.get(Calendar.DAY_OF_MONTH) + ")";
 
@@ -254,22 +227,6 @@ public class MCTowns extends JavaPlugin {
         }
 
         logInfo("Backup saving as: " + path.getAbsolutePath());
-
-        FileOutputStream fos;
-        ObjectOutputStream oos;
-
-        try {
-            fos = new FileOutputStream(path);
-            oos = new ObjectOutputStream(fos);
-
-            townManager.writeExternal(oos);
-
-            oos.close();
-            fos.close();
-
-        } catch (IOException e) {
-            log.log(Level.WARNING, "Error saving the town database backup.");
-        }
     }
 
     private boolean setupEconomy() {
