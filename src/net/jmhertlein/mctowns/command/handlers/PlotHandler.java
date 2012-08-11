@@ -42,10 +42,6 @@ public class PlotHandler extends CommandHandler {
 
     }
 
-    public void movePlotInTown() {
-        //Pushed off to post-1.0
-    }
-
     public void removePlayerFromPlot(String player) {
         Plot p = localSender.getActivePlot();
         player = player.toLowerCase();

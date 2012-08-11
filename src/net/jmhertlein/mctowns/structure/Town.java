@@ -41,11 +41,11 @@ public class Town {
     //the territories associated with it
     private HashSet<String> territories;
     //the players in it
-    private HashMap<String, Boolean> residents;
+    private HashSet<String> residents;
     //its mayor (string)
     private String mayor;
     //the assistants (strings)
-    private HashMap<String, Boolean> assistants;
+    private HashSet<String> assistants;
     //whether or not plots are buyable and thus have a price
     private boolean buyablePlots;
     //turns off the join request/invitation system. Instead, buying a plot in
@@ -73,8 +73,8 @@ public class Town {
 
         bank = new BlockBank();
 
-        residents = new HashMap<>();
-        assistants = new HashMap<>();
+        residents = new HashSet<>();
+        assistants = new HashSet<>();
         territories = new HashSet<>();
 
         buyablePlots = false;
@@ -84,7 +84,7 @@ public class Town {
 
 
 
-        residents.put(mayor.getName(), Boolean.TRUE);
+        residents.add(mayor.getName());
 
         motdColor = ChatColor.GOLD;
 
@@ -165,11 +165,11 @@ public class Town {
     }
 
     public boolean addPlayer(String playerName) {
-        if (residents.containsKey(playerName)) {
+        if (residents.contains(playerName)) {
             return false;
         }
 
-        residents.put(playerName, true);
+        residents.add(playerName);
         return true;
     }
 
@@ -241,11 +241,11 @@ public class Town {
      * an assistant or they're not a resident of the town.
      */
     public boolean addAssistant(String playerName) {
-        if (assistants.get(playerName) != null && assistants.get(playerName) && residents.get(playerName) != null && residents.get(playerName)) {
+        if (assistants.contains(playerName) || !residents.contains(playerName)) {
             return false;
         }
 
-        assistants.put(playerName, Boolean.TRUE);
+        assistants.add(playerName);
         return true;
     }
 
@@ -257,7 +257,7 @@ public class Town {
      * assistant, true otherwise
      */
     public boolean removeAssistant(Player player) {
-        if (!assistants.containsKey(player.getName())) {
+        if (!assistants.contains(player.getName())) {
             return false;
         }
 
@@ -311,7 +311,7 @@ public class Town {
      * @return
      */
     public String[] getResidentNames() {
-        return residents.keySet().toArray(new String[residents.keySet().size()]);
+        return residents.toArray(new String[residents.size()]);
     }
 
     /**
@@ -337,7 +337,7 @@ public class Town {
      * @return if the player is an assistant or not
      */
     public boolean playerIsAssistant(Player p) {
-        return assistants.containsKey(p.getName());
+        return assistants.contains(p.getName());
     }
 
     /**
@@ -347,7 +347,7 @@ public class Town {
      * @return if the player is a resident or not
      */
     public boolean playerIsResident(Player p) {
-        return residents.containsKey(p.getName());
+        return residents.contains(p.getName());
     }
 
     /**
@@ -356,7 +356,7 @@ public class Town {
      * @return
      */
     public boolean playerIsResident(String p) {
-        return residents.containsKey(p);
+        return residents.contains(p);
     }
 
     /**
@@ -409,8 +409,7 @@ public class Town {
      * @return
      */
     public boolean playerIsAssistant(String playerExactName) {
-        Boolean b = assistants.get(playerExactName);
-        return (b == null ? false : b);
+        return assistants.contains(playerExactName);
     }
 
     /**
@@ -419,7 +418,7 @@ public class Town {
      * @return the number of residents in the town
      */
     public int getSize() {
-        return residents.values().size();
+        return residents.size();
     }
 
     /**
@@ -431,7 +430,7 @@ public class Town {
         Player temp;
         message = ChatColor.GOLD + message;
 
-        for (String playerName : residents.keySet()) {
+        for (String playerName : residents) {
             temp = server.getPlayerExact(playerName);
             if (temp != null) {
                 temp.sendMessage(message);
@@ -543,17 +542,52 @@ public class Town {
         f.set("mayor", mayor);
         f.set("territs", getTerritoryNames());
 
+        List<String> list = new LinkedList<>();
+        list.addAll(assistants);
+        f.set("assistants", list);
+
+        f.set("friendlyFire", friendlyFire);
+        f.set("defaultPlotPrice", defaultPlotPrice.toString());
+        f.set("economyJoins", economyJoins);
+
         bank.writeYAML(f);
+    }
+
+    public static Town readYAML(FileConfiguration f) {
+        Town t = new Town(null, null);
+
+        t.townName = f.getString("townName");
+        t.worldName = f.getString("worldName");
+        t.townMOTD = f.getString("motd");
+        t.motdColor = ChatColor.getByChar(f.getString("motdColor"));
+        t.townSpawn = Location.fromList(f.getStringList("spawnLocation"));
+        t.mayor = f.getString("mayor");
+        t.territories = parseListToHashSet(f.getStringList("territs"));
+
+        t.assistants = new HashSet<>();
+        t.assistants.addAll(f.getStringList("assistants"));
+
+        t.friendlyFire = f.getBoolean("friendlyFire");
+        t.defaultPlotPrice = new BigDecimal(f.getString("defaultPlotPrice"));
+        t.economyJoins = f.getBoolean("economyJoins");
+
+        return t;
     }
 
     private List<String> getTerritoryNames() {
         LinkedList<String> ret = new LinkedList<>();
 
-        for(String t : territories) {
-            ret.add(t);
-        }
+        ret.addAll(this.territories);
 
         return ret;
 
+    }
+
+    private static HashSet<String> parseListToHashSet(List<String> s) {
+        HashSet<String> ret = new HashSet<>();
+
+        ret.addAll(s);
+
+        return ret;
     }
 }
