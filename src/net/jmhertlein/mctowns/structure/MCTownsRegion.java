@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public abstract class MCTownsRegion implements Externalizable {
+public abstract class MCTownsRegion {
     private static final long serialVersionUID = "MCTOWNSREGION".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();
@@ -119,28 +119,6 @@ public abstract class MCTownsRegion implements Externalizable {
 
     public ProtectedRegion getWGRegion() {
         return wgp.getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegionExact(name);
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(VERSION);
-        out.writeUTF(name);
-        out.writeUTF(worldName);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int ver = in.readInt();
-
-        if (ver == 0) {
-
-            //============Beginning of original variables for version 0=========
-            name = in.readUTF();
-            worldName = in.readUTF();
-            //============End of original variables for version 0===============
-        } else {
-            MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of MCTownsRegion.");
-        }
     }
 
     @Override

@@ -40,7 +40,7 @@ public class MCTowns extends JavaPlugin {
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
 
-    private TownManager townManager;
+    private static TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
     private static WorldGuardPlugin wgp;
@@ -328,7 +328,7 @@ public class MCTowns extends JavaPlugin {
         return options;
     }
 
-	public TownManager getTownManager() {
+	public static TownManager getTownManager() {
 		return townManager;
 	}
 

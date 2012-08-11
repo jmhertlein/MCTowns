@@ -8,7 +8,6 @@ import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.MCTowns;
@@ -17,7 +16,6 @@ import net.jmhertlein.mctowns.command.handlers.CommandHandler;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
@@ -228,7 +226,7 @@ public class MCTPlayerListener implements Listener {
         String nuName;
         try {
             nuName = e.getLine(1);
-            
+
             if(nuName.isEmpty())
                 throw new IndexOutOfBoundsException();
 

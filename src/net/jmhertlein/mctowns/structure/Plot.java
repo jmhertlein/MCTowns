@@ -27,7 +27,7 @@ import org.bukkit.craftbukkit.block.CraftSign;
  *
  * @author joshua
  */
-public class Plot extends MCTownsRegion implements Externalizable {
+public class Plot extends MCTownsRegion {
 
     private static final long serialVersionUID = "PLOT".hashCode(); // DO NOT CHANGE
 
@@ -35,25 +35,29 @@ public class Plot extends MCTownsRegion implements Externalizable {
      *
      */
     private static final int VERSION = 0;
+
+    private String parTerrName;
+    private String parTownName;
+
     private boolean forSale;
     private BigDecimal price;
     private Location signLoc;
 
-    public Plot() {
-        forSale = false;
-        price = BigDecimal.ZERO;
-    }
-
-    /**
-     * Creates a new plot.
-     *
-     * @param name the name of the plot
-     * @param worldName the name of the world in which the plot exists
-     */
-    public Plot(String name, String worldName) {
+    public Plot(String name, String worldName, String parentTerritoryName, String parentTownName) {
         super(name, worldName);
 
+        parTerrName = parentTerritoryName;
+        parTownName = parentTownName;
+
         //calculateSignLoc(wgp);
+    }
+
+    public String getParentTerritoryName() {
+        return parTerrName;
+    }
+
+    public String getParentTownName() {
+        return parTownName;
     }
 
     public BigDecimal getPrice() {
@@ -135,42 +139,13 @@ public class Plot extends MCTownsRegion implements Externalizable {
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        super.writeExternal(out);
-
-        out.writeInt(VERSION);
-
-        out.writeBoolean(forSale);
-        out.writeObject(price);
-        out.writeObject(signLoc);
-
-
-
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        super.readExternal(in);
-
-        int ver = in.readInt();
-
-        if (ver == 0) {
-            //============Beginning of original variables for version 0=========
-            forSale = in.readBoolean();
-            price = (BigDecimal) (in.readObject());
-            signLoc = (Location) in.readObject();
-            //============End of original variables for version 0===============
-        } else {
-            MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Plot.");
-        }
-    }
-
-    @Override
     public void writeYAML(FileConfiguration f) {
         super.writeYAML(f);
         f.set("forSale", forSale);
         f.set("price", price.toString());
         f.set("signLoc", signLoc.toList());
+        f.set("parentTownName", parTownName);
+        f.set("parentTerritoryName", parTerrName);
     }
 
 

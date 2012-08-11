@@ -7,6 +7,7 @@ package net.jmhertlein.mctowns.structure;
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -17,17 +18,13 @@ import org.bukkit.configuration.file.FileConfiguration;
  *
  * @author joshua
  */
-public class Territory extends MCTownsRegion implements Externalizable {
+public class Territory extends MCTownsRegion{
 
     private static final long serialVersionUID = "TERRITORY".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
-    private HashMap<String, Plot> plots;
 
-    /**
-     * Required constructor for Externalization
-     */
-    public Territory() {
-    }
+    private String parTownName;
+    private HashSet<String> plotNames;
 
     /**
      * Constructs a new territory
@@ -35,9 +32,10 @@ public class Territory extends MCTownsRegion implements Externalizable {
      * @param name the desired name of the territory
      * @param worldName the name of the world in which the territory exists
      */
-    public Territory(String name, String worldName) {
+    public Territory(String name, String worldName, String parentTownName) {
         super(name, worldName);
-        plots = new HashMap<>();
+        plotNames = new HashSet<>();
+        parTownName = parentTownName;
     }
 
     /**
@@ -49,71 +47,40 @@ public class Territory extends MCTownsRegion implements Externalizable {
      * otherwise
      */
     public boolean addPlot(Plot plot) {
-        if (plots.containsKey(plot.getName())) {
+        if (plotNames.contains(plot.getName())) {
             return false;
         }
 
-        plots.put(plot.getName(), plot);
+        plotNames.add(plot.getName());
         return true;
-
-
-    }
-
-    /**
-     * Returns the plot whose name is name
-     *
-     * @param name the name of the plot to be returned
-     * @return the plot whose name is name
-     */
-    public Plot getPlot(String name) {
-        return plots.get(name);
     }
 
     /**
      *
      * @return the plots owned by this territory
      */
-    public Collection<Plot> getPlotsCollection() {
-        return plots.values();
+    public Collection<String> getPlotsCollection() {
+        return plotNames;
     }
 
     /**
      * Removes the plot from the territory
      *
      * @param plotName the name of the plot to be removed
-     * @return the removed plot
+     * @return if a plot was removed or not
      */
-    public Plot removePlot(String plotName) {
-        return plots.remove(plotName);
+    public boolean removePlot(String plotName) {
+        return plotNames.remove(plotName);
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        super.writeExternal(out);
-
-        out.writeInt(VERSION);
-        out.writeObject(plots);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        super.readExternal(in);
-
-        int ver = in.readInt();
-
-        if (ver == 0) {
-            //============Beginning of original variables for version 0=========
-            plots = (HashMap<String, Plot>) in.readObject();
-            //============End of original variables for version 0===============
-        } else {
-            MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Territory.");
-        }
+    public String getParentTown() {
+        return parTownName;
     }
 
     @Override
     public void writeYAML(FileConfiguration f) {
         super.writeYAML(f);
+        f.set("town", parTownName);
         f.set("plots", getPlotNameList());
 
     }
@@ -121,10 +88,12 @@ public class Territory extends MCTownsRegion implements Externalizable {
     private List<String> getPlotNameList() {
         LinkedList<String> ret = new LinkedList<>();
 
-        for(Plot p : plots.values()) {
-            ret.add(p.getAbstractName());
+        for(String s : plotNames) {
+            ret.add(s);
         }
 
         return ret;
     }
+
+
 }

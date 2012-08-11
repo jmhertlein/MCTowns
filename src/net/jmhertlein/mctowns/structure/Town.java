@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public class Town implements Externalizable {
+public class Town {
 
     private static final long serialVersionUID = "TOWN".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
@@ -39,7 +39,7 @@ public class Town implements Externalizable {
     //town bank
     private BlockBank bank;
     //the territories associated with it
-    private HashMap<String, Territory> territories;
+    private HashSet<String> territories;
     //the players in it
     private HashMap<String, Boolean> residents;
     //its mayor (string)
@@ -54,12 +54,6 @@ public class Town implements Externalizable {
     private boolean economyJoins;
     private BigDecimal defaultPlotPrice;
     private boolean friendlyFire;
-
-    /**
-     *
-     */
-    public Town() {
-    }
 
     /**
      * Creates a new town, setting the name to townName, the mayor to the player
@@ -81,7 +75,7 @@ public class Town implements Externalizable {
 
         residents = new HashMap<>();
         assistants = new HashMap<>();
-        territories = new HashMap<>();
+        territories = new HashSet<>();
 
         buyablePlots = false;
         economyJoins = false;
@@ -210,36 +204,22 @@ public class Town implements Externalizable {
      * otherwise
      */
     public boolean addTerritory(Territory territ) {
-        if (territories.containsKey(territ.getName())) {
+        if (territories.contains(territ.getName())) {
             return false;
         }
 
-        territories.put(territ.getName(), territ);
+        territories.add(territ.getName());
         return true;
     }
 
     /**
-     * Removes the territory from the town. Removal of the territ's region will
-     * need to be handled elsewhere.
+     * Removes the territory from the town.
      *
      * @param territName the name of the territory to remove
      * @return the removed territory
-     * @see
-     * me.everdras.mctowns.database.TownManager.unregisterTownFromWorldGuard(WorldGuardPlugin
-     * wgp, Town t)
      */
-    public Territory removeTerritory(String territName) {
+    public boolean removeTerritory(String territName) {
         return territories.remove(territName);
-    }
-
-    /**
-     * Returns the territory whose name is the same as name
-     *
-     * @param name the name of the territory to be gotten
-     * @return the territory whose name is name
-     */
-    public Territory getTerritory(String name) {
-        return territories.get(name);
     }
 
     /**
@@ -292,7 +272,7 @@ public class Town implements Externalizable {
      * @return the hashmap of territories
      * @deprecated use getTerritoriesCollection()
      */
-    public HashMap<String, Territory> getTerritories() {
+    public HashSet<String> getTerritories() {
         return territories;
     }
 
@@ -301,8 +281,8 @@ public class Town implements Externalizable {
      *
      * @return the town's territories
      */
-    public Collection<Territory> getTerritoriesCollection() {
-        return territories.values();
+    public Collection<String> getTerritoriesCollection() {
+        return territories;
     }
 
     /**
@@ -465,16 +445,18 @@ public class Town implements Externalizable {
      * @param p
      * @return
      */
-    public boolean playerIsInsideTownBorders(WorldGuardPlugin wgp, Player p) {
+    public boolean playerIsInsideTownBorders(Player p) {
         org.bukkit.Location playerLoc = p.getLocation();
-        RegionManager regMan = wgp.getRegionManager(p.getWorld());
+        RegionManager regMan = MCTowns.getWgp().getRegionManager(p.getWorld());
 
         ProtectedRegion tempReg;
-        for (Territory territ : getTerritoriesCollection()) {
-            tempReg = regMan.getRegion(territ.getName());
-            if (tempReg != null) {
-                if (tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ()))) {
-                    return true;
+        for (MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
+            if(mctReg instanceof Territory) {
+                tempReg = regMan.getRegion( ((Territory)mctReg).getName());
+                if (tempReg != null) {
+                    if (tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ()))) {
+                        return true;
+                    }
                 }
             }
         }
@@ -533,66 +515,6 @@ public class Town implements Externalizable {
 
     /**
      *
-     * @param out
-     * @throws IOException
-     */
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(VERSION);
-
-        out.writeUTF(townName);
-        out.writeUTF(worldName);
-        out.writeUTF(townMOTD);
-        out.writeObject(motdColor);
-        out.writeObject(townSpawn);
-        out.writeObject(bank);
-        out.writeObject(territories);
-        out.writeObject(residents);
-        out.writeUTF(mayor);
-        out.writeObject(assistants);
-        out.writeBoolean(buyablePlots);
-        out.writeBoolean(economyJoins);
-        out.writeObject(defaultPlotPrice);
-        out.writeBoolean(friendlyFire);
-
-
-    }
-
-    /**
-     *
-     * @param in
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int ver = in.readInt();
-
-        if (ver == 0) {
-            //============Beginning of original variables for version 0=========
-            townName = in.readUTF();
-            worldName = in.readUTF();
-            townMOTD = in.readUTF();
-            motdColor = (ChatColor) in.readObject();
-            townSpawn = (Location) in.readObject();
-            bank = (BlockBank) in.readObject();
-            territories = (HashMap<String, Territory>) in.readObject();
-            residents = (HashMap<String, Boolean>) in.readObject();
-            mayor = in.readUTF();
-            assistants = (HashMap<String, Boolean>) in.readObject();
-            buyablePlots = in.readBoolean();
-            economyJoins = in.readBoolean();
-            defaultPlotPrice = (BigDecimal) in.readObject();
-            friendlyFire = in.readBoolean();
-            //============End of original variables for version 0===============
-        } else {
-            MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of Town.");
-        }
-
-    }
-
-    /**
-     *
      * @return
      */
     public BigDecimal getDefaultPlotPrice() {
@@ -627,8 +549,8 @@ public class Town implements Externalizable {
     private List<String> getTerritoryNames() {
         LinkedList<String> ret = new LinkedList<>();
 
-        for(Territory t : territories.values()) {
-            ret.add(t.getName());
+        for(String t : territories) {
+            ret.add(t);
         }
 
         return ret;
