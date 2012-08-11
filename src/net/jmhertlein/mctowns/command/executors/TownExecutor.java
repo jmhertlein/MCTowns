@@ -105,6 +105,7 @@ public class TownExecutor extends BaseExecutor {
 
                 case "list":
                 case "ls":
+                    helpMessage = "/town list (territories | players | requests | invites)";
                     switch (command.get(2).toLowerCase()) {
                         case "players":
                             if (command.hasArgAtIndex(3)) {

@@ -41,7 +41,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        plotName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, plotName);
+        plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
 
         World w = localSender.getPlayer().getWorld();
         String worldName = w.getName();
@@ -70,7 +70,7 @@ public class TerritoryHandler extends CommandHandler {
 
         townManager.addPlot(plotName, w, region, t, parTerr);
 
-        localSender.sendMessage("Plot added.");
+        localSender.sendMessage(SUCC + "Plot added.");
 
         if (autoActive) {
             localSender.setActivePlot(townManager.getPlot(plotName));
@@ -226,10 +226,10 @@ public class TerritoryHandler extends CommandHandler {
 
 
 
-        Plot[] plots = t.getPlotsCollection().toArray(new Plot[t.getPlotsCollection().size()]);
+        String[] plots = t.getPlotsCollection().toArray(new String[t.getPlotsCollection().size()]);
 
         for (int i = page * RESULTS_PER_PAGE; i < plots.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
-            localSender.sendMessage(ChatColor.YELLOW + plots[i].getName());
+            localSender.sendMessage(ChatColor.YELLOW + plots[i]);
         }
     }
 

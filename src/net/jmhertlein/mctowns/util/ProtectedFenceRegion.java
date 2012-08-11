@@ -34,7 +34,6 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
         cameFrom = NONE;
         do {
             dirToNext = getDirToNextFence(cameFrom, cur);
-            System.out.println("Dir to next:" + dirToNext);
 
             //if there was a corner in the fence...
             if(getOppositeDir(cameFrom) != dirToNext) {
@@ -71,8 +70,6 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
     }
 
     private static final int getDirToNextFence(int cameFrom, Location l) {
-        System.out.println("Came from: " + cameFrom);
-
         if (cameFrom != SOUTH) {
             if (l.clone().add(0, 0, -1).getBlock().getType() == Material.FENCE) {
                 return SOUTH;

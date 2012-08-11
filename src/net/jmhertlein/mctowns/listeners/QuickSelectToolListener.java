@@ -14,6 +14,7 @@ import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -53,7 +54,12 @@ public class QuickSelectToolListener implements Listener {
             actives.setActiveTown(mctp.getTownManager().matchPlayerToTown(player));
         }
 
-        Location spotClicked = e.getClickedBlock().getLocation();
+        Block b = e.getClickedBlock();
+
+        if(b == null)
+            return;
+
+        Location spotClicked = b.getLocation();
 
         ApplicableRegionSet regs = wgp.getRegionManager(e.getPlayer().getWorld()).getApplicableRegions(spotClicked);
 

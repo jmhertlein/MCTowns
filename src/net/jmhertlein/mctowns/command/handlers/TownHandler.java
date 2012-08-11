@@ -266,7 +266,7 @@ public class TownHandler extends CommandHandler {
         //IF ALL THE THINGS ARE FINALLY DONE...
         region.getOwners().addPlayer(t.getMayor());
 
-
+        localSender.sendMessage(SUCC + "Territory added.");
 
         if (autoActive) {
             localSender.setActiveTerritory(townManager.getTerritory(territName));
@@ -981,10 +981,10 @@ public class TownHandler extends CommandHandler {
 
 
 
-        Territory[] territs = t.getTerritoriesCollection().toArray(new Territory[t.getTerritoriesCollection().size()]);
+        String[] territs = t.getTerritoriesCollection().toArray(new String[t.getTerritoriesCollection().size()]);
 
         for (int i = page * RESULTS_PER_PAGE; i < territs.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
-            localSender.sendMessage(ChatColor.YELLOW + territs[i].getName());
+            localSender.sendMessage(ChatColor.YELLOW + territs[i]);
         }
     }
 

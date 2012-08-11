@@ -5,6 +5,7 @@
 package net.jmhertlein.mctowns.database;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.IOException;
@@ -106,14 +107,6 @@ public class TownManager {
             return false;
 
         parentTerritory.addPlot(p);
-
-        RegionManager regMan = wgp.getRegionManager(worldPlotIsIn);
-
-        try {
-            reg.setParent(regMan.getRegion(parentTerritory.getName()));
-        } catch (ProtectedRegion.CircularInheritanceException ex) {
-            Logger.getLogger(MCTPlayerListener.class.getName()).log(Level.SEVERE, null, ex);
-        }
         return false;
     }
 
@@ -127,6 +120,13 @@ public class TownManager {
 
         regMan.addRegion(reg);
         regions.put(mctReg.getName(), mctReg);
+
+        try {
+            regMan.save();
+        } catch (ProtectionDatabaseException ex) {
+            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            ex.printStackTrace();
+        }
 
         return true;
     }
@@ -164,13 +164,15 @@ public class TownManager {
     }
 
     public boolean removeTown(String townName) {
+        MCTowns.logDebug("removeTown()");
+
         Town t = towns.get(townName);
 
         if(t == null)
             return false;
 
         for(String s : t.getTerritoriesCollection()) {
-            removeTerritory(townName);
+            removeTerritory(s);
         }
 
         towns.remove(t.getTownName());
@@ -179,6 +181,7 @@ public class TownManager {
     }
 
     public boolean removeTerritory(String territoryName) {
+        MCTowns.logDebug("removeTerritory()");
         MCTownsRegion mctReg = regions.get(territoryName);
 
         if(mctReg == null || !(mctReg instanceof Territory))
@@ -190,16 +193,27 @@ public class TownManager {
             removePlot(plot);
         }
 
+        getTown(territ.getParentTown()).removeTerritory(territoryName);
+
         regions.remove(territ.getName());
+        MCTowns.logDebug(territoryName);
 
         RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(territ.getWorldName()));
 
         regMan.removeRegion(territ.getName());
 
+        try {
+            regMan.save();
+        } catch (ProtectionDatabaseException ex) {
+            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            ex.printStackTrace();
+        }
+
         return true;
     }
 
     public boolean removePlot(String plotName) {
+        MCTowns.logDebug("removePlot()");
         MCTownsRegion plot = regions.get(plotName);
 
         if(plot == null || !(plot instanceof Plot))
@@ -207,9 +221,18 @@ public class TownManager {
 
         regions.remove(plotName);
 
+        getTerritory(((Plot)plot).getParentTerritoryName()).removePlot(plotName);
+
         RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(plot.getWorldName()));
 
         regMan.removeRegion(plotName);
+
+        try {
+            regMan.save();
+        } catch (ProtectionDatabaseException ex) {
+            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            ex.printStackTrace();
+        }
 
         return true;
     }

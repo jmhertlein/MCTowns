@@ -38,7 +38,7 @@ public class MCTowns extends JavaPlugin {
     private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
-    private static final boolean DEBUGGING = false;
+    private static final boolean DEBUGGING = true;
 
     private static TownManager townManager;
     private TownJoinManager joinManager;
@@ -87,8 +87,6 @@ public class MCTowns extends JavaPlugin {
         checkFiles();
         loadConfig();
 
-        setupTownManager();
-
         joinManager = new TownJoinManager();
 
         activeSets = new HashMap<>();
@@ -100,6 +98,8 @@ public class MCTowns extends JavaPlugin {
         Perms.registerPermNodes(getServer().getPluginManager());
 
         hookInDependencies();
+
+        setupTownManager();
 
         regEventListeners();
 
@@ -158,6 +158,8 @@ public class MCTowns extends JavaPlugin {
 //            logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
 //            townManager = new TownManager();
 //        }
+
+        townManager = new TownManager();
 
 
 
