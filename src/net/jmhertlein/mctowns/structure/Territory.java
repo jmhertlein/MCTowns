@@ -4,14 +4,10 @@
  */
 package net.jmhertlein.mctowns.structure;
 
-import java.io.*;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -83,6 +79,19 @@ public class Territory extends MCTownsRegion{
         f.set("town", parTownName);
         f.set("plots", getPlotNameList());
 
+    }
+
+    public Territory readYAML(FileConfiguration f) {
+        Territory ret = new Territory(null, null, null);
+
+        ret.name = f.getString("name");
+        ret.worldName = f.getString("worldName");
+        ret.parTownName = f.getString("town");
+
+        ret.plotNames = new HashSet<>();
+        ret.plotNames.addAll(f.getStringList("plots"));
+
+        return ret;
     }
 
     private List<String> getPlotNameList() {

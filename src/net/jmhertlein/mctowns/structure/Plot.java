@@ -7,14 +7,9 @@ package net.jmhertlein.mctowns.structure;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.math.BigDecimal;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Material;
@@ -142,11 +137,31 @@ public class Plot extends MCTownsRegion {
     public void writeYAML(FileConfiguration f) {
         super.writeYAML(f);
         f.set("forSale", forSale);
-        f.set("price", (price == null) ? "null" : price.toString());
-        f.set("signLoc", (signLoc == null) ? "null" : signLoc.toList());
+        f.set("price", (price == null) ? "nil" : price.toString());
+        f.set("signLoc", (signLoc == null) ? "nil" : signLoc.toList());
         f.set("parentTownName", parTownName);
         f.set("parentTerritoryName", parTerrName);
     }
 
+    public static Plot readYAML(FileConfiguration f) {
+        Plot p = new Plot(null, null, null, null);
 
+        p.name = f.getString("name");
+        p.worldName = f.getString("worldName");
+        p.parTerrName = f.getString("parentTerritoryName");
+        p.parTownName = f.getString("parentTownName");
+        p.forSale = f.getBoolean("forSale");
+
+        if(f.getString("signLoc").equals("nil"))
+            p.signLoc = null;
+        else
+            p.signLoc = Location.fromList(f.getStringList("signLoc"));
+
+        if(f.getString("price").equals("nil"))
+            p.price = null;
+        else
+            p.price = new BigDecimal(f.getString("price"));
+
+        return p;
+    }
 }

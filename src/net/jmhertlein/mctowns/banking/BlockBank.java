@@ -4,14 +4,11 @@
  */
 package net.jmhertlein.mctowns.banking;
 
-import java.io.*;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -19,7 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration;
  *
  * @author joshua
  */
-public class BlockBank implements Externalizable {
+public class BlockBank {
 
     private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 1;
@@ -129,35 +126,6 @@ public class BlockBank implements Externalizable {
         return townFunds.compareTo(amt) >= 0;
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(VERSION);
-
-        out.writeObject(bank);
-        out.writeObject(townFunds);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
-        int ver = in.readInt();
-
-        if (ver == 0) {
-            //============Beginning of original variables for version 0=========
-            bank = (TreeMap<Integer, Integer>) in.readObject();
-            //============End of original variables for version 0===============
-            townFunds = BigDecimal.ZERO;
-        } else if (ver == 1) {
-            //============Beginning of original variables for version 1=========
-            bank = (TreeMap<Integer, Integer>) in.readObject();
-            townFunds = (BigDecimal) in.readObject();
-            //============End of original variables for version 1===============
-
-        } else {
-            MCTowns.log.log(Level.SEVERE, "MCTowns: Unsupported version (version " + ver + ") of BlockBank.");
-        }
-    }
-
     public void writeYAML(FileConfiguration f) {
         f.set("bank.townFunds", townFunds.toString());
 
@@ -168,5 +136,21 @@ public class BlockBank implements Externalizable {
         }
 
         f.set("bank.contents", l);
+    }
+
+    public static BlockBank readYAML(FileConfiguration f) {
+        BlockBank bank = new BlockBank();
+
+        bank.bank = new TreeMap<>();
+        String[] temp;
+
+        for(String s : f.getStringList("bank.contents")) {
+            temp = s.split("|");
+            bank.bank.put(Integer.parseInt(temp[0]), Integer.parseInt(temp[1]));
+        }
+
+        bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));
+
+        return bank;
     }
 }

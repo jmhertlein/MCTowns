@@ -571,6 +571,8 @@ public class Town {
         t.defaultPlotPrice = new BigDecimal(f.getString("defaultPlotPrice"));
         t.economyJoins = f.getBoolean("economyJoins");
 
+        t.bank = BlockBank.readYAML(f);
+
         return t;
     }
 
