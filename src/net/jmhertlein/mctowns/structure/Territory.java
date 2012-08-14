@@ -78,10 +78,11 @@ public class Territory extends MCTownsRegion{
         super.writeYAML(f);
         f.set("town", parTownName);
         f.set("plots", getPlotNameList());
+        f.set("type", TownLevel.TERRITORY.name());
 
     }
 
-    public Territory readYAML(FileConfiguration f) {
+    public static Territory readYAML(FileConfiguration f) {
         Territory ret = new Territory(null, null, null);
 
         ret.name = f.getString("name");

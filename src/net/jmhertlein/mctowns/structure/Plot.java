@@ -141,6 +141,7 @@ public class Plot extends MCTownsRegion {
         f.set("signLoc", (signLoc == null) ? "nil" : signLoc.toList());
         f.set("parentTownName", parTownName);
         f.set("parentTerritoryName", parTerrName);
+        f.set("type", TownLevel.PLOT.name());
     }
 
     public static Plot readYAML(FileConfiguration f) {
