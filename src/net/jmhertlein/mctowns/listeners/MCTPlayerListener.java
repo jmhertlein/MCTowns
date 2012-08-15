@@ -261,6 +261,9 @@ public class MCTPlayerListener implements Listener {
         } catch (IncompleteFenceException ex) {
             p.sendMessage(ChatColor.RED + "Error: Fence was not complete. Fence must be a complete polygon.");
             return;
+        } catch(ProtectedFenceRegion.InfiniteFenceLoopException ifle) {
+            p.sendMessage(ChatColor.RED + "Error: " + ifle.getLocalizedMessage());
+            return;
         }
 
         if(! CommandHandler.selectionIsWithinParent(fencedReg, pActive.getActiveTerritory())) {

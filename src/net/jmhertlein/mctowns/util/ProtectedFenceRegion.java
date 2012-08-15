@@ -19,12 +19,13 @@ import org.bukkit.Material;
 public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
 
     private static final int NORTH = 0, SOUTH = 1, EAST = 2, WEST = 3, NONE = -1;
+    private static final int FENCE_SEGMENT_THRESHOLD = 1000;
 
     public ProtectedFenceRegion(String id, List<BlockVector2D> points, int minY, int maxY) {
         super(id, points, minY, maxY);
     }
 
-    public static final ProtectedFenceRegion assembleSelectionFromFenceOrigin(String id, Location l) throws IncompleteFenceException {
+    public static final ProtectedFenceRegion assembleSelectionFromFenceOrigin(String id, Location l) throws IncompleteFenceException, InfiniteFenceLoopException {
         LinkedList<BlockVector2D> points = new LinkedList<>();
 
         Location cur;
@@ -32,6 +33,7 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
 
         cur = l.clone();
         cameFrom = NONE;
+        int numFenceSegmentsTried = 0;
         do {
             dirToNext = getDirToNextFence(cameFrom, cur);
 
@@ -63,7 +65,12 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
                 case NONE:
                     throw new IncompleteFenceException();
             }
-        } while (!cur.equals(l));
+            numFenceSegmentsTried++;
+        } while (!cur.equals(l) && numFenceSegmentsTried < FENCE_SEGMENT_THRESHOLD);
+
+        if(numFenceSegmentsTried >= FENCE_SEGMENT_THRESHOLD) {
+            throw new InfiniteFenceLoopException();
+        }
 
 
         return new ProtectedFenceRegion(id, points, 0, l.getWorld().getMaxHeight()-1);
@@ -101,6 +108,12 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
 
         public IncompleteFenceException() {
             super("The fence was not a complete loop.");
+        }
+    }
+
+    public static class InfiniteFenceLoopException extends Exception {
+        public InfiniteFenceLoopException() {
+            super("Either the fence was too long (>1000 fence segments) or the fence is not a valid configuration.");
         }
     }
 
