@@ -21,6 +21,7 @@ import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.mctowns.util.metrics.Metrics;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,15 +32,14 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author joshua
  */
 public class MCTowns extends JavaPlugin {
-    public static MCTowns plugin;
 
+    public static MCTowns plugin;
     public static final Logger log = Logger.getLogger("Minecraft");
     private static final String MCT_DATA_FOLDER = "plugins" + File.separator + "MCTowns";
     private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
     private static final boolean DEBUGGING = true;
-
     private static TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
@@ -123,9 +123,7 @@ public class MCTowns extends JavaPlugin {
         dirs.add(new File(MCT_DATA_FOLDER));
 
         //add files
-        files.add(new File(TOWN_DATABASE_SAVE_PATH));
         files.add(new File(MCT_TEXT_CONFIG_PATH));
-        files.add(new File(BACKUP_TOWN_DATABASE_SAVE_PATH));
 
         for (File dir : dirs) {
             if (!dir.exists()) {
@@ -149,21 +147,13 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void setupTownManager() {
-        File path = new File(TOWN_DATABASE_SAVE_PATH);
-
-//        try {
-//
-//        } catch (IOException | ClassNotFoundException e) {
-//            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
-//            logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
-//            townManager = new TownManager();
-//        }
-
-        townManager = new TownManager();
-
-
-
-
+        try {
+            townManager = TownManager.readYAML(MCT_DATA_FOLDER);
+        } catch (IOException | InvalidConfigurationException ex) {
+            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
+            logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
+            townManager = new TownManager();
+        }
     }
 
     private void hookInDependencies() {
@@ -291,42 +281,38 @@ public class MCTowns extends JavaPlugin {
         return options;
     }
 
-	public static TownManager getTownManager() {
-		return townManager;
-	}
+    public static TownManager getTownManager() {
+        return townManager;
+    }
 
-	public TownJoinManager getJoinManager() {
-		return joinManager;
-	}
+    public TownJoinManager getJoinManager() {
+        return joinManager;
+    }
 
-	public HashMap<String, ActiveSet> getActiveSets() {
-		return activeSets;
-	}
+    public HashMap<String, ActiveSet> getActiveSets() {
+        return activeSets;
+    }
 
-	public static Economy getEconomy() {
-		return economy;
-	}
+    public static Economy getEconomy() {
+        return economy;
+    }
 
-	public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
-		return potentialPlotBuyers;
-	}
+    public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
+        return potentialPlotBuyers;
+    }
 
     public static WorldGuardPlugin getWgp() {
         return wgp;
     }
 
+    private void startMetricsCollection() {
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+            logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
+        }
 
-
-	private void startMetricsCollection() {
-		try {
-		    Metrics metrics = new Metrics(this);
-		    metrics.start();
-		} catch (IOException e) {
-		    logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
-		}
-
-		MCTowns.logDebug("Metrics reporting started.");
-	}
-
-
+        MCTowns.logDebug("Metrics reporting started.");
+    }
 }
