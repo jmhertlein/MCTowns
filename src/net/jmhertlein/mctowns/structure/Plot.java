@@ -47,6 +47,8 @@ public class Plot extends MCTownsRegion {
         //calculateSignLoc(wgp);
     }
 
+    public Plot() {}
+
     public String getParentTerritoryName() {
         return parTerrName;
     }
@@ -145,7 +147,7 @@ public class Plot extends MCTownsRegion {
     }
 
     public static Plot readYAML(FileConfiguration f) {
-        Plot p = new Plot(null, null, null, null);
+        Plot p = new Plot();
 
         p.name = f.getString("name");
         p.worldName = f.getString("worldName");

@@ -34,6 +34,8 @@ public class Territory extends MCTownsRegion{
         parTownName = parentTownName;
     }
 
+    public Territory(){}
+
     /**
      * Adds a plot to the territory. Registering the WG region of the territory
      * needs to be done elsewhere.
@@ -83,7 +85,7 @@ public class Territory extends MCTownsRegion{
     }
 
     public static Territory readYAML(FileConfiguration f) {
-        Territory ret = new Territory(null, null, null);
+        Territory ret = new Territory();
 
         ret.name = f.getString("name");
         ret.worldName = f.getString("worldName");

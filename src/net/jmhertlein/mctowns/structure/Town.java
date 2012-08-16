@@ -87,9 +87,9 @@ public class Town {
         residents.add(mayor.getName());
 
         motdColor = ChatColor.GOLD;
-
-
     }
+
+    public Town() {}
 
     /**
      *
@@ -537,7 +537,7 @@ public class Town {
         f.set("townName", townName);
         f.set("worldName", worldName);
         f.set("motd", townMOTD);
-        f.set("motdColor", motdColor.toString());
+        f.set("motdColor", motdColor.name());
         f.set("spawnLocation", townSpawn.toList());
         f.set("mayor", mayor);
         f.set("territs", getTerritoryNames());
@@ -554,12 +554,12 @@ public class Town {
     }
 
     public static Town readYAML(FileConfiguration f) {
-        Town t = new Town(null, null);
+        Town t = new Town();
 
         t.townName = f.getString("townName");
         t.worldName = f.getString("worldName");
         t.townMOTD = f.getString("motd");
-        t.motdColor = ChatColor.getByChar(f.getString("motdColor"));
+        t.motdColor = ChatColor.valueOf(f.getString("motdColor"));
         t.townSpawn = Location.fromList(f.getStringList("spawnLocation"));
         t.mayor = f.getString("mayor");
         t.territories = parseListToHashSet(f.getStringList("territs"));
