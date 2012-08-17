@@ -322,7 +322,7 @@ public class TownManager {
         l.addAll(towns.keySet());
         f.set("towns", l);
 
-        l.clear();
+        l = new LinkedList<>();
 
         l.addAll(regions.keySet());
         f.set("regions", l);
