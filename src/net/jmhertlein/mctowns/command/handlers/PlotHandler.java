@@ -34,7 +34,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
         ChatColor c = ChatColor.AQUA;
-        localSender.sendMessage(c + "Plot name: " + p.getAbstractName());
+        localSender.sendMessage(c + "Plot name: " + p.getTerseName());
         localSender.sendMessage(c + "Corresponding WG Region name: " + p.getName());
         localSender.sendMessage(c + "World name: " + p.getWorldName());
         localSender.sendMessage(c + "Plot is for sale: " + p.isForSale());
@@ -197,7 +197,7 @@ public class PlotHandler extends CommandHandler {
         }
 
         p.setPrice(price);
-        p.buildSign(server);
+        p.buildSign();
         localSender.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
     }
 
@@ -219,7 +219,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        p.buildSign(server);
+        p.buildSign();
         localSender.sendMessage("Sign built!");
     }
 
@@ -241,7 +241,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        p.demolishSign(server);
+        p.demolishSign();
         localSender.sendMessage("Sign demolished.");
     }
 
@@ -271,9 +271,9 @@ public class PlotHandler extends CommandHandler {
 
         //use the block ABOVE the one the player is staring at.
         mctLoc.setY(mctLoc.getY() + 1);
-        p.demolishSign(server);
+        p.demolishSign();
         p.setSignLoc(mctLoc);
-        p.buildSign(server);
+        p.buildSign();
 
         localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
 

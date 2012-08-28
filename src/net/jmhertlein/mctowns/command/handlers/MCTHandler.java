@@ -312,7 +312,7 @@ public class MCTHandler extends CommandHandler {
         p.setPrice(BigDecimal.ZERO);
         p.setForSale(false);
         ProtectedRegion plotReg = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
-        p.demolishSign(server);
+        p.demolishSign();
 
         plotReg.getOwners().addPlayer(localSender.getPlayer().getName());
 

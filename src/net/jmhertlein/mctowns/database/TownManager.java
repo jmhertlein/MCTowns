@@ -73,6 +73,10 @@ public class TownManager {
         return towns.values();
     }
 
+    /**
+     *
+     * @return
+     */
     public Collection<MCTownsRegion> getRegionsCollection() {
         return regions.values();
     }
@@ -98,6 +102,15 @@ public class TownManager {
 
     }
 
+    /**
+     * Creates a new territory, adds it to the manager, and registers its region in WorldGuard.
+     * @param fullTerritoryName the desired, formatted name of the region
+     * @param worldTerritoryIsIn
+     * @param reg the desired region for the territory to occupy, names MUST match
+     * @param parentTown the parent town of the Territory
+     * @throws InvalidWorldGuardRegionNameException if the name of the ProtectedRegion does not match the desired name
+     * @return true if the addition was successful, false if the name is already used
+     */
     public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) {
         Territory t = new Territory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
 
@@ -108,6 +121,16 @@ public class TownManager {
         return true;
     }
 
+    /**
+     * Creates a new territory, adds it to the manager, and registers its region in WorldGuard.
+     * @param fullPlotName the desired, formatted name of the region
+     * @param worldPlotIsIn
+     * @param reg the desired region for the plot to occupy
+     * @param parentTown the parent town of this region
+     * @param parentTerritory the parent territory of this region
+     * @throws InvalidWorldGuardRegionNameException if the name of the ProtectedRegion does not match the desired name
+     * @return true if the addition was successful, false if the name is already used
+     */
     public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) {
         Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
 
@@ -177,9 +200,12 @@ public class TownManager {
         return (ret instanceof Plot ? (Plot) ret : null);
     }
 
+    /**
+     * Removes the Town and all its child territories if it has any
+     * @param townName
+     * @return true if it succeeds, false if town doesn't exist
+     */
     public boolean removeTown(String townName) {
-        MCTowns.logDebug("removeTown()");
-
         Town t = towns.get(townName);
 
         if(t == null)
@@ -194,6 +220,11 @@ public class TownManager {
         return true;
     }
 
+    /**
+     * Removes the territory, its worldguard region, and all of its child plots
+     * @param territoryName
+     * @return true if successful, false if the Territiry doesn't exist or isn't a territory
+     */
     public boolean removeTerritory(String territoryName) {
         MCTowns.logDebug("removeTerritory()");
         MCTownsRegion mctReg = regions.get(territoryName);
@@ -226,6 +257,11 @@ public class TownManager {
         return true;
     }
 
+    /**
+     * Removes the plot and its worldguard region
+     * @param plotName
+     * @return true if removal was successful, false if the plot doesn't exist or isn't a plot
+     */
     public boolean removePlot(String plotName) {
         MCTowns.logDebug("removePlot()");
         MCTownsRegion plot = regions.get(plotName);
@@ -309,10 +345,20 @@ public class TownManager {
         //throw new RuntimeException("Couldn't find a match for this plot.");
     }
 
+    /**
+     *
+     * @param invitee
+     * @return true if the player is already in a town, else false
+     */
     public boolean playerIsAlreadyInATown(String invitee) {
         return matchPlayerToTown(invitee) != null;
     }
 
+    /**
+     *
+     * @param rootDirPath
+     * @throws IOException
+     */
     public void writeYAML(String rootDirPath) throws IOException {
         FileConfiguration f;
 
@@ -346,6 +392,14 @@ public class TownManager {
         }
     }
 
+    /**
+     *
+     * @param rootDirPath
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws InvalidConfigurationException
+     */
     public static TownManager readYAML(String rootDirPath) throws FileNotFoundException, IOException, InvalidConfigurationException {
         File rootDir = new File(rootDirPath);
         FileConfiguration metaF, f;
@@ -376,7 +430,15 @@ public class TownManager {
 
     }
 
+    /**
+     *
+     */
     public class InvalidWorldGuardRegionNameException extends RuntimeException {
+        /**
+         *
+         * @param invalidName
+         * @param shouldMatchButDoesnt
+         */
         public InvalidWorldGuardRegionNameException(String invalidName, String shouldMatchButDoesnt) {
             super("Problem: Attempted to create a new MCTownsRegion, but the MCTownsRegion name and WorldGuard region name did not match. (" + invalidName + " should match " + shouldMatchButDoesnt + ").");
         }

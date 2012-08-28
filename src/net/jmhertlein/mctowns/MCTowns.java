@@ -1,9 +1,5 @@
 package net.jmhertlein.mctowns;
 
-import net.jmhertlein.mctowns.command.executors.TownExecutor;
-import net.jmhertlein.mctowns.command.executors.MCTExecutor;
-import net.jmhertlein.mctowns.command.executors.TerritoryExecutor;
-import net.jmhertlein.mctowns.command.executors.PlotExecutor;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.io.*;
 import java.util.ArrayDeque;
@@ -12,6 +8,10 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.command.ActiveSet;
+import net.jmhertlein.mctowns.command.executors.MCTExecutor;
+import net.jmhertlein.mctowns.command.executors.PlotExecutor;
+import net.jmhertlein.mctowns.command.executors.TerritoryExecutor;
+import net.jmhertlein.mctowns.command.executors.TownExecutor;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.listeners.MCTPvPListener;

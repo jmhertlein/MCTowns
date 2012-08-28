@@ -8,14 +8,12 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.block.CraftSign;
 
 /**
@@ -26,11 +24,6 @@ public class Plot extends MCTownsRegion {
 
     private static final long serialVersionUID = "PLOT".hashCode(); // DO NOT CHANGE
 
-    /*
-     *
-     */
-    private static final int VERSION = 0;
-
     private String parTerrName;
     private String parTownName;
 
@@ -38,38 +31,70 @@ public class Plot extends MCTownsRegion {
     private BigDecimal price;
     private Location signLoc;
 
+    /**
+     * Creates a new plot with the specified properties.
+     * @param name
+     * @param worldName
+     * @param parentTerritoryName
+     * @param parentTownName
+     */
     public Plot(String name, String worldName, String parentTerritoryName, String parentTownName) {
         super(name, worldName);
 
         parTerrName = parentTerritoryName;
         parTownName = parentTownName;
-
-        //calculateSignLoc(wgp);
     }
 
+    /**
+     * Empty constructor for de-serialization. Recommended: Don't use this.
+     */
     public Plot() {}
 
+    /**
+     *
+     * @return
+     */
     public String getParentTerritoryName() {
         return parTerrName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getParentTownName() {
         return parTownName;
     }
 
+    /**
+     *
+     * @return the price of the Plot
+     */
     public BigDecimal getPrice() {
         return price;
     }
 
+    /**
+     *
+     * @param price
+     */
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
+    /**
+     *
+     * @return the location of the plot's sale sign
+     */
     public Location getSignLoc() {
         return signLoc;
     }
 
-    public String getAbstractName() {
+    /**
+     *
+     * @return the shorter, reading-friendly name of the plot
+     */
+    public String getTerseName() {
         String absName = name;
 
         while (absName.contains("_")) {
@@ -80,25 +105,40 @@ public class Plot extends MCTownsRegion {
 
     }
 
+    /**
+     *
+     * @param signLoc the new location for the plot's sale sign
+     */
     public void setSignLoc(Location signLoc) {
         this.signLoc = signLoc;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isForSale() {
         return forSale;
     }
 
+    /**
+     *
+     * @param forSale
+     */
     public void setForSale(boolean forSale) {
         this.forSale = forSale;
     }
 
-    public void buildSign(Server s) {
+    /**
+     *
+     */
+    public void buildSign() {
 
         if (signLoc == null) {
             MCTowns.logSevere("The sign's location was null.");
         }
 
-        org.bukkit.Location loc = Location.convertToBukkitLocation(s, signLoc);
+        org.bukkit.Location loc = Location.convertToBukkitLocation(Bukkit.getServer(), signLoc);
 
         loc.getBlock().setType(Material.SIGN_POST);
 
@@ -114,11 +154,17 @@ public class Plot extends MCTownsRegion {
         sign.update();
     }
 
-    public void demolishSign(Server s) {
-        Location.convertToBukkitLocation(s, signLoc).getBlock().setType(Material.AIR);
+    /**
+     *
+     */
+    public void demolishSign() {
+        Location.convertToBukkitLocation(Bukkit.getServer(), signLoc).getBlock().setType(Material.AIR);
     }
 
-    public void calculateSignLoc(WorldGuardPlugin wgp) {
+    /**
+     * Tries to place the sign's location in the middle of the plot.
+     */
+    public void calculateSignLoc() {
         ProtectedRegion reg = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name);
         Vector middle = reg.getMaximumPoint().add(reg.getMinimumPoint());
         middle = middle.divide(2);
@@ -131,10 +177,18 @@ public class Plot extends MCTownsRegion {
         signLoc = Location.convertFromBukkitLocation(loc);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean signLocIsSet() {
         return signLoc != null;
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void writeYAML(FileConfiguration f) {
         super.writeYAML(f);
@@ -146,6 +200,11 @@ public class Plot extends MCTownsRegion {
         f.set("type", TownLevel.PLOT.name());
     }
 
+    /**
+     *
+     * @param f
+     * @return
+     */
     public static Plot readYAML(FileConfiguration f) {
         Plot p = new Plot();
 
