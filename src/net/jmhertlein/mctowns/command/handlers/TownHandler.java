@@ -4,14 +4,12 @@
  */
 package net.jmhertlein.mctowns.command.handlers;
 
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
-import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Territory;
@@ -38,13 +36,14 @@ public class TownHandler extends CommandHandler {
     }
 
     public void setActiveTown(String townName) {
-        if (!localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
-            localSender.notifyInsufPermissions();
+        Town t = townManager.getTown(townName);
+        if (t == null) {
+            localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
         }
 
-        if (townManager.getTown(townName) == null) {
-            localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
+        if (!localSender.hasExternalPermissions(Perms.ADMIN.toString()) && !t.playerIsMayor(localSender.getPlayer())) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
