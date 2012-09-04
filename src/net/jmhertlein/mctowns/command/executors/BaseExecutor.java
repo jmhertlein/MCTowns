@@ -12,7 +12,9 @@ import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -37,4 +39,12 @@ public abstract class BaseExecutor implements CommandExecutor {
         this.activeSets = parent.getActiveSets();
         this.potentialPlotBuyers = parent.getPotentialPlotBuyers();
     }
+
+    @Override
+    public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+        MCTowns.logInfo("[Command]: Player: " + cs.getName() + " Command: " + cmnd);
+        return true;
+    }
+
+
 }

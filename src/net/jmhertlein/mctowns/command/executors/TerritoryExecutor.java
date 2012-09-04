@@ -29,6 +29,7 @@ public class TerritoryExecutor extends BaseExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
+        super.onCommand(cs, cmnd, label, args);
         ECommand command = new ECommand(label, args);
 
         handler.setNewCommand(cs, command);
