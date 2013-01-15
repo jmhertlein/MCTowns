@@ -1,6 +1,7 @@
 package net.jmhertlein.mctowns;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.mctowns.util.metrics.Metrics;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -52,7 +54,12 @@ public class MCTowns extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-
+        try {
+            saveWorldGuardWorlds();
+        } catch (ProtectionDatabaseException ex) {
+            logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
+        }
+        
         if (!abortSave) {
             persistTownManager();
             persistTownManagerBackup();
@@ -312,5 +319,11 @@ public class MCTowns extends JavaPlugin {
         }
 
         MCTowns.logDebug("Metrics reporting started.");
+    }
+
+    private void saveWorldGuardWorlds() throws ProtectionDatabaseException {
+        for(World w : this.getServer().getWorlds()) {
+            getWgp().getRegionManager(w).save();
+        }
     }
 }
