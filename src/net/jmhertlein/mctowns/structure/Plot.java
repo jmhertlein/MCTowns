@@ -14,7 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.block.CraftSign;
+import org.bukkit.craftbukkit.v1_4_6.block.CraftSign;
 
 /**
  *
