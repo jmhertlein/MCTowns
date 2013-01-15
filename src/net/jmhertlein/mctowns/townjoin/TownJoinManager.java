@@ -7,8 +7,10 @@ package net.jmhertlein.mctowns.townjoin;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.structure.Town;
 
 /**
@@ -17,7 +19,7 @@ import net.jmhertlein.mctowns.structure.Town;
  */
 public class TownJoinManager {
     private HashMap<String, Town> joinInvitations;
-    private HashMap<Town, TreeMap<String, Boolean>> joinRequests;
+    private HashMap<Town, TreeMap<String, Boolean>> joinRequests; //TODO: Refactor this into a TreeSet or something
 
     public TownJoinManager() {
         joinInvitations = new HashMap<>();
@@ -67,8 +69,18 @@ public class TownJoinManager {
         return joinInvitations.get(playerName);
     }
 
+    /**
+     * Gets all current requests for the town.
+     * @param t
+     * @return an array of requests, or an empty array if there are none
+     */
     public String[] getCurrentRequestsForTown(Town t) {
-        return (String[]) joinRequests.get(t).keySet().toArray();
+        Map<String, Boolean> m = joinRequests.get(t);
+        
+        if(m == null)
+            return new String[0];
+        else
+            return (String[]) m.keySet().toArray();
     }
 
     public String[] getIssuedInvitesForTown(Town t) {

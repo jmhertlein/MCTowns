@@ -61,17 +61,12 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-
-
         if (p.removePlayer(player)) {
             localSender.sendMessage("Player removed from plot.");
         }
         else {
             localSender.sendMessage(ERR + player + " is not a member of this region.");
         }
-
-
-
     }
 
     public void addPlayerToPlot(String playerName) {
@@ -134,7 +129,6 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setPlotBuyability(String s_forSale) {
-
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -160,8 +154,6 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-
-
         Plot p = localSender.getActivePlot();
 
         if (p == null) {
@@ -171,7 +163,6 @@ public class PlotHandler extends CommandHandler {
 
         p.setForSale(forSale);
         localSender.sendMessage(ChatColor.GREEN + "The plot " + p.getName() + " is " + (forSale ? "now" : "no longer") + " for sale!");
-
     }
 
     public void setPlotPrice(String s_price) {

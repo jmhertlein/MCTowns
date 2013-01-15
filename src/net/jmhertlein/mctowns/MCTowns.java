@@ -101,13 +101,9 @@ public class MCTowns extends JavaPlugin {
         }
 
         Perms.registerPermNodes(getServer().getPluginManager());
-
         hookInDependencies();
-
         setupTownManager();
-
         regEventListeners();
-
         setCommandExecutors();
 
         abortSave = false;

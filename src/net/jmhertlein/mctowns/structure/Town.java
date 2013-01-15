@@ -542,11 +542,16 @@ public class Town {
         List<String> list = new LinkedList<>();
         list.addAll(assistants);
         f.set("assistants", list);
+        
+        List<String> resList = new LinkedList<>();
+        resList.addAll(residents);
+        f.set("residents", resList);
 
         f.set("friendlyFire", friendlyFire);
         f.set("defaultPlotPrice", defaultPlotPrice.toString());
         f.set("economyJoins", economyJoins);
-
+        f.set("buyablePlots", buyablePlots);
+        
         bank.writeYAML(f);
     }
 
@@ -563,13 +568,16 @@ public class Town {
 
         t.assistants = new HashSet<>();
         t.assistants.addAll(f.getStringList("assistants"));
+        
+        t.residents = new HashSet<>();
+        t.residents.addAll(f.getStringList("residents"));
 
         t.friendlyFire = f.getBoolean("friendlyFire");
         t.defaultPlotPrice = new BigDecimal(f.getString("defaultPlotPrice"));
         t.economyJoins = f.getBoolean("economyJoins");
+        t.buyablePlots = f.getBoolean("buyablePlots");
 
         t.bank = BlockBank.readYAML(f);
-
         return t;
     }
 
