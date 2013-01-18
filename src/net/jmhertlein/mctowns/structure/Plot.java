@@ -5,16 +5,14 @@
 package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_4_6.block.CraftSign;
+import org.bukkit.craftbukkit.v1_4_R1.block.CraftSign;
 
 /**
  *
