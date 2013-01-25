@@ -85,10 +85,6 @@ public class MCTowns extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        log.log(Level.INFO, "MCTowns is now setting up...");
-        logDebug("NOTICE: MCTowns is currently running in debug mode. This means a lot of extra info will probably be printed to the console, but nothing else will change.");
-        logDebug("Debug Mode is a hardcoded option, and it is not possible to disable. If you are using a dev build, this is INTENTIONAL. Since Dev Builds are about getting bugs fixed, this extra information is valuable.");
-
         checkFiles();
         loadConfig();
 
@@ -115,8 +111,6 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void checkFiles() {
-
-
         ArrayDeque<File> files = new ArrayDeque<>();
         ArrayDeque<File> dirs = new ArrayDeque<>();
 

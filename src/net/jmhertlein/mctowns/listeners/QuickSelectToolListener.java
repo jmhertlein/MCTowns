@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
@@ -29,21 +30,20 @@ public class QuickSelectToolListener implements Listener {
     public static Material SELECT_TOOL;
     private WorldGuardPlugin wgp;
     private MCTowns mctp;
+    private TownManager townMan;
 
     public QuickSelectToolListener(WorldGuardPlugin wgp, MCTowns mctp) {
         this.wgp = wgp;
         this.mctp = mctp;
+        this.townMan = MCTowns.getTownManager();
     }
 
     @EventHandler
     public void onToolUse(PlayerInteractEvent e) {
-        MCTowns.logDebug("Event triggered.");
         if ((e.getPlayer().getItemInHand().getType().compareTo(SELECT_TOOL)) != 0) {
-            MCTowns.logDebug(("ID wrong. Tool ID: " + SELECT_TOOL.getId() + ", Hand ID: " + e.getPlayer().getItemInHand().getType().getId()));
             return;
         }
 
-        MCTowns.logDebug("Item was tool.");
         Player player = e.getPlayer();
 
         ActiveSet actives = mctp.getActiveSets().get(e.getPlayer().getName());
@@ -51,7 +51,7 @@ public class QuickSelectToolListener implements Listener {
         if (actives == null) {
             mctp.getActiveSets().put(player.getName(), new ActiveSet());
             actives = mctp.getActiveSets().get(player.getName());
-            actives.setActiveTown(mctp.getTownManager().matchPlayerToTown(player));
+            actives.setActiveTown(townMan.matchPlayerToTown(player));
         }
 
         Block b = e.getClickedBlock();
@@ -66,9 +66,9 @@ public class QuickSelectToolListener implements Listener {
         Town town = null;
         Territory territ = null;
         for (ProtectedRegion pr : regs) {
-            for(Town to : MCTowns.getTownManager().getTownsCollection()) {
+            for(Town to : townMan.getTownsCollection()) {
                 town = to;
-                territ = MCTowns.getTownManager().getTerritory(pr.getId());
+                territ = townMan.getTerritory(pr.getId());
                 if (territ != null) {
                     break;
                 }
@@ -78,7 +78,7 @@ public class QuickSelectToolListener implements Listener {
         Plot plot = null;
         if (territ != null) {
             for (ProtectedRegion pr : regs) {
-                plot = MCTowns.getTownManager().getPlot(pr.getId());
+                plot = townMan.getPlot(pr.getId());
                 if (plot != null) {
                     break;
                 }
