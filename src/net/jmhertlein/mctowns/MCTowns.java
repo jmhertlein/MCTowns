@@ -39,7 +39,7 @@ public class MCTowns extends JavaPlugin {
     private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
-    private static final boolean DEBUGGING = true;
+    private static final boolean DEBUGGING = false;
     private static TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
