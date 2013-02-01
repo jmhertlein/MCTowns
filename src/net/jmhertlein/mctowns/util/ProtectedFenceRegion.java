@@ -13,7 +13,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 /**
- *
+ * A ProtectedFenceRegion is a WorldGuard region that can be constructed from a fenced polygon
+ * of blocks in-game. There are some restrictions that are detailed in the docs for "EasyRegion", 
+ * mostly that they need to be closed polygons where each fence block touches exactly two other fences.
  * @author joshua
  */
 public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
@@ -25,7 +27,16 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
         super(id, points, minY, maxY);
     }
 
-    public static final ProtectedFenceRegion assembleSelectionFromFenceOrigin(String id, Location l) throws IncompleteFenceException, InfiniteFenceLoopException {
+    /**
+     * Creates a new ProtectedFenceRegion with the given ID (must be formatted manually to MCTowns spec)
+     * This is fairly "fire and forget", and handles most exceptional circumstances.
+     * @param id The name of the region to useas a GUID
+     * @param l any fence in the polygon
+     * @return the constructed PFR
+     * @throws net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException if the fenced-in region is not completed
+     * @throws net.jmhertlein.mctowns.util.ProtectedFenceRegion.InfiniteFenceLoopException if the fenced-in region is not properly formed (usually, where there exists a fence that touches more than exactly two fences)
+     */
+    public static final ProtectedFenceRegion assembleSelectionFromFenceOrigin(String id, Location l) throws IncompleteFenceException, MalformedFenceRegionException {
         LinkedList<BlockVector2D> points = new LinkedList<>();
 
         Location cur;
@@ -69,7 +80,7 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
         } while (!cur.equals(l) && numFenceSegmentsTried < FENCE_SEGMENT_THRESHOLD);
 
         if(numFenceSegmentsTried >= FENCE_SEGMENT_THRESHOLD) {
-            throw new InfiniteFenceLoopException();
+            throw new MalformedFenceRegionException();
         }
 
 
@@ -111,8 +122,12 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
         }
     }
 
-    public static class InfiniteFenceLoopException extends Exception {
-        public InfiniteFenceLoopException() {
+    /**
+     * Thrown if a fence region is malformed such that it is not possible to finish
+     * parsing it
+     */
+    public static class MalformedFenceRegionException extends Exception {
+        public MalformedFenceRegionException() {
             super("Either the fence was too long (>1000 fence segments) or the fence is not a valid configuration.");
         }
     }
