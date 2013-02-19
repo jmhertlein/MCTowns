@@ -62,7 +62,6 @@ public class MCTowns extends JavaPlugin {
         
         if (!abortSave) {
             persistTownManager();
-            persistTownManagerBackup();
         } else {
             logInfo("The save was aborted manually, so nothing was saved.");
         }

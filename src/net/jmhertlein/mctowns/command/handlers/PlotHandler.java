@@ -262,9 +262,13 @@ public class PlotHandler extends CommandHandler {
 
         //use the block ABOVE the one the player is staring at.
         mctLoc.setY(mctLoc.getY() + 1);
-        p.demolishSign();
+        if(!cmd.hasFlag("--no-rebuild"))
+            p.demolishSign();
+        
         p.setSignLoc(mctLoc);
-        p.buildSign();
+        
+        if(!cmd.hasFlag("--no-rebuild"))
+            p.buildSign();
 
         localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
 
