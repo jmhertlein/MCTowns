@@ -42,7 +42,8 @@ public class Plot extends MCTownsRegion {
         parTerrName = parentTerritoryName;
         parTownName = parentTownName;
         
-        calculateSignLoc();
+        //note to self- don't put calculateSignLoc() here because it needs the region to already
+        //added to the region manager
     }
 
     /**
@@ -164,7 +165,7 @@ public class Plot extends MCTownsRegion {
     /**
      * Tries to place the sign's location in the middle of the plot.
      */
-    private void calculateSignLoc() {
+    public final void calculateSignLoc() {
         ProtectedRegion reg = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name);
         Vector middle = reg.getMaximumPoint().add(reg.getMinimumPoint());
         middle = middle.divide(2);

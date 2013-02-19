@@ -144,6 +144,9 @@ public class TownManager {
         } catch (CircularInheritanceException ex) {
             Logger.getLogger(TownManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        p.calculateSignLoc(); //note: don't move calculateSignLoc from here.
+        //it needs the region to exist in the region manager
         return false;
     }
 
