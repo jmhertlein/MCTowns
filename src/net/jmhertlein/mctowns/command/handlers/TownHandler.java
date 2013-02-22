@@ -112,6 +112,8 @@ public class TownHandler extends CommandHandler {
         } else if (method == TownJoinMethod.INVITATION) {
             t.setEconomyJoins(false);
         }
+        
+        localSender.sendMessage(SUCC + "Town join method updated.");
 
 
     }

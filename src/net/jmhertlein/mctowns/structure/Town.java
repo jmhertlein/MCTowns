@@ -346,14 +346,15 @@ public class Town {
     public boolean playerIsResident(Player p) {
         return residents.contains(p.getName());
     }
-
-    /**
+    
+     /**
+     * Returns whether or not the player is a resident of the town
      *
-     * @param p
-     * @return
+     * @param p the name of the player to be checked
+     * @return if the player is a resident or not
      */
-    public boolean playerIsResident(String p) {
-        return residents.contains(p);
+    public boolean playerIsResident(String pName) {
+        return residents.contains(pName);
     }
 
     /**

@@ -63,8 +63,7 @@ public class PlotHandler extends CommandHandler {
 
         if (p.removePlayer(player)) {
             localSender.sendMessage("Player removed from plot.");
-        }
-        else {
+        } else {
             localSender.sendMessage(ERR + player + " is not a member of this region.");
         }
     }
@@ -77,8 +76,10 @@ public class PlotHandler extends CommandHandler {
 
         Plot p = localSender.getActivePlot();
         Player player = server.getPlayer(playerName);
+        Town t = localSender.getActiveTown();
 
-        if (!localSender.getActiveTown().playerIsResident(player)) {
+        if (((player == null) && !t.playerIsResident(playerName))
+                || !t.playerIsResident(player)) {
             localSender.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
@@ -94,8 +95,7 @@ public class PlotHandler extends CommandHandler {
 
         if (p.addPlayer(playerName)) {
             localSender.sendMessage("Player added to plot.");
-        }
-        else {
+        } else {
             localSender.sendMessage(ERR + "That player is already in that plot.");
         }
 
@@ -262,12 +262,12 @@ public class PlotHandler extends CommandHandler {
 
         //use the block ABOVE the one the player is staring at.
         mctLoc.setY(mctLoc.getY() + 1);
-        if(!cmd.hasFlag("--no-rebuild"))
+        if (!cmd.hasFlag("--no-rebuild"))
             p.demolishSign();
-        
+
         p.setSignLoc(mctLoc);
-        
-        if(!cmd.hasFlag("--no-rebuild"))
+
+        if (!cmd.hasFlag("--no-rebuild"))
             p.buildSign();
 
         localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
@@ -329,8 +329,7 @@ public class PlotHandler extends CommandHandler {
             if (nuActive == null) {
                 nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
             }
-        }
-        else {
+        } else {
             plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
 
             for (MCTownsRegion reg : townManager.getRegionsCollection()) {
@@ -349,13 +348,13 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if(!nuActive.getParentTownName().equals(t.getTownName())) {
+        if (!nuActive.getParentTownName().equals(t.getTownName())) {
             localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist in your town.");
             return;
         }
 
         localSender.setActivePlot(nuActive);
-        if(nuActiveTerrit != null)
+        if (nuActiveTerrit != null)
             localSender.setActiveTerritory(nuActiveTerrit);
         localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
