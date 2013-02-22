@@ -328,13 +328,16 @@ public class TownHandler extends CommandHandler {
 
         if(joinManager.townHasRequestFromPlayer(t, invitee)) {
             t.addPlayer(invitee);
-            p.sendMessage("You have joined " + t.getTownName() + "!");
+            if(p != null)
+                p.sendMessage("You have joined " + t.getTownName() + "!");
             broadcastTownJoin(t, invitee);
         } else {
             joinManager.invitePlayerToTown(invitee, t);
             localSender.sendMessage(SUCC + (p == null ? invitee : p.getName()) + " has been invited to join " + t.getTownName() + ".");
-            p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
-            p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
+            if(p != null) {
+                p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
+                p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
+            }
         }
     }
 
