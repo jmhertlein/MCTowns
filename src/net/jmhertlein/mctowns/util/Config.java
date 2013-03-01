@@ -18,6 +18,7 @@ public class Config {
     private int minNumPlayersToBuyTerritory;
     private boolean allowTownFriendlyFireManagement;
     private Material qsTool;
+    private boolean logCommands;
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -34,6 +35,7 @@ public class Config {
         minNumPlayersToBuyTerritory = 3;
         allowTownFriendlyFireManagement = false;
         qsTool = Material.getMaterial(290);
+        logCommands = false;
 
         failReason = "No fail detected.";
         File configPath = new File(configFilePath);
@@ -132,6 +134,16 @@ public class Config {
                         failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
                     }
                     break;
+                    
+                case "logCommands":
+                    curToken = lineScan.next().trim();
+                    try {
+                        logCommands = Boolean.parseBoolean(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                    break;
 
                 default:
                     failBit = true;
@@ -171,6 +183,12 @@ public class Config {
         return qsTool;
     }
 
+    public boolean isLoggingCommands() {
+        return logCommands;
+    }
+
+    
+    
     /*
      * Returns the next uncommented, non-empty line in the file.
      */
@@ -245,6 +263,10 @@ public class Config {
         ps.println();
         ps.println("#Default is wooden hoe (ID 290)");
         ps.println("quickSelectTool = 290");
+        
+        ps.println();
+        ps.println("#Log verbose information of each MCTowns command issued");
+        ps.println("logCommands = false");
 
 
         ps.close();

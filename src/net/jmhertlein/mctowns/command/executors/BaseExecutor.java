@@ -6,6 +6,7 @@ package net.jmhertlein.mctowns.command.executors;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.HashMap;
+import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -42,7 +43,8 @@ public abstract class BaseExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-        MCTowns.logInfo("[Command]: Player: " + cs.getName() + " Command: " + cmnd);
+        if(options.isLoggingCommands())
+            MCTowns.logInfo("[Command]: Player: " + cs.getName() + " Command: " + new ECommand(string, strings));
         return true;
     }
 

@@ -17,7 +17,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
@@ -64,7 +63,7 @@ public abstract class CommandHandler {
      */
     public CommandHandler(MCTowns parent) {
         plugin = parent;
-        townManager = parent.getTownManager();
+        townManager = MCTowns.getTownManager();
         joinManager = parent.getJoinManager();
         server = parent.getServer();
     }

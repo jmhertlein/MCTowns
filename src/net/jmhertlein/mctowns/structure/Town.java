@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class Town {
-
     private static final long serialVersionUID = "TOWN".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
     //the town name
