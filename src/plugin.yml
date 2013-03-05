@@ -1,7 +1,8 @@
 name: MCTowns
 main: net.jmhertlein.mctowns.MCTowns
 version: 2.0.0-release
-depend: [WorldGuard, Vault]
+depend: [WorldGuard]
+softdepend: [Vault]
 commands:
     mct:
         description: Base command for plugin-wide config or generic commands
