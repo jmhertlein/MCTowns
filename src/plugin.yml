@@ -1,6 +1,6 @@
 name: MCTowns
 main: net.jmhertlein.mctowns.MCTowns
-version: 2.0.0-RC1
+version: 2.0.0-release
 depend: [WorldGuard, Vault]
 commands:
     mct:
@@ -13,9 +13,9 @@ commands:
         aliases: to
     territory:
         description: base command for all territory-based commands
-        usage: /territory (add | remove | active | list | flag)
+        usage: /territory (add | redefine | remove | active | list | flag)
         aliases: te
     plot:
         description: base command for all plot-based commands
-        usage: /plot (add | remove | active | list | sign | info | flag | economy)
+        usage: /plot (add | redefine | remove | active | list | sign | info | flag | economy)
         aliases: pl
