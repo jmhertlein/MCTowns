@@ -9,6 +9,7 @@ import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import java.util.HashMap;
+import java.util.List;
 import net.jmhertlein.core.command.CommandSenderWrapper;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
@@ -43,8 +44,8 @@ public class MCTLocalSender extends CommandSenderWrapper {
             player = (Player) sender;
             if (!activeSets.containsKey(player.getName())) {
                 activeSets.put(player.getName(), new ActiveSet());
-                activeSets.get(player.getName()).setActiveTown(manager.matchPlayerToTown(player));
-
+                List<Town> towns = tMan.matchPlayerToTown(player);
+                activeSets.get(player.getName()).setActiveTown(towns == null ? null : towns.get(0));
             }
 
             this.activeSet = activeSets.get(player.getName());

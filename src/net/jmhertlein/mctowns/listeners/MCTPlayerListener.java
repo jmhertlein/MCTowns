@@ -5,6 +5,9 @@
 package net.jmhertlein.mctowns.listeners;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.CommandHandler;
@@ -58,67 +61,34 @@ public class MCTPlayerListener implements Listener {
     }
 
     /**
-     *
+     * Informs the player of any towns they're invited to
+     * tells them the MOTD for each town they're in, 
+     * and if they're the mayor, tells them about pending invites and requests
      * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        Town t = townManager.matchPlayerToTown(p);
-        boolean isMayor;
-        try {
-            isMayor = t.playerIsMayor(p);
-        } catch (NullPointerException npe) {
-            isMayor = false;
+        List<Town> towns = townManager.matchPlayerToTown(p);
+        
+        List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
+        p.sendMessage(INFO + "You are currently invited to join the following towns:");
+        for(Town t : townsInvitedTo) {
+            p.sendMessage(INFO + t.getTownName());
         }
-
-        int count = 0;
-
-
-        if (t == null) { //if player doesn't belong to a town...
-            if (joinManager.getCurrentInviteForPlayer(p.getName()) != null) {
-                p.sendMessage(ChatColor.LIGHT_PURPLE + "You have a pending town invitation! To check, type /mct list invite");
-
-            }
-            return; //TODO: this return makes flow of control confusing, refactor it out
-        }
-
-        //after this point, we know the player belongs to a town
-        p.sendMessage(t.getTownMOTD());
-
-        if (isMayor) {
-
-            count = joinManager.getIssuedInvitesForTown(t).length;
-            if (count > 0) {
-                p.sendMessage(ChatColor.LIGHT_PURPLE + t.getTownName() + " has " + count + " pending player join invitations.");
-            }
-
-            count = joinManager.getCurrentRequestsForTown(t).length;
-            if (count > 0) {
-                p.sendMessage(ChatColor.LIGHT_PURPLE + t.getTownName() + " has " + count + " pending player join requests.");
+        
+        for(Town t : towns) {
+            p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
+            if(t.playerIsMayor(p)) {
+                if(! joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
+                    p.sendMessage(INFO + t.getTownName() + " has players requesting to join.");
             }
         }
-
-
+        
+        
+        
+        
     }
-
-//    /**
-//     *
-//     * @param event
-//     */
-//    @EventHandler(priority = EventPriority.NORMAL)
-//    public void onPlayerRespawn(PlayerRespawnEvent event) {
-//        Player p = event.getPlayer();
-//
-//        Town t = townManager.matchPlayerToTown(p);
-//
-//        if (t == null) {
-//            return;
-//        }
-//
-//        p.teleport(t.getTownSpawn(p.getServer()));
-//
-//    }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerClickPurchaseSign(PlayerInteractEvent event) {

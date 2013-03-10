@@ -31,32 +31,32 @@ public class MCTPvPListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onEntityDamage(EntityDamageEvent event) {
-
-        if (!(event instanceof EntityDamageByEntityEvent)) {
-            return;
-        }
-
-        EntityDamageByEntityEvent pvpEvent = (EntityDamageByEntityEvent) event;
-
-        Player damager, damagee;
-
-        damager = (pvpEvent.getDamager() instanceof Player ? (Player) pvpEvent.getDamager() : null);
-
-        damagee = (pvpEvent.getEntity() instanceof Player ? (Player) pvpEvent.getEntity() : null);
-
-        //if it's not player versus player, return
-        if (damager == null || damagee == null) {
-            return;
-        }
-
-        Town damagerTown = manager.matchPlayerToTown(damager);
-        if (damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
-            event.setCancelled(true);
-            damager.sendMessage(ChatColor.RED + "That player is in your town! Don't attack him!");
-        }
-
-
-    }
+//    @EventHandler(priority = EventPriority.NORMAL)
+//    public void onEntityDamage(EntityDamageEvent event) {
+//
+//        if (!(event instanceof EntityDamageByEntityEvent)) {
+//            return;
+//        }
+//
+//        EntityDamageByEntityEvent pvpEvent = (EntityDamageByEntityEvent) event;
+//
+//        Player damager, damagee;
+//
+//        damager = (pvpEvent.getDamager() instanceof Player ? (Player) pvpEvent.getDamager() : null);
+//
+//        damagee = (pvpEvent.getEntity() instanceof Player ? (Player) pvpEvent.getEntity() : null);
+//
+//        //if it's not player versus player, return
+//        if (damager == null || damagee == null) {
+//            return;
+//        }
+//
+//        Town damagerTown = manager.matchPlayerToTown(damager);
+//        if (damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
+//            event.setCancelled(true);
+//            damager.sendMessage(ChatColor.RED + "That player is in your town! Don't attack him!");
+//        }
+//
+//
+//    }
 }

@@ -6,6 +6,8 @@ package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
@@ -53,14 +55,15 @@ public class TownHandler extends CommandHandler {
     }
 
     public void resetActiveTown() {
-        Town t = townManager.matchPlayerToTown((Player) localSender.getSender());
+        List<Town> t = townManager.matchPlayerToTown((Player) localSender.getSender());
+        
         if (t == null) {
             localSender.sendMessage(ERR + "Unable to match you to a town. Are you sure you belong to one?");
             return;
         }
 
-        localSender.setActiveTown(t);
-        localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active town reset to your default (" + t.getTownName() + ")");
+        localSender.setActiveTown(t.get(0));
+        localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active town reset to " + t.get(0).getTownName() + ".");
     }
 
     public void setTownSpawn() {
@@ -526,11 +529,11 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        String[] reqs = joinManager.getCurrentRequestsForTown(t);
+        Set<String> playerNames = joinManager.getPlayersRequestingMembershipToTown(t);
 
         localSender.sendMessage(ChatColor.DARK_BLUE + "There are pending requests from:");
 
-        for (String s : getOutputFriendlyTownJoinListMessages(reqs)) {
+        for (String s : getOutputFriendlyTownJoinListMessages(playerNames)) {
             localSender.sendMessage(ChatColor.YELLOW + s);
         }
 
@@ -549,12 +552,12 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        String[] invs = joinManager.getIssuedInvitesForTown(t);
+        Set<String> invitedPlayers = joinManager.getIssuedInvitesForTown(t);
 
         localSender.sendMessage(ChatColor.DARK_BLUE + "There are pending invites for:");
 
 
-        for (String s : getOutputFriendlyTownJoinListMessages(invs)) {
+        for (String s : getOutputFriendlyTownJoinListMessages(invitedPlayers)) {
             localSender.sendMessage(ChatColor.YELLOW + s);
         }
 

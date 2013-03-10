@@ -4,11 +4,9 @@
  */
 package net.jmhertlein.mctowns.command.executors;
 
-import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.core.command.ArgumentCountException;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.MCTHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -107,8 +105,8 @@ public class MCTExecutor extends BaseExecutor {
                     break;
 
                 case "refuse":
-                    helpMessage = "/mct refuse";
-                    handler.rejectInvitation();
+                    helpMessage = "/mct refuse <town name>";
+                    handler.rejectInvitationFromTown(command.get(2));
                     softFailure = false;
                     break;
 

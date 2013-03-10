@@ -7,6 +7,8 @@ package net.jmhertlein.mctowns.listeners;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.util.List;
+import java.util.Set;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -51,7 +53,8 @@ public class QuickSelectToolListener implements Listener {
         if (actives == null) {
             mctp.getActiveSets().put(player.getName(), new ActiveSet());
             actives = mctp.getActiveSets().get(player.getName());
-            actives.setActiveTown(townMan.matchPlayerToTown(player));
+            List<Town> towns = townMan.matchPlayerToTown(player);
+            actives.setActiveTown(towns == null ? null : towns.get(0));
         }
 
         Block b = e.getClickedBlock();

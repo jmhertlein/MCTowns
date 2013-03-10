@@ -12,6 +12,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritan
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -90,15 +91,15 @@ public class TownManager {
      * @return true if town was added, false if town was not because it was
      * already existing
      */
-    public boolean addTown(String townName, Player mayor) {
+    public Town addTown(String townName, Player mayor) {
         Town t = new Town(townName, mayor);
 
         if (towns.containsKey(townName)) {
-            return false;
+            return null;
         }
 
         towns.put(t.getTownName(), t);
-        return true;
+        return t;
 
     }
 
@@ -298,7 +299,7 @@ public class TownManager {
      * @return the town of which the player is a member, or null if player has
      * no town
      */
-    public Town matchPlayerToTown(Player p) {
+    public List<Town> matchPlayerToTown(Player p) {
         return matchPlayerToTown(p.getName());
 
     }
@@ -310,14 +311,14 @@ public class TownManager {
      * @return the Town the player is a member of, or null if player is not a
      * member of any town
      */
-    public Town matchPlayerToTown(String playerName) {
+    public List<Town> matchPlayerToTown(String playerName) {
+        ArrayList<Town> ret = new ArrayList<>();
         for (Town town : towns.values()) {
             if (town.playerIsResident(playerName)) {
-                return town;
+                ret.add(town);
             }
         }
-
-        return null;
+        return ret;
     }
 
     /**
