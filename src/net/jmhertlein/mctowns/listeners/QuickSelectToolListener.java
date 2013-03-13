@@ -53,7 +53,7 @@ public class QuickSelectToolListener implements Listener {
         if (actives == null) {
             mctp.getActiveSets().put(player.getName(), new ActiveSet());
             actives = mctp.getActiveSets().get(player.getName());
-            List<Town> towns = townMan.matchPlayerToTown(player);
+            List<Town> towns = townMan.matchPlayerToTowns(player);
             actives.setActiveTown(towns == null ? null : towns.get(0));
         }
 

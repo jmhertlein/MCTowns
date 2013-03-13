@@ -299,8 +299,8 @@ public class TownManager {
      * @return the town of which the player is a member, or null if player has
      * no town
      */
-    public List<Town> matchPlayerToTown(Player p) {
-        return matchPlayerToTown(p.getName());
+    public List<Town> matchPlayerToTowns(Player p) {
+        return matchPlayerToTowns(p.getName());
 
     }
 
@@ -308,10 +308,9 @@ public class TownManager {
      * Matches a possibly non-live player to a town
      *
      * @param playerName the name of the player to match for
-     * @return the Town the player is a member of, or null if player is not a
-     * member of any town
+     * @return a list of all towns the player is in
      */
-    public List<Town> matchPlayerToTown(String playerName) {
+    public List<Town> matchPlayerToTowns(String playerName) {
         ArrayList<Town> ret = new ArrayList<>();
         for (Town town : towns.values()) {
             if (town.playerIsResident(playerName)) {
@@ -355,7 +354,7 @@ public class TownManager {
      * @return true if the player is already in a town, else false
      */
     public boolean playerIsAlreadyInATown(String invitee) {
-        return matchPlayerToTown(invitee) != null;
+        return !matchPlayerToTowns(invitee).isEmpty();
     }
 
     /**

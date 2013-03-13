@@ -55,7 +55,7 @@ public class TownHandler extends CommandHandler {
     }
 
     public void resetActiveTown() {
-        List<Town> t = townManager.matchPlayerToTown((Player) localSender.getSender());
+        List<Town> t = townManager.matchPlayerToTowns((Player) localSender.getSender());
         
         if (t == null) {
             localSender.sendMessage(ERR + "Unable to match you to a town. Are you sure you belong to one?");
@@ -318,7 +318,7 @@ public class TownHandler extends CommandHandler {
 
         Player p = server.getPlayer(invitee);
 
-        if (townManager.playerIsAlreadyInATown(invitee)) {
+        if (!options.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(invitee)) {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }

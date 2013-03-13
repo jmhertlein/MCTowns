@@ -19,6 +19,7 @@ public class Config {
     private boolean allowTownFriendlyFireManagement;
     private Material qsTool;
     private boolean logCommands;
+    private boolean playersCanJoinMultipleTowns;
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -144,6 +145,16 @@ public class Config {
                         failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
                     }
                     break;
+                    
+                case "playersCanJoinMultipleTowns":
+                    curToken = lineScan.next().trim();
+                    try {
+                        playersCanJoinMultipleTowns = Boolean.parseBoolean(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                    break;
 
                 default:
                     failBit = true;
@@ -186,6 +197,12 @@ public class Config {
     public boolean isLoggingCommands() {
         return logCommands;
     }
+
+    public boolean playersCanJoinMultipleTowns() {
+        return playersCanJoinMultipleTowns;
+    }
+    
+    
 
     
     
@@ -267,6 +284,10 @@ public class Config {
         ps.println();
         ps.println("#Log verbose information of each MCTowns command issued");
         ps.println("logCommands = false");
+        
+        ps.println();
+        ps.println("#if set to true, players are allowed to join multiple towns");
+        ps.println("playersCanJoinMultipleTowns = false");
 
 
         ps.close();

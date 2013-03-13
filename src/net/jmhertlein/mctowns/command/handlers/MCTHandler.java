@@ -43,7 +43,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (townManager.matchPlayerToTown(nuMayor) != null) {
+        if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
             localSender.sendMessage(ERR + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
             return;
         }
@@ -126,14 +126,14 @@ public class MCTHandler extends CommandHandler {
     public void queryPlayerInfo(String playerName) {
         Player p = server.getPlayer(playerName);
 
-        if (p == null && townManager.matchPlayerToTown(playerName) == null) {
+        if (p == null && townManager.matchPlayerToTowns(playerName).isEmpty()) {
             localSender.sendMessage(ERR + "That player is either not online or doesn't exist.");
             return;
         }
 
         String playerExactName = (p == null ? playerName : p.getName());
 
-        List<Town> towns = townManager.matchPlayerToTown(playerExactName);
+        List<Town> towns = townManager.matchPlayerToTowns(playerExactName);
 
         for (Town t : towns) {
             if (t == null) {
@@ -284,7 +284,8 @@ public void listTowns() {
         }
 
         if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
-            if (!plotToBuy.getActiveTown().equals(townManager.matchPlayerToTown(localSender.getPlayer()))) {
+            //if players can't join multiple towns AND the town they're buying from isn't their current town
+            if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown()) ) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }

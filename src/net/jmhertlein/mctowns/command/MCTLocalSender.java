@@ -44,7 +44,7 @@ public class MCTLocalSender extends CommandSenderWrapper {
             player = (Player) sender;
             if (!activeSets.containsKey(player.getName())) {
                 activeSets.put(player.getName(), new ActiveSet());
-                List<Town> towns = tMan.matchPlayerToTown(player);
+                List<Town> towns = tMan.matchPlayerToTowns(player);
                 activeSets.get(player.getName()).setActiveTown(towns == null ? null : towns.get(0));
             }
 
