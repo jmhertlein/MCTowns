@@ -11,7 +11,7 @@ import net.jmhertlein.mctowns.structure.Territory;
 import java.util.HashMap;
 import java.util.List;
 import net.jmhertlein.core.command.CommandSenderWrapper;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YAMLManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
  */
 public class MCTLocalSender extends CommandSenderWrapper {
 
-    private TownManager manager;
+    private YAMLManager manager;
     private ActiveSet activeSet;
 
     /**
@@ -33,7 +33,7 @@ public class MCTLocalSender extends CommandSenderWrapper {
      * @param sender the sender to be wrapped
      * @param activeSets the database of active sets as a hashmap
      */
-    public MCTLocalSender(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
+    public MCTLocalSender(YAMLManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
         super(sender);
         this.sender = sender;
         manager = tMan;

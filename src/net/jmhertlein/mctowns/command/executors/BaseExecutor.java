@@ -9,7 +9,7 @@ import java.util.HashMap;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YAMLManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 public abstract class BaseExecutor implements CommandExecutor {
 
     protected MCTowns parent;
-    protected TownManager townManager;
+    protected YAMLManager townManager;
     protected TownJoinManager joinManager;
     protected HashMap<String, ActiveSet> activeSets;
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();

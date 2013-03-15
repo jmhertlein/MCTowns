@@ -11,7 +11,7 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.CommandHandler;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YAMLManager;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
@@ -40,7 +40,7 @@ public class MCTPlayerListener implements Listener {
     private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
 
     private MCTowns plugin;
-    private TownManager townManager;
+    private YAMLManager townManager;
     private TownJoinManager joinManager;
     private Config options;
     private Economy economy;

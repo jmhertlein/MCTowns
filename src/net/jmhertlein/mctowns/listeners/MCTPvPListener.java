@@ -4,7 +4,7 @@
  */
 package net.jmhertlein.mctowns.listeners;
 
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YAMLManager;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.util.Config;
 import org.bukkit.ChatColor;
@@ -22,10 +22,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
  */
 public class MCTPvPListener implements Listener {
 
-    private TownManager manager;
+    private YAMLManager manager;
     private Config options;
 
-    public MCTPvPListener(TownManager manager, Config options) {
+    public MCTPvPListener(YAMLManager manager, Config options) {
         this.manager = manager;
         this.options = options;
 

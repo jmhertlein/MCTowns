@@ -13,7 +13,7 @@ import net.jmhertlein.mctowns.command.executors.MCTExecutor;
 import net.jmhertlein.mctowns.command.executors.PlotExecutor;
 import net.jmhertlein.mctowns.command.executors.TerritoryExecutor;
 import net.jmhertlein.mctowns.command.executors.TownExecutor;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YAMLManager;
 import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.listeners.MCTPvPListener;
 import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
@@ -40,7 +40,7 @@ public class MCTowns extends JavaPlugin {
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
-    private static TownManager townManager;
+    private static YAMLManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
     private static WorldGuardPlugin wgp;
@@ -142,11 +142,11 @@ public class MCTowns extends JavaPlugin {
 
     private void setupTownManager() {
         try {
-            townManager = TownManager.readYAML(MCT_DATA_FOLDER);
+            townManager = YAMLManager.readYAML(MCT_DATA_FOLDER);
         } catch (IOException | InvalidConfigurationException ex) {
             log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
-            townManager = new TownManager();
+            townManager = new YAMLManager();
         }
     }
 
@@ -275,7 +275,7 @@ public class MCTowns extends JavaPlugin {
         return options;
     }
 
-    public static TownManager getTownManager() {
+    public static YAMLManager getTownManager() {
         return townManager;
     }
 
