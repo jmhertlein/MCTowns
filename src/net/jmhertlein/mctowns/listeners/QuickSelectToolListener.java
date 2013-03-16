@@ -13,6 +13,7 @@ import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -52,6 +53,10 @@ public class QuickSelectToolListener implements Listener {
             mctp.getActiveSets().put(player.getName(), new ActiveSet());
             actives = mctp.getActiveSets().get(player.getName());
             actives.setActiveTown(townMan.matchPlayerToTown(player));
+        }
+        if(actives.getActiveTown() == null) {
+            e.getPlayer().sendMessage(ChatColor.RED + "You need to set your active town first.");
+            return;
         }
 
         Block b = e.getClickedBlock();
