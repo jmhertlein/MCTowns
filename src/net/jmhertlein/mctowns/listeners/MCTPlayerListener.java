@@ -72,7 +72,9 @@ public class MCTPlayerListener implements Listener {
         List<Town> towns = townManager.matchPlayerToTowns(p);
         
         List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
-        p.sendMessage(INFO + "You are currently invited to join the following towns:");
+        if(!townsInvitedTo.isEmpty())
+            p.sendMessage(INFO + "You are currently invited to join the following towns:");
+
         for(Town t : townsInvitedTo) {
             p.sendMessage(INFO + t.getTownName());
         }
