@@ -68,17 +68,14 @@ public class QuickSelectToolListener implements Listener {
 
         ApplicableRegionSet regs = wgp.getRegionManager(e.getPlayer().getWorld()).getApplicableRegions(spotClicked);
 
-        Town town = null;
+        Town town = actives.getActiveTown();
         Territory territ = null;
         for (ProtectedRegion pr : regs) {
-            for(Town to : townMan.getTownsCollection()) {
-                town = to;
                 territ = townMan.getTerritory(pr.getId());
                 if (territ != null && territ.getParentTown().equals(actives.getActiveTown())) {
                     break;
                 } else
                     territ = null;
-            }
         }
 
         Plot plot = null;
