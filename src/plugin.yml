@@ -1,6 +1,6 @@
 name: MCTowns
 main: net.jmhertlein.mctowns.MCTowns
-version: 2.0.0-release
+version: 2.0.0-release2
 depend: [WorldGuard]
 softdepend: [Vault]
 commands:
