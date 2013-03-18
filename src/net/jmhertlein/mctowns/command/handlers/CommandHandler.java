@@ -23,7 +23,7 @@ import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.MCTLocalSender;
-import net.jmhertlein.mctowns.database.YAMLManager;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
@@ -47,7 +47,7 @@ import org.bukkit.entity.Player;
 public abstract class CommandHandler {
     protected static final int RESULTS_PER_PAGE = 10;
     protected MCTowns plugin;
-    protected YAMLManager townManager;
+    protected TownManager townManager;
     protected TownJoinManager joinManager;
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();
     protected static Economy economy = MCTowns.getEconomy();

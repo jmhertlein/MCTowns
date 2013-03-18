@@ -4,16 +4,9 @@
  */
 package net.jmhertlein.mctowns.listeners;
 
-import net.jmhertlein.mctowns.database.YAMLManager;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.util.Config;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
  * intended to stop PvP between townmates.
@@ -22,10 +15,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
  */
 public class MCTPvPListener implements Listener {
 
-    private YAMLManager manager;
+    private TownManager manager;
     private Config options;
 
-    public MCTPvPListener(YAMLManager manager, Config options) {
+    public MCTPvPListener(TownManager manager, Config options) {
         this.manager = manager;
         this.options = options;
 

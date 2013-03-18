@@ -13,6 +13,7 @@ import net.jmhertlein.mctowns.command.executors.MCTExecutor;
 import net.jmhertlein.mctowns.command.executors.PlotExecutor;
 import net.jmhertlein.mctowns.command.executors.TerritoryExecutor;
 import net.jmhertlein.mctowns.command.executors.TownExecutor;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.database.YAMLManager;
 import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.listeners.MCTPvPListener;
@@ -40,7 +41,7 @@ public class MCTowns extends JavaPlugin {
     private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
     private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
-    private static YAMLManager townManager;
+    private static TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
     private static WorldGuardPlugin wgp;
@@ -275,7 +276,7 @@ public class MCTowns extends JavaPlugin {
         return options;
     }
 
-    public static YAMLManager getTownManager() {
+    public static TownManager getTownManager() {
         return townManager;
     }
 
