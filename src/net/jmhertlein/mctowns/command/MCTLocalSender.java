@@ -10,7 +10,7 @@ import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import java.util.HashMap;
 import java.util.List;
-import net.jmhertlein.core.command.CommandSenderWrapper;
+import net.jmhertlein.core.command.LocalSender;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import org.bukkit.command.CommandSender;
@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public class MCTLocalSender extends CommandSenderWrapper {
+public class MCTLocalSender extends LocalSender {
 
     private TownManager manager;
     private ActiveSet activeSet;
