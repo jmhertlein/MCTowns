@@ -5,6 +5,7 @@
 package net.jmhertlein.mctowns.listeners;
 
 import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.util.Config;
 import org.bukkit.event.Listener;
 
