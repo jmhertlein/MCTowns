@@ -20,6 +20,7 @@ import org.bukkit.command.CommandSender;
  * @author Joshua
  */
 public class TerritoryExecutor extends BaseExecutor {
+
     private TerritoryHandler handler;
 
     public TerritoryExecutor(MCTowns parent) {
@@ -28,8 +29,7 @@ public class TerritoryExecutor extends BaseExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
-        super.onCommand(cs, cmnd, label, args);
+    public boolean executeCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         ECommand command = new ECommand(label, args);
 
         handler.setNewCommand(cs, command);

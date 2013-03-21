@@ -43,10 +43,11 @@ public abstract class BaseExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-        if(options.isLoggingCommands())
+        if (options.isLoggingCommands())
             MCTowns.logInfo("[Command]: Player: " + cs.getName() + " Command: " + new ECommand(string, strings));
-        return true;
+
+        return executeCommand(cs, cmnd, string, strings);
     }
 
-
+    public abstract boolean executeCommand(CommandSender cs, Command cmnd, String string, String[] strings);
 }
