@@ -9,7 +9,7 @@ import org.bukkit.Material;
  *
  * @author Joshua
  */
-public class Config {
+public class Config implements Serializable {
 
     private String path;
     private boolean economyEnabled;
@@ -17,7 +17,7 @@ public class Config {
     private BigDecimal pricePerXZBlock;
     private int minNumPlayersToBuyTerritory;
     private boolean allowTownFriendlyFireManagement;
-    private Material qsTool;
+    private transient Material qsTool;
     private boolean logCommands;
     private boolean playersCanJoinMultipleTowns;
     //true if config is tainted/bad/parse error, false otherwise.
