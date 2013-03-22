@@ -150,8 +150,8 @@ public class MCTHandler extends CommandHandler {
     }
 }
 public void listTowns() {
-
-        listTowns(1);
+        throw new RuntimeException("Haha dun goof'd.");
+        //listTowns(1);
     }
 
     public void listTowns(String page) {

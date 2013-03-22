@@ -18,7 +18,7 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
-import net.jmhertlein.mctowns.util.BugReport;
+import net.jmhertlein.mctowns.util.reporting.BugReport;
 import net.jmhertlein.mctowns.util.Config;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -33,6 +33,8 @@ import org.bukkit.entity.Player;
  * @author Joshua
  */
 public abstract class BaseExecutor implements CommandExecutor {
+    private static final String BUG_REPORT_SERVER_HOSTNAME = "localhost";
+    private static final int BUG_REPORT_SERVER_PORT = 9001;
 
     protected MCTowns parent;
     protected TownManager townManager;
@@ -59,9 +61,11 @@ public abstract class BaseExecutor implements CommandExecutor {
         try {
             return executeCommand(cs, cmnd, string, strings);
         } catch (Exception e) {
-
-
-
+            try {
+                reportBug(e);
+            } catch (IOException ex) {
+                Logger.getLogger(BaseExecutor.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             //tell the player what happened!
             cs.sendMessage(ChatColor.RED + "An internal error occurred while running the command. A bug report has been automatically sent to the developer.");
@@ -71,10 +75,10 @@ public abstract class BaseExecutor implements CommandExecutor {
 
     }
 
-    private void reportBug(Exception e) throws IOException, UnknownHostException {
+    private void reportBug(Exception e) throws IOException {
         BugReport report = new BugReport(Bukkit.getServer(), e, options);
 
-        Socket s = new Socket("services.jmhertlein.net", 9001);
+        Socket s = new Socket(BUG_REPORT_SERVER_HOSTNAME, BUG_REPORT_SERVER_PORT);
         ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
         oos.writeObject(report);
         oos.close();

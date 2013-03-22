@@ -1,6 +1,7 @@
-package net.jmhertlein.mctowns.util;
+package net.jmhertlein.mctowns.util.reporting;
 
 import java.io.Serializable;
+import net.jmhertlein.mctowns.util.Config;
 import org.bukkit.Server;
 
 /**
@@ -43,9 +44,11 @@ public class BugReport implements Serializable {
         sb.append(message);
         sb.append('\n');
         
-        sb.append("Call Stack:");
-        for(StackTraceElement e : stackTrace)
+        sb.append("Call Stack:\n");
+        for(StackTraceElement e : stackTrace) {
             sb.append(e.toString());
+            sb.append('\n');
+        }
         sb.append('\n');
         
         sb.append("End\n");
