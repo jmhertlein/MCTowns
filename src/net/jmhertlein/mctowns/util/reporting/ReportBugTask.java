@@ -13,9 +13,6 @@ import org.bukkit.Bukkit;
  * @author joshua
  */
 public class ReportBugTask implements Runnable {
-
-    private static final String BUG_REPORT_SERVER_HOSTNAME = "localhost";
-    private static final int BUG_REPORT_SERVER_PORT = 9001;
     private Exception e;
     private Config options;
 
@@ -28,7 +25,7 @@ public class ReportBugTask implements Runnable {
     public void run() {
         BugReport report = new BugReport(Bukkit.getServer(), e, options);
         
-        try (Socket s = new Socket(BUG_REPORT_SERVER_HOSTNAME, BUG_REPORT_SERVER_PORT); ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());) {
+        try (Socket s = new Socket(options.getBugReportHostname(), options.getPort()); ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());) {
             oos.writeObject(report);
         } catch (UnknownHostException ex) {
             MCTowns.logInfo("Unable to report bug; DNS lookup failed.");

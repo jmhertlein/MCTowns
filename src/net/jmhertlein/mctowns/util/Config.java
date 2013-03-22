@@ -20,6 +20,8 @@ public class Config implements Serializable {
     private transient Material qsTool;
     private boolean logCommands;
     private boolean playersCanJoinMultipleTowns;
+    private String bugReportHostname;
+    private int port;
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -37,6 +39,8 @@ public class Config implements Serializable {
         allowTownFriendlyFireManagement = false;
         qsTool = Material.getMaterial(290);
         logCommands = false;
+        bugReportHostname = "services.jmhertlein.net";
+        port = 9001;
 
         failReason = "No fail detected.";
         File configPath = new File(configFilePath);
@@ -155,6 +159,26 @@ public class Config implements Serializable {
                         failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
                     }
                     break;
+                    
+                case "bugReportHostname":
+                    curToken = lineScan.next().trim();
+                    try {
+                        bugReportHostname = curToken;
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                    break;
+                    
+                    case "port":
+                    curToken = lineScan.next().trim();
+                    try {
+                        port = Integer.parseInt(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                    break;
 
                 default:
                     failBit = true;
@@ -201,10 +225,14 @@ public class Config implements Serializable {
     public boolean playersCanJoinMultipleTowns() {
         return playersCanJoinMultipleTowns;
     }
-    
-    
 
-    
+    public String getBugReportHostname() {
+        return bugReportHostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
     
     /*
      * Returns the next uncommented, non-empty line in the file.
@@ -288,6 +316,13 @@ public class Config implements Serializable {
         ps.println();
         ps.println("#if set to true, players are allowed to join multiple towns");
         ps.println("playersCanJoinMultipleTowns = false");
+        
+        ps.println();
+        ps.println("#The hostname of the bug reporting server");
+        ps.println("#Default is the developer's bug reporting server");
+        ps.println("bugReportHostname = services.jmhertlein.net");
+        ps.println("#Port the server is running on");
+        ps.println("port=9001");
 
 
         ps.close();
