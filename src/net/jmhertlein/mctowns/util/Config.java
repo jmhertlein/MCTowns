@@ -17,7 +17,7 @@ public class Config implements Serializable {
     private BigDecimal pricePerXZBlock;
     private int minNumPlayersToBuyTerritory;
     private boolean allowTownFriendlyFireManagement;
-    private transient Material qsTool;
+    private String qsTool;
     private boolean logCommands;
     private boolean playersCanJoinMultipleTowns;
     private String bugReportHostname;
@@ -37,7 +37,7 @@ public class Config implements Serializable {
         pricePerXZBlock = BigDecimal.ZERO;
         minNumPlayersToBuyTerritory = 3;
         allowTownFriendlyFireManagement = false;
-        qsTool = Material.getMaterial(290);
+        qsTool = Material.getMaterial(290).name();
         logCommands = false;
         bugReportHostname = "services.jmhertlein.net";
         port = 9001;
@@ -133,7 +133,7 @@ public class Config implements Serializable {
                 case "quickSelectTool":
                     curToken = lineScan.next().trim();
                     try {
-                        qsTool = Material.getMaterial(Integer.parseInt(curToken));
+                        qsTool = Material.getMaterial(Integer.parseInt(curToken)).name();
                     } catch (Exception e) {
                         failBit = true;
                         failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
@@ -215,7 +215,7 @@ public class Config implements Serializable {
     }
 
     public Material getQsTool() {
-        return qsTool;
+        return Material.getMaterial(qsTool);
     }
 
     public boolean isLoggingCommands() {
@@ -330,4 +330,14 @@ public class Config implements Serializable {
 
 
     }
+
+    @Override
+    public String toString() {
+        return "Config{" + "economyEnabled=" + economyEnabled + ",\n mayorsCanBuyTerritories=" + mayorsCanBuyTerritories + ",\n pricePerXZBlock=" + 
+                pricePerXZBlock + ",\n minNumPlayersToBuyTerritory=" + minNumPlayersToBuyTerritory + ",\n allowTownFriendlyFireManagement=" + 
+                allowTownFriendlyFireManagement + ",\n qsTool=" + qsTool + ",\n logCommands=" + logCommands + ",\n playersCanJoinMultipleTowns=" + 
+                playersCanJoinMultipleTowns + ",\n bugReportHostname=" + bugReportHostname + ",\n port=" + port + ", failBit=" + failBit + ",\n failReason=" + failReason + '}';
+    }
+    
+    
 }

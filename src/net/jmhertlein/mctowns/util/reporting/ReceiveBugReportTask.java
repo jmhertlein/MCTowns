@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class ReceiveBugReportTask implements Runnable {
 
-    private Set<BugReport> reports;
+    private final Set<BugReport> reports;
     private Socket clientSocket;
 
     public ReceiveBugReportTask(Set<BugReport> reports, Socket client) {
@@ -33,6 +33,9 @@ public class ReceiveBugReportTask implements Runnable {
             BugReport received = (BugReport) rawReceived;
 
             System.out.println("Received report from " + client.getInetAddress());
+            synchronized(reports) {
+                reports.add(received);
+            }
 
         } catch (IOException ex) {
             Logger.getLogger(ReceiveBugReportTask.class.getName()).log(Level.SEVERE, null, ex);

@@ -85,7 +85,7 @@ public class BugReportServerDaemon {
 
                 case "clear":
                     reports.clear();
-                    System.out.println("Dumped reports.");
+                    System.out.println("Deleted reports.");
                     break;
 
                 case "print":

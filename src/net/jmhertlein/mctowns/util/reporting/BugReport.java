@@ -14,14 +14,14 @@ public class BugReport implements Serializable {
     private String message;
     private StackTraceElement[] stackTrace;
     private String ip;
-    private Config options;
+    private String options;
     private String bukkitVersion;
     
     public BugReport(Server s, Exception e, Config o) {
        ip = s.getIp();
        stackTrace = e.getStackTrace();
        message = e.getMessage();
-       options = o;
+       options = o.toString();
        bukkitVersion = s.getBukkitVersion();
     }
     
