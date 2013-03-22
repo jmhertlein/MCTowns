@@ -24,5 +24,35 @@ public class BugReport implements Serializable {
        bukkitVersion = s.getBukkitVersion();
     }
     
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("IP:");
+        sb.append(ip);
+        sb.append('\n');
+        
+        sb.append("CB Version:");
+        sb.append(bukkitVersion);
+        sb.append('\n');
+        
+        sb.append("Config:");
+        sb.append(options.toString());
+        sb.append('\n');
+        
+        sb.append("ErrMessage:");
+        sb.append(message);
+        sb.append('\n');
+        
+        sb.append("Call Stack:");
+        for(StackTraceElement e : stackTrace)
+            sb.append(e.toString());
+        sb.append('\n');
+        
+        sb.append("End\n");
+        
+        return sb.toString();
+        
+    }
+    
 
 }
