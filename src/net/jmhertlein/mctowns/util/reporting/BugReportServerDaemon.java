@@ -29,17 +29,37 @@ public class BugReportServerDaemon {
                     System.out.println("Invalid command");
                     break;
                 case "stop":
+                    if(connectionListener == null) {
+                        System.out.println("Already stopped.");
+                        break;
+                    }
                     connectionListener.stop();
+                    connectionListener = null;
+                    th = null;
+                    
+                    System.out.println("Stopped.");
+                    break;
+                case "start":
+                    if(connectionListener != null) {
+                        System.out.println("Already listening.");
+                        break;
+                    }
+                    connectionListener = new IncomingReportListenTask(reports);
+                    th = new Thread(connectionListener);
+                    th.start();
+                    System.out.println("Started.");
                     break;
                 case "dump":
                     dumpReportsToFile();
                     break;
                 case "exit":
                     System.out.println("Stopping");
-                    connectionListener.stop();
-                    System.out.println("Waiting for connection thread to join...");
-                    try { th.join(); } catch (InterruptedException ex) { Logger.getLogger(BugReportServerDaemon.class.getName()).log(Level.SEVERE, null, ex); }
-                    System.out.println("Joined.");
+                    if(connectionListener != null) {
+                        connectionListener.stop();
+                        System.out.println("Waiting for connection thread to join...");
+                        try { th.join(); } catch (InterruptedException ex) { Logger.getLogger(BugReportServerDaemon.class.getName()).log(Level.SEVERE, null, ex); }
+                        System.out.println("Joined.");
+                    }
                     done = true;
                     System.exit(0);
                     break;
@@ -57,6 +77,7 @@ public class BugReportServerDaemon {
         System.out.println("dump - dumps all reports to file");
         System.out.println("stop - stop listening on port");
         System.out.println("exit - quit program");
+        System.out.println("start - start listening on port");
     }
 
     private static void dumpReportsToFile() {
