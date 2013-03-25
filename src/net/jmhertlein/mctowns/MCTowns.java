@@ -199,7 +199,8 @@ public class MCTowns extends JavaPlugin {
         try {
             townManager.writeYAML(MCT_DATA_FOLDER);
         } catch (IOException ex) {
-            MCTowns.logSevere("Error saving town database.");
+            MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -314,5 +315,9 @@ public class MCTowns extends JavaPlugin {
         for(World w : this.getServer().getWorlds()) {
             getWgp().getRegionManager(w).save();
         }
+    }
+    
+    public static boolean isDebugging() {
+        return DEBUGGING;
     }
 }

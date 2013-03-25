@@ -9,7 +9,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
@@ -147,9 +146,10 @@ public class MCTHandler extends CommandHandler {
                 localSender.sendMessage("Is Mayor: " + t.getMayor().equals(playerExactName));
                 localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(playerExactName));
             }
+        }
     }
-}
-public void listTowns() {
+
+    public void listTowns() {
         listTowns(1);
     }
 
@@ -223,7 +223,7 @@ public void listTowns() {
     public void rejectInvitationFromTown(String townName) {
 
         String pName = localSender.getPlayer().getName();
-        
+
 
         Town t = townManager.getTown(townName);
 
@@ -258,13 +258,11 @@ public void listTowns() {
 
     }
 
-
-
     public void checkPendingInvite() {
         List<Town> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
 
         localSender.sendMessage(INFO + "You are currently invited to the following towns:");
-        for(Town t : towns) {
+        for (Town t : towns) {
             localSender.sendMessage(INFO_ALT + t.getTownName());
         }
     }
@@ -284,7 +282,7 @@ public void listTowns() {
 
         if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             //if players can't join multiple towns AND the town they're buying from isn't their current town
-            if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown()) ) {
+            if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }
