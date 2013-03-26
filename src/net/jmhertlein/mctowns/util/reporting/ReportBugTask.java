@@ -23,7 +23,7 @@ public class ReportBugTask implements Runnable {
 
     @Override
     public void run() {
-        BugReport report = new BugReport(Bukkit.getServer(), e, options);
+        BugReport report = new BugReport((MCTowns) Bukkit.getServer().getPluginManager().getPlugin("MCTowns"), Bukkit.getServer(), e, options);
         
         try (Socket s = new Socket(options.getBugReportHostname(), options.getPort()); ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());) {
             oos.writeObject(report);
