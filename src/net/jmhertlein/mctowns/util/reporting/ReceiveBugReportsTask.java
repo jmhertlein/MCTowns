@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +44,8 @@ public class ReceiveBugReportsTask implements Runnable {
             } else {
                 try {
                     Thread.sleep(1000L);
-                } catch (InterruptedException ex) {}
+                } catch (InterruptedException ex) {
+                }
             }
         }
         System.out.println("Worker thread closing.");
@@ -61,9 +61,15 @@ public class ReceiveBugReportsTask implements Runnable {
 
             BugReport received = (BugReport) rawReceived;
 
+            received.setIp(client.getInetAddress().getHostAddress());
+
             System.out.println("Received report from " + client.getInetAddress());
-            synchronized (reports) {
-                reports.add(received);
+            if (reports.contains(received)) {
+                System.out.println("Report was a duplicate, dropped.");
+            } else {
+                synchronized (reports) {
+                    reports.add(received);
+                }
             }
 
         } catch (IOException ex) {
@@ -72,7 +78,7 @@ public class ReceiveBugReportsTask implements Runnable {
             Logger.getLogger(ReceiveBugReportsTask.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void stop() {
         this.stop = true;
     }
