@@ -50,6 +50,7 @@ public class IncomingReportListenTask implements Runnable {
             try {
                 client = s.accept();
             } catch (Exception ignore) {
+                System.out.println("Ignored exception.");
                 continue;
             }
 
