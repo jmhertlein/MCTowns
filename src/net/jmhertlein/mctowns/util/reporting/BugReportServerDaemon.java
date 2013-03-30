@@ -18,20 +18,18 @@ public class BugReportServerDaemon {
 
     private static IncomingReportListenTask connectionListener;
     private static LinkedHashSet<BugReport> reports;
-    private static boolean done;
+    private static boolean done, running;
     private static Scanner scan;
     private static Thread th;
 
     public static void main(String[] args) {
         setupShutdownHook();
         reports = new LinkedHashSet<>();
-
-        connectionListener = new IncomingReportListenTask(reports);
-        th = new Thread(connectionListener);
-        th.start();
-
+        running = false;
         done = false;
         scan = new Scanner(System.in);
+
+        start();
 
         printMenu();
 
@@ -53,7 +51,7 @@ public class BugReportServerDaemon {
                     dumpReportsToFile(reports);
                     break;
                 case "exit":
-                   quit();
+                    quit();
                     break;
                 case "help":
                     printMenu();
@@ -116,14 +114,22 @@ public class BugReportServerDaemon {
     }
 
     public static void stop() {
-        if (connectionListener == null) {
+        if (!running) {
             System.out.println("Already stopped.");
             return;
         }
         connectionListener.stop();
         connectionListener = null;
-        th = null;
+        System.out.println("Waiting for connection thread to join...");
+        try {
+            th.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(BugReportServerDaemon.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Joined.");
 
+        th = null;
+        running = false;
         System.out.println("Stopped.");
     }
 
@@ -135,37 +141,29 @@ public class BugReportServerDaemon {
     }
 
     public static void start() {
-        if (connectionListener != null) {
+        if (running) {
             System.out.println("Already listening.");
             return;
         }
         connectionListener = new IncomingReportListenTask(reports);
         th = new Thread(connectionListener);
         th.start();
+        running = true;
         System.out.println("Started.");
     }
-    
+
     public static void quit() {
-         System.out.println("Stopping");
-                    if (connectionListener != null) {
-                        connectionListener.stop();
-                        System.out.println("Waiting for connection thread to join...");
-                        try {
-                            th.join();
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(BugReportServerDaemon.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        System.out.println("Joined.");
-                    }
-                    done = true;
+        System.out.println("Quitting...");
+        stop();
+        done = true;
     }
-    
-    public static void setupShutdownHook() {
+
+    private static void setupShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                if(th != null)
+                if (th != null)
                     quit();
-                if(reports.size() > 0)
+                if (reports.size() > 0)
                     dumpReportsToFile(reports);
             }
         }));
