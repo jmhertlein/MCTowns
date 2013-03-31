@@ -1,14 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.command.executors;
 
-import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.core.command.ArgumentCountException;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.TerritoryHandler;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;

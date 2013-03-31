@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.listeners;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
