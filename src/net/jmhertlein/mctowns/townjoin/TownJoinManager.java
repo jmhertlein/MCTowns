@@ -117,11 +117,15 @@ public class TownJoinManager {
      * Gets all current requests for the town.
      *
      * @param t
-     * @return an array of requests, or an empty array if there are none
+     * @return A set of requests. Changes made to the set will be reflected in later calls to this method
      */
     public Set<String> getPlayersRequestingMembershipToTown(Town t) {
         Set<String> r = joinRequests.get(t);
-        return r == null ? new HashSet<String>() : r;
+        if(r == null) {
+            r = new HashSet<>();
+            joinRequests.put(t, r);
+        }
+        return r;
     }
 
     public Set<String> getIssuedInvitesForTown(Town t) {
