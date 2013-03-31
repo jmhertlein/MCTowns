@@ -120,7 +120,8 @@ public class TownJoinManager {
      * @return an array of requests, or an empty array if there are none
      */
     public Set<String> getPlayersRequestingMembershipToTown(Town t) {
-        return joinRequests.get(t);
+        Set<String> r = joinRequests.get(t);
+        return r == null ? new HashSet<String>() : r;
     }
 
     public Set<String> getIssuedInvitesForTown(Town t) {

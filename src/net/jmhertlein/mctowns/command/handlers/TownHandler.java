@@ -595,8 +595,8 @@ public class TownHandler extends CommandHandler {
 
 
         localSender.getActiveTown().removePlayer(playerName);
-
-        removeFrom.removePlayer(playerName);
+        
+        Town.recursivelyRemovePlayerFromTown(removeMe, removeFrom);
 
         localSender.sendMessage("\"" + playerName + "\" was removed from the town.");
         if (removeMe != null) {

@@ -161,7 +161,7 @@ public class BugReportServerDaemon {
     private static void setupShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                if (th != null)
+                if (running)
                     quit();
                 if (reports.size() > 0)
                     dumpReportsToFile(reports);

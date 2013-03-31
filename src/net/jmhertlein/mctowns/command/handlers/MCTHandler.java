@@ -186,7 +186,7 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void requestAdditionToTown(String townName) {
-        if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
+        if (!options.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
         }

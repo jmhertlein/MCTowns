@@ -12,6 +12,7 @@ import java.util.*;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
+import net.jmhertlein.mctowns.database.TownManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -579,6 +580,21 @@ public class Town {
 
         t.bank = BlockBank.readYAML(f);
         return t;
+    }
+    
+    public static void recursivelyRemovePlayerFromTown(Player p, Town t) {
+        TownManager tMan = MCTowns.getTownManager();
+        
+        for(String teName : t.getTerritoriesCollection()) {
+            Territory te = tMan.getTerritory(teName);
+            for(String plName : te.getPlotsCollection()) {
+                Plot pl = tMan.getPlot(plName);
+                pl.removePlayer(p);
+            }
+            te.removePlayer(p);
+        }
+        
+        t.removePlayer(p);
     }
 
     private List<String> getTerritoryNames() {

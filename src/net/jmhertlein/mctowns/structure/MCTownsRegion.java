@@ -85,6 +85,10 @@ public abstract class MCTownsRegion {
 
         return removed;
     }
+    
+    public boolean removePlayer(Player p) {
+        return this.removePlayer(p.getName());
+    }
 
     /**
      *
