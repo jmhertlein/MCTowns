@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class BugReportServerDaemon {
 
-    private static IncomingReportListenTask connectionListener;
+    private static ConnectionListenTask connectionListener;
     private static LinkedHashSet<BugReport> reports;
     private static boolean done, running;
     private static Scanner scan;
@@ -145,7 +145,7 @@ public class BugReportServerDaemon {
             System.out.println("Already listening.");
             return;
         }
-        connectionListener = new IncomingReportListenTask(reports);
+        connectionListener = new ConnectionListenTask(reports);
         th = new Thread(connectionListener);
         th.start();
         running = true;

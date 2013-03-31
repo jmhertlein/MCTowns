@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  *
  * @author joshua
  */
-public class IncomingReportListenTask implements Runnable {
+public class ConnectionListenTask implements Runnable {
 
     private boolean stop;
     private Set<BugReport> reports;
@@ -21,7 +21,7 @@ public class IncomingReportListenTask implements Runnable {
     private final LinkedList<Socket> clients;
     private List<ReceiveBugReportsTask> workers;
 
-    public IncomingReportListenTask(Set<BugReport> reports) {
+    public ConnectionListenTask(Set<BugReport> reports) {
         stop = false;
         this.reports = reports;
         clients = new LinkedList<>();
