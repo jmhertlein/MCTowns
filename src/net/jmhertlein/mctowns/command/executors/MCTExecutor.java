@@ -46,6 +46,7 @@ public class MCTExecutor extends BaseExecutor {
                         MCTowns.logDebug(cs.getName() + " intentionally broke the server.");
                         throw new RuntimeException("Intentionally broke.");
                     }
+                    break;
                 case "info":
                     helpMessage = "/mct info (player | town)";
                     switch (command.get(2)) {
