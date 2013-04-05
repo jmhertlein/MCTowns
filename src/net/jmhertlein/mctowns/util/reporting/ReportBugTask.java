@@ -29,8 +29,16 @@ public class ReportBugTask implements Runnable {
             oos.writeObject(report);
         } catch (UnknownHostException ex) {
             MCTowns.logInfo("Unable to report bug; DNS lookup failed.");
+            MCTowns.logSevere("Here is the error report, please submit a ticket containing it:");
+            MCTowns.logSevere("================================================================");
+            MCTowns.logSevere(report.toString());
+            MCTowns.logSevere("================================================================");
         } catch (IOException ex) {
             MCTowns.logInfo("Unable to report bug, generic failure. Remote bug server is probably not running.");
+            MCTowns.logSevere("Here is the error report, please submit a ticket containing it:");
+            MCTowns.logSevere("================================================================");
+            MCTowns.logSevere(report.toString());
+            MCTowns.logSevere("================================================================");
         }
     }
 }
