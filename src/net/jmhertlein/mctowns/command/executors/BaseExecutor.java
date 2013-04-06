@@ -8,7 +8,7 @@ import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
-import net.jmhertlein.mctowns.util.reporting.BugReportingCommandExecutor;
+import net.jmhertlein.core.reporting.BugReportingCommandExecutor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
