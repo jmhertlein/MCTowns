@@ -14,18 +14,19 @@ import java.util.logging.Logger;
  * @author joshua
  */
 public class ConnectionListenTask implements Runnable {
+    private static final int NUM_WORKER_THREADS = 2;
 
     private boolean stop;
     private Set<BugReport> reports;
     private ServerSocket s;
     private final LinkedList<Socket> clients;
-    private List<ReceiveBugReportsTask> workers;
+    private List<ReceiveBugReportsWorkerThread> workerThreads;
 
     public ConnectionListenTask(Set<BugReport> reports) {
         stop = false;
         this.reports = reports;
         clients = new LinkedList<>();
-        workers = new LinkedList<>();
+        workerThreads = new LinkedList<>();
     }
 
     @Override
@@ -37,11 +38,13 @@ public class ConnectionListenTask implements Runnable {
             return;
         }
 
+        System.out.println("Starting " + NUM_WORKER_THREADS + " worker threads.");
         //start worker thread(s)
-        ReceiveBugReportsTask task = new ReceiveBugReportsTask(reports, clients);
-        Thread t = new Thread(task);
-        t.start();
-        workers.add(task);
+        for(int i = 0; i < NUM_WORKER_THREADS; i++) {
+            ReceiveBugReportsWorkerThread t = new ReceiveBugReportsWorkerThread(reports, clients);
+            workerThreads.add(t);
+            t.start();
+        }
         System.out.println("Downloader thread(s) started.");
 
         while (!stop) {
@@ -49,14 +52,16 @@ public class ConnectionListenTask implements Runnable {
 
             try {
                 client = s.accept();
-            } catch (Exception ignore) {
-                System.out.println("Ignored exception.");
+            } catch (IOException ignore) {
+                System.out.println("Socket listener ignored exception.");
                 continue;
             }
 
             synchronized (clients) {
                 clients.add(client);
+                clients.notify();
             }
+            
             System.out.println("Client connection opened");
         }
     }
@@ -64,14 +69,14 @@ public class ConnectionListenTask implements Runnable {
     public void stop() {
         stop = true;
         
-        for(ReceiveBugReportsTask t : workers) {
-            t.stop();
-        }
+        for(ReceiveBugReportsWorkerThread t : workerThreads) {
+            t.setStopFlag();
+            t.interrupt();
+        } //interrupt all worker threads
         
         try {
             s.close();
         } catch (IOException ignore) {
         }
-        
     }
 }

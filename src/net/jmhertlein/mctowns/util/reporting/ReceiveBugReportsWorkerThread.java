@@ -12,13 +12,13 @@ import java.util.logging.Logger;
  *
  * @author joshua
  */
-public class ReceiveBugReportsTask implements Runnable {
+public class ReceiveBugReportsWorkerThread extends Thread {
 
     private final Set<BugReport> reports;
     private final LinkedList<Socket> clientSockets;
     private boolean stop;
 
-    public ReceiveBugReportsTask(Set<BugReport> reports, LinkedList<Socket> clients) {
+    public ReceiveBugReportsWorkerThread(Set<BugReport> reports, LinkedList<Socket> clients) {
         this.reports = reports;
         this.clientSockets = clients;
         stop = false;
@@ -39,12 +39,17 @@ public class ReceiveBugReportsTask implements Runnable {
                     cur.close();
                     System.out.println("Worker disconnected client.");
                 } catch (IOException ex) {
-                    Logger.getLogger(ReceiveBugReportsTask.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ReceiveBugReportsWorkerThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 try {
-                    Thread.sleep(1000L);
+                    synchronized(clientSockets) {
+                        System.out.println("Waiting for new client...");
+                        clientSockets.wait();
+                        System.out.println("Done waiting for new client. Re-evaluating.");
+                    }
                 } catch (InterruptedException ex) {
+                    System.out.println("Worker interrupted, re-evaluating.");
                 }
             }
         }
@@ -73,13 +78,13 @@ public class ReceiveBugReportsTask implements Runnable {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(ReceiveBugReportsTask.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReceiveBugReportsWorkerThread.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ReceiveBugReportsTask.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReceiveBugReportsWorkerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void stop() {
+    public void setStopFlag() {
         this.stop = true;
     }
 }
