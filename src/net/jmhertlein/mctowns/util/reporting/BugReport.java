@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
-import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.util.Config;
 import org.bukkit.Server;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -21,7 +20,7 @@ public class BugReport implements Serializable {
     private String ip;
     private String options;
     private String bukkitVersion;
-    private String mctVersion;
+    private String pluginVersion;
     
     //java stuff
     private String jreVendor;
@@ -30,13 +29,13 @@ public class BugReport implements Serializable {
     //OS stuff
     private String osName, osArch, osVersion;
     
-    public BugReport(MCTowns plugin, Server s, Exception e, Config o) {
+    public BugReport(Plugin plugin, Server s, Exception e, String options) {
        ip = s.getIp();
        stackTrace = e.getStackTrace();
        message = e.getMessage();
-       options = o.toString();
+       this.options = options.toString();
        bukkitVersion = s.getBukkitVersion();
-       mctVersion = plugin.getDescription().getVersion();
+       pluginVersion = plugin.getDescription().getVersion();
        
        Properties p = System.getProperties();
        
@@ -63,7 +62,7 @@ public class BugReport implements Serializable {
         sb.append('\n');
         
         sb.append("MCTVersion:");
-        sb.append(mctVersion);
+        sb.append(pluginVersion);
         sb.append('\n');
         
         sb.append("Config:");

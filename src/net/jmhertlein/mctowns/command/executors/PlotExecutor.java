@@ -23,7 +23,7 @@ public class PlotExecutor extends BaseExecutor {
     }
 
     @Override
-    public boolean executeCommand(CommandSender cs, Command cmnd, String label, String[] args) {
+    public boolean runCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         ECommand command = new ECommand(label, args);
 
         handler.setNewCommand(cs, command);
