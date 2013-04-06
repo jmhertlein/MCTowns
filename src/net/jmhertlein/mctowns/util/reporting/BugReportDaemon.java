@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author joshua
  */
-public class BugReportServerDaemon {
+public class BugReportDaemon {
 
     private static ConnectionListenTask connectionListener;
     private static LinkedHashSet<BugReport> reports;
@@ -107,7 +107,7 @@ public class BugReportServerDaemon {
                 ps.println(report.toString());
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(BugReportServerDaemon.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BugReportDaemon.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
         System.out.println("Reports dumped.");
@@ -124,7 +124,7 @@ public class BugReportServerDaemon {
         try {
             th.join();
         } catch (InterruptedException ex) {
-            Logger.getLogger(BugReportServerDaemon.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BugReportDaemon.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("Joined.");
 

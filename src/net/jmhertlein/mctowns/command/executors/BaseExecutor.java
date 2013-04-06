@@ -33,7 +33,7 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
 
     public BaseExecutor(MCTowns parent) {
         this.parent = parent;
-        this.townManager = parent.getTownManager();
+        this.townManager = MCTowns.getTownManager();
         this.joinManager = parent.getJoinManager();
         this.activeSets = parent.getActiveSets();
         this.potentialPlotBuyers = parent.getPotentialPlotBuyers();
@@ -41,6 +41,7 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
 
 
 
+    @Override
     public boolean executeCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
         if (options.isLoggingCommands())
             MCTowns.logInfo("[Command]: Player: " + cs.getName() + " Command: " + new ECommand(string, strings));

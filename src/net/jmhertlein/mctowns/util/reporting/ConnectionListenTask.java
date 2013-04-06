@@ -34,7 +34,7 @@ public class ConnectionListenTask implements Runnable {
         try {
             s = new ServerSocket(9001);
         } catch (IOException ex) {
-            Logger.getLogger(BugReportServerDaemon.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BugReportDaemon.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
 
