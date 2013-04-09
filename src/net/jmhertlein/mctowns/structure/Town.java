@@ -265,7 +265,7 @@ public class Town {
      * @return the town's territories
      */
     public Collection<String> getTerritoriesCollection() {
-        return Collections.unmodifiableCollection(territories);
+        return (Collection<String>) territories.clone();
     }
 
     /**

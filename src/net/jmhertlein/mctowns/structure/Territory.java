@@ -55,7 +55,7 @@ public class Territory extends MCTownsRegion{
      * @return the plots owned by this territory
      */
     public Collection<String> getPlotsCollection() {
-        return Collections.unmodifiableCollection(plotNames);
+        return (Collection<String>) plotNames.clone();
     }
 
     /**
