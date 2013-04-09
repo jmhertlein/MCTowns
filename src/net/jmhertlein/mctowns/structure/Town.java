@@ -260,22 +260,12 @@ public class Town {
     }
 
     /**
-     * Returns a hashmap of the territories
-     *
-     * @return the hashmap of territories
-     * @deprecated use getTerritoriesCollection()
-     */
-    public HashSet<String> getTerritories() {
-        return territories;
-    }
-
-    /**
      * Returns the territories this town has.
      *
      * @return the town's territories
      */
     public Collection<String> getTerritoriesCollection() {
-        return territories;
+        return Collections.unmodifiableCollection(territories);
     }
 
     /**
