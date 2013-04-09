@@ -170,4 +170,8 @@ public class MCTLocalSender extends LocalSender {
     private void notifyActiveNotSet(TownLevel level) {
         sender.sendMessage("Your active " + level.toString().toLowerCase() + " is not set.");
     }
+
+    public void notifyConsoleNotSupported() {
+        sender.sendMessage("This command cannot be run as console");
+    }
 }

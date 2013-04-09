@@ -23,6 +23,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void addPlotToTerritory(String plotName) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -77,6 +82,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void removePlotFromTerritory(String plotName) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -98,6 +108,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void addPlayerToTerritory(String playerName) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -130,6 +145,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void removePlayerFromTerritory(String player) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -177,6 +197,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void setActiveTerritory(String territName) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -207,6 +232,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     private void listPlots(int page) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         page--; //shift to 0-indexing
 
         if (page < 0) {
@@ -232,6 +262,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void listPlots(String s_page) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         int page;
         try {
             page = Integer.parseInt(s_page);
@@ -244,6 +279,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void listPlots() {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         listPlots(1);
     }
 }

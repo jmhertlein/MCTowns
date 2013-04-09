@@ -23,6 +23,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void printPlotInfo() {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         Plot p = localSender.getActivePlot();
 
         if (p == null) {
@@ -39,6 +44,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void removePlayerFromPlot(String player) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         Plot p = localSender.getActivePlot();
         player = player.toLowerCase();
 
@@ -65,6 +75,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void addPlayerToPlot(String playerName) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -98,6 +113,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void addPlayerToPlotAsGuest(String playername) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         Plot p = localSender.getActivePlot();
 
         if (p == null) {
@@ -125,6 +145,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setPlotBuyability(String s_forSale) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -162,6 +187,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setPlotPrice(String s_price) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -189,6 +219,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void buildSign() {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -211,6 +246,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void demolishSign() {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -233,6 +273,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setPlotSignPosition() {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -272,6 +317,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void surrenderPlot() {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         Plot p = localSender.getActivePlot();
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -300,6 +350,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setActivePlot(String plotName) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+        
         Town t = localSender.getActiveTown();
 
         boolean quickSelect = cmd.hasFlag("-q");

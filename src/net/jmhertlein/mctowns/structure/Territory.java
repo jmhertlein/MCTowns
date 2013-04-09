@@ -1,6 +1,7 @@
 package net.jmhertlein.mctowns.structure;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class Territory extends MCTownsRegion{
      * @return the plots owned by this territory
      */
     public Collection<String> getPlotsCollection() {
-        return plotNames;
+        return Collections.unmodifiableCollection(plotNames);
     }
 
     /**

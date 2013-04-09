@@ -26,6 +26,11 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void createTown(String townName, String mayorName) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         if (!localSender.canCreateTown()) {
             localSender.notifyInsufPermissions();
             return;
@@ -182,6 +187,11 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void requestAdditionToTown(String townName) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         if (!options.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
@@ -217,6 +227,10 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void rejectInvitationFromTown(String townName) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
 
         String pName = localSender.getPlayer().getName();
 
@@ -234,6 +248,11 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void cancelRequest(String townName) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -255,6 +274,11 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void checkPendingInvite() {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         List<Town> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
 
         localSender.sendMessage(INFO + "You are currently invited to the following towns:");
@@ -264,6 +288,11 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void confirmPlotPurchase(HashMap<Player, ActiveSet> buyers) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         if (!options.isEconomyEnabled()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
