@@ -73,6 +73,11 @@ public class PlotHandler extends CommandHandler {
         Plot p = localSender.getActivePlot();
         Player player = server.getPlayer(playerName);
         Town t = localSender.getActiveTown();
+        
+        if(t == null) {
+            localSender.notifyActiveTownNotSet();
+            return;
+        }
 
         if (((player == null) && !t.playerIsResident(playerName))
                 || !t.playerIsResident(player)) {
