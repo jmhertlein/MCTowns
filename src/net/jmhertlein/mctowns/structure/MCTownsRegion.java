@@ -163,6 +163,10 @@ public abstract class MCTownsRegion {
 
         return (owner.getTownName() + infix + plotName).toLowerCase();
     }
+    
+    public String getReadableName() {
+        return name.substring(name.lastIndexOf('_')+1);
+    }
 
     public void writeYAML(FileConfiguration f) {
         f.set("name", name);

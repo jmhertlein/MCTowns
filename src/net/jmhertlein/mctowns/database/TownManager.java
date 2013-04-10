@@ -382,11 +382,7 @@ public class TownManager {
 
         for(MCTownsRegion reg : regions.values()) {
             f = new YamlConfiguration();
-            if(reg instanceof Territory) {
-                ((Territory) reg).writeYAML(f);
-            } else {
-                ((Plot) reg).writeYAML(f);
-            }
+            reg.writeYAML(f);
             f.save(new File(rootDirPath + File.separator + reg.getName() + ".yml"));
         }
     }
