@@ -1,10 +1,12 @@
-package net.jmhertlein.mctowns.structure;
+package net.jmhertlein.mctowns.structure.yaml;
 
+import net.jmhertlein.mctowns.structure.MCTRegion;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.Objects;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -13,7 +15,7 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public abstract class MCTownsRegion {
+public abstract class YamlMCTRegion implements MCTRegion {
     private static final long serialVersionUID = "MCTOWNSREGION".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();
@@ -23,7 +25,7 @@ public abstract class MCTownsRegion {
      */
     protected String name, worldName;
 
-    public MCTownsRegion() {
+    public YamlMCTRegion() {
     }
 
     /**
@@ -33,7 +35,7 @@ public abstract class MCTownsRegion {
      * @param name the name of the new region
      * @param worldName the world of the new region
      */
-    public MCTownsRegion(String name, String worldName) {
+    public YamlMCTRegion(String name, String worldName) {
         this.name = name.toLowerCase();
         this.worldName = worldName;
     }
@@ -50,6 +52,7 @@ public abstract class MCTownsRegion {
      *
      * @return the name of the world in which the region resides
      */
+    @Override
     public String getWorldName() {
         return worldName;
     }
@@ -60,6 +63,7 @@ public abstract class MCTownsRegion {
      * @param p
      * @return
      */
+    @Override
     public boolean removePlayer(String p) {
         DefaultDomain members, owners;
         boolean removed = false;
@@ -80,6 +84,7 @@ public abstract class MCTownsRegion {
         return removed;
     }
     
+    @Override
     public boolean removePlayer(Player p) {
         return this.removePlayer(p.getName());
     }
@@ -90,10 +95,12 @@ public abstract class MCTownsRegion {
      * @param p
      * @return
      */
+    @Override
     public boolean addPlayer(Player p) {
         return addPlayer(p.getName());
     }
 
+    @Override
     public boolean addPlayer(String playerName) {
         DefaultDomain dd = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getOwners();
 
@@ -104,6 +111,7 @@ public abstract class MCTownsRegion {
         return false;
     }
 
+    @Override
     public boolean addGuest(String playerName) {
         DefaultDomain members = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getMembers();
 
@@ -115,6 +123,7 @@ public abstract class MCTownsRegion {
         return false;
     }
 
+    @Override
     public ProtectedRegion getWGRegion() {
         return wgp.getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegionExact(name);
     }
@@ -132,7 +141,7 @@ public abstract class MCTownsRegion {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final MCTownsRegion other = (MCTownsRegion) obj;
+        final YamlMCTRegion other = (YamlMCTRegion) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -150,7 +159,7 @@ public abstract class MCTownsRegion {
         return hash;
     }
 
-    public static final String formatRegionName(Town owner, TownLevel type, String plotName) {
+    public static final String formatRegionName(YamlTown owner, TownLevel type, String plotName) {
         plotName = plotName.toLowerCase();
 
         String infix;
@@ -164,6 +173,7 @@ public abstract class MCTownsRegion {
         return (owner.getTownName() + infix + plotName).toLowerCase();
     }
     
+    @Override
     public String getReadableName() {
         return name.substring(name.lastIndexOf('_')+1);
     }

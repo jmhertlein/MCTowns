@@ -7,9 +7,9 @@ import java.util.List;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
-import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
+import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
+import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +49,7 @@ public class QuickSelectToolListener implements Listener {
         if (actives == null) {
             actives = new ActiveSet();
             mctp.getActiveSets().put(player.getName(), actives);
-            List<Town> towns = townMan.matchPlayerToTowns(player);
+            List<YamlTown> towns = townMan.matchPlayerToTowns(player);
             actives.setActiveTown(towns.isEmpty() ? null : towns.get(0));
         }
 
@@ -62,14 +62,14 @@ public class QuickSelectToolListener implements Listener {
 
         ApplicableRegionSet regs = wgp.getRegionManager(e.getPlayer().getWorld()).getApplicableRegions(spotClicked);
 
-        Town town = actives.getActiveTown();
+        YamlTown town = actives.getActiveTown();
         
         if(town == null) {
             player.sendMessage(ChatColor.RED + "You need to set your active town first.");
             return;
         }
         
-        Territory territ = null;
+        YamlTerritory territ = null;
         for (ProtectedRegion pr : regs) {
             territ = townMan.getTerritory(pr.getId());
             if (territ != null && territ.getParentTown().equals(town.getTownName())) 
@@ -78,7 +78,7 @@ public class QuickSelectToolListener implements Listener {
                 territ = null;
         }
 
-        Plot plot = null;
+        YamlPlot plot = null;
         if (territ != null) {
             for (ProtectedRegion pr : regs) {
                 plot = townMan.getPlot(pr.getId());

@@ -25,8 +25,8 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.MCTLocalSender;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
-import net.jmhertlein.mctowns.structure.MCTownsRegion;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
+import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
@@ -91,7 +91,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        MCTownsRegion reg = null;
+        YamlMCTRegion reg = null;
 
         switch (regionType) {
             case TOWN:
@@ -170,7 +170,7 @@ public abstract class CommandHandler {
     }
 
     public void listPlayers(TownLevel level) {
-        MCTownsRegion reg = null;
+        YamlMCTRegion reg = null;
 
         switch (level) {
             case TERRITORY:
@@ -271,7 +271,7 @@ public abstract class CommandHandler {
         return region;
     }
 
-    public static boolean selectionIsWithinParent(ProtectedRegion reg, MCTownsRegion parent) {
+    public static boolean selectionIsWithinParent(ProtectedRegion reg, YamlMCTRegion parent) {
         ProtectedRegion parentReg = wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
 
         return selectionIsWithinParent(reg, parentReg);
@@ -311,11 +311,11 @@ public abstract class CommandHandler {
         }
     }
 
-    protected void broadcastTownJoin(Town t, Player whoJoined) {
+    protected void broadcastTownJoin(YamlTown t, Player whoJoined) {
         broadcastTownJoin(t, whoJoined.getName());
     }
 
-    protected void broadcastTownJoin(Town t, String s_playerWhoJoined) {
+    protected void broadcastTownJoin(YamlTown t, String s_playerWhoJoined) {
         for (String pl : t.getResidentNames()) {
             try {
                 //broadcast the join to everyone BUT the player who joined.
@@ -359,7 +359,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        MCTownsRegion reg;
+        YamlMCTRegion reg;
 
         switch (regType) {
             case TOWN:

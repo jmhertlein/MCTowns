@@ -18,10 +18,10 @@ import java.util.logging.Logger;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.structure.MCTownsRegion;
-import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
+import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
+import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
+import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -40,8 +40,8 @@ public class TownManager {
     private static final long serialVersionUID = "TOWNMANAGER".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
 
-    private HashMap<String, Town> towns;
-    private HashMap<String, MCTownsRegion> regions;
+    private HashMap<String, YamlTown> towns;
+    private HashMap<String, YamlMCTRegion> regions;
 
     /**
      * Constructs a new, empty town manager.
@@ -66,7 +66,7 @@ public class TownManager {
      *
      * @return the towns
      */
-    public Collection<Town> getTownsCollection() {
+    public Collection<YamlTown> getTownsCollection() {
         return towns.values();
     }
 
@@ -74,7 +74,7 @@ public class TownManager {
      *
      * @return
      */
-    public Collection<MCTownsRegion> getRegionsCollection() {
+    public Collection<YamlMCTRegion> getRegionsCollection() {
         return regions.values();
     }
 
@@ -87,8 +87,8 @@ public class TownManager {
      * @return true if town was added, false if town was not because it was
      * already existing
      */
-    public Town addTown(String townName, Player mayor) {
-        Town t = new Town(townName, mayor);
+    public YamlTown addTown(String townName, Player mayor) {
+        YamlTown t = new YamlTown(townName, mayor);
 
         if (towns.containsKey(townName)) {
             return null;
@@ -108,8 +108,8 @@ public class TownManager {
      * @throws InvalidWorldGuardRegionNameException if the name of the ProtectedRegion does not match the desired name
      * @return true if the addition was successful, false if the name is already used
      */
-    public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) {
-        Territory t = new Territory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
+    public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, YamlTown parentTown) {
+        YamlTerritory t = new YamlTerritory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
 
         if(! addMCTRegion(fullTerritoryName, t, worldTerritoryIsIn, reg))
             return false;
@@ -128,8 +128,8 @@ public class TownManager {
      * @throws InvalidWorldGuardRegionNameException if the name of the ProtectedRegion does not match the desired name
      * @return true if the addition was successful, false if the name is already used
      */
-    public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) {
-        Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
+    public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, YamlTown parentTown, YamlTerritory parentTerritory) {
+        YamlPlot p = new YamlPlot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
 
         if(! addMCTRegion(fullPlotName, p, worldPlotIsIn, reg))
             return false;
@@ -147,7 +147,7 @@ public class TownManager {
         return false;
     }
 
-    private boolean addMCTRegion(String fullPlotName, MCTownsRegion mctReg, World w, ProtectedRegion reg) {
+    private boolean addMCTRegion(String fullPlotName, YamlMCTRegion mctReg, World w, ProtectedRegion reg) {
         RegionManager regMan = wgp.getRegionManager(w);
         if(! reg.getId().equals(mctReg.getName()))
             throw new InvalidWorldGuardRegionNameException(fullPlotName, reg.getId());
@@ -174,7 +174,7 @@ public class TownManager {
      * @param townName the name of the town
      * @return the town, or null is no town by that name exists
      */
-    public Town getTown(String townName) {
+    public YamlTown getTown(String townName) {
         return towns.get(townName);
     }
 
@@ -183,10 +183,10 @@ public class TownManager {
      * @param territName name of the Territory to get
      * @return the Territory if it exists, or null otherwise
      */
-    public Territory getTerritory(String territName) {
-        MCTownsRegion ret = regions.get(territName);
+    public YamlTerritory getTerritory(String territName) {
+        YamlMCTRegion ret = regions.get(territName);
 
-        return (ret instanceof Territory ? (Territory) ret : null);
+        return (ret instanceof YamlTerritory ? (YamlTerritory) ret : null);
     }
 
     /**
@@ -194,10 +194,10 @@ public class TownManager {
      * @param plotName name of the Plot to get
      * @return the Plot if it exists, or null otherwise
      */
-    public Plot getPlot(String plotName) {
-        MCTownsRegion ret = regions.get(plotName);
+    public YamlPlot getPlot(String plotName) {
+        YamlMCTRegion ret = regions.get(plotName);
 
-        return (ret instanceof Plot ? (Plot) ret : null);
+        return (ret instanceof YamlPlot ? (YamlPlot) ret : null);
     }
 
     /**
@@ -206,7 +206,7 @@ public class TownManager {
      * @return true if it succeeds, false if town doesn't exist
      */
     public boolean removeTown(String townName) {
-        Town t = towns.get(townName);
+        YamlTown t = towns.get(townName);
 
         if(t == null)
             return false;
@@ -227,12 +227,12 @@ public class TownManager {
      */
     public boolean removeTerritory(String territoryName) {
         MCTowns.logDebug("removeTerritory()");
-        MCTownsRegion mctReg = regions.get(territoryName);
+        YamlMCTRegion mctReg = regions.get(territoryName);
 
-        if(mctReg == null || !(mctReg instanceof Territory))
+        if(mctReg == null || !(mctReg instanceof YamlTerritory))
             return false;
 
-        Territory territ = (Territory) mctReg;
+        YamlTerritory territ = (YamlTerritory) mctReg;
 
         for(String plot : territ.getPlotsCollection()) {
             removePlot(plot);
@@ -264,14 +264,14 @@ public class TownManager {
      */
     public boolean removePlot(String plotName) {
         MCTowns.logDebug("removePlot()");
-        MCTownsRegion plot = regions.get(plotName);
+        YamlMCTRegion plot = regions.get(plotName);
 
-        if(plot == null || !(plot instanceof Plot))
+        if(plot == null || !(plot instanceof YamlPlot))
             return false;
 
         regions.remove(plotName);
 
-        getTerritory(((Plot)plot).getParentTerritoryName()).removePlot(plotName);
+        getTerritory(((YamlPlot)plot).getParentTerritoryName()).removePlot(plotName);
 
         RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(plot.getWorldName()));
 
@@ -295,7 +295,7 @@ public class TownManager {
      * @return the town of which the player is a member, or null if player has
      * no town
      */
-    public List<Town> matchPlayerToTowns(Player p) {
+    public List<YamlTown> matchPlayerToTowns(Player p) {
         return matchPlayerToTowns(p.getName());
 
     }
@@ -306,9 +306,9 @@ public class TownManager {
      * @param playerName the name of the player to match for
      * @return a list of all towns the player is in
      */
-    public List<Town> matchPlayerToTowns(String playerName) {
-        ArrayList<Town> ret = new ArrayList<>();
-        for (Town town : towns.values()) {
+    public List<YamlTown> matchPlayerToTowns(String playerName) {
+        ArrayList<YamlTown> ret = new ArrayList<>();
+        for (YamlTown town : towns.values()) {
             if (town.playerIsResident(playerName)) {
                 ret.add(town);
             }
@@ -325,12 +325,12 @@ public class TownManager {
     public ActiveSet getPlotFromSignLocation(org.bukkit.Location bukkitLoc) {
         Location mctLoc = Location.convertFromBukkitLocation(bukkitLoc);
 
-        Plot p;
-        Territory territ;
-        Town town;
-        for(MCTownsRegion reg : regions.values()) {
-            if(reg instanceof Plot) {
-                p = (Plot) reg;
+        YamlPlot p;
+        YamlTerritory territ;
+        YamlTown town;
+        for(YamlMCTRegion reg : regions.values()) {
+            if(reg instanceof YamlPlot) {
+                p = (YamlPlot) reg;
                 if (p.getSignLoc() != null && p.getSignLoc().equals(mctLoc)) {
                     territ = getTerritory(p.getParentTerritoryName());
                     town = getTown(territ.getParentTown());
@@ -374,13 +374,13 @@ public class TownManager {
 
         f.save(new File(rootDirPath + File.separator + ".meta.yml"));
 
-        for(Town t : towns.values()) {
+        for(YamlTown t : towns.values()) {
             f = new YamlConfiguration();
             t.writeYAML(f);
             f.save(new File(rootDirPath + File.separator + t.getTownName() + ".yml"));
         }
 
-        for(MCTownsRegion reg : regions.values()) {
+        for(YamlMCTRegion reg : regions.values()) {
             f = new YamlConfiguration();
             reg.writeYAML(f);
             f.save(new File(rootDirPath + File.separator + reg.getName() + ".yml"));
@@ -407,7 +407,7 @@ public class TownManager {
         for(String s : metaF.getStringList("towns")) {
             f = new YamlConfiguration();
             f.load(rootDirPath + File.separator + s + ".yml");
-            ret.towns.put(s, Town.readYAML(f));
+            ret.towns.put(s, YamlTown.readYAML(f));
         }
 
         for(String s : metaF.getStringList("regions")) {
@@ -415,9 +415,9 @@ public class TownManager {
             f.load(rootDirPath + File.separator + s + ".yml");
 
             if(TownLevel.parseTownLevel(f.getString("type")) == TownLevel.PLOT)
-                ret.regions.put(s, Plot.readYAML(f));
+                ret.regions.put(s, YamlPlot.readYAML(f));
             else
-                ret.regions.put(s, Territory.readYAML(f));
+                ret.regions.put(s, YamlTerritory.readYAML(f));
         }
 
         return ret;

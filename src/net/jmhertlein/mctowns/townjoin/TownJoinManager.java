@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 
 /**
  *
@@ -18,22 +18,22 @@ public class TownJoinManager {
      * Key- Player name Value- Set of towns the player is currently invited to
      * join
      */
-    private HashMap<String, Set<Town>> joinInvitations;
+    private HashMap<String, Set<YamlTown>> joinInvitations;
     /**
      * Key- Town Value- Set of players who have requested membership to the town
      */
-    private HashMap<Town, Set<String>> joinRequests;
+    private HashMap<YamlTown, Set<String>> joinRequests;
 
     public TownJoinManager() {
         joinInvitations = new HashMap<>();
         joinRequests = new HashMap<>();
     }
 
-    public void invitePlayerToTown(final String playerName, final Town invitedTo) {
-        Set<Town> towns = joinInvitations.get(playerName);
+    public void invitePlayerToTown(final String playerName, final YamlTown invitedTo) {
+        Set<YamlTown> towns = joinInvitations.get(playerName);
 
         if (towns == null)
-            joinInvitations.put(playerName, new HashSet<Town>() {
+            joinInvitations.put(playerName, new HashSet<YamlTown>() {
                 {
                     this.add(invitedTo);
                 }
@@ -43,13 +43,13 @@ public class TownJoinManager {
 
     }
 
-    public boolean playerIsInvitedToTown(String playerName, Town isInvitedTo) {
-        Set<Town> towns = joinInvitations.get(playerName);
+    public boolean playerIsInvitedToTown(String playerName, YamlTown isInvitedTo) {
+        Set<YamlTown> towns = joinInvitations.get(playerName);
 
         return towns == null ? false : towns.contains(isInvitedTo);
     }
 
-    public void addPlayerRequestForTown(final Town requestJoinTo, final String playerName) {
+    public void addPlayerRequestForTown(final YamlTown requestJoinTo, final String playerName) {
         Set<String> players = joinRequests.get(requestJoinTo);
 
         if (players == null)
@@ -62,7 +62,7 @@ public class TownJoinManager {
             players.add(playerName);
     }
 
-    public boolean townHasRequestFromPlayer(Town t, String playerName) {
+    public boolean townHasRequestFromPlayer(YamlTown t, String playerName) {
         Set<String> players = joinRequests.get(t);
 
         return players == null ? false : players.contains(playerName);
@@ -77,7 +77,7 @@ public class TownJoinManager {
      * @return true if player was removed, false if player had not ever actually
      * requested membership
      */
-    public boolean clearRequestForTownFromPlayer(Town t, String playerName) {
+    public boolean clearRequestForTownFromPlayer(YamlTown t, String playerName) {
         Set<String> playerNames = joinRequests.get(t);
 
         return playerNames == null ? false : playerNames.remove(playerName);
@@ -94,14 +94,14 @@ public class TownJoinManager {
      * @return true if the invite was actually cleared, false if the player was
      * not ever actually invited
      */
-    public boolean clearInvitationForPlayerFromTown(String playerName, Town t) {
-        Set<Town> towns = joinInvitations.get(playerName);
+    public boolean clearInvitationForPlayerFromTown(String playerName, YamlTown t) {
+        Set<YamlTown> towns = joinInvitations.get(playerName);
         return towns == null ? false : towns.remove(t);
     }
 
-    public List<Town> getTownsPlayerIsInvitedTo(String playerName) {
-        ArrayList<Town> ret = new ArrayList<>();
-        for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
+    public List<YamlTown> getTownsPlayerIsInvitedTo(String playerName) {
+        ArrayList<YamlTown> ret = new ArrayList<>();
+        for (Entry<String, Set<YamlTown>> e : joinInvitations.entrySet()) {
             if (e.getKey().equals(playerName))
                 ret.addAll(e.getValue());
         }
@@ -115,7 +115,7 @@ public class TownJoinManager {
      * @param t
      * @return A set of requests. Changes made to the set will be reflected in later calls to this method
      */
-    public Set<String> getPlayersRequestingMembershipToTown(Town t) {
+    public Set<String> getPlayersRequestingMembershipToTown(YamlTown t) {
         Set<String> r = joinRequests.get(t);
         if(r == null) {
             r = new HashSet<>();
@@ -124,9 +124,9 @@ public class TownJoinManager {
         return r;
     }
 
-    public Set<String> getIssuedInvitesForTown(Town t) {
+    public Set<String> getIssuedInvitesForTown(YamlTown t) {
         HashSet<String> playersInvited = new HashSet<>();
-        for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
+        for (Entry<String, Set<YamlTown>> e : joinInvitations.entrySet()) {
             if (e.getValue().contains(t)) {
                 playersInvited.add(e.getKey());
             }

@@ -1,9 +1,9 @@
 package net.jmhertlein.mctowns.command;
 
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
-import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
+import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
+import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import java.util.HashMap;
 import java.util.List;
 import net.jmhertlein.core.command.LocalSender;
@@ -40,7 +40,7 @@ public class MCTLocalSender extends LocalSender {
             player = (Player) sender;
             if (!activeSets.containsKey(player.getName())) {
                 activeSets.put(player.getName(), new ActiveSet());
-                List<Town> towns = tMan.matchPlayerToTowns(player);
+                List<YamlTown> towns = tMan.matchPlayerToTowns(player);
                 activeSets.get(player.getName()).setActiveTown(towns.isEmpty() ? null : towns.get(0));
             }
 
@@ -60,7 +60,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @return
      */
-    public Town getActiveTown() {
+    public YamlTown getActiveTown() {
         return activeSet.getActiveTown();
     }
 
@@ -68,7 +68,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @return the currently active plot
      */
-    public Plot getActivePlot() {
+    public YamlPlot getActivePlot() {
         return activeSet.getActivePlot();
     }
 
@@ -77,7 +77,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @param activePlot
      */
-    public void setActivePlot(Plot activePlot) {
+    public void setActivePlot(YamlPlot activePlot) {
         activeSet.setActivePlot(activePlot);
     }
 
@@ -85,7 +85,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @return the currently active territory
      */
-    public Territory getActiveTerritory() {
+    public YamlTerritory getActiveTerritory() {
         return activeSet.getActiveTerritory();
     }
 
@@ -94,7 +94,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @param activeTerritory
      */
-    public void setActiveTerritory(Territory activeTerritory) {
+    public void setActiveTerritory(YamlTerritory activeTerritory) {
         activeSet.setActiveTerritory(activeTerritory);
     }
 
@@ -103,7 +103,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @param activeTown the town to be set as active
      */
-    public void setActiveTown(Town activeTown) {
+    public void setActiveTown(YamlTown activeTown) {
         activeSet.setActiveTown(activeTown);
     }
 

@@ -7,8 +7,8 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.CommandHandler;
 import net.jmhertlein.mctowns.database.TownManager;
-import net.jmhertlein.mctowns.structure.MCTownsRegion;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
+import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
@@ -64,17 +64,17 @@ public class MCTPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        List<Town> towns = townManager.matchPlayerToTowns(p);
+        List<YamlTown> towns = townManager.matchPlayerToTowns(p);
         
-        List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
+        List<YamlTown> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
         if(!townsInvitedTo.isEmpty())
             p.sendMessage(INFO + "You are currently invited to join the following towns:");
 
-        for(Town t : townsInvitedTo) {
+        for(YamlTown t : townsInvitedTo) {
             p.sendMessage(INFO + t.getTownName());
         }
         
-        for(Town t : towns) {
+        for(YamlTown t : towns) {
             p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
             if(t.playerIsMayor(p)) {
                 if(! joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
@@ -160,7 +160,7 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-        Town t = pActive.getActiveTown();
+        YamlTown t = pActive.getActiveTown();
 
         if(t == null) {
             p.sendMessage(ChatColor.RED + "Your active town is not set.");
@@ -218,7 +218,7 @@ public class MCTPlayerListener implements Listener {
 
         ProtectedFenceRegion fencedReg;
         try {
-            fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), signLoc);
+            fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, nuName), signLoc);
         } catch (IncompleteFenceException ex) {
             p.sendMessage(ChatColor.RED + "Error: Fence was not complete. Fence must be a complete polygon.");
             return;
@@ -232,11 +232,11 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-        townManager.addPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
+        townManager.addPlot(YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
 
         p.sendMessage(ChatColor.GREEN + "Plot created.");
 
-        pActive.setActivePlot(townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName)));
+        pActive.setActivePlot(townManager.getPlot(YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, nuName)));
         p.sendMessage(ChatColor.LIGHT_PURPLE + "Active plot set to newly created plot.");
 
 

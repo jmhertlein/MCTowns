@@ -4,10 +4,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.structure.MCTownsRegion;
-import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
+import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
+import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
+import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -35,19 +35,19 @@ public class TerritoryHandler extends CommandHandler {
 
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
 
-        Town t = localSender.getActiveTown();
+        YamlTown t = localSender.getActiveTown();
 
         if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
-        plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
+        plotName = YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, plotName);
 
         World w = localSender.getPlayer().getWorld();
         String worldName = w.getName();
 
-        Territory parTerr = localSender.getActiveTerritory();
+        YamlTerritory parTerr = localSender.getActiveTerritory();
 
         if (parTerr == null) {
             localSender.notifyActiveTerritoryNotSet();
@@ -92,7 +92,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        Territory t = localSender.getActiveTerritory();
+        YamlTerritory t = localSender.getActiveTerritory();
 
         if (t == null) {
             localSender.notifyActiveTerritoryNotSet();
@@ -118,9 +118,9 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        Territory territ = localSender.getActiveTerritory();
+        YamlTerritory territ = localSender.getActiveTerritory();
         Player player = server.getPlayer(playerName);
-        Town t = localSender.getActiveTown();
+        YamlTown t = localSender.getActiveTown();
 
         if (player == null) {
             localSender.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
@@ -157,7 +157,7 @@ public class TerritoryHandler extends CommandHandler {
 
         boolean recursive = cmd.hasFlag(ECommand.RECURSIVE);
 
-        Territory territ = localSender.getActiveTerritory();
+        YamlTerritory territ = localSender.getActiveTerritory();
 
         if (territ == null) {
             localSender.notifyActiveTerritoryNotSet();
@@ -176,10 +176,10 @@ public class TerritoryHandler extends CommandHandler {
             }
 
 
-            Plot p;
-            for(MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if(reg instanceof Plot) {
-                    p = (Plot) reg;
+            YamlPlot p;
+            for(YamlMCTRegion reg : townManager.getRegionsCollection()) {
+                if(reg instanceof YamlPlot) {
+                    p = (YamlPlot) reg;
                     if(p.getParentTerritoryName().equals(territ.getName()))
                         p.removePlayer(player);
                 }
@@ -202,7 +202,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
         
-        Town t = localSender.getActiveTown();
+        YamlTown t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -211,10 +211,10 @@ public class TerritoryHandler extends CommandHandler {
 
 
 
-        Territory nuActive = townManager.getTerritory(territName);
+        YamlTerritory nuActive = townManager.getTerritory(territName);
 
         if (nuActive == null) {
-            nuActive = townManager.getTerritory(MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, territName));
+            nuActive = townManager.getTerritory(YamlMCTRegion.formatRegionName(t, TownLevel.TERRITORY, territName));
         }
 
         if (nuActive == null) {
@@ -244,7 +244,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        Territory t = localSender.getActiveTerritory();
+        YamlTerritory t = localSender.getActiveTerritory();
 
         if (t == null) {
             localSender.notifyActiveTerritoryNotSet();
