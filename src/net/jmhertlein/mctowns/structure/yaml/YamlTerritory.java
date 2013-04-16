@@ -2,7 +2,6 @@ package net.jmhertlein.mctowns.structure.yaml;
 
 import net.jmhertlein.mctowns.structure.Territory;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,6 +107,11 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
         }
 
         return ret;
+    }
+
+    @Override
+    public boolean save() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 

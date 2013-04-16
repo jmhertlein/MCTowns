@@ -283,4 +283,6 @@ public interface Town {
      */
     boolean usesEconomyJoins();
     
+    boolean save();
+    
 }

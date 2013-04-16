@@ -637,4 +637,9 @@ public class YamlTown implements Town {
 
         return ret;
     }
+
+    @Override
+    public boolean save() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
