@@ -8,6 +8,8 @@ import java.util.List;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
+import net.jmhertlein.mctowns.structure.Plot;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import org.bukkit.ChatColor;
@@ -71,7 +73,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = townManager.getTown(townName);
+        Town t = townManager.getTown(townName);
         if (t == null) {
             localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
@@ -103,7 +105,7 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void queryTownInfo(String townName) {
-        YamlTown t = townManager.getTown(townName);
+        Town t = townManager.getTown(townName);
 
         if (t == null) {
             localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
@@ -133,9 +135,9 @@ public class MCTHandler extends CommandHandler {
 
         String playerExactName = (p == null ? playerName : p.getName());
 
-        List<YamlTown> towns = townManager.matchPlayerToTowns(playerExactName);
+        List<Town> towns = townManager.matchPlayerToTowns(playerExactName);
 
-        for (YamlTown t : towns) {
+        for (Town t : towns) {
             if (t == null) {
                 localSender.sendMessage("Player: " + playerExactName);
                 localSender.sendMessage("Town: None");
@@ -197,7 +199,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        YamlTown addTo = townManager.getTown(townName);
+        Town addTo = townManager.getTown(townName);
         String pName = localSender.getPlayer().getName();
 
         if (addTo == null) {
@@ -235,7 +237,7 @@ public class MCTHandler extends CommandHandler {
         String pName = localSender.getPlayer().getName();
 
 
-        YamlTown t = townManager.getTown(townName);
+        Town t = townManager.getTown(townName);
 
         if (t == null) {
             localSender.sendMessage(ERR + "You're not invited to any towns right now.");
@@ -258,7 +260,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = townManager.getTown(townName);
+        Town t = townManager.getTown(townName);
 
         if (t == null) {
             localSender.sendMessage(ERR + "That town doesn't exist.");
@@ -282,7 +284,7 @@ public class MCTHandler extends CommandHandler {
         List<YamlTown> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
 
         localSender.sendMessage(INFO + "You are currently invited to the following towns:");
-        for (YamlTown t : towns) {
+        for (Town t : towns) {
             localSender.sendMessage(INFO_ALT + t.getTownName());
         }
     }
@@ -325,7 +327,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        YamlPlot p = plotToBuy.getActivePlot();
+        Plot p = plotToBuy.getActivePlot();
 
         if (!p.isForSale()) {
             localSender.sendMessage(ERR + "This plot isn't for sale.");

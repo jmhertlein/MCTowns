@@ -1,12 +1,10 @@
 package net.jmhertlein.mctowns.structure.sql;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.structure.Plot;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -38,13 +36,7 @@ public class SQLPlot implements Plot {
 
     @Override
     public String getParentTownName() {
-        Statement s;
-        try {
-            s = con.createStatement();
-        } catch (SQLException ex) {
-            Logger.getLogger(SQLPlot.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     @Override
@@ -84,6 +76,56 @@ public class SQLPlot implements Plot {
 
     @Override
     public boolean signLocIsSet() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean addGuest(String playerName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean addPlayer(Player p) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean addPlayer(String playerName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getReadableName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ProtectedRegion getWGRegion() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getWorldName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean removePlayer(String p) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean removePlayer(Player p) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean save() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getName() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -6,6 +6,7 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.Objects;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -159,7 +160,7 @@ public abstract class YamlMCTRegion implements MCTRegion {
         return hash;
     }
 
-    public static final String formatRegionName(YamlTown owner, TownLevel type, String plotName) {
+    public static final String formatRegionName(Town owner, TownLevel type, String plotName) {
         plotName = plotName.toLowerCase();
 
         String infix;

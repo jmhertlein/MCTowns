@@ -11,7 +11,7 @@ import net.jmhertlein.core.location.Location;
  *
  * @author joshua
  */
-public interface Plot {
+public interface Plot extends MCTRegion {
 
     /**
      *

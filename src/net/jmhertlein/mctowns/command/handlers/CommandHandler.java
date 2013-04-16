@@ -23,8 +23,10 @@ import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.MCTLocalSender;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YamlTownManager;
 import net.jmhertlein.mctowns.permission.Perms;
+import net.jmhertlein.mctowns.structure.MCTRegion;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
@@ -47,7 +49,7 @@ import org.bukkit.entity.Player;
 public abstract class CommandHandler {
     protected static final int RESULTS_PER_PAGE = 10;
     protected MCTowns plugin;
-    protected TownManager townManager;
+    protected YamlTownManager townManager;
     protected TownJoinManager joinManager;
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();
     protected static Economy economy = MCTowns.getEconomy();
@@ -91,7 +93,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        YamlMCTRegion reg = null;
+        MCTRegion reg = null;
 
         switch (regionType) {
             case TOWN:
@@ -170,7 +172,7 @@ public abstract class CommandHandler {
     }
 
     public void listPlayers(TownLevel level) {
-        YamlMCTRegion reg = null;
+        MCTRegion reg = null;
 
         switch (level) {
             case TERRITORY:
@@ -271,7 +273,7 @@ public abstract class CommandHandler {
         return region;
     }
 
-    public static boolean selectionIsWithinParent(ProtectedRegion reg, YamlMCTRegion parent) {
+    public static boolean selectionIsWithinParent(ProtectedRegion reg, MCTRegion parent) {
         ProtectedRegion parentReg = wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
 
         return selectionIsWithinParent(reg, parentReg);
@@ -311,11 +313,11 @@ public abstract class CommandHandler {
         }
     }
 
-    protected void broadcastTownJoin(YamlTown t, Player whoJoined) {
+    protected void broadcastTownJoin(Town t, Player whoJoined) {
         broadcastTownJoin(t, whoJoined.getName());
     }
 
-    protected void broadcastTownJoin(YamlTown t, String s_playerWhoJoined) {
+    protected void broadcastTownJoin(Town t, String s_playerWhoJoined) {
         for (String pl : t.getResidentNames()) {
             try {
                 //broadcast the join to everyone BUT the player who joined.
@@ -359,7 +361,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        YamlMCTRegion reg;
+        MCTRegion reg;
 
         switch (regType) {
             case TOWN:

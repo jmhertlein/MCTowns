@@ -5,6 +5,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.structure.MCTRegion;
+import net.jmhertlein.mctowns.structure.Plot;
+import net.jmhertlein.mctowns.structure.Territory;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
 import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
@@ -28,7 +32,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
         
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -49,7 +53,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
         
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
         player = player.toLowerCase();
 
         if (p == null) {
@@ -85,9 +89,9 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
         Player player = server.getPlayer(playerName);
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
         
         if(t == null) {
             localSender.notifyActiveTownNotSet();
@@ -123,7 +127,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
         
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -160,7 +164,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -180,7 +184,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -211,7 +215,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -239,7 +243,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -266,7 +270,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -288,7 +292,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
 
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -327,7 +331,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
         
-        YamlPlot p = localSender.getActivePlot();
+        Plot p = localSender.getActivePlot();
         if (p == null) {
             localSender.notifyActivePlotNotSet();
             return;
@@ -360,7 +364,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
         
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         boolean quickSelect = cmd.hasFlag("-q");
 
@@ -373,7 +377,7 @@ public class PlotHandler extends CommandHandler {
         YamlTerritory nuActiveTerrit = null;
 
         if (!quickSelect) {
-            YamlTerritory te = localSender.getActiveTerritory();
+            Territory te = localSender.getActiveTerritory();
 
             if (te == null) {
                 localSender.notifyActiveTerritoryNotSet();
@@ -388,7 +392,7 @@ public class PlotHandler extends CommandHandler {
         } else {
             plotName = YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, plotName);
 
-            for (YamlMCTRegion reg : townManager.getRegionsCollection()) {
+            for (MCTRegion reg : townManager.getRegionsCollection()) {
                 if (reg instanceof YamlTerritory) {
                     nuActiveTerrit = (YamlTerritory) reg;
                     if (nuActiveTerrit.getPlotsCollection().contains(plotName)) {

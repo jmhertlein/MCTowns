@@ -55,7 +55,7 @@ public interface Town {
      * @return false if territ was not added because it is already added, true
      * otherwise
      */
-    boolean addTerritory(YamlTerritory territ);
+    boolean addTerritory(Territory territ);
 
     /**
      *
@@ -284,5 +284,12 @@ public interface Town {
     boolean usesEconomyJoins();
     
     boolean save();
+
+    /**
+     * Sets the motd to the specified MOTD
+     *
+     * @param townMOTD - the new MOTD
+     */
+    void setTownMOTD(String townMOTD);
     
 }

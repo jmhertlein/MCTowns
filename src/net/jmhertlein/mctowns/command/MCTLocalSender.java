@@ -7,8 +7,11 @@ import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import java.util.HashMap;
 import java.util.List;
 import net.jmhertlein.core.command.LocalSender;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YamlTownManager;
 import net.jmhertlein.mctowns.permission.Perms;
+import net.jmhertlein.mctowns.structure.Plot;
+import net.jmhertlein.mctowns.structure.Territory;
+import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,7 +22,7 @@ import org.bukkit.entity.Player;
  */
 public class MCTLocalSender extends LocalSender {
 
-    private TownManager manager;
+    private YamlTownManager manager;
     private ActiveSet activeSet;
 
     /**
@@ -29,7 +32,7 @@ public class MCTLocalSender extends LocalSender {
      * @param sender the sender to be wrapped
      * @param activeSets the database of active sets as a hashmap
      */
-    public MCTLocalSender(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
+    public MCTLocalSender(YamlTownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
         super(sender);
         this.sender = sender;
         manager = tMan;
@@ -40,7 +43,7 @@ public class MCTLocalSender extends LocalSender {
             player = (Player) sender;
             if (!activeSets.containsKey(player.getName())) {
                 activeSets.put(player.getName(), new ActiveSet());
-                List<YamlTown> towns = tMan.matchPlayerToTowns(player);
+                List<Town> towns = tMan.matchPlayerToTowns(player);
                 activeSets.get(player.getName()).setActiveTown(towns.isEmpty() ? null : towns.get(0));
             }
 
@@ -60,7 +63,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @return
      */
-    public YamlTown getActiveTown() {
+    public Town getActiveTown() {
         return activeSet.getActiveTown();
     }
 
@@ -68,7 +71,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @return the currently active plot
      */
-    public YamlPlot getActivePlot() {
+    public Plot getActivePlot() {
         return activeSet.getActivePlot();
     }
 
@@ -77,7 +80,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @param activePlot
      */
-    public void setActivePlot(YamlPlot activePlot) {
+    public void setActivePlot(Plot activePlot) {
         activeSet.setActivePlot(activePlot);
     }
 
@@ -85,7 +88,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @return the currently active territory
      */
-    public YamlTerritory getActiveTerritory() {
+    public Territory getActiveTerritory() {
         return activeSet.getActiveTerritory();
     }
 
@@ -94,7 +97,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @param activeTerritory
      */
-    public void setActiveTerritory(YamlTerritory activeTerritory) {
+    public void setActiveTerritory(Territory activeTerritory) {
         activeSet.setActiveTerritory(activeTerritory);
     }
 
@@ -103,7 +106,7 @@ public class MCTLocalSender extends LocalSender {
      *
      * @param activeTown the town to be set as active
      */
-    public void setActiveTown(YamlTown activeTown) {
+    public void setActiveTown(Town activeTown) {
         activeSet.setActiveTown(activeTown);
     }
 

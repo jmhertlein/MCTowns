@@ -1,5 +1,8 @@
 package net.jmhertlein.mctowns.command;
 
+import net.jmhertlein.mctowns.structure.Plot;
+import net.jmhertlein.mctowns.structure.Territory;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
@@ -11,9 +14,9 @@ import net.jmhertlein.mctowns.structure.yaml.YamlTown;
  */
 public class ActiveSet {
 
-    private YamlTown activeTown;
-    private YamlTerritory activeTerritory;
-    private YamlPlot activePlot;
+    private Town activeTown;
+    private Territory activeTerritory;
+    private Plot activePlot;
 
     /**
      *
@@ -24,7 +27,7 @@ public class ActiveSet {
         activePlot = null;
     }
 
-    public ActiveSet(YamlTown activeTown, YamlTerritory activeTerritory, YamlPlot activePlot) {
+    public ActiveSet(Town activeTown, Territory activeTerritory, Plot activePlot) {
         this.activeTown = activeTown;
         this.activeTerritory = activeTerritory;
         this.activePlot = activePlot;
@@ -34,7 +37,7 @@ public class ActiveSet {
      *
      * @return the active plot
      */
-    public YamlPlot getActivePlot() {
+    public Plot getActivePlot() {
         return activePlot;
     }
 
@@ -42,7 +45,7 @@ public class ActiveSet {
      *
      * @param activePlot the new active plot
      */
-    public void setActivePlot(YamlPlot activePlot) {
+    public void setActivePlot(Plot activePlot) {
         this.activePlot = activePlot;
     }
 
@@ -50,7 +53,7 @@ public class ActiveSet {
      *
      * @return the active territory
      */
-    public YamlTerritory getActiveTerritory() {
+    public Territory getActiveTerritory() {
         return activeTerritory;
     }
 
@@ -58,7 +61,7 @@ public class ActiveSet {
      *
      * @param activeTerritory the new active territory
      */
-    public void setActiveTerritory(YamlTerritory activeTerritory) {
+    public void setActiveTerritory(Territory activeTerritory) {
         this.activeTerritory = activeTerritory;
     }
 
@@ -66,7 +69,7 @@ public class ActiveSet {
      *
      * @return the active town
      */
-    public YamlTown getActiveTown() {
+    public Town getActiveTown() {
         return activeTown;
     }
 
@@ -74,7 +77,7 @@ public class ActiveSet {
      *
      * @param activeTown the new active town
      */
-    public void setActiveTown(YamlTown activeTown) {
+    public void setActiveTown(Town activeTown) {
         this.activeTown = activeTown;
     }
 

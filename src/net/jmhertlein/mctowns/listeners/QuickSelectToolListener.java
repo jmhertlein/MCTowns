@@ -6,7 +6,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.List;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YamlTownManager;
+import net.jmhertlein.mctowns.structure.Plot;
+import net.jmhertlein.mctowns.structure.Territory;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
@@ -28,7 +31,7 @@ public class QuickSelectToolListener implements Listener {
     public static Material SELECT_TOOL;
     private WorldGuardPlugin wgp;
     private MCTowns mctp;
-    private TownManager townMan;
+    private YamlTownManager townMan;
 
     public QuickSelectToolListener(WorldGuardPlugin wgp, MCTowns mctp) {
         this.wgp = wgp;
@@ -49,7 +52,7 @@ public class QuickSelectToolListener implements Listener {
         if (actives == null) {
             actives = new ActiveSet();
             mctp.getActiveSets().put(player.getName(), actives);
-            List<YamlTown> towns = townMan.matchPlayerToTowns(player);
+            List<Town> towns = townMan.matchPlayerToTowns(player);
             actives.setActiveTown(towns.isEmpty() ? null : towns.get(0));
         }
 
@@ -62,14 +65,14 @@ public class QuickSelectToolListener implements Listener {
 
         ApplicableRegionSet regs = wgp.getRegionManager(e.getPlayer().getWorld()).getApplicableRegions(spotClicked);
 
-        YamlTown town = actives.getActiveTown();
+        Town town = actives.getActiveTown();
         
         if(town == null) {
             player.sendMessage(ChatColor.RED + "You need to set your active town first.");
             return;
         }
         
-        YamlTerritory territ = null;
+        Territory territ = null;
         for (ProtectedRegion pr : regs) {
             territ = townMan.getTerritory(pr.getId());
             if (territ != null && territ.getParentTown().equals(town.getTownName())) 
@@ -78,7 +81,7 @@ public class QuickSelectToolListener implements Listener {
                 territ = null;
         }
 
-        YamlPlot plot = null;
+        Plot plot = null;
         if (territ != null) {
             for (ProtectedRegion pr : regs) {
                 plot = townMan.getPlot(pr.getId());

@@ -46,5 +46,11 @@ public interface MCTRegion {
     boolean removePlayer(Player p);
     
     boolean save();
+
+    /**
+     *
+     * @return the name of the region
+     */
+    String getName();
     
 }

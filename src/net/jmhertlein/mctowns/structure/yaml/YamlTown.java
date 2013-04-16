@@ -9,7 +9,9 @@ import java.util.*;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YamlTownManager;
+import net.jmhertlein.mctowns.structure.MCTRegion;
+import net.jmhertlein.mctowns.structure.Territory;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -83,7 +85,7 @@ public class YamlTown implements Town {
         motdColor = ChatColor.GOLD;
     }
 
-    public YamlTown() {}
+    private YamlTown() {}
 
     /**
      *
@@ -208,7 +210,7 @@ public class YamlTown implements Town {
      * otherwise
      */
     @Override
-    public boolean addTerritory(YamlTerritory territ) {
+    public boolean addTerritory(Territory territ) {
         if (territories.contains(territ.getName())) {
             return false;
         }
@@ -463,7 +465,7 @@ public class YamlTown implements Town {
         RegionManager regMan = MCTowns.getWgp().getRegionManager(p.getWorld());
 
         ProtectedRegion tempReg;
-        for (YamlMCTRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
+        for (MCTRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
             if(mctReg instanceof YamlTerritory) {
                 tempReg = regMan.getRegion( ((YamlTerritory)mctReg).getName());
                 if (tempReg != null) {
@@ -606,11 +608,11 @@ public class YamlTown implements Town {
         return t;
     }
     
-    public static void recursivelyRemovePlayerFromTown(Player p, YamlTown t) {
-        TownManager tMan = MCTowns.getTownManager();
+    public static void recursivelyRemovePlayerFromTown(Player p, Town t) {
+        YamlTownManager tMan = MCTowns.getTownManager();
         
         for(String teName : t.getTerritoriesCollection()) {
-            YamlTerritory te = tMan.getTerritory(teName);
+            Territory te = tMan.getTerritory(teName);
             for(String plName : te.getPlotsCollection()) {
                 YamlPlot pl = tMan.getPlot(plName);
                 pl.removePlayer(p);

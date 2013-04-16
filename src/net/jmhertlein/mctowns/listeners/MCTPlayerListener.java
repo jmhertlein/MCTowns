@@ -6,7 +6,8 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.CommandHandler;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YamlTownManager;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
@@ -35,7 +36,7 @@ public class MCTPlayerListener implements Listener {
     private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
 
     private MCTowns plugin;
-    private TownManager townManager;
+    private YamlTownManager townManager;
     private TownJoinManager joinManager;
     private Config options;
     private Economy economy;
@@ -64,17 +65,17 @@ public class MCTPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        List<YamlTown> towns = townManager.matchPlayerToTowns(p);
+        List<Town> towns = townManager.matchPlayerToTowns(p);
         
         List<YamlTown> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
         if(!townsInvitedTo.isEmpty())
             p.sendMessage(INFO + "You are currently invited to join the following towns:");
 
-        for(YamlTown t : townsInvitedTo) {
+        for(Town t : townsInvitedTo) {
             p.sendMessage(INFO + t.getTownName());
         }
         
-        for(YamlTown t : towns) {
+        for(Town t : towns) {
             p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
             if(t.playerIsMayor(p)) {
                 if(! joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
@@ -160,7 +161,7 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-        YamlTown t = pActive.getActiveTown();
+        Town t = pActive.getActiveTown();
 
         if(t == null) {
             p.sendMessage(ChatColor.RED + "Your active town is not set.");

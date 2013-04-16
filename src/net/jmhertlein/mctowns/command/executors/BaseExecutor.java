@@ -5,7 +5,7 @@ import java.util.HashMap;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YamlTownManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.core.reporting.BugReportingCommandExecutor;
@@ -23,7 +23,7 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
 
 
     protected MCTowns parent;
-    protected TownManager townManager;
+    protected YamlTownManager townManager;
     protected TownJoinManager joinManager;
     protected HashMap<String, ActiveSet> activeSets;
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();

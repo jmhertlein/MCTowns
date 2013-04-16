@@ -9,6 +9,8 @@ import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.permission.Perms;
+import net.jmhertlein.mctowns.structure.MCTRegion;
+import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
 import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
@@ -39,7 +41,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = townManager.getTown(townName);
+        Town t = townManager.getTown(townName);
         if (t == null) {
             localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
             return;
@@ -61,7 +63,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        List<YamlTown> t = townManager.matchPlayerToTowns((Player) localSender.getSender());
+        List<Town> t = townManager.matchPlayerToTowns((Player) localSender.getSender());
 
         if (t == null) {
             localSender.sendMessage(ERR + "Unable to match you to a town. Are you sure you belong to one?");
@@ -83,7 +85,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -110,7 +112,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -148,7 +150,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -190,7 +192,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -236,7 +238,7 @@ public class TownHandler extends CommandHandler {
 
 
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -321,7 +323,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown to = localSender.getActiveTown();
+        Town to = localSender.getActiveTown();
 
         if (to == null) {
             localSender.notifyActiveTownNotSet();
@@ -345,7 +347,7 @@ public class TownHandler extends CommandHandler {
             localSender.notifyInsufPermissions();
             return;
         }
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -391,7 +393,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -421,7 +423,7 @@ public class TownHandler extends CommandHandler {
         }
 
         if (t.addAssistant(playerName)) {
-            for (YamlMCTRegion reg : townManager.getRegionsCollection()) {
+            for (MCTRegion reg : townManager.getRegionsCollection()) {
                 if (reg instanceof YamlTerritory && ((YamlTerritory) reg).getParentTown().equals(t.getTownName()))
                     ((YamlTerritory) reg).addPlayer(playerName);
             }
@@ -445,7 +447,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
         Player p = server.getPlayer(playerName);
 
         if (t == null) {
@@ -474,7 +476,7 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(p.getName() + " has been demoted.");
             p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
             YamlTerritory rmFrom;
-            for (YamlMCTRegion reg : townManager.getRegionsCollection()) {
+            for (MCTRegion reg : townManager.getRegionsCollection()) {
                 if (reg instanceof YamlTerritory) {
                     rmFrom = (YamlTerritory) reg;
                     if (rmFrom.getParentTown().equals(t.getTownName()))
@@ -492,7 +494,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
@@ -531,7 +533,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -557,7 +559,7 @@ public class TownHandler extends CommandHandler {
         }
 
         Player p = server.getPlayer(playerName);
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
 //        if (p == null) {
 //            senderWrapper.sendMessage(ERR + "Player does not exist or is not online.");
@@ -592,7 +594,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -619,7 +621,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -651,7 +653,7 @@ public class TownHandler extends CommandHandler {
         }
 
         Player removeMe = server.getPlayer(playerName);
-        YamlTown removeFrom = localSender.getActiveTown();
+        Town removeFrom = localSender.getActiveTown();
 
         if (removeMe == null) {
             localSender.sendMessage(INFO + playerName + " is not online. Make sure you typed their name correctly.");
@@ -689,7 +691,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.sendMessage(ERR + "You're either not a member of a town, or your active town isn't set.");
             localSender.sendMessage("To set your active town to your own town, use /town active reset");
@@ -718,7 +720,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -750,7 +752,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -767,7 +769,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -808,7 +810,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -843,7 +845,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -865,7 +867,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = townManager.getTown(townName);
+        Town t = townManager.getTown(townName);
 
         if (t == null) {
             localSender.sendMessage(ERR + "That town doesn't exist.");
@@ -885,7 +887,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -923,7 +925,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -958,7 +960,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -1041,7 +1043,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -1077,7 +1079,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -1107,7 +1109,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -1147,7 +1149,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = localSender.getActiveTown();
+        Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();

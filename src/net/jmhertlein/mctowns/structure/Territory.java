@@ -11,7 +11,7 @@ import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
  *
  * @author joshua
  */
-public interface Territory {
+public interface Territory extends MCTRegion {
 
     /**
      * Adds a plot to the territory. Registering the WG region of the territory
@@ -21,7 +21,7 @@ public interface Territory {
      * @return false if the plot was not added because it is already added, true
      * otherwise
      */
-    boolean addPlot(YamlPlot plot);
+    boolean addPlot(Plot plot);
 
     String getParentTown();
 

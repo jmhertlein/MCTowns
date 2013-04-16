@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -32,7 +33,7 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
         parTownName = parentTownName;
     }
 
-    public YamlTerritory(){}
+    private YamlTerritory(){}
 
     /**
      * Adds a plot to the territory. Registering the WG region of the territory
@@ -43,7 +44,7 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
      * otherwise
      */
     @Override
-    public boolean addPlot(YamlPlot plot) {
+    public boolean addPlot(Plot plot) {
         if (plotNames.contains(plot.getName())) {
             return false;
         }

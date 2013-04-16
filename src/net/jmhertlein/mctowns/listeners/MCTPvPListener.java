@@ -1,6 +1,6 @@
 package net.jmhertlein.mctowns.listeners;
 
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.database.YamlTownManager;
 import net.jmhertlein.mctowns.util.Config;
 import org.bukkit.event.Listener;
 
@@ -11,10 +11,10 @@ import org.bukkit.event.Listener;
  */
 public class MCTPvPListener implements Listener {
 
-    private TownManager manager;
+    private YamlTownManager manager;
     private Config options;
 
-    public MCTPvPListener(TownManager manager, Config options) {
+    public MCTPvPListener(YamlTownManager manager, Config options) {
         this.manager = manager;
         this.options = options;
 
