@@ -34,11 +34,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void setActiveTown(String townName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = townManager.getTown(townName);
         if (t == null) {
             localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
@@ -56,13 +56,13 @@ public class TownHandler extends CommandHandler {
     }
 
     public void resetActiveTown() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         List<Town> t = townManager.matchPlayerToTowns((Player) localSender.getSender());
-        
+
         if (t == null) {
             localSender.sendMessage(ERR + "Unable to match you to a town. Are you sure you belong to one?");
             return;
@@ -73,11 +73,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void setTownSpawn() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -100,11 +100,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void setTownJoinMethod(String s_method) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -131,18 +131,18 @@ public class TownHandler extends CommandHandler {
         } else if (method == TownJoinMethod.INVITATION) {
             t.setEconomyJoins(false);
         }
-        
+
         localSender.sendMessage(SUCC + "Town join method updated.");
 
 
     }
 
     public void setTownPlotBuyability(String s_buyability) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -180,11 +180,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void setDefaultPlotPrice(String plotPrice) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -213,11 +213,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void addTerritorytoTown(String territName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
         boolean admin = cmd.hasFlag(ECommand.ADMIN);
         if (!localSender.hasExternalPermissions(Perms.ADMIN.toString()) && admin) {
@@ -293,7 +293,7 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + price.toString());
         }
 
-        if (! townManager.addTerritory(territName, w, region, t)) {
+        if (!townManager.addTerritory(territName, w, region, t)) {
             localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
@@ -311,11 +311,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void removeTerritoryFromTown(String territName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -328,7 +328,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if(! townManager.removeTerritory(territName)) {
+        if (!townManager.removeTerritory(territName)) {
             localSender.sendMessage(ERR + "Error: Territory \"" + territName + "\" does not exist and was not removed (because it doesn't exist!)");
         } else {
             localSender.sendMessage(SUCC + "Territory removed.");
@@ -336,11 +336,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void invitePlayerToTown(String invitee) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -370,15 +370,15 @@ public class TownHandler extends CommandHandler {
             invitee = p.getName(); //let's use that sexy name-completion
         }
 
-        if(joinManager.townHasRequestFromPlayer(t, invitee)) {
+        if (joinManager.townHasRequestFromPlayer(t, invitee)) {
             t.addPlayer(invitee);
-            if(p != null)
+            if (p != null)
                 p.sendMessage("You have joined " + t.getTownName() + "!");
             broadcastTownJoin(t, invitee);
         } else {
             joinManager.invitePlayerToTown(invitee, t);
             localSender.sendMessage(SUCC + (p == null ? invitee : p.getName()) + " has been invited to join " + t.getTownName() + ".");
-            if(p != null) {
+            if (p != null) {
                 p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
                 p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
             }
@@ -386,11 +386,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void promoteToAssistant(String playerName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -422,7 +422,7 @@ public class TownHandler extends CommandHandler {
 
         if (t.addAssistant(playerName)) {
             for (MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if(reg instanceof Territory && ((Territory)reg).getParentTown().equals(t.getTownName()))
+                if (reg instanceof Territory && ((Territory) reg).getParentTown().equals(t.getTownName()))
                     ((Territory) reg).addPlayer(playerName);
             }
 
@@ -440,11 +440,11 @@ public class TownHandler extends CommandHandler {
     }
 
     public void demoteFromAssistant(String playerName) {
-if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
         Player p = server.getPlayer(playerName);
 
@@ -475,9 +475,9 @@ if(localSender.isConsole()) {
             p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
             Territory rmFrom;
             for (MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if(reg instanceof Territory) {
+                if (reg instanceof Territory) {
                     rmFrom = (Territory) reg;
-                    if(rmFrom.getParentTown().equals(t.getTownName()))
+                    if (rmFrom.getParentTown().equals(t.getTownName()))
                         rmFrom.removePlayer(p.getName());
                 }
             }
@@ -487,11 +487,11 @@ if(localSender.isConsole()) {
     }
 
     public void setMayor(String playerName) {
-if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -521,11 +521,11 @@ if(localSender.isConsole()) {
     }
 
     public void cancelInvitation(String playerName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -546,11 +546,11 @@ if(localSender.isConsole()) {
     }
 
     public void rejectRequest(String playerName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -582,11 +582,11 @@ if(localSender.isConsole()) {
     }
 
     public void listRequestsForTown() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -609,11 +609,11 @@ if(localSender.isConsole()) {
     }
 
     public void listInvitesForTown() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -640,11 +640,11 @@ if(localSender.isConsole()) {
     }
 
     public void removePlayerFromTown(String playerName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -674,7 +674,7 @@ if(localSender.isConsole()) {
 
 
         localSender.getActiveTown().removePlayer(playerName);
-        
+
         Town.recursivelyRemovePlayerFromTown(removeMe, removeFrom);
 
         localSender.sendMessage("\"" + playerName + "\" was removed from the town.");
@@ -684,15 +684,16 @@ if(localSender.isConsole()) {
     }
 
     public void removeSelfFromTown() {
-if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.sendMessage(ERR + "You're either not a member of a town, or your active town isn't set.");
             localSender.sendMessage("To set your active town to your own town, use /town active reset");
+            return;
         }
 
         if (t.playerIsMayor(localSender.getPlayer())) {
@@ -707,11 +708,11 @@ if(localSender.isConsole()) {
     }
 
     public void setTownFriendlyFire(String sFriendlyFire) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -739,11 +740,11 @@ if(localSender.isConsole()) {
     }
 
     public void setMOTD(String motd) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -761,11 +762,11 @@ if(localSender.isConsole()) {
     }
 
     public void printMOTD() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -778,11 +779,11 @@ if(localSender.isConsole()) {
     }
 
     public void listResidents(String s_page) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         int i;
         try {
             i = Integer.parseInt(s_page);
@@ -795,11 +796,11 @@ if(localSender.isConsole()) {
     }
 
     public void listResidents(int page) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         page--; //shift to 0-indexing
 
         if (page < 0) {
@@ -823,20 +824,20 @@ if(localSender.isConsole()) {
     }
 
     public void listResidents() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         listResidents(1);
     }
 
     public void warpToSpawn() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasExternalPermissions(Perms.WARP.toString())) {
             localSender.notifyInsufPermissions();
             return;
@@ -854,11 +855,11 @@ if(localSender.isConsole()) {
     }
 
     public void warpToOtherSpawn(String townName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasExternalPermissions(Perms.WARP_FOREIGN.toString())) {
             localSender.notifyInsufPermissions();
             return;
@@ -879,11 +880,11 @@ if(localSender.isConsole()) {
     }
 
     public void checkBlockBank(String blockName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -904,11 +905,11 @@ if(localSender.isConsole()) {
     }
 
     public void withdrawBlockBank(String blockName, String s_quantity) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -952,11 +953,11 @@ if(localSender.isConsole()) {
     }
 
     public void depositBlockBank(String blockName, String s_quantity) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -997,11 +998,11 @@ if(localSender.isConsole()) {
     }
 
     public void depositHeldItem(String quantity) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         String blockName;
 
         if (localSender.getPlayer().getItemInHand() == null) {
@@ -1017,11 +1018,11 @@ if(localSender.isConsole()) {
     }
 
     public void withdrawCurrencyBank(String quantity) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -1058,11 +1059,11 @@ if(localSender.isConsole()) {
     }
 
     public void depositCurrencyBank(String quantity) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!options.isEconomyEnabled()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
@@ -1096,11 +1097,11 @@ if(localSender.isConsole()) {
     }
 
     public void checkCurrencyBank() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!options.isEconomyEnabled()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
@@ -1117,11 +1118,11 @@ if(localSender.isConsole()) {
     }
 
     public void listTerritories(String s_page) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         int i;
         try {
             i = Integer.parseInt(s_page);
@@ -1134,11 +1135,11 @@ if(localSender.isConsole()) {
     }
 
     private void listTerritories(int page) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         page--; //shift to 0-indexing
 
         if (page < 0) {
@@ -1164,11 +1165,11 @@ if(localSender.isConsole()) {
     }
 
     public void listTerritories() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         listTerritories(1);
     }
 }
