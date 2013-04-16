@@ -9,7 +9,7 @@ import org.bukkit.Material;
  *
  * @author Joshua
  */
-public class Config {
+public class Config implements Serializable {
 
     private String path;
     private boolean economyEnabled;
@@ -17,8 +17,11 @@ public class Config {
     private BigDecimal pricePerXZBlock;
     private int minNumPlayersToBuyTerritory;
     private boolean allowTownFriendlyFireManagement;
-    private Material qsTool;
+    private String qsTool;
     private boolean logCommands;
+    private boolean playersCanJoinMultipleTowns;
+    private String bugReportHostname;
+    private int port;
     //true if config is tainted/bad/parse error, false otherwise.
     private boolean failBit;
     private String failReason;
@@ -34,8 +37,10 @@ public class Config {
         pricePerXZBlock = BigDecimal.ZERO;
         minNumPlayersToBuyTerritory = 3;
         allowTownFriendlyFireManagement = false;
-        qsTool = Material.getMaterial(290);
+        qsTool = Material.getMaterial(290).name();
         logCommands = false;
+        bugReportHostname = "services.jmhertlein.net";
+        port = 9001;
 
         failReason = "No fail detected.";
         File configPath = new File(configFilePath);
@@ -128,7 +133,7 @@ public class Config {
                 case "quickSelectTool":
                     curToken = lineScan.next().trim();
                     try {
-                        qsTool = Material.getMaterial(Integer.parseInt(curToken));
+                        qsTool = Material.getMaterial(Integer.parseInt(curToken)).name();
                     } catch (Exception e) {
                         failBit = true;
                         failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
@@ -139,6 +144,36 @@ public class Config {
                     curToken = lineScan.next().trim();
                     try {
                         logCommands = Boolean.parseBoolean(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                    break;
+                    
+                case "playersCanJoinMultipleTowns":
+                    curToken = lineScan.next().trim();
+                    try {
+                        playersCanJoinMultipleTowns = Boolean.parseBoolean(curToken);
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                    break;
+                    
+                case "bugReportHostname":
+                    curToken = lineScan.next().trim();
+                    try {
+                        bugReportHostname = curToken;
+                    } catch (Exception e) {
+                        failBit = true;
+                        failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
+                    }
+                    break;
+                    
+                    case "port":
+                    curToken = lineScan.next().trim();
+                    try {
+                        port = Integer.parseInt(curToken);
                     } catch (Exception e) {
                         failBit = true;
                         failReason = "Error parsing token \"" + curToken + "\". Error message: " + e.getMessage();
@@ -180,14 +215,24 @@ public class Config {
     }
 
     public Material getQsTool() {
-        return qsTool;
+        return Material.getMaterial(qsTool);
     }
 
     public boolean isLoggingCommands() {
         return logCommands;
     }
 
-    
+    public boolean playersCanJoinMultipleTowns() {
+        return playersCanJoinMultipleTowns;
+    }
+
+    public String getBugReportHostname() {
+        return bugReportHostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
     
     /*
      * Returns the next uncommented, non-empty line in the file.
@@ -267,6 +312,17 @@ public class Config {
         ps.println();
         ps.println("#Log verbose information of each MCTowns command issued");
         ps.println("logCommands = false");
+        
+        ps.println();
+        ps.println("#if set to true, players are allowed to join multiple towns");
+        ps.println("playersCanJoinMultipleTowns = false");
+        
+        ps.println();
+        ps.println("#The hostname of the bug reporting server");
+        ps.println("#Default is the developer's bug reporting server");
+        ps.println("bugReportHostname = services.jmhertlein.net");
+        ps.println("#Port the server is running on");
+        ps.println("port=9001");
 
 
         ps.close();
@@ -274,4 +330,14 @@ public class Config {
 
 
     }
+
+    @Override
+    public String toString() {
+        return "Config{" + "economyEnabled=" + economyEnabled + ",\n mayorsCanBuyTerritories=" + mayorsCanBuyTerritories + ",\n pricePerXZBlock=" + 
+                pricePerXZBlock + ",\n minNumPlayersToBuyTerritory=" + minNumPlayersToBuyTerritory + ",\n allowTownFriendlyFireManagement=" + 
+                allowTownFriendlyFireManagement + ",\n qsTool=" + qsTool + ",\n logCommands=" + logCommands + ",\n playersCanJoinMultipleTowns=" + 
+                playersCanJoinMultipleTowns + ",\n bugReportHostname=" + bugReportHostname + ",\n port=" + port + ", failBit=" + failBit + ",\n failReason=" + failReason + '}';
+    }
+    
+    
 }

@@ -1,14 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.command.executors;
 
-import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.core.command.ArgumentCountException;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.MCTHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,6 +13,7 @@ import org.bukkit.command.CommandSender;
  * @author Joshua
  */
 public class MCTExecutor extends BaseExecutor {
+
     private MCTHandler handler;
 
     public MCTExecutor(MCTowns parent) {
@@ -27,9 +22,7 @@ public class MCTExecutor extends BaseExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
-        super.onCommand(cs, cmnd, label, args);
-
+    public boolean runCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         ECommand command = new ECommand(label, args);
 
         handler.setNewCommand(cs, command);
@@ -48,6 +41,12 @@ public class MCTExecutor extends BaseExecutor {
 
 
             switch (command.get(1)) {
+                case "break":
+                    if(MCTowns.isDebugging()) {
+                        MCTowns.logDebug(cs.getName() + " intentionally broke the server.");
+                        throw new RuntimeException("Intentionally broke.");
+                    }
+                    break;
                 case "info":
                     helpMessage = "/mct info (player | town)";
                     switch (command.get(2)) {
@@ -107,8 +106,8 @@ public class MCTExecutor extends BaseExecutor {
                     break;
 
                 case "refuse":
-                    helpMessage = "/mct refuse";
-                    handler.rejectInvitation();
+                    helpMessage = "/mct refuse <town name>";
+                    handler.rejectInvitationFromTown(command.get(2));
                     softFailure = false;
                     break;
 

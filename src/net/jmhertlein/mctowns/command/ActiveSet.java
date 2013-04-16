@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.command;
 
 import net.jmhertlein.mctowns.structure.Plot;

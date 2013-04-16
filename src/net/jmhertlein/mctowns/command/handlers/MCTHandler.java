@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
@@ -29,6 +26,11 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void createTown(String townName, String mayorName) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         if (!localSender.canCreateTown()) {
             localSender.notifyInsufPermissions();
             return;
@@ -41,16 +43,17 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (townManager.matchPlayerToTown(nuMayor) != null) {
+        if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
             localSender.sendMessage(ERR + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
             return;
         }
 
-        if (townManager.addTown(townName, nuMayor)) {
+        Town t = townManager.addTown(townName, nuMayor);
+        if (t != null) {
             localSender.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
 
-            localSender.setActiveTown(townManager.matchPlayerToTown(nuMayor));
+            localSender.setActiveTown(t);
             localSender.sendMessage(INFO + "Active town set to newly created town.");
 
             localSender.sendMessage(INFO_ALT + "The town's spawn has been set to your current location. Change it with /town spawn set.");
@@ -123,31 +126,31 @@ public class MCTHandler extends CommandHandler {
     public void queryPlayerInfo(String playerName) {
         Player p = server.getPlayer(playerName);
 
-        if (p == null && townManager.matchPlayerToTown(playerName) == null) {
+        if (p == null && townManager.matchPlayerToTowns(playerName).isEmpty()) {
             localSender.sendMessage(ERR + "That player is either not online or doesn't exist.");
             return;
         }
 
         String playerExactName = (p == null ? playerName : p.getName());
 
-        Town t = townManager.matchPlayerToTown(playerExactName);
+        List<Town> towns = townManager.matchPlayerToTowns(playerExactName);
 
-        if (t == null) {
-            localSender.sendMessage("Player: " + playerExactName);
-            localSender.sendMessage("Town: None");
-            localSender.sendMessage("Is Mayor: n/a");
-            localSender.sendMessage("Is Assistant: n/a");
-        } else {
-            localSender.sendMessage("Player: " + playerExactName);
-            localSender.sendMessage("Town: " + t.getTownName());
-            localSender.sendMessage("Is Mayor: " + t.getMayor().equals(playerExactName));
-            localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(playerExactName));
+        for (Town t : towns) {
+            if (t == null) {
+                localSender.sendMessage("Player: " + playerExactName);
+                localSender.sendMessage("Town: None");
+                localSender.sendMessage("Is Mayor: n/a");
+                localSender.sendMessage("Is Assistant: n/a");
+            } else {
+                localSender.sendMessage("Player: " + playerExactName);
+                localSender.sendMessage("Town: " + t.getTownName());
+                localSender.sendMessage("Is Mayor: " + t.getMayor().equals(playerExactName));
+                localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(playerExactName));
+            }
         }
-
     }
 
     public void listTowns() {
-
         listTowns(1);
     }
 
@@ -184,7 +187,12 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void requestAdditionToTown(String townName) {
-        if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
+        if (!options.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
         }
@@ -218,16 +226,21 @@ public class MCTHandler extends CommandHandler {
         }
     }
 
-    public void rejectInvitation() {
+    public void rejectInvitationFromTown(String townName) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
 
         String pName = localSender.getPlayer().getName();
 
-        Town t = joinManager.getCurrentInviteForPlayer(pName);
+
+        Town t = townManager.getTown(townName);
 
         if (t == null) {
             localSender.sendMessage(ERR + "You're not invited to any towns right now.");
         } else {
-            joinManager.clearInvitationForPlayer(pName);
+            joinManager.clearInvitationForPlayerFromTown(pName, t);
             localSender.sendMessage(ChatColor.GOLD + "You have rejected the invitation to join " + t.getTownName());
             t.broadcastMessageToTown(server, ERR + pName + " has declined the invitation to join the town.");
         }
@@ -235,6 +248,11 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void cancelRequest(String townName) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -255,15 +273,26 @@ public class MCTHandler extends CommandHandler {
 
     }
 
-
-
     public void checkPendingInvite() {
-        Town t = joinManager.getCurrentInviteForPlayer(localSender.getPlayer().getName());
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
 
-        localSender.sendMessage(INFO_ALT + "You are currently " + (t == null ? " not invited to a town." : "invited to " + t.getTownName() + "."));
+        List<Town> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
+
+        localSender.sendMessage(INFO + "You are currently invited to the following towns:");
+        for (Town t : towns) {
+            localSender.sendMessage(INFO_ALT + t.getTownName());
+        }
     }
 
     public void confirmPlotPurchase(HashMap<Player, ActiveSet> buyers) {
+        if (localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
+
         if (!options.isEconomyEnabled()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
@@ -277,7 +306,8 @@ public class MCTHandler extends CommandHandler {
         }
 
         if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
-            if (!plotToBuy.getActiveTown().equals(townManager.matchPlayerToTown(localSender.getPlayer()))) {
+            //if players can't join multiple towns AND the town they're buying from isn't their current town
+            if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }

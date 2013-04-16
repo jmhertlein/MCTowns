@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldedit.Vector;
@@ -12,6 +8,7 @@ import java.util.*;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
+import net.jmhertlein.mctowns.database.TownManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -263,22 +260,12 @@ public class Town {
     }
 
     /**
-     * Returns a hashmap of the territories
-     *
-     * @return the hashmap of territories
-     * @deprecated use getTerritoriesCollection()
-     */
-    public HashSet<String> getTerritories() {
-        return territories;
-    }
-
-    /**
      * Returns the territories this town has.
      *
      * @return the town's territories
      */
     public Collection<String> getTerritoriesCollection() {
-        return territories;
+        return (Collection<String>) territories.clone();
     }
 
     /**
@@ -579,6 +566,21 @@ public class Town {
 
         t.bank = BlockBank.readYAML(f);
         return t;
+    }
+    
+    public static void recursivelyRemovePlayerFromTown(Player p, Town t) {
+        TownManager tMan = MCTowns.getTownManager();
+        
+        for(String teName : t.getTerritoriesCollection()) {
+            Territory te = tMan.getTerritory(teName);
+            for(String plName : te.getPlotsCollection()) {
+                Plot pl = tMan.getPlot(plName);
+                pl.removePlayer(p);
+            }
+            te.removePlayer(p);
+        }
+        
+        t.removePlayer(p);
     }
 
     private List<String> getTerritoryNames() {

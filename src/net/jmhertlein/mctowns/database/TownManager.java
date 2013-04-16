@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.database;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -12,6 +8,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritan
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -90,15 +87,15 @@ public class TownManager {
      * @return true if town was added, false if town was not because it was
      * already existing
      */
-    public boolean addTown(String townName, Player mayor) {
+    public Town addTown(String townName, Player mayor) {
         Town t = new Town(townName, mayor);
 
         if (towns.containsKey(townName)) {
-            return false;
+            return null;
         }
 
         towns.put(t.getTownName(), t);
-        return true;
+        return t;
 
     }
 
@@ -298,8 +295,8 @@ public class TownManager {
      * @return the town of which the player is a member, or null if player has
      * no town
      */
-    public Town matchPlayerToTown(Player p) {
-        return matchPlayerToTown(p.getName());
+    public List<Town> matchPlayerToTowns(Player p) {
+        return matchPlayerToTowns(p.getName());
 
     }
 
@@ -307,17 +304,16 @@ public class TownManager {
      * Matches a possibly non-live player to a town
      *
      * @param playerName the name of the player to match for
-     * @return the Town the player is a member of, or null if player is not a
-     * member of any town
+     * @return a list of all towns the player is in
      */
-    public Town matchPlayerToTown(String playerName) {
+    public List<Town> matchPlayerToTowns(String playerName) {
+        ArrayList<Town> ret = new ArrayList<>();
         for (Town town : towns.values()) {
             if (town.playerIsResident(playerName)) {
-                return town;
+                ret.add(town);
             }
         }
-
-        return null;
+        return ret;
     }
 
     /**
@@ -354,7 +350,7 @@ public class TownManager {
      * @return true if the player is already in a town, else false
      */
     public boolean playerIsAlreadyInATown(String invitee) {
-        return matchPlayerToTown(invitee) != null;
+        return !matchPlayerToTowns(invitee).isEmpty();
     }
 
     /**
@@ -386,11 +382,7 @@ public class TownManager {
 
         for(MCTownsRegion reg : regions.values()) {
             f = new YamlConfiguration();
-            if(reg instanceof Territory) {
-                ((Territory) reg).writeYAML(f);
-            } else {
-                ((Plot) reg).writeYAML(f);
-            }
+            reg.writeYAML(f);
             f.save(new File(rootDirPath + File.separator + reg.getName() + ".yml"));
         }
     }

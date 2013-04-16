@@ -1,19 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.listeners;
 
 import net.jmhertlein.mctowns.database.TownManager;
-import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.util.Config;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
  * intended to stop PvP between townmates.
@@ -31,32 +20,32 @@ public class MCTPvPListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onEntityDamage(EntityDamageEvent event) {
-
-        if (!(event instanceof EntityDamageByEntityEvent)) {
-            return;
-        }
-
-        EntityDamageByEntityEvent pvpEvent = (EntityDamageByEntityEvent) event;
-
-        Player damager, damagee;
-
-        damager = (pvpEvent.getDamager() instanceof Player ? (Player) pvpEvent.getDamager() : null);
-
-        damagee = (pvpEvent.getEntity() instanceof Player ? (Player) pvpEvent.getEntity() : null);
-
-        //if it's not player versus player, return
-        if (damager == null || damagee == null) {
-            return;
-        }
-
-        Town damagerTown = manager.matchPlayerToTown(damager);
-        if (damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
-            event.setCancelled(true);
-            damager.sendMessage(ChatColor.RED + "That player is in your town! Don't attack him!");
-        }
-
-
-    }
+//    @EventHandler(priority = EventPriority.NORMAL)
+//    public void onEntityDamage(EntityDamageEvent event) {
+//
+//        if (!(event instanceof EntityDamageByEntityEvent)) {
+//            return;
+//        }
+//
+//        EntityDamageByEntityEvent pvpEvent = (EntityDamageByEntityEvent) event;
+//
+//        Player damager, damagee;
+//
+//        damager = (pvpEvent.getDamager() instanceof Player ? (Player) pvpEvent.getDamager() : null);
+//
+//        damagee = (pvpEvent.getEntity() instanceof Player ? (Player) pvpEvent.getEntity() : null);
+//
+//        //if it's not player versus player, return
+//        if (damager == null || damagee == null) {
+//            return;
+//        }
+//
+//        Town damagerTown = manager.matchPlayerToTown(damager);
+//        if (damagerTown.allowsFriendlyFire() && damagerTown.equals(manager.matchPlayerToTown(damagee))) {
+//            event.setCancelled(true);
+//            damager.sendMessage(ChatColor.RED + "That player is in your town! Don't attack him!");
+//        }
+//
+//
+//    }
 }

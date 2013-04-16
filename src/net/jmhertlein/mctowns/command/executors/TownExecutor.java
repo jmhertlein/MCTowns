@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.command.executors;
 
 import net.jmhertlein.core.command.ArgumentCountException;
@@ -17,6 +13,7 @@ import org.bukkit.command.CommandSender;
  * @author Joshua
  */
 public class TownExecutor extends BaseExecutor {
+
     private TownHandler handler;
 
     public TownExecutor(MCTowns parent) {
@@ -25,8 +22,7 @@ public class TownExecutor extends BaseExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
-        super.onCommand(cs, cmnd, label, args);
+    public boolean runCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         ECommand command = new ECommand(label, args);
 
         handler.setNewCommand(cs, command);

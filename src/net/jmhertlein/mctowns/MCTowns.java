@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.command.ActiveSet;
@@ -24,6 +25,8 @@ import net.jmhertlein.mctowns.util.metrics.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -67,6 +70,13 @@ public class MCTowns extends JavaPlugin {
         }
 
         log.info("[MCTowns]: MCTowns has been successfully disabled.");
+        try {
+            trimFiles();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MCTowns.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | InvalidConfigurationException ex) {
+            Logger.getLogger(MCTowns.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         //release as much memory as I can, to make reloads suck less.
         townManager = null;
@@ -199,24 +209,9 @@ public class MCTowns extends JavaPlugin {
         try {
             townManager.writeYAML(MCT_DATA_FOLDER);
         } catch (IOException ex) {
-            MCTowns.logSevere("Error saving town database.");
+            MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
+            ex.printStackTrace();
         }
-    }
-
-    private void persistTownManagerBackup() {
-        Calendar cal = Calendar.getInstance();
-        String dateStamp = "(" + (cal.get(Calendar.MONTH) + 1) + cal.get(Calendar.DAY_OF_MONTH) + ")";
-
-        File path = new File(BACKUP_TOWN_DATABASE_SAVE_PATH + dateStamp);
-
-        if (!path.exists()) {
-            try {
-                path.createNewFile();
-            } catch (Exception ignore) {
-            }
-        }
-
-        logInfo("Backup saving as: " + path.getAbsolutePath());
     }
 
     private boolean setupEconomy() {
@@ -233,6 +228,28 @@ public class MCTowns extends JavaPlugin {
         getCommand("town").setExecutor(new TownExecutor(this));
         getCommand("territory").setExecutor(new TerritoryExecutor(this));
         getCommand("plot").setExecutor(new PlotExecutor(this));
+    }
+    
+    private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
+        File root = new File(MCT_DATA_FOLDER);
+        File meta = new File(root, ".meta.yml");
+        FileConfiguration f = new YamlConfiguration();
+        f.load(meta);
+        
+        List<String> towns = f.getStringList("towns"),
+                     regions = f.getStringList("regions");
+        
+        for(String s : root.list()) {
+            if(s.equals(".meta.yml") || s.equals("config.txt"))
+                continue;
+            
+            String trunc = s.substring(0, s.lastIndexOf('.'));
+            
+            if(!(towns.contains(trunc) || regions.contains(trunc))) {
+                new File(root, s).delete();
+            }
+        }
+        
     }
 
     public static void logSevere(String msg) {
@@ -314,5 +331,9 @@ public class MCTowns extends JavaPlugin {
         for(World w : this.getServer().getWorlds()) {
             getWgp().getRegionManager(w).save();
         }
+    }
+    
+    public static boolean isDebugging() {
+        return DEBUGGING;
     }
 }

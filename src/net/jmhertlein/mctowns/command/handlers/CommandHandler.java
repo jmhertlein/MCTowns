@@ -17,6 +17,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.util.ArrayList;
+import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
@@ -324,18 +325,21 @@ public abstract class CommandHandler {
         }
     }
 
-    protected ArrayList<String> getOutputFriendlyTownJoinListMessages(String[] list) {
-
+    protected ArrayList<String> getOutputFriendlyTownJoinListMessages(Set<String> playerNames) {
         ArrayList<String> msgs = new ArrayList<>();
-        String temp;
-        for (int i = 0; i < list.length; i += 3) {
-            temp = "";
-            for (int j = i; j < list.length && j < i + 3; j++) {
-
-                temp += list[j];
-                temp += " ";
+        
+        int numNamesOnCurrentLine = 0;
+        String curLine = "";
+        for(String s : playerNames) {
+            if(numNamesOnCurrentLine == 3) {
+                curLine.substring(0, curLine.length() - 3);
+                msgs.add(curLine);
+                numNamesOnCurrentLine = 0;
+                curLine = "";
             }
-            msgs.add(temp);
+            
+            curLine += s + ", ";
+            numNamesOnCurrentLine++;
         }
 
         return msgs;

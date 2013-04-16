@@ -1,14 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.command.executors;
 
-import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.core.command.ArgumentCountException;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.TerritoryHandler;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
@@ -20,6 +14,7 @@ import org.bukkit.command.CommandSender;
  * @author Joshua
  */
 public class TerritoryExecutor extends BaseExecutor {
+
     private TerritoryHandler handler;
 
     public TerritoryExecutor(MCTowns parent) {
@@ -28,8 +23,7 @@ public class TerritoryExecutor extends BaseExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
-        super.onCommand(cs, cmnd, label, args);
+    public boolean runCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         ECommand command = new ECommand(label, args);
 
         handler.setNewCommand(cs, command);

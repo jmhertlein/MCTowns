@@ -1,12 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.listeners;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.util.List;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -50,9 +47,10 @@ public class QuickSelectToolListener implements Listener {
         ActiveSet actives = mctp.getActiveSets().get(e.getPlayer().getName());
 
         if (actives == null) {
-            mctp.getActiveSets().put(player.getName(), new ActiveSet());
-            actives = mctp.getActiveSets().get(player.getName());
-            actives.setActiveTown(townMan.matchPlayerToTown(player));
+            actives = new ActiveSet();
+            mctp.getActiveSets().put(player.getName(), actives);
+            List<Town> towns = townMan.matchPlayerToTowns(player);
+            actives.setActiveTown(towns.isEmpty() ? null : towns.get(0));
         }
         if(actives.getActiveTown() == null) {
             e.getPlayer().sendMessage(ChatColor.RED + "You need to set your active town first.");
@@ -61,7 +59,7 @@ public class QuickSelectToolListener implements Listener {
 
         Block b = e.getClickedBlock();
 
-        if(b == null)
+        if (b == null)
             return;
 
         Location spotClicked = b.getLocation();
@@ -69,22 +67,28 @@ public class QuickSelectToolListener implements Listener {
         ApplicableRegionSet regs = wgp.getRegionManager(e.getPlayer().getWorld()).getApplicableRegions(spotClicked);
 
         Town town = actives.getActiveTown();
+        
+        if(town == null) {
+            player.sendMessage(ChatColor.RED + "You need to set your active town first.");
+            return;
+        }
+        
         Territory territ = null;
         for (ProtectedRegion pr : regs) {
-                territ = townMan.getTerritory(pr.getId());
-                if (territ != null && territ.getParentTown().equals(actives.getActiveTown())) {
-                    break;
-                } else
-                    territ = null;
+            territ = townMan.getTerritory(pr.getId());
+            if (territ != null && territ.getParentTown().equals(town.getTownName())) 
+                break;
+            else
+                territ = null;
         }
 
         Plot plot = null;
         if (territ != null) {
             for (ProtectedRegion pr : regs) {
                 plot = townMan.getPlot(pr.getId());
-                if (plot != null && plot.getParentTerritoryName().equals(territ.getName())) {
+                if (plot != null && plot.getParentTerritoryName().equals(territ.getName())) 
                     break;
-                } else
+                else
                     plot = null;
             }
         }

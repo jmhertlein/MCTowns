@@ -1,15 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.io.*;
 import java.util.Objects;
-import java.util.logging.Level;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -84,6 +78,10 @@ public abstract class MCTownsRegion {
         }
 
         return removed;
+    }
+    
+    public boolean removePlayer(Player p) {
+        return this.removePlayer(p.getName());
     }
 
     /**
@@ -164,6 +162,10 @@ public abstract class MCTownsRegion {
             infix = "";
 
         return (owner.getTownName() + infix + plotName).toLowerCase();
+    }
+    
+    public String getReadableName() {
+        return name.substring(name.lastIndexOf('_')+1);
     }
 
     public void writeYAML(FileConfiguration f) {

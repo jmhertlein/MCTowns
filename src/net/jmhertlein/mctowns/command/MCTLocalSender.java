@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jmhertlein.mctowns.command;
 
 import net.jmhertlein.mctowns.structure.Town;
@@ -9,7 +5,8 @@ import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import java.util.HashMap;
-import net.jmhertlein.core.command.CommandSenderWrapper;
+import java.util.List;
+import net.jmhertlein.core.command.LocalSender;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import org.bukkit.command.CommandSender;
@@ -20,7 +17,7 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public class MCTLocalSender extends CommandSenderWrapper {
+public class MCTLocalSender extends LocalSender {
 
     private TownManager manager;
     private ActiveSet activeSet;
@@ -43,8 +40,8 @@ public class MCTLocalSender extends CommandSenderWrapper {
             player = (Player) sender;
             if (!activeSets.containsKey(player.getName())) {
                 activeSets.put(player.getName(), new ActiveSet());
-                activeSets.get(player.getName()).setActiveTown(manager.matchPlayerToTown(player));
-
+                List<Town> towns = tMan.matchPlayerToTowns(player);
+                activeSets.get(player.getName()).setActiveTown(towns.isEmpty() ? null : towns.get(0));
             }
 
             this.activeSet = activeSets.get(player.getName());
@@ -172,5 +169,9 @@ public class MCTLocalSender extends CommandSenderWrapper {
 
     private void notifyActiveNotSet(TownLevel level) {
         sender.sendMessage("Your active " + level.toString().toLowerCase() + " is not set.");
+    }
+
+    public void notifyConsoleNotSupported() {
+        sender.sendMessage("This command cannot be run as console");
     }
 }

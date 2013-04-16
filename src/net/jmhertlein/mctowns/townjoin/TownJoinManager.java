@@ -1,16 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.jmhertlein.mctowns.townjoin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
-import java.util.TreeMap;
-import net.jmhertlein.mctowns.MCTowns;
+import java.util.Set;
 import net.jmhertlein.mctowns.structure.Town;
 
 /**
@@ -18,78 +13,125 @@ import net.jmhertlein.mctowns.structure.Town;
  * @author joshua
  */
 public class TownJoinManager {
-    private HashMap<String, Town> joinInvitations;
-    private HashMap<Town, TreeMap<String, Boolean>> joinRequests; //TODO: Refactor this into a TreeSet or something
+
+    /**
+     * Key- Player name Value- Set of towns the player is currently invited to
+     * join
+     */
+    private HashMap<String, Set<Town>> joinInvitations;
+    /**
+     * Key- Town Value- Set of players who have requested membership to the town
+     */
+    private HashMap<Town, Set<String>> joinRequests;
 
     public TownJoinManager() {
         joinInvitations = new HashMap<>();
         joinRequests = new HashMap<>();
     }
 
-    public void invitePlayerToTown(String playerName, Town invitedTo) {
-        joinInvitations.put(playerName, invitedTo);
+    public void invitePlayerToTown(final String playerName, final Town invitedTo) {
+        Set<Town> towns = joinInvitations.get(playerName);
+
+        if (towns == null)
+            joinInvitations.put(playerName, new HashSet<Town>() {
+                {
+                    this.add(invitedTo);
+                }
+            });
+        else
+            towns.add(invitedTo);
+
     }
 
     public boolean playerIsInvitedToTown(String playerName, Town isInvitedTo) {
-        return joinInvitations.get(playerName).equals(isInvitedTo);
+        Set<Town> towns = joinInvitations.get(playerName);
+
+        return towns == null ? false : towns.contains(isInvitedTo);
     }
 
-    public void addPlayerRequestForTown(Town requestJoinTo, String playerName) {
-        if(joinRequests.get(requestJoinTo) == null)
-            joinRequests.put(requestJoinTo, new TreeMap<String, Boolean>());
+    public void addPlayerRequestForTown(final Town requestJoinTo, final String playerName) {
+        Set<String> players = joinRequests.get(requestJoinTo);
 
-        joinRequests.get(requestJoinTo).put(playerName, Boolean.TRUE);
+        if (players == null)
+            joinRequests.put(requestJoinTo, new HashSet<String>() {
+                {
+                    this.add(playerName);
+                }
+            });
+        else
+            players.add(playerName);
     }
 
     public boolean townHasRequestFromPlayer(Town t, String playerName) {
-        if(joinRequests.get(t) == null)
-            return false;
-        
-        Boolean ret = joinRequests.get(t).get(playerName);
-        return ret == null ? false : ret;
+        Set<String> players = joinRequests.get(t);
+
+        return players == null ? false : players.contains(playerName);
     }
 
+    /**
+     * Removes the player from the list of players who have requested membership
+     * to the specified town
+     *
+     * @param t
+     * @param playerName
+     * @return true if player was removed, false if player had not ever actually
+     * requested membership
+     */
     public boolean clearRequestForTownFromPlayer(Town t, String playerName) {
-        return joinRequests.get(t).remove(playerName);
+        Set<String> playerNames = joinRequests.get(t);
+
+        return playerNames == null ? false : playerNames.remove(playerName);
     }
 
-    public void clearInvitationForPlayer(String playerName) {
-        joinInvitations.remove(playerName);
+    public void clearInvitationsForPlayer(String playerName) {
+        joinInvitations.put(playerName, null);
     }
 
+    /**
+     *
+     * @param playerName
+     * @param t
+     * @return true if the invite was actually cleared, false if the player was
+     * not ever actually invited
+     */
     public boolean clearInvitationForPlayerFromTown(String playerName, Town t) {
-        if(! t.equals(joinInvitations.get(playerName)))
-            return false;
-
-        joinInvitations.remove(playerName);
-        return true;
+        Set<Town> towns = joinInvitations.get(playerName);
+        return towns == null ? false : towns.remove(t);
     }
 
-    public Town getCurrentInviteForPlayer(String playerName) {
-        return joinInvitations.get(playerName);
+    public List<Town> getTownsPlayerIsInvitedTo(String playerName) {
+        ArrayList<Town> ret = new ArrayList<>();
+        for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
+            if (e.getKey().equals(playerName))
+                ret.addAll(e.getValue());
+        }
+
+        return ret;
     }
 
     /**
      * Gets all current requests for the town.
+     *
      * @param t
-     * @return an array of requests, or an empty array if there are none
+     * @return A set of requests. Changes made to the set will be reflected in later calls to this method
      */
-    public String[] getCurrentRequestsForTown(Town t) {
-        Map<String, Boolean> m = joinRequests.get(t);
-        
-        if(m == null)
-            return new String[0];
-        else
-            return (String[]) m.keySet().toArray();
+    public Set<String> getPlayersRequestingMembershipToTown(Town t) {
+        Set<String> r = joinRequests.get(t);
+        if(r == null) {
+            r = new HashSet<>();
+            joinRequests.put(t, r);
+        }
+        return r;
     }
 
-    public String[] getIssuedInvitesForTown(Town t) {
-        LinkedList<String> ret = new LinkedList<>();
-        for(Entry<String, Town> e : joinInvitations.entrySet()) {
-            if(e.getValue().equals(t))
-                ret.add(e.getValue().getTownName());
+    public Set<String> getIssuedInvitesForTown(Town t) {
+        HashSet<String> playersInvited = new HashSet<>();
+        for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
+            if (e.getValue().contains(t)) {
+                playersInvited.add(e.getKey());
+            }
         }
 
-        return ret.toArray(new String[ret.size()]);
+        return playersInvited;
     }
 }
