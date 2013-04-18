@@ -6,6 +6,7 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.CommandHandler;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.database.YamlTownManager;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
@@ -67,7 +68,7 @@ public class MCTPlayerListener implements Listener {
         Player p = event.getPlayer();
         List<Town> towns = townManager.matchPlayerToTowns(p);
         
-        List<YamlTown> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
+        List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
         if(!townsInvitedTo.isEmpty())
             p.sendMessage(INFO + "You are currently invited to join the following towns:");
 
@@ -219,7 +220,7 @@ public class MCTPlayerListener implements Listener {
 
         ProtectedFenceRegion fencedReg;
         try {
-            fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, nuName), signLoc);
+            fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(TownManager.formatRegionName(t, TownLevel.PLOT, nuName), signLoc);
         } catch (IncompleteFenceException ex) {
             p.sendMessage(ChatColor.RED + "Error: Fence was not complete. Fence must be a complete polygon.");
             return;
@@ -233,11 +234,11 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-        townManager.addPlot(YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
+        townManager.addPlot(TownManager.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
 
         p.sendMessage(ChatColor.GREEN + "Plot created.");
 
-        pActive.setActivePlot(townManager.getPlot(YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, nuName)));
+        pActive.setActivePlot(townManager.getPlot(TownManager.formatRegionName(t, TownLevel.PLOT, nuName)));
         p.sendMessage(ChatColor.LIGHT_PURPLE + "Active plot set to newly created plot.");
 
 

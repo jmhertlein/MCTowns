@@ -4,12 +4,15 @@ import net.jmhertlein.mctowns.structure.MCTRegion;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 /**
@@ -25,8 +28,9 @@ public abstract class YamlMCTRegion implements MCTRegion {
      * The name of the region, the name of the world in which the region exists
      */
     protected String name, worldName;
+    protected File saveLocation;
 
-    public YamlMCTRegion() {
+    protected YamlMCTRegion() {
     }
 
     /**
@@ -36,9 +40,10 @@ public abstract class YamlMCTRegion implements MCTRegion {
      * @param name the name of the new region
      * @param worldName the world of the new region
      */
-    public YamlMCTRegion(String name, String worldName) {
+    public YamlMCTRegion(String name, String worldName, File saveLocation) {
         this.name = name.toLowerCase();
         this.worldName = worldName;
+        this.saveLocation = saveLocation;
     }
 
     /**
@@ -159,29 +164,14 @@ public abstract class YamlMCTRegion implements MCTRegion {
         hash = 79 * hash + Objects.hashCode(this.worldName);
         return hash;
     }
-
-    public static final String formatRegionName(Town owner, TownLevel type, String plotName) {
-        plotName = plotName.toLowerCase();
-
-        String infix;
-        if(type == TownLevel.PLOT)
-            infix = TownLevel.PLOT_INFIX;
-        else if(type == TownLevel.TERRITORY)
-            infix = TownLevel.TERRITORY_INFIX;
-        else
-            infix = "";
-
-        return (owner.getTownName() + infix + plotName).toLowerCase();
-    }
     
     @Override
     public String getReadableName() {
         return name.substring(name.lastIndexOf('_')+1);
     }
 
-    public void writeYAML(FileConfiguration f) {
+    protected void writeYAML(FileConfiguration f) {
         f.set("name", name);
         f.set("worldName", worldName);
     }
-
 }

@@ -1,5 +1,7 @@
 package net.jmhertlein.mctowns.structure.yaml;
 
+import java.io.File;
+import java.io.IOException;
 import net.jmhertlein.mctowns.structure.Territory;
 import java.util.Collection;
 import java.util.HashSet;
@@ -7,7 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.TownLevel;
+import net.jmhertlein.mctowns.structure.factory.YamlMCTFactory;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  *
@@ -27,8 +31,8 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
      * @param name the desired name of the territory
      * @param worldName the name of the world in which the territory exists
      */
-    public YamlTerritory(String name, String worldName, String parentTownName) {
-        super(name, worldName);
+    public YamlTerritory(String name, String worldName, String parentTownName, File saveLocation) {
+        super(name, worldName, saveLocation);
         plotNames = new HashSet<>();
         parTownName = parentTownName;
     }
@@ -87,7 +91,7 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
 
     }
 
-    public static YamlTerritory readYAML(FileConfiguration f) {
+    public static YamlTerritory readYAML(FileConfiguration f, YamlMCTFactory factory) {
         YamlTerritory ret = new YamlTerritory();
 
         ret.name = f.getString("name");
@@ -96,6 +100,8 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
 
         ret.plotNames = new HashSet<>();
         ret.plotNames.addAll(f.getStringList("plots"));
+        
+        ret.saveLocation = factory.getRegionSavePath(null)
 
         return ret;
     }
@@ -111,8 +117,10 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
     }
 
     @Override
-    public boolean save() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void save() throws IOException {
+        FileConfiguration f = new YamlConfiguration();
+        writeYAML(f);
+        f.save(saveLocation);
     }
 
 

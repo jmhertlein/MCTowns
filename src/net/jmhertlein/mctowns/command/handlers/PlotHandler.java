@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.MCTRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
@@ -387,10 +388,10 @@ public class PlotHandler extends CommandHandler {
             nuActive = townManager.getPlot(plotName);
 
             if (nuActive == null) {
-                nuActive = townManager.getPlot(YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, plotName));
+                nuActive = townManager.getPlot(TownManager.formatRegionName(t, TownLevel.PLOT, plotName));
             }
         } else {
-            plotName = YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, plotName);
+            plotName = TownManager.formatRegionName(t, TownLevel.PLOT, plotName);
 
             for (MCTRegion reg : townManager.getRegionsCollection()) {
                 if (reg instanceof YamlTerritory) {

@@ -17,6 +17,8 @@ import net.jmhertlein.mctowns.structure.MCTRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.structure.TownLevel;
+import net.jmhertlein.mctowns.structure.factory.MCTFactory;
 import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
 import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
@@ -31,10 +33,17 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public class TownManager {
+public abstract class TownManager {
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();
     protected HashMap<String, MCTRegion> regions;
     protected HashMap<String, Town> towns;
+    protected MCTFactory factory;
+    
+    public TownManager(MCTFactory factory) {
+        this.factory = factory;
+        regions = new HashMap<>();
+        towns = new HashMap<>();
+    }
 
     protected boolean addMCTRegion(String fullPlotName, MCTRegion mctReg, World w, ProtectedRegion reg) {
         RegionManager regMan = wgp.getRegionManager(w);
@@ -64,7 +73,7 @@ public class TownManager {
      * @return true if the addition was successful, false if the name is already used
      */
     public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) {
-        Plot p = new YamlPlot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
+        Plot p = factory.newPlot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
         if (!addMCTRegion(fullPlotName, p, worldPlotIsIn, reg))
             return false;
         parentTerritory.addPlot(p);
@@ -89,7 +98,7 @@ public class TownManager {
      * @return true if the addition was successful, false if the name is already used
      */
     public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) {
-        Territory t = new YamlTerritory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
+        Territory t = factory.newTerritory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
         if (!addMCTRegion(fullTerritoryName, t, worldTerritoryIsIn, reg))
             return false;
         parentTown.addTerritory(t);
@@ -105,8 +114,8 @@ public class TownManager {
      * @return true if town was added, false if town was not because it was
      * already existing
      */
-    public YamlTown addTown(String townName, Player mayor) {
-        YamlTown t = new YamlTown(townName, mayor);
+    public Town addTown(String townName, Player mayor) {
+        Town t = factory.newTown(townName, mayor);
         if (towns.containsKey(townName)) {
             return null;
         }
@@ -300,10 +309,6 @@ public class TownManager {
         return true;
     }
     
-    public static TownManager getYamlTownManager(String rootDir) throws IOException, InvalidConfigurationException {
-        return YamlTownManager.readYAML(rootDir);
-    }
-    
     public static TownManager getSQLTownManager(SQLManager sqlManager) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
@@ -325,6 +330,24 @@ public class TownManager {
     public enum TownManagerType {
         SQL,
         YAML;
+    }
+    
+    public static final String formatRegionName(Town owner, TownLevel type, String plotName) {
+        return formatRegionName(owner.getTownName(), type, plotName);
+    }
+    
+    public static final String formatRegionName(String ownerTownName, TownLevel type, String plotName) {
+        plotName = plotName.toLowerCase();
+
+        String infix;
+        if(type == TownLevel.PLOT)
+            infix = TownLevel.PLOT_INFIX;
+        else if(type == TownLevel.TERRITORY)
+            infix = TownLevel.TERRITORY_INFIX;
+        else
+            infix = "";
+
+        return (ownerTownName + infix + plotName).toLowerCase();
     }
 
 }

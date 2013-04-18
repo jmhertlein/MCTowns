@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.MCTRegion;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
@@ -45,7 +46,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        plotName = YamlMCTRegion.formatRegionName(t, TownLevel.PLOT, plotName);
+        plotName = TownManager.formatRegionName(t, TownLevel.PLOT, plotName);
 
         World w = localSender.getPlayer().getWorld();
         String worldName = w.getName();
@@ -217,7 +218,7 @@ public class TerritoryHandler extends CommandHandler {
         Territory nuActive = townManager.getTerritory(territName);
 
         if (nuActive == null) {
-            nuActive = townManager.getTerritory(YamlMCTRegion.formatRegionName(t, TownLevel.TERRITORY, territName));
+            nuActive = townManager.getTerritory(TownManager.formatRegionName(t, TownLevel.TERRITORY, territName));
         }
 
         if (nuActive == null) {

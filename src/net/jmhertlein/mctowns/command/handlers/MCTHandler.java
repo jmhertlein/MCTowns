@@ -50,7 +50,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        YamlTown t = townManager.addTown(townName, nuMayor);
+        Town t = townManager.addTown(townName, nuMayor);
         if (t != null) {
             localSender.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
@@ -281,7 +281,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        List<YamlTown> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
+        List<Town> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
 
         localSender.sendMessage(INFO + "You are currently invited to the following towns:");
         for (Town t : towns) {

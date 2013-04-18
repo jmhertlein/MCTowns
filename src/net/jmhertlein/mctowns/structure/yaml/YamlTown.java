@@ -4,6 +4,8 @@ import net.jmhertlein.mctowns.structure.Town;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import net.jmhertlein.core.location.Location;
@@ -15,6 +17,7 @@ import net.jmhertlein.mctowns.structure.Territory;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 /**
@@ -50,6 +53,8 @@ public class YamlTown implements Town {
     private boolean economyJoins;
     private BigDecimal defaultPlotPrice;
     private boolean friendlyFire;
+    
+    private transient File saveLocation;
 
     /**
      * Creates a new town, setting the name to townName, the mayor to the player
@@ -60,7 +65,7 @@ public class YamlTown implements Town {
      * @param mayor the player to be made the mayor of the town
      *
      */
-    public YamlTown(String townName, Player mayor) {
+    public YamlTown(String townName, Player mayor, File saveLocation) {
         this.townName = townName;
         this.mayor = mayor.getName();
         townMOTD = "Use /town motd set <msg> to set the town MOTD!";
@@ -83,6 +88,8 @@ public class YamlTown implements Town {
         residents.add(mayor.getName());
 
         motdColor = ChatColor.GOLD;
+        
+        this.saveLocation = saveLocation;
     }
 
     private YamlTown() {}
@@ -641,7 +648,9 @@ public class YamlTown implements Town {
     }
 
     @Override
-    public boolean save() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void save() throws IOException {
+        FileConfiguration f = new YamlConfiguration();
+        writeYAML(f);
+        f.save(saveLocation);
     }
 }

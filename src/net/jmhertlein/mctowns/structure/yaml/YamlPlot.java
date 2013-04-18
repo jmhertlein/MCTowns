@@ -2,14 +2,19 @@ package net.jmhertlein.mctowns.structure.yaml;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.TownLevel;
+import net.jmhertlein.mctowns.structure.factory.MCTFactory;
+import net.jmhertlein.mctowns.structure.factory.YamlMCTFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_5_R2.block.CraftSign;
 
 /**
@@ -34,8 +39,8 @@ public class YamlPlot extends YamlMCTRegion implements Plot {
      * @param parentTerritoryName
      * @param parentTownName
      */
-    public YamlPlot(String name, String worldName, String parentTerritoryName, String parentTownName) {
-        super(name, worldName);
+    public YamlPlot(String name, String worldName, String parentTerritoryName, String parentTownName, File saveLocation) {
+        super(name, worldName, saveLocation);
 
         parTerrName = parentTerritoryName;
         parTownName = parentTownName;
@@ -217,7 +222,7 @@ public class YamlPlot extends YamlMCTRegion implements Plot {
      * @param f
      * @return
      */
-    public static YamlPlot readYAML(FileConfiguration f) {
+    public static YamlPlot readYAML(FileConfiguration f, YamlMCTFactory factory) {
         YamlPlot p = new YamlPlot();
 
         p.name = f.getString("name");
@@ -235,12 +240,16 @@ public class YamlPlot extends YamlMCTRegion implements Plot {
             p.price = null;
         else
             p.price = new BigDecimal(f.getString("price"));
+        
+        p.saveLocation = factory.getRegionSavePath(p.name);
 
         return p;
     }
 
     @Override
-    public boolean save() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void save() throws IOException {
+        FileConfiguration f = new YamlConfiguration();
+        writeYAML(f);
+        f.save(saveLocation);
     }
 }

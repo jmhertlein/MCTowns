@@ -13,6 +13,7 @@ import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
+import net.jmhertlein.mctowns.structure.factory.MCTFactory;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,7 +27,8 @@ public class YamlTownManager extends TownManager {
     /**
      * Constructs a new, empty town manager.
      */
-    public YamlTownManager() {
+    public YamlTownManager(MCTFactory factory) {
+        super(factory);
         towns = new HashMap<>();
         regions = new HashMap<>();
     }
@@ -52,16 +54,13 @@ public class YamlTownManager extends TownManager {
 
         f.save(new File(rootDirPath + File.separator + ".meta.yml"));
 
+        //now save the regions
         for(Town t : towns.values()) {
-            f = new YamlConfiguration();
-            t.writeYAML(f);
-            f.save(new File(rootDirPath + File.separator + t.getTownName() + ".yml"));
+            t.save();
         }
 
         for(MCTRegion reg : regions.values()) {
-            f = new YamlConfiguration();
-            reg.writeYAML(f);
-            f.save(new File(rootDirPath + File.separator + reg.getName() + ".yml"));
+            reg.save();
         }
     }
 
@@ -73,11 +72,11 @@ public class YamlTownManager extends TownManager {
      * @throws IOException
      * @throws InvalidConfigurationException
      */
-    public static YamlTownManager readYAML(String rootDirPath) throws FileNotFoundException, IOException, InvalidConfigurationException {
+    public static YamlTownManager readYAML(String rootDirPath, MCTFactory factory) throws FileNotFoundException, IOException, InvalidConfigurationException {
         File rootDir = new File(rootDirPath);
         FileConfiguration metaF, f;
 
-        YamlTownManager ret = new YamlTownManager();
+        YamlTownManager ret = new YamlTownManager(factory);
 
         metaF = new YamlConfiguration();
         metaF.load(rootDirPath + File.separator + ".meta.yml");

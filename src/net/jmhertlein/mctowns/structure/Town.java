@@ -4,10 +4,10 @@
  */
 package net.jmhertlein.mctowns.structure;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
 import net.jmhertlein.mctowns.banking.BlockBank;
-import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -283,7 +283,7 @@ public interface Town {
      */
     boolean usesEconomyJoins();
     
-    boolean save();
+    void save() throws IOException;
 
     /**
      * Sets the motd to the specified MOTD

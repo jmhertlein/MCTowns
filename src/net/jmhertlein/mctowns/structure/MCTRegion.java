@@ -5,6 +5,7 @@
 package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.io.IOException;
 import org.bukkit.entity.Player;
 
 /**
@@ -45,12 +46,11 @@ public interface MCTRegion {
 
     boolean removePlayer(Player p);
     
-    boolean save();
+    void save() throws IOException;
 
     /**
      *
      * @return the name of the region
      */
     String getName();
-    
 }

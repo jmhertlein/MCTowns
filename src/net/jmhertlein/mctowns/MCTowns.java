@@ -4,7 +4,6 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import java.io.*;
 import java.util.ArrayDeque;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,6 +18,8 @@ import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.listeners.MCTPvPListener;
 import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
 import net.jmhertlein.mctowns.permission.Perms;
+import net.jmhertlein.mctowns.structure.factory.MCTFactory;
+import net.jmhertlein.mctowns.structure.factory.YamlMCTFactory;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.mctowns.util.metrics.Metrics;
@@ -152,11 +153,11 @@ public class MCTowns extends JavaPlugin {
 
     private void setupTownManager() {
         try {
-            townManager = YamlTownManager.readYAML(MCT_DATA_FOLDER);
+            townManager = YamlTownManager.readYAML(MCT_DATA_FOLDER, new YamlMCTFactory(MCT_DATA_FOLDER));
         } catch (IOException | InvalidConfigurationException ex) {
             log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
-            townManager = new YamlTownManager();
+            townManager = new YamlTownManager(new YamlMCTFactory(MCT_DATA_FOLDER));
         }
     }
 
@@ -335,5 +336,9 @@ public class MCTowns extends JavaPlugin {
     
     public static boolean isDebugging() {
         return DEBUGGING;
+    }
+    
+    public static final String getMCTDataFolder() {
+        return MCT_DATA_FOLDER;
     }
 }

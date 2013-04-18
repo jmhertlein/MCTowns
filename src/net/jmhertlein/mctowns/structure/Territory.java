@@ -5,7 +5,6 @@
 package net.jmhertlein.mctowns.structure;
 
 import java.util.Collection;
-import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 
 /**
  *

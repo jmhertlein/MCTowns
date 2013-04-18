@@ -8,6 +8,7 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTRegion;
 import net.jmhertlein.mctowns.structure.Town;
@@ -257,7 +258,7 @@ public class TownHandler extends CommandHandler {
         }
 
 
-        territName = YamlMCTRegion.formatRegionName(t, TownLevel.TERRITORY, territName);
+        territName = TownManager.formatRegionName(t, TownLevel.TERRITORY, territName);
 
         World w = Bukkit.getWorld(t.getWorldName());
 
