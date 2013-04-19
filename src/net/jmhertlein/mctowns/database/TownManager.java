@@ -19,14 +19,11 @@ import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.structure.factory.MCTFactory;
-import net.jmhertlein.mctowns.structure.yaml.YamlMCTRegion;
 import net.jmhertlein.mctowns.structure.yaml.YamlPlot;
 import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
-import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
 /**
@@ -349,5 +346,7 @@ public abstract class TownManager {
 
         return (ownerTownName + infix + plotName).toLowerCase();
     }
+    
+    public abstract void save() throws IOException;
 
 }

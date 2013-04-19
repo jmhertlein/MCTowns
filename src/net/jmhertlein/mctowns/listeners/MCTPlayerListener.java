@@ -37,7 +37,7 @@ public class MCTPlayerListener implements Listener {
     private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
 
     private MCTowns plugin;
-    private YamlTownManager townManager;
+    private TownManager townManager;
     private TownJoinManager joinManager;
     private Config options;
     private Economy economy;

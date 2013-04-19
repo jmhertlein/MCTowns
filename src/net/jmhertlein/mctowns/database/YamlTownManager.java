@@ -14,6 +14,7 @@ import net.jmhertlein.mctowns.structure.yaml.YamlTerritory;
 import net.jmhertlein.mctowns.structure.yaml.YamlTown;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.structure.factory.MCTFactory;
+import net.jmhertlein.mctowns.structure.factory.YamlMCTFactory;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -72,7 +73,7 @@ public class YamlTownManager extends TownManager {
      * @throws IOException
      * @throws InvalidConfigurationException
      */
-    public static YamlTownManager readYAML(String rootDirPath, MCTFactory factory) throws FileNotFoundException, IOException, InvalidConfigurationException {
+    public static YamlTownManager readYAML(String rootDirPath, YamlMCTFactory factory) throws FileNotFoundException, IOException, InvalidConfigurationException {
         File rootDir = new File(rootDirPath);
         FileConfiguration metaF, f;
 
@@ -84,7 +85,7 @@ public class YamlTownManager extends TownManager {
         for(String s : metaF.getStringList("towns")) {
             f = new YamlConfiguration();
             f.load(rootDirPath + File.separator + s + ".yml");
-            ret.towns.put(s, YamlTown.readYAML(f));
+            ret.towns.put(s, YamlTown.readYAML(f, factory));
         }
 
         for(String s : metaF.getStringList("regions")) {
@@ -92,13 +93,20 @@ public class YamlTownManager extends TownManager {
             f.load(rootDirPath + File.separator + s + ".yml");
 
             if(TownLevel.parseTownLevel(f.getString("type")) == TownLevel.PLOT)
-                ret.regions.put(s, YamlPlot.readYAML(f));
+                ret.regions.put(s, YamlPlot.readYAML(f, factory));
             else
-                ret.regions.put(s, YamlTerritory.readYAML(f));
+                ret.regions.put(s, YamlTerritory.readYAML(f, factory));
         }
 
         return ret;
 
 
     }
+
+    @Override
+    public void save() throws IOException {
+        
+    }
+    
+    
 }

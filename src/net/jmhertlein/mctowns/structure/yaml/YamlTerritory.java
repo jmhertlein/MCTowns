@@ -101,7 +101,7 @@ public class YamlTerritory extends YamlMCTRegion implements Territory{
         ret.plotNames = new HashSet<>();
         ret.plotNames.addAll(f.getStringList("plots"));
         
-        ret.saveLocation = factory.getRegionSavePath(null)
+        ret.saveLocation = factory.getRegionSavePath(ret.name);
 
         return ret;
     }

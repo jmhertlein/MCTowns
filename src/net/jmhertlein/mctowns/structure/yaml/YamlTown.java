@@ -14,6 +14,7 @@ import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.YamlTownManager;
 import net.jmhertlein.mctowns.structure.MCTRegion;
 import net.jmhertlein.mctowns.structure.Territory;
+import net.jmhertlein.mctowns.structure.factory.YamlMCTFactory;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -589,7 +590,7 @@ public class YamlTown implements Town {
         bank.writeYAML(f);
     }
 
-    public static YamlTown readYAML(FileConfiguration f) {
+    public static YamlTown readYAML(FileConfiguration f, YamlMCTFactory factory) {
         YamlTown t = new YamlTown();
 
         t.townName = f.getString("townName");
@@ -612,6 +613,8 @@ public class YamlTown implements Town {
         t.buyablePlots = f.getBoolean("buyablePlots");
 
         t.bank = BlockBank.readYAML(f);
+        
+        t.saveLocation = factory.getTownSavePath(t.townName);
         return t;
     }
     

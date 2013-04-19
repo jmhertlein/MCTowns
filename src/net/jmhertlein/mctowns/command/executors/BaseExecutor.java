@@ -9,6 +9,7 @@ import net.jmhertlein.mctowns.database.YamlTownManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.core.reporting.BugReportingCommandExecutor;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,7 +24,7 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
 
 
     protected MCTowns parent;
-    protected YamlTownManager townManager;
+    protected TownManager townManager;
     protected TownJoinManager joinManager;
     protected HashMap<String, ActiveSet> activeSets;
     protected static WorldGuardPlugin wgp = MCTowns.getWgp();
