@@ -36,7 +36,7 @@ public class RemoteConnectionServer extends Thread {
      */
     public RemoteConnectionServer(Plugin p, File authorizedKeysDirectory) throws IOException {
         authKeysDir = authorizedKeysDirectory;
-        threadPool = Executors.newFixedThreadPool(NUM_THREADS);
+        threadPool = Executors.newCachedThreadPool();
         done = false;
         server = new ServerSocket(SERVER_PORT);
         cMan = new CryptoManager();
@@ -58,7 +58,7 @@ public class RemoteConnectionServer extends Thread {
                 continue;
             }
             
-            threadPool.submit(new HandleRemoteClientTask(cMan, authKeysDir, client));
+            threadPool.submit(new HandleRemoteClientTask(cMan, privateKey, pubKey, authKeysDir, client));
         }
     }
     

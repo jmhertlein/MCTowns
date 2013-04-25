@@ -12,6 +12,8 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import net.jmhertlein.core.crypto.CryptoManager;
 import net.jmhertlein.core.crypto.RSACipherInputStream;
@@ -30,7 +32,16 @@ public class HandleRemoteClientTask implements Runnable {
     private PublicKey pubKey;
     
     private String clientName;
+    private PublicKey clientKey;
 
+    /**
+     * 
+     * @param cMan cryptomanager that will be shared with other tasks
+     * @param privateKey private RSA key for the server
+     * @param pubKey public RSA key for the server
+     * @param authKeysDir Directory to hold pubkeys of authorized users
+     * @param client the client socket this task will interface with
+     */
     public HandleRemoteClientTask(CryptoManager cMan, PrivateKey privateKey, PublicKey pubKey, File authKeysDir, Socket client) {
         this.client = client;
         this.authKeysDir = authKeysDir;
@@ -38,6 +49,7 @@ public class HandleRemoteClientTask implements Runnable {
         this.privateKey = privateKey;
         this.pubKey = pubKey;
         clientName = null;
+        clientKey = null;
     }
 
     @Override
@@ -45,8 +57,21 @@ public class HandleRemoteClientTask implements Runnable {
         sendPubKey();
         receiveClientUserName();
         if(!authenticateClient()) {
+            try { //tell the user we are rejecting their auth response
+                new ObjectOutputStream(client.getOutputStream()).writeObject(false);
+            } catch (IOException ex) {}
             return;
         }
+        
+        try { //tell the user we have accepted their authentication response
+            new ObjectOutputStream(client.getOutputStream()).writeObject(true);
+        } catch (IOException ex) { 
+            System.err.println("Error communicating with " + client.getInetAddress() + ", err: " + ex); 
+        }
+        
+        receiveCommands();
+        
+        
                 
         
         
@@ -78,40 +103,59 @@ public class HandleRemoteClientTask implements Runnable {
     
     private boolean authenticateClient() {
         //load the public key for their claimed username
-        PublicKey clientKey = cMan.loadPubKey(new File(authKeysDir, clientName + ".pub").getPath());
+        clientKey = cMan.loadPubKey(new File(authKeysDir, clientName + ".pub").getPath());
         
         //now, all is encrypted from here on
         try(RSACipherOutputStream cos = new RSACipherOutputStream(client.getOutputStream(), clientKey);
-                RSACipherInputStream cis = new RSACipherInputStream(client.getInputStream(), privateKey)) {
-            byte[] checkBytes = new byte[NUM_CHECK_BYTES];
-            new SecureRandom().nextBytes(checkBytes);
+                RSACipherInputStream cis = new RSACipherInputStream(client.getInputStream(), privateKey);
+                ObjectOutputStream unencryptedOos = new ObjectOutputStream(client.getOutputStream());
+                ObjectInputStream ois = new ObjectInputStream(cis)) { //init two encrypted streams, an encrypted object input stream, and an unencrypted object output stream
             
-            //send user some random bytes
-            cos.write(checkBytes);
-            byte[] receivedBytes = new byte[NUM_CHECK_BYTES];
+            byte[] originalBytes = new byte[NUM_CHECK_BYTES];
+            new SecureRandom().nextBytes(originalBytes);
+            
+            
+            
+            AuthenticationChallenge challenge = new AuthenticationChallenge(cos.getCipher().doFinal(originalBytes));
+            
+            //send user the challenge
+            unencryptedOos.writeObject(challenge);
             //read their response
-            cis.read(receivedBytes);
+            byte[] responseBytes = ((AuthenticationChallenge) ois.readObject()).getChallenge();
             
-            boolean matches = true;
-            for(int i = 0; i < checkBytes.length; i++) {
-                if(receivedBytes[i] != checkBytes[i])
-                    matches = false;
+            if(responseBytes.length != originalBytes.length)
+                return false;
+            
+            for(int i = 0; i < responseBytes.length; i++) {
+                if(responseBytes[i] != originalBytes[i])
+                    return false;
             }
-            //if they weren't able to decrypt and send back the bytes, we're outta here.
-            if(! matches)
-                return false; //show's over, folks
+            return true;
             
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            System.err.println("Error communicating with " + client.getInetAddress() + ", err: " + ex);
         }
         
-        return true;
+        return false;
+    }
+
+    private void receiveCommands() {
+        boolean done = false;
+        
+        try (ObjectOutputStream oos = new ObjectOutputStream(new RSACipherOutputStream(client.getOutputStream(), pubKey));
+                ObjectInputStream ois = new ObjectInputStream(new RSACipherInputStream(client.getInputStream(), privateKey))){ 
+            while(!done) {
+                RemoteAction action = (RemoteAction) ois.readObject();
+                System.out.println("ACTION RECEIVED:" + action.name()); //dummy line in place of actually doing the input...
+                
+                if(action == RemoteAction.TERMINATE_CONNECTION)
+                    done = true;
+            }
+        } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
+            System.err.println("Error communicating with " + client.getInetAddress() + ", err: " + ex);
+        } catch (ClassNotFoundException ex) {
+            System.err.println(ex);
+        } 
     }
 
 }
