@@ -1,0 +1,33 @@
+package net.jmhertlein.mctowns.database;
+
+/**
+ *
+ * @author joshua
+ */
+public enum SQLAction {
+    CREATE_TOWN,
+    CREATE_TERRITORY,
+    CREATE_PLOT,
+    
+    DELETE_TOWN,
+    DELETE_TERRITORY,
+    DELETE_PLOT,
+    
+    UPDATE_TOWN,
+    UPDATE_TERRITORY,
+    UPDATE_PLOT,
+    
+    COUNT_TOWNS,
+    COUNT_TERRITORIES,
+    COUNT_PLOTS,
+    
+    GET_PARENT_TOWN_OF_TERRITORY,
+    GET_PARENT_TERRITORY_OF_PLOT,
+    
+    GET_TOWNS_FOR_PLAYER,
+    GET_TERRITORIES_FOR_TOWN,
+    GET_PLOTS_FOR_TERRITORY,
+    
+    GET_BLOCKS_IN_TOWN_BANK,
+    GET_CURRENCY_IN_TOWN_BANK;
+}
