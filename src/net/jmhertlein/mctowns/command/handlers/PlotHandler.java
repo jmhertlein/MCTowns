@@ -98,11 +98,17 @@ public class PlotHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
-        if (((player == null) && !t.playerIsResident(playerName))
-                || !t.playerIsResident(player)) {
-            localSender.sendMessage(ERR + "That player is not a member of the town.");
-            return;
+        
+        if(player == null) {
+            if(!t.playerIsResident(playerName)) {
+                localSender.sendMessage(ERR + "That player is not a member of the town.");
+                return;
+            }
+        } else {
+            if(!t.playerIsResident(player)) {
+                localSender.sendMessage(ERR + "That player is not a member of the town.");
+                return;
+            }
         }
 
         if (p == null) {

@@ -126,14 +126,18 @@ public class TerritoryHandler extends CommandHandler {
         Player player = server.getPlayer(playerName);
         Town t = localSender.getActiveTown();
 
-        if (player == null) {
+        if(player == null) {
             localSender.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
-        }
-
-        if (((player == null) && !t.playerIsResident(playerName))
-                || !t.playerIsResident(player)) {
-            localSender.sendMessage(ERR + "That player is not a member of the town.");
-            return;
+            
+            if(!t.playerIsResident(playerName)) {
+                localSender.sendMessage(ERR + "That player is not a member of the town.");
+                return;
+            }
+        } else {
+            if(!t.playerIsResident(player)) {
+                localSender.sendMessage(ERR + "That player is not a member of the town.");
+                return;
+            }
         }
 
         if (territ == null) {

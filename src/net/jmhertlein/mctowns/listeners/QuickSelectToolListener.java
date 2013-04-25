@@ -52,6 +52,10 @@ public class QuickSelectToolListener implements Listener {
             List<Town> towns = townMan.matchPlayerToTowns(player);
             actives.setActiveTown(towns.isEmpty() ? null : towns.get(0));
         }
+        if(actives.getActiveTown() == null) {
+            e.getPlayer().sendMessage(ChatColor.RED + "You need to set your active town first.");
+            return;
+        }
 
         Block b = e.getClickedBlock();
 
