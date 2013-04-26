@@ -1,6 +1,7 @@
 package net.jmhertlein.mctowns.remote.client;
 
 import java.io.File;
+import java.security.KeyPair;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,5 +53,13 @@ public class KeyLoader {
         dropKey(pairName);
         File keyDir = new File(rootDir, pairName);
         return keyDir.delete();
+    }
+    
+    public void persistAndLoadNewKeyPair(String label, KeyPair newPair) {
+        loadedPairs.put(label, new NamedKeyPair(label, newPair.getPublic(), newPair.getPrivate()));
+        File keyDir = new File(rootDir, label);
+        
+        cMan.storeKey(new File(keyDir, label + ".pub").getPath(), newPair.getPublic());
+        cMan.storeKey(new File(keyDir, label + ".private").getPath(), newPair.getPrivate());
     }
 }

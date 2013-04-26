@@ -5,6 +5,9 @@
 package net.jmhertlein.mctowns.remote.client.gui;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jmhertlein.mctowns.remote.client.KeyLoader;
 import net.jmhertlein.mctowns.remote.client.MCTConnectionManager;
 import net.jmhertlein.mctowns.remote.client.NamedKeyPair;
@@ -25,9 +28,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
         setupFiles();
         keyLoader = new KeyLoader(rootKeysDir);
         
-        for(NamedKeyPair pair : keyLoader.getLoadedPairs()) {
-            keypairDropDown.addItem(pair.getName());
-        }
+        updateKeyComboBox();
     }
     
     private void setupFiles() {
@@ -50,9 +51,15 @@ public class ConnectionFrame extends javax.swing.JFrame {
         keypairDropDown = new javax.swing.JComboBox();
         manageKeysButton = new javax.swing.JButton();
         connectButton = new javax.swing.JButton();
+        connectionProgressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Connect to a Server");
+        addWindowStateListener(new java.awt.event.WindowStateListener() {
+            public void windowStateChanged(java.awt.event.WindowEvent evt) {
+                formWindowStateChanged(evt);
+            }
+        });
 
         jLabel1.setText("Server Hostname:");
 
@@ -60,9 +67,12 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Key Pair");
 
-        keypairDropDown.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         manageKeysButton.setText("Manage Keys...");
+        manageKeysButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                manageKeysButtonActionPerformed(evt);
+            }
+        });
 
         connectButton.setText("Connect");
         connectButton.addActionListener(new java.awt.event.ActionListener() {
@@ -77,18 +87,21 @@ public class ConnectionFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hostnameDropDown, 0, 324, Short.MAX_VALUE)
-                    .addComponent(keypairDropDown, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(connectButton)
-                    .addComponent(manageKeysButton))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(connectionProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(hostnameDropDown, 0, 423, Short.MAX_VALUE)
+                            .addComponent(keypairDropDown, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(connectButton)
+                            .addComponent(manageKeysButton))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -103,6 +116,8 @@ public class ConnectionFrame extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(keypairDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(manageKeysButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(connectionProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -111,15 +126,45 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         String hostMeta = hostnameDropDown.getSelectedItem().toString();
-        String host = hostMeta.substring(0, hostMeta.indexOf(':'));
-        int port = Integer.parseInt(hostMeta.substring(hostMeta.indexOf(':')+1));
+        final String host = hostMeta.substring(0, hostMeta.indexOf(':'));
+        final int port = Integer.parseInt(hostMeta.substring(hostMeta.indexOf(':')+1));
         
+        final NamedKeyPair selectedKP = keyLoader.getLoadedKey(keypairDropDown.getSelectedItem().toString().trim());
         
+        final MCTConnectionManager conMan = new MCTConnectionManager(host, port, selectedKP.getPubKey(), selectedKP.getPrivateKey());
+        
+        connectionProgressBar.setIndeterminate(true);
+        try {
+            conMan.connect();
+        } catch (IOException ex) {
+            Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        connectionProgressBar.setIndeterminate(false);
+        
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                MetaViewerFrame metaViewer = new MetaViewerFrame(conMan);
+                metaViewer.setVisible(true);
+            }
+        });
         
         
         
         
     }//GEN-LAST:event_connectButtonActionPerformed
+
+    private void manageKeysButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageKeysButtonActionPerformed
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new ManageKeysFrame(keyLoader).setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_manageKeysButtonActionPerformed
+
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
+        updateKeyComboBox();
+    }//GEN-LAST:event_formWindowStateChanged
 
     /**
      * @param args the command line arguments
@@ -157,10 +202,18 @@ public class ConnectionFrame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton connectButton;
+    private javax.swing.JProgressBar connectionProgressBar;
     private javax.swing.JComboBox hostnameDropDown;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JComboBox keypairDropDown;
     private javax.swing.JButton manageKeysButton;
     // End of variables declaration//GEN-END:variables
+
+    private void updateKeyComboBox() {
+        keypairDropDown.removeAllItems();
+        for(NamedKeyPair pair : keyLoader.getLoadedPairs()) {
+            keypairDropDown.addItem(pair.getName());
+        }
+    }
 }

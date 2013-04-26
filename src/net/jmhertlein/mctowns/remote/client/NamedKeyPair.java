@@ -2,6 +2,7 @@ package net.jmhertlein.mctowns.remote.client;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import sun.misc.BASE64Encoder;
 
 /**
  *
@@ -28,6 +29,14 @@ public class NamedKeyPair {
 
     public PrivateKey getPrivateKey() {
         return privateKey;
+    }
+    
+    public String getPublicEncoded() {
+        return new BASE64Encoder().encode(pubKey.getEncoded());
+    }
+    
+    public String getPrivateEncoded() {
+        return new BASE64Encoder().encode(privateKey.getEncoded());
     }
     
     

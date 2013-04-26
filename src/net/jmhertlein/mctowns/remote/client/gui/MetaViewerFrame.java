@@ -18,6 +18,8 @@ public class MetaViewerFrame extends javax.swing.JFrame {
     public MetaViewerFrame(MCTConnectionManager connection) {
         initComponents();
         this.connection = connection;
+        
+        
     }
 
     /**
