@@ -21,56 +21,72 @@ import net.jmhertlein.core.crypto.RSACipherOutputStream;
  * @author joshua
  */
 public class MCTConnectionManager {
+
     private String hostname;
     private int port;
-    
     private Socket s;
     private PrivateKey privateKey;
-    private PublicKey pubKey;
+    private ObjectOutputStream oos;
+    private ObjectInputStream ois;
+    private RSACipherInputStream cis;
+    private RSACipherOutputStream cos;
+    
+    private PublicKey serverPubKey;
 
-    public MCTConnectionManager(String hostname, int port, PublicKey pubKey, PrivateKey privateKey) {
+    public MCTConnectionManager(String hostname, int port, PrivateKey privateKey) {
         this.hostname = hostname;
         this.port = port;
         s = null;
         this.privateKey = privateKey;
-        this.pubKey = pubKey;
+        this.serverPubKey = null;
     }
-    
+
     public void connect() throws IOException, UnknownHostException {
         s = new Socket(hostname, port);
     }
-    
+
     public void disconnect() throws IOException {
         s.close();
     }
-    
+
     public ObjectOutputStream getOutputStream() throws IOException {
-        return new ObjectOutputStream(s.getOutputStream());
+        if (oos == null) {
+            oos = new ObjectOutputStream(s.getOutputStream());
+        }
+        return oos;
     }
-    
+
     public ObjectInputStream getInputStream() throws IOException {
-        return new ObjectInputStream(s.getInputStream());
+        if (ois == null) {
+            ois = new ObjectInputStream(s.getInputStream());
+        }
+        return ois;
     }
-    
+
     public RSACipherInputStream getEncryptedInputStream() throws IOException, InvalidKeyException {
+        if (cis == null)
+            try {
+                cis = new RSACipherInputStream(s.getInputStream(), privateKey);
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
+                Logger.getLogger(MCTConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        return cis;
+    }
+
+    public RSACipherOutputStream getEncryptedOutputStream(PublicKey serverPubKey) throws IOException, InvalidKeyException {
+        if(cos == null)
         try {
-            return new RSACipherInputStream(s.getInputStream(), privateKey);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(MCTConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
+            cos = new RSACipherOutputStream(s.getOutputStream(), serverPubKey);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
             Logger.getLogger(MCTConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return cos;
+    }
+
+    public PublicKey getServerPubKey() {
+        return serverPubKey;
     }
     
-    public RSACipherOutputStream getEncryptedOutputStream() throws IOException, InvalidKeyException {
-        try {
-            return new RSACipherOutputStream(s.getOutputStream(), pubKey);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(MCTConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(MCTConnectionManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
+    
 }
