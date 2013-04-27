@@ -54,8 +54,16 @@ public class HandleRemoteClientTask implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Hanling client.");
+        
+        System.out.println("Sending pubkey...");
         sendPubKey();
+        System.out.println("Pubkey sent.");
+        
+        System.out.println("Waiting for client username...");
         receiveClientUserName();
+        System.out.println("Got client username.");
+        
         if(!authenticateClient()) {
             try { //tell the user we are rejecting their auth response
                 new ObjectOutputStream(client.getOutputStream()).writeObject(false);

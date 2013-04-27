@@ -8,6 +8,7 @@ import java.security.KeyPair;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import net.jmhertlein.core.crypto.CryptoManager;
 import net.jmhertlein.mctowns.remote.client.KeyLoader;
@@ -18,15 +19,16 @@ import net.jmhertlein.mctowns.remote.client.NamedKeyPair;
  * @author joshua
  */
 public class ManageKeysFrame extends javax.swing.JFrame {
-
+    private JFrame parentFrame;
     private final KeyLoader keyLoader;
 
     /**
      * Creates new form ManageKeysFrame
      */
-    public ManageKeysFrame(KeyLoader keyLoader) {
+    public ManageKeysFrame(KeyLoader keyLoader, JFrame parentFrame) {
         initComponents();
         this.keyLoader = keyLoader;
+        this.parentFrame = parentFrame;
         updateKeyComboBox();
         
         this.genKeyPane.setVisible(false);
@@ -61,6 +63,12 @@ public class ManageKeysFrame extends javax.swing.JFrame {
         lockDeletionCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Manage Keys");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         keyPairComboBox.setToolTipText("");
         keyPairComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -203,8 +211,11 @@ public class ManageKeysFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void keyPairComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyPairComboBoxActionPerformed
-        if (keyPairComboBox.getSelectedItem() == null)
+        if (keyPairComboBox.getSelectedItem() == null) {
+            pubKeyArea.setText("");
+            privateKeyArea.setText("");
             return;
+        }
 
         String selectedPairName = keyPairComboBox.getSelectedItem().toString();
 
@@ -231,6 +242,9 @@ public class ManageKeysFrame extends javax.swing.JFrame {
         
         if(label.isEmpty()) {
             newPairLabelField.setText("Name required.");
+            return;
+        } else if(label.equals("servers")) {
+            newPairLabelField.setText("Invalid name.");
             return;
         }
 
@@ -278,6 +292,10 @@ public class ManageKeysFrame extends javax.swing.JFrame {
         keyLoader.deleteKey(selectedKey.toString());
         updateKeyComboBox();
     }//GEN-LAST:event_deleteKeyButtonActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        parentFrame.setVisible(true);
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteKeyButton;

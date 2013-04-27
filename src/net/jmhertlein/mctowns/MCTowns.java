@@ -7,6 +7,7 @@ import java.util.ArrayDeque;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.command.ActiveSet;
@@ -19,6 +20,7 @@ import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.listeners.MCTPvPListener;
 import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
 import net.jmhertlein.mctowns.permission.Perms;
+import net.jmhertlein.mctowns.remote.RemoteConnectionServer;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.mctowns.util.metrics.Metrics;
@@ -38,10 +40,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MCTowns extends JavaPlugin {
     public static final Logger log = Logger.getLogger("Minecraft");
-    private static final String MCT_DATA_FOLDER = "plugins" + File.separator + "MCTowns";
-    private static final String TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.mct";
-    private static final String BACKUP_TOWN_DATABASE_SAVE_PATH = MCT_DATA_FOLDER + File.separator + "MCTownsExternalTownDatabase.bak";
-    private static final String MCT_TEXT_CONFIG_PATH = MCT_DATA_FOLDER + File.separator + "config.txt";
+    private static final String MCT_TEXT_CONFIG_PATH = "plugins" + File.separator + "MCTowns" + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
     private TownJoinManager joinManager;
@@ -51,6 +50,8 @@ public class MCTowns extends JavaPlugin {
     private static Config options;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
     private boolean abortSave;
+    
+    private Set<File> dataDirs;
 
     /**
      * Persist any data that needs to be persisted.
@@ -114,6 +115,8 @@ public class MCTowns extends JavaPlugin {
         abortSave = false;
 
         startMetricsCollection();
+        
+        startRemoteServer();
 
         log.info("MCTowns is now fully loaded.");
 
@@ -124,7 +127,7 @@ public class MCTowns extends JavaPlugin {
         ArrayDeque<File> dirs = new ArrayDeque<>();
 
         //add dirs in descending path order
-        dirs.add(new File(MCT_DATA_FOLDER));
+        dirs.add(this.getDataFolder());
 
         //add files
         files.add(new File(MCT_TEXT_CONFIG_PATH));
@@ -152,7 +155,7 @@ public class MCTowns extends JavaPlugin {
 
     private void setupTownManager() {
         try {
-            townManager = TownManager.readYAML(MCT_DATA_FOLDER);
+            townManager = TownManager.readYAML(this.getDataFolder().getPath());
         } catch (IOException | InvalidConfigurationException ex) {
             log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
@@ -207,7 +210,7 @@ public class MCTowns extends JavaPlugin {
 
     private void persistTownManager() {
         try {
-            townManager.writeYAML(MCT_DATA_FOLDER);
+            townManager.writeYAML(this.getDataFolder().getPath());
         } catch (IOException ex) {
             MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
             ex.printStackTrace();
@@ -231,7 +234,7 @@ public class MCTowns extends JavaPlugin {
     }
     
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
-        File root = new File(MCT_DATA_FOLDER);
+        File root = this.getDataFolder();
         File meta = new File(root, ".meta.yml");
         FileConfiguration f = new YamlConfiguration();
         f.load(meta);
@@ -335,5 +338,17 @@ public class MCTowns extends JavaPlugin {
     
     public static boolean isDebugging() {
         return DEBUGGING;
+    }
+
+    private void startRemoteServer() {
+        RemoteConnectionServer s;
+        try {
+            s = new RemoteConnectionServer(this, new File(this.getDataFolder(), "auth_keys"));
+        } catch (IOException ex) {
+            Logger.getLogger(MCTowns.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+        
+        s.start();
     }
 }

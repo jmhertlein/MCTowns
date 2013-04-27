@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jmhertlein.core.crypto.CryptoManager;
 import org.bukkit.plugin.Plugin;
 
@@ -42,7 +45,7 @@ public class RemoteConnectionServer extends Thread {
         cMan = new CryptoManager();
         this.p = p;
         
-        privateKey = cMan.loadPrivateKey(p.getConfig().getString("serverPrivateKey"));
+        loadServerKeys();
         
     }
 
@@ -51,7 +54,9 @@ public class RemoteConnectionServer extends Thread {
         while(!done) {
             Socket client;
             try {
+                System.out.println("Listening on port.");
                 client = server.accept();
+                System.out.println("Got new client.");
             } catch (IOException ex) {
                 System.err.println("Error accepting client connection: " + ex);
                 System.err.println("Bad connection or server socket closing.");
@@ -59,6 +64,7 @@ public class RemoteConnectionServer extends Thread {
             }
             
             threadPool.submit(new HandleRemoteClientTask(cMan, privateKey, pubKey, authKeysDir, client));
+            System.out.println("Submitted client to thread pool.");
         }
     }
     
@@ -72,6 +78,61 @@ public class RemoteConnectionServer extends Thread {
             while(!threadPool.awaitTermination(30, TimeUnit.SECONDS)) {}
         } catch (InterruptedException ignore) {}
         System.out.println("Closed cleanly.");
+    }
+    
+    public static void main(String[] args) {
+        RemoteConnectionServer s;
+        
+        try {
+            s = new RemoteConnectionServer(null, new File("mct_auth_keys"));
+        } catch (IOException ex) {
+            Logger.getLogger(RemoteConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+        
+        System.out.println("Starting server...");
+        s.start();
+    }
+
+    private void loadServerKeys() throws IOException {
+        File keysDir = new File(p.getDataFolder(), "rsa_keys");
+        keysDir.mkdirs();
+        
+        File pubKeyFile = new File(keysDir, "server.pub"),
+                privKeyFile = new File(keysDir, "server.private");
+        
+        boolean regenKeys = false;
+        
+        if(!pubKeyFile.exists()) {
+            System.err.println("Error loading pubkey. Will generate new keypair.");
+            pubKeyFile.createNewFile();
+            regenKeys = true;
+        }
+        
+        if(!privKeyFile.exists()) {
+            System.err.println("Error loading private key. Will generate new keypair.");
+            privKeyFile.createNewFile();
+            regenKeys = true;
+        }
+        
+        if(regenKeys) {
+            int length = p.getConfig().getInt("rsaKeyPairLength");
+            System.out.println("Generating new key pair of length " + length + ", this may take a moment.");
+            KeyPair pair = CryptoManager.newRSAKeyPair(length);
+            System.out.println("New key pair generated.");
+            
+            cMan.storeKey(pubKeyFile, pair.getPublic());
+            cMan.storeKey(privKeyFile, pair.getPrivate());
+            this.privateKey = pair.getPrivate();
+            this.pubKey = pair.getPublic();
+        } else {
+            System.out.println("Loading keys from disk.");
+            this.pubKey = cMan.loadPubKey(pubKeyFile);
+            this.privateKey = cMan.loadPrivateKey(privKeyFile);
+            System.out.println("Keys loaded from disk.");
+        }
+        
+        System.out.println("Done loading server keys.");
     }
     
     
