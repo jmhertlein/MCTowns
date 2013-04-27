@@ -1,6 +1,8 @@
 package net.jmhertlein.mctowns.remote.client;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,7 +33,7 @@ public class KeyLoader {
     public Collection<NamedKeyPair> getLoadedPairs() {
         return loadedPairs.values();
     }
-    
+
     public NamedKeyPair getLoadedKey(String pairName) {
         return loadedPairs.get(pairName);
     }
@@ -41,8 +43,7 @@ public class KeyLoader {
         loadedPairs.put(pairName, new NamedKeyPair(
                 pairName,
                 cMan.loadPubKey(new File(keyDir, pairName + ".pub")),
-                cMan.loadPrivateKey(new File(keyDir, pairName + ".private"))
-                ));
+                cMan.loadPrivateKey(new File(keyDir, pairName + ".private"))));
     }
 
     public void dropKey(String pairName) {
@@ -52,14 +53,26 @@ public class KeyLoader {
     public boolean deleteKey(String pairName) {
         dropKey(pairName);
         File keyDir = new File(rootDir, pairName);
-        return keyDir.delete();
+        return deleteDir(keyDir);
     }
-    
+
     public void persistAndLoadNewKeyPair(String label, KeyPair newPair) {
         loadedPairs.put(label, new NamedKeyPair(label, newPair.getPublic(), newPair.getPrivate()));
         File keyDir = new File(rootDir, label);
-        
+
         cMan.storeKey(new File(keyDir, label + ".pub").getPath(), newPair.getPublic());
         cMan.storeKey(new File(keyDir, label + ".private").getPath(), newPair.getPrivate());
+    }
+
+    private boolean deleteDir(File f)  {
+        if (f.isDirectory()) {
+            for (File c : f.listFiles())
+                if(!deleteDir(c))
+                    return false;
+        }
+        if (!f.delete())
+            return false;
+        
+        return true;
     }
 }

@@ -29,8 +29,8 @@ public class ManageKeysFrame extends javax.swing.JFrame {
         this.keyLoader = keyLoader;
         updateKeyComboBox();
         
-        
-
+        this.genKeyPane.setVisible(false);
+        this.pack();
     }
 
     /**
@@ -56,7 +56,9 @@ public class ManageKeysFrame extends javax.swing.JFrame {
         pubKeyArea = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         privateKeyArea = new javax.swing.JTextArea();
-        jButton2 = new javax.swing.JButton();
+        genKeyPanelToggleButton = new javax.swing.JButton();
+        deleteKeyButton = new javax.swing.JButton();
+        lockDeletionCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -134,7 +136,28 @@ public class ManageKeysFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Private Key", jScrollPane3);
 
-        jButton2.setText("Generate Key...");
+        genKeyPanelToggleButton.setText("Generate Key...");
+        genKeyPanelToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genKeyPanelToggleButtonActionPerformed(evt);
+            }
+        });
+
+        deleteKeyButton.setText("Delete");
+        deleteKeyButton.setEnabled(false);
+        deleteKeyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteKeyButtonActionPerformed(evt);
+            }
+        });
+
+        lockDeletionCheckBox.setSelected(true);
+        lockDeletionCheckBox.setText("Lock Deletion");
+        lockDeletionCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lockDeletionCheckBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -143,18 +166,21 @@ public class ManageKeysFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTabbedPane1)
-                        .addContainerGap())
+                    .addComponent(jTabbedPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(genKeyPanelToggleButton)
+                            .addComponent(genKeyPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(keyPairComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton2)
-                            .addComponent(genKeyPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 304, Short.MAX_VALUE))))
+                                .addComponent(keyPairComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(deleteKeyButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lockDeletionCheckBox)))
+                        .addGap(0, 238, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,11 +188,13 @@ public class ManageKeysFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(keyPairComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel1)
+                    .addComponent(deleteKeyButton)
+                    .addComponent(lockDeletionCheckBox))
+                .addGap(7, 7, 7)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(genKeyPanelToggleButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(genKeyPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -200,7 +228,11 @@ public class ManageKeysFrame extends javax.swing.JFrame {
         genNewKeyPairButton.setEnabled(false);
         final String label = newPairLabelField.getText().trim();
         final int bits = Integer.parseInt(newPairSizeComboBox.getSelectedItem().toString());
-        System.out.println(bits);
+        
+        if(label.isEmpty()) {
+            newPairLabelField.setText("Name required.");
+            return;
+        }
 
         SwingWorker x = new SwingWorker() {
             @Override
@@ -225,10 +257,33 @@ public class ManageKeysFrame extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_genNewKeyPairButtonActionPerformed
+
+    private void genKeyPanelToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genKeyPanelToggleButtonActionPerformed
+        if(genKeyPane.isVisible())
+           genKeyPane.setVisible(false);
+        else
+            genKeyPane.setVisible(true);
+        this.pack();
+    }//GEN-LAST:event_genKeyPanelToggleButtonActionPerformed
+
+    private void lockDeletionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockDeletionCheckBoxActionPerformed
+        deleteKeyButton.setEnabled(!lockDeletionCheckBox.isSelected());
+    }//GEN-LAST:event_lockDeletionCheckBoxActionPerformed
+
+    private void deleteKeyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteKeyButtonActionPerformed
+        Object selectedKey = keyPairComboBox.getSelectedItem();
+        if(selectedKey == null)
+            return;
+        
+        keyLoader.deleteKey(selectedKey.toString());
+        updateKeyComboBox();
+    }//GEN-LAST:event_deleteKeyButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton deleteKeyButton;
     private javax.swing.JPanel genKeyPane;
+    private javax.swing.JButton genKeyPanelToggleButton;
     private javax.swing.JButton genNewKeyPairButton;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -237,6 +292,7 @@ public class ManageKeysFrame extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JProgressBar keyGenProgressBar;
     private javax.swing.JComboBox keyPairComboBox;
+    private javax.swing.JCheckBox lockDeletionCheckBox;
     private javax.swing.JTextField newPairLabelField;
     private javax.swing.JComboBox newPairSizeComboBox;
     private javax.swing.JTextArea privateKeyArea;
