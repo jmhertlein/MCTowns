@@ -274,11 +274,9 @@ public class Config implements Serializable {
      *
      * @throws IOException
      */
-    public static void resetConfigFileToDefault(String path) throws IOException {
+    public static void resetConfigFileToDefault(File f) throws IOException {
         FileOutputStream fos;
         PrintStream ps;
-
-        File f = new File(path);
         if (!f.exists()) {
             f.createNewFile();
         }

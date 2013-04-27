@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -39,6 +40,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author joshua
  */
 public class MCTowns extends JavaPlugin {
+
+    public static final String TOWNS_SAVE_DIR_NAME = "saves",
+            RSA_KEYS_DIR_NAME = "rsa_keys",
+            AUTH_KEYS_DIR_NAME = "auth_keys",
+            TEXT_CONFIG_FILE_NAME = "config.txt",
+            META_TOWN_YAML_FILE_NAME = ".meta.yml";
     public static final Logger log = Logger.getLogger("Minecraft");
     private static final String MCT_TEXT_CONFIG_PATH = "plugins" + File.separator + "MCTowns" + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
@@ -50,8 +57,7 @@ public class MCTowns extends JavaPlugin {
     private static Config options;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
     private boolean abortSave;
-    
-    private Set<File> dataDirs;
+    private Set<File> dataDirs, configFiles;
 
     /**
      * Persist any data that needs to be persisted.
@@ -63,7 +69,7 @@ public class MCTowns extends JavaPlugin {
         } catch (ProtectionDatabaseException ex) {
             logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
         }
-        
+
         if (!abortSave) {
             persistTownManager();
         } else {
@@ -115,7 +121,7 @@ public class MCTowns extends JavaPlugin {
         abortSave = false;
 
         startMetricsCollection();
-        
+
         startRemoteServer();
 
         log.info("MCTowns is now fully loaded.");
@@ -123,33 +129,29 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void checkFiles() {
-        ArrayDeque<File> files = new ArrayDeque<>();
-        ArrayDeque<File> dirs = new ArrayDeque<>();
+        dataDirs = new HashSet<>();
+        dataDirs.add(new File(this.getDataFolder(), RSA_KEYS_DIR_NAME));
+        dataDirs.add(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME));
+        dataDirs.add(new File(this.getDataFolder(), AUTH_KEYS_DIR_NAME));
 
-        //add dirs in descending path order
-        dirs.add(this.getDataFolder());
+        for (File f : dataDirs)
+            f.mkdirs();
 
-        //add files
-        files.add(new File(MCT_TEXT_CONFIG_PATH));
+        configFiles = new HashSet<>();
+        configFiles.add(new File(this.getDataFolder(), TEXT_CONFIG_FILE_NAME));
 
-        for (File dir : dirs) {
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-        }
-
-        for (File file : files) {
-            if (!file.exists()) {
+        for (File f : configFiles) {
+            if (!f.exists())
                 try {
-                    file.createNewFile();
-                    if (file.getPath().equals(MCT_TEXT_CONFIG_PATH)) {
-                        Config.resetConfigFileToDefault(MCT_TEXT_CONFIG_PATH);
+                    f.createNewFile();
+                    if (f.getName().equals(TEXT_CONFIG_FILE_NAME)) {
+                        Config.resetConfigFileToDefault(f);
                         log.log(Level.INFO, "Created a default config file.");
                     }
                 } catch (IOException ex) {
-                    log.log(Level.WARNING, "MCTowns: Unable to create necessary files. Will not save.");
+                    System.err.println("Error creating empty config file.");
+                    Logger.getLogger(MCTowns.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
         }
     }
 
@@ -232,27 +234,27 @@ public class MCTowns extends JavaPlugin {
         getCommand("territory").setExecutor(new TerritoryExecutor(this));
         getCommand("plot").setExecutor(new PlotExecutor(this));
     }
-    
+
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
         File root = this.getDataFolder();
-        File meta = new File(root, ".meta.yml");
-        FileConfiguration f = new YamlConfiguration();
-        f.load(meta);
-        
-        List<String> towns = f.getStringList("towns"),
-                     regions = f.getStringList("regions");
-        
-        for(String s : root.list()) {
-            if(s.equals(".meta.yml") || s.equals("config.txt"))
+        File meta = new File(root, META_TOWN_YAML_FILE_NAME);
+        FileConfiguration fileConfig = new YamlConfiguration();
+        fileConfig.load(meta);
+
+        List<String> towns = fileConfig.getStringList("towns"),
+                regions = fileConfig.getStringList("regions");
+
+        for (File f : root.listFiles()) {
+            if (f.getName().equals(META_TOWN_YAML_FILE_NAME) || dataDirs.contains(f) || configFiles.contains(f))
                 continue;
-            
-            String trunc = s.substring(0, s.lastIndexOf('.'));
-            
-            if(!(towns.contains(trunc) || regions.contains(trunc))) {
-                new File(root, s).delete();
+
+            String trunc = f.getName().substring(0, f.getName().lastIndexOf('.'));
+
+            if (!(towns.contains(trunc) || regions.contains(trunc))) {
+                f.delete();
             }
         }
-        
+
     }
 
     public static void logSevere(String msg) {
@@ -331,11 +333,11 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void saveWorldGuardWorlds() throws ProtectionDatabaseException {
-        for(World w : this.getServer().getWorlds()) {
+        for (World w : this.getServer().getWorlds()) {
             getWgp().getRegionManager(w).save();
         }
     }
-    
+
     public static boolean isDebugging() {
         return DEBUGGING;
     }
@@ -348,7 +350,7 @@ public class MCTowns extends JavaPlugin {
             Logger.getLogger(MCTowns.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
-        
+
         s.start();
     }
 }

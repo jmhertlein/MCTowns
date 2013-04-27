@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.core.crypto.CryptoManager;
+import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.plugin.Plugin;
 
 
@@ -95,8 +96,7 @@ public class RemoteConnectionServer extends Thread {
     }
 
     private void loadServerKeys() throws IOException {
-        File keysDir = new File(p.getDataFolder(), "rsa_keys");
-        keysDir.mkdirs();
+        File keysDir = new File(p.getDataFolder(), MCTowns.RSA_KEYS_DIR_NAME);
         
         File pubKeyFile = new File(keysDir, "server.pub"),
                 privKeyFile = new File(keysDir, "server.private");
