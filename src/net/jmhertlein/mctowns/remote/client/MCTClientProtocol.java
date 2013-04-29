@@ -51,10 +51,29 @@ public class MCTClientProtocol {
     private void exchangeKeys(RemoteAction action, ObjectOutputStream oos) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher inCipher = Cipher.getInstance("RSA");
         inCipher.init(Cipher.DECRYPT_MODE, clientPrivKey);
-        System.out.println("Creating encrypted input stream");
+        
         ObjectInputStream ois = new ObjectInputStream(server.getInputStream());
+        
         System.out.println("Receiving server pubkey.");
         serverPubKey = (PublicKey) ois.readObject();
+        
+        //server sends encrypted challenge
+        
+        //we decrypt it
+        
+        //send it back
+        
+        //check their approval
+        
+        //make our challenge
+        
+        //encrypt it with their pubkey
+        
+        //send it
+        
+        //receive their response
+        
+        //send our approval... or lack thereof
         
         System.out.println("Reading session key.");
         EncryptedSecretKey encryptedSessionKey = (EncryptedSecretKey) ois.readObject();
