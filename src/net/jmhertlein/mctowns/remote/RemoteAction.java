@@ -1,12 +1,14 @@
 package net.jmhertlein.mctowns.remote;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  *
  * @author joshua
  */
-public enum RemoteAction {
+public enum RemoteAction implements Serializable {
+    KEY_EXCHANGE,
+    HANDSHAKE,
     GET_TOWN_VIEW,
     GET_TERRITORY_VIEW,
     GET_PLOT_VIEW,
@@ -16,9 +18,15 @@ public enum RemoteAction {
     GET_META_VIEW,
     TERMINATE_CONNECTION;
     
-    private List<String> args;
-    
-    public void setArguments(List<String> args) {
+    private String[] args;
+
+    public String[] getArgs() {
+        return args;
+    }
+
+    public void setArgs(String[] args) {
         this.args = args;
     }
+    
+    
 }

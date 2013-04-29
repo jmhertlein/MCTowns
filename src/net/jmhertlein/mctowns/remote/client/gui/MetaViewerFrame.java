@@ -4,20 +4,17 @@
  */
 package net.jmhertlein.mctowns.remote.client.gui;
 
-import net.jmhertlein.mctowns.remote.client.MCTConnectionManager;
 
 /**
  *
  * @author joshua
  */
 public class MetaViewerFrame extends javax.swing.JFrame {
-    private MCTConnectionManager connection;
     /**
      * Creates new form MetaViewerFrame
      */
-    public MetaViewerFrame(MCTConnectionManager connection) {
+    public MetaViewerFrame() {
         initComponents();
-        this.connection = connection;
         
         
     }

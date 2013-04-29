@@ -21,7 +21,7 @@ import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.listeners.MCTPvPListener;
 import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
 import net.jmhertlein.mctowns.permission.Perms;
-import net.jmhertlein.mctowns.remote.RemoteConnectionServer;
+import net.jmhertlein.mctowns.remote.server.RemoteConnectionServer;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.mctowns.util.metrics.Metrics;
@@ -129,6 +129,7 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void checkFiles() {
+        this.saveDefaultConfig();
         dataDirs = new HashSet<>();
         dataDirs.add(new File(this.getDataFolder(), RSA_KEYS_DIR_NAME));
         dataDirs.add(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME));
@@ -139,6 +140,7 @@ public class MCTowns extends JavaPlugin {
 
         configFiles = new HashSet<>();
         configFiles.add(new File(this.getDataFolder(), TEXT_CONFIG_FILE_NAME));
+        configFiles.add(new File(this.getDataFolder(),"config.yml"));
 
         for (File f : configFiles) {
             if (!f.exists())
@@ -203,6 +205,7 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void loadConfig() {
+        saveDefaultConfig();
         options = new Config(MCT_TEXT_CONFIG_PATH);
 
         if (options.badConfig()) {

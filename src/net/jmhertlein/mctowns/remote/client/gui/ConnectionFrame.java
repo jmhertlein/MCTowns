@@ -5,17 +5,15 @@
 package net.jmhertlein.mctowns.remote.client.gui;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
+import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.client.KeyLoader;
-import net.jmhertlein.mctowns.remote.client.MCTConnectionManager;
+import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
 import net.jmhertlein.mctowns.remote.client.NamedKeyPair;
 import sun.misc.BASE64Encoder;
 
@@ -258,35 +256,14 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
         final NamedKeyPair selectedKP = keyLoader.getLoadedKey(keypairDropDown.getSelectedItem().toString().trim());
 
-        final MCTConnectionManager conMan = new MCTConnectionManager(host, port, selectedKP.getPrivateKey());
-
         connectionProgressBar.setIndeterminate(true);
 
         SwingWorker x = new SwingWorker() {
             @Override
             protected Boolean doInBackground() throws Exception {
-                try {
-                    conMan.connect();
-                    
-                    PublicKey serverPublicKey = (PublicKey) conMan.getInputStream().readObject();
-                    
-                    //TODO: Check received pubkey against cached key
-                    keyLoader.addAndPersistServerPublicKey(host, serverPublicKey);
-                    
-                    ObjectOutputStream encryptedOut = new ObjectOutputStream(conMan.getEncryptedOutputStream(serverPublicKey));
-                    
-                    encryptedOut.writeObject(username);
-                    
-                    
-                } catch(UnknownHostException uhe) {
-                    conStatusField.setText("Unknown host.");
-                    return false;
-                } catch (IOException ex) {
-                    //Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    conStatusField.setText(ex.getLocalizedMessage());
-                    return false;
-                }
+                MCTClientProtocol protocol = new MCTClientProtocol(host, port, username, selectedKP.getPubKey(), selectedKP.getPrivateKey());
                 
+                protocol.submitAction(RemoteAction.KEY_EXCHANGE);
                 return true;
             }
 

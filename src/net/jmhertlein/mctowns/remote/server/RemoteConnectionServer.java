@@ -1,17 +1,21 @@
-package net.jmhertlein.mctowns.remote;
+package net.jmhertlein.mctowns.remote.server;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.crypto.SecretKey;
 import net.jmhertlein.core.crypto.CryptoManager;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.plugin.Plugin;
@@ -22,7 +26,6 @@ import org.bukkit.plugin.Plugin;
  * @author joshua
  */
 public class RemoteConnectionServer extends Thread {
-    public static final int NUM_THREADS = 2, SERVER_PORT = 3333;
     
     private File authKeysDir;
     private ExecutorService threadPool;
@@ -31,6 +34,7 @@ public class RemoteConnectionServer extends Thread {
     private CryptoManager cMan;
     private PrivateKey privateKey;
     private PublicKey pubKey;
+    private Map<String, SecretKey> sessionKeys;
     private Plugin p;
     
     /**
@@ -42,9 +46,10 @@ public class RemoteConnectionServer extends Thread {
         authKeysDir = authorizedKeysDirectory;
         threadPool = Executors.newCachedThreadPool();
         done = false;
-        server = new ServerSocket(SERVER_PORT);
+        server = new ServerSocket(p.getConfig().getInt("remoteAdminPort"));
         cMan = new CryptoManager();
         this.p = p;
+        sessionKeys = new ConcurrentHashMap<>();
         
         loadServerKeys();
         
@@ -64,7 +69,7 @@ public class RemoteConnectionServer extends Thread {
                 continue;
             }
             
-            threadPool.submit(new HandleRemoteClientTask(cMan, privateKey, pubKey, authKeysDir, client));
+            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessionKeys));
             System.out.println("Submitted client to thread pool.");
         }
     }
@@ -79,20 +84,6 @@ public class RemoteConnectionServer extends Thread {
             while(!threadPool.awaitTermination(30, TimeUnit.SECONDS)) {}
         } catch (InterruptedException ignore) {}
         System.out.println("Closed cleanly.");
-    }
-    
-    public static void main(String[] args) {
-        RemoteConnectionServer s;
-        
-        try {
-            s = new RemoteConnectionServer(null, new File("mct_auth_keys"));
-        } catch (IOException ex) {
-            Logger.getLogger(RemoteConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
-            return;
-        }
-        
-        System.out.println("Starting server...");
-        s.start();
     }
 
     private void loadServerKeys() throws IOException {
@@ -116,7 +107,7 @@ public class RemoteConnectionServer extends Thread {
         }
         
         if(regenKeys) {
-            int length = p.getConfig().getInt("rsaKeyPairLength");
+            int length = p.getConfig().getInt("remoteAdminKeyLength");
             System.out.println("Generating new key pair of length " + length + ", this may take a moment.");
             KeyPair pair = CryptoManager.newRSAKeyPair(length);
             System.out.println("New key pair generated.");
