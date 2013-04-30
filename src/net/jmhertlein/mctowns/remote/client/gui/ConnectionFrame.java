@@ -5,13 +5,25 @@
 package net.jmhertlein.mctowns.remote.client.gui;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.swing.PopupFactory;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import net.jmhertlein.mctowns.remote.AuthenticationAttemptRejectedException;
 import net.jmhertlein.mctowns.remote.RemoteAction;
+import net.jmhertlein.mctowns.remote.ServerTrustException;
+import net.jmhertlein.mctowns.remote.client.KeyExchangeFailReason;
 import net.jmhertlein.mctowns.remote.client.KeyLoader;
 import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
 import net.jmhertlein.mctowns.remote.client.NamedKeyPair;
@@ -22,6 +34,22 @@ import sun.misc.BASE64Encoder;
  * @author joshua
  */
 public class ConnectionFrame extends javax.swing.JFrame {
+    private static final String SERVER_FAIL_CHALLENGE_MESSAGE = "The server presented the expected public key, but was unable to pass our authentication challenge.\n"
+            + ". This may be because:\n" + 
+            "* The server operator re-created the server's encryption keys. (Unlikely to cause this error.)\n" +
+            "* You are being redirected to a potentially malicious server (Man-In-The-Middle Attack). (MUCH MORE LIKELY)\n" + 
+            "No security breach has occurred, but this is a very serious security concern. You should not connect to this server.\n"
+            + "If you want to continue connecting anyway, please clear the server's cached public key\n"
+            + "under the \"Advanced\" button.",
+            
+            
+            SERVER_KEY_MISMATCH_MESSAGE = "The server's identity has changed. This may be because:\n" + 
+            "* The server operator re-created the server's encryption keys.\n" +
+            "* You are being redirected to a potentially malicious server (Man-In-The-Middle Attack).\n" + 
+            "No security breach has occurred. You should contact the server operator and\n"
+            + "ask them if this is expected.\n"
+            + "If you want to continue connecting anyway, please clear the server's cached public key\n"
+            + "under the \"Advanced\" button.";
 
     private KeyLoader keyLoader;
     private File rootKeysDir;
@@ -260,26 +288,54 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
         SwingWorker x = new SwingWorker() {
             @Override
-            protected Boolean doInBackground() throws Exception {
-                MCTClientProtocol protocol = new MCTClientProtocol(host, port, username, selectedKP.getPubKey(), selectedKP.getPrivateKey());
+            protected KeyExchangeFailReason doInBackground() {
+                MCTClientProtocol protocol = new MCTClientProtocol(host, port, keyLoader, username, selectedKP.getPubKey(), selectedKP.getPrivateKey());
+                try {
+                    protocol.submitAction(RemoteAction.KEY_EXCHANGE);
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+                    Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
+                } catch(AuthenticationAttemptRejectedException ex) {
+                    return KeyExchangeFailReason.CLIENT_FAILED_SERVER_CHALLENGE;
+                } catch(ServerTrustException ex) {
+                    return ex.getReason();
+                }
                 
-                protocol.submitAction(RemoteAction.KEY_EXCHANGE);
-                return true;
+                return KeyExchangeFailReason.NO_FAILURE;
             }
 
             @Override
             protected void done() {
                 connectionProgressBar.setIndeterminate(false);
-                Boolean connected;
+                KeyExchangeFailReason failReason;
                 try {
-                    connected = (Boolean) get();
+                    failReason = (KeyExchangeFailReason) get();
                 } catch (        InterruptedException | ExecutionException ex) {
                     Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    connected = false;
+                    failReason = null;
                 }
-                
-                if(connected) {
-                    conStatusField.setText("Connected.");
+                if(failReason == null) {
+                    conStatusField.setText("Unknown error.");
+                    return;
+                }
+                switch(failReason) {
+                    case CLIENT_FAILED_SERVER_CHALLENGE:
+                        conStatusField.setText("Failed server authentication challenge.");
+                        break;
+                    case SERVER_FAILED_CLIENT_CHALLENGE:
+                        conStatusField.setText("Server failed our authentication challenge.");
+                        JOptionPane.showMessageDialog(null, SERVER_FAIL_CHALLENGE_MESSAGE, "Possible Security Issue", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case SERVER_PUBLIC_KEY_MISMATCH:
+                        conStatusField.setText("Server public key does not match cached key.");
+                        JOptionPane.showMessageDialog(null, SERVER_KEY_MISMATCH_MESSAGE, "Possible Security Issue", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case NO_FAILURE:
+                        conStatusField.setText("Connection successful.");
+                        break;
                 }
             }
             

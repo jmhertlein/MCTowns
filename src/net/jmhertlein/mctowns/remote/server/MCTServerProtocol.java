@@ -6,17 +6,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -31,7 +26,7 @@ import org.bukkit.plugin.Plugin;
  * @author joshua
  */
 public class MCTServerProtocol {
-    private static final int NUM_CHECK_BYTES = 500;
+    private static final int NUM_CHECK_BYTES = 100;
     private Socket client;
     private File authKeysDir;
     private CryptoManager cMan;
@@ -51,62 +46,72 @@ public class MCTServerProtocol {
         this.p = p;
     }
 
-    private boolean exchangeKeys(String username, ObjectInputStream ois) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    private boolean exchangeKeys(ObjectInputStream ois) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         System.out.println("Loading client key from disk.");
-        PublicKey clientKey = cMan.loadPubKey(new File(authKeysDir, username + ".pub"));
-
-        if (clientKey == null) {
-            System.out.println("Didnt have public key for user. Exiting.");
-            return false;
-        }
-        Cipher outCipher = Cipher.getInstance("RSA");
-        outCipher.init(Cipher.ENCRYPT_MODE, clientKey);
+        PublicKey clientKey = cMan.loadPubKey(new File(authKeysDir, clientName + ".pub"));
 
         ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+        
+        if (clientKey == null) {
+            System.out.println("Didnt have public key for user. Exiting.");
+            oos.writeObject(false);
+            return false;
+        } else
+            oos.writeObject(true);
+        
+        //init ciphers
+        Cipher outCipher = Cipher.getInstance("RSA");
+        outCipher.init(Cipher.ENCRYPT_MODE, clientKey);
+        
+        Cipher inCipher = Cipher.getInstance("RSA");
+        inCipher.init(Cipher.DECRYPT_MODE, serverPrivateKey);
+        
         System.out.println("Sending our public key.");
         oos.writeObject(serverPubKey);
         
+        Boolean clientAcceptsPublicKey = (Boolean) ois.readObject();
+        
+        if(!clientAcceptsPublicKey) {
+            System.out.println("Client did not accept our public key- did not match their cached copy.");
+            return false;
+        }
+        
         //send client auth challenge
         AuthenticationChallenge originalChallenge = new AuthenticationChallenge(NUM_CHECK_BYTES);
-        originalChallenge.encrypt(outCipher);
-        oos.writeObject(originalChallenge);
+        oos.writeObject(originalChallenge.encrypt(outCipher));
         
         AuthenticationChallenge clientResponse = (AuthenticationChallenge) ois.readObject();
+        clientResponse = clientResponse.decrypt(inCipher);
         
-        if(clientResponse.equals(originalChallenge))
+        if(clientResponse.equals(originalChallenge)) {
             oos.writeObject(true);
-        else {
+            System.out.println("Accepting client challenge response.");
+        } else {
             oos.writeObject(false);
+            System.out.println("Rejecting client challenge response.");
             return false;
         }
         
         AuthenticationChallenge clientChallenge = (AuthenticationChallenge) ois.readObject();
-        Cipher inCipher = Cipher.getInstance("RSA");
-        inCipher.init(Cipher.DECRYPT_MODE, serverPrivateKey);
-        clientChallenge.decrypt(inCipher);
-        
-        oos.writeObject(clientChallenge);
+        oos.writeObject(clientChallenge.decrypt(inCipher).encrypt(outCipher));
         
         Boolean clientAcceptsUs = (Boolean) ois.readObject();
         
         if(!clientAcceptsUs) {
             System.out.println("Client did not accept us as server they wanted to connect to.");
             return false;
-        }
-        
+        } else
+            System.out.println("Client accepts us.");
 
         System.out.println("Making new session key.");
         SecretKey newKey = CryptoManager.newAESKey(p.getConfig().getInt("remoteAdminSessionKeyLength"));
         System.out.println("Session key made.");
 
-
-
-
         System.out.println("Writing key...");
         oos.writeObject(new EncryptedSecretKey(newKey, outCipher));
         System.out.println("Wrote key.");
         
-        sessionKeys.put(username, newKey);
+        sessionKeys.put(clientName, newKey);
 
         System.out.println("Done handling client.");
         return true;
@@ -120,11 +125,12 @@ public class MCTServerProtocol {
         RemoteAction clientAction = (RemoteAction) ois.readObject();
         System.out.println("Getting username.");
         String username = (String) ois.readObject();
+        clientName = username;
 
         System.out.println("Handling action.");
         switch (clientAction) {
             case KEY_EXCHANGE:
-                if (!exchangeKeys(username, ois))
+                if (!exchangeKeys(ois))
                     System.err.println("Username " + username + " tried to connect, but was not authorized.");
                 break;
         }

@@ -18,12 +18,20 @@ public class AuthenticationChallenge implements Serializable {
         new SecureRandom().nextBytes(challenge);
     }
     
-    public void encrypt(Cipher c) throws IllegalBlockSizeException, BadPaddingException {
-        challenge = c.doFinal(challenge);
+    private AuthenticationChallenge() {}
+    
+    public AuthenticationChallenge encrypt(Cipher c) throws IllegalBlockSizeException, BadPaddingException {
+        AuthenticationChallenge ret = new AuthenticationChallenge();
+        ret.challenge = c.doFinal(challenge);
+        
+        return ret;
     }
     
-    public void decrypt(Cipher c) throws IllegalBlockSizeException, BadPaddingException {
-        challenge = c.doFinal(challenge);
+    public AuthenticationChallenge decrypt(Cipher c) throws IllegalBlockSizeException, BadPaddingException {
+        AuthenticationChallenge ret = new AuthenticationChallenge();
+        ret.challenge = c.doFinal(challenge);
+        
+        return ret;
     }
 
     @Override
