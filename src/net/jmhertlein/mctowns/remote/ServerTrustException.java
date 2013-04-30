@@ -1,19 +1,19 @@
 package net.jmhertlein.mctowns.remote;
 
-import net.jmhertlein.mctowns.remote.client.KeyExchangeFailReason;
+import net.jmhertlein.mctowns.remote.client.ActionFailReason;
 
 /**
  *
  * @author joshua
  */
 public class ServerTrustException extends Exception {
-    private KeyExchangeFailReason reason;
-    public ServerTrustException(KeyExchangeFailReason reason) {
+    private ActionFailReason reason;
+    public ServerTrustException(ActionFailReason reason) {
         super("Could not trust server.");
         this.reason = reason;
     }
 
-    public KeyExchangeFailReason getReason() {
+    public ActionFailReason getReason() {
         return reason;
     }
     

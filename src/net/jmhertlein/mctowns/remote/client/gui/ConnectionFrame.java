@@ -23,7 +23,7 @@ import javax.swing.SwingWorker;
 import net.jmhertlein.mctowns.remote.AuthenticationAttemptRejectedException;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.ServerTrustException;
-import net.jmhertlein.mctowns.remote.client.KeyExchangeFailReason;
+import net.jmhertlein.mctowns.remote.client.ActionFailReason;
 import net.jmhertlein.mctowns.remote.client.KeyLoader;
 import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
 import net.jmhertlein.mctowns.remote.client.NamedKeyPair;
@@ -279,31 +279,31 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
         SwingWorker x = new SwingWorker() {
             @Override
-            protected KeyExchangeFailReason doInBackground() {
+            protected ActionFailReason doInBackground() {
                 MCTClientProtocol protocol = new MCTClientProtocol(host, port, keyLoader, username, selectedKP.getPubKey(), selectedKP.getPrivateKey());
                 try {
                     protocol.submitAction(RemoteAction.KEY_EXCHANGE);
                 } catch (UnknownHostException ex) {
-                    Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    return ActionFailReason.UNKNOWN_HOST;
                 } catch (IOException ex) {
-                    Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    return ActionFailReason.CONNECTION_REFUSED;
                 } catch (ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
-                    Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    return ActionFailReason.FATAL_ERROR;
                 } catch(AuthenticationAttemptRejectedException ex) {
-                    return KeyExchangeFailReason.CLIENT_FAILED_SERVER_CHALLENGE;
+                    return ActionFailReason.CLIENT_FAILED_SERVER_CHALLENGE;
                 } catch(ServerTrustException ex) {
                     return ex.getReason();
                 }
                 
-                return KeyExchangeFailReason.NO_FAILURE;
+                return ActionFailReason.NO_FAILURE;
             }
 
             @Override
             protected void done() {
                 connectionProgressBar.setIndeterminate(false);
-                KeyExchangeFailReason failReason;
+                ActionFailReason failReason;
                 try {
-                    failReason = (KeyExchangeFailReason) get();
+                    failReason = (ActionFailReason) get();
                 } catch (        InterruptedException | ExecutionException ex) {
                     Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
                     failReason = null;
@@ -323,6 +323,15 @@ public class ConnectionFrame extends javax.swing.JFrame {
                     case SERVER_PUBLIC_KEY_MISMATCH:
                         conStatusField.setText("Server public key does not match cached key.");
                         JOptionPane.showMessageDialog(null, SERVER_KEY_MISMATCH_MESSAGE, "Possible Security Issue", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case CONNECTION_REFUSED:
+                        conStatusField.setText("Connection refused.");
+                        break;
+                    case FATAL_ERROR:
+                        conStatusField.setText("Unknown error.");
+                        break;
+                    case UNKNOWN_HOST:
+                        conStatusField.setText("Unknown host.");
                         break;
                     case NO_FAILURE:
                         conStatusField.setText("Connection successful.");
