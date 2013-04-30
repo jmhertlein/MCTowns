@@ -9,11 +9,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -29,7 +26,7 @@ import net.jmhertlein.mctowns.remote.ServerTrustException;
  * @author joshua
  */
 public class MCTClientProtocol {
-    public static final int CHALLENGE_LENGTH = 100;
+    public static final int CHALLENGE_LENGTH = 50;
     private String hostname;
     private int port;
     private String username;
@@ -63,7 +60,7 @@ public class MCTClientProtocol {
         
         ObjectInputStream ois = new ObjectInputStream(server.getInputStream());
         
-        Boolean usernameAccepted = (Boolean) ois.readObject(); //handle first-time connection- no cached key
+        Boolean usernameAccepted = (Boolean) ois.readObject();
         
         if(!usernameAccepted) {
             throw new AuthenticationAttemptRejectedException("Server rejected username.");

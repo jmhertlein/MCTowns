@@ -112,4 +112,8 @@ public class KeyLoader {
     public Collection<String> getListOfCachedServers() {
         return Collections.unmodifiableCollection(cachedServerKeys.keySet());
     }
+
+    public boolean keyExistsByName(String label) {
+        return loadedPairs.containsKey(label);
+    }
 }

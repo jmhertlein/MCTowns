@@ -26,7 +26,7 @@ import org.bukkit.plugin.Plugin;
  * @author joshua
  */
 public class MCTServerProtocol {
-    private static final int NUM_CHECK_BYTES = 100;
+    private static final int NUM_CHECK_BYTES = 50;
     private Socket client;
     private File authKeysDir;
     private CryptoManager cMan;

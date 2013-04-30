@@ -79,7 +79,7 @@ public class ManageKeysFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Key Pair");
 
-        jLabel3.setText("Key Pair Label:");
+        jLabel3.setText("Key Pair Username:");
 
         jLabel4.setText("Key Length (bits)");
 
@@ -178,7 +178,6 @@ public class ManageKeysFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(genKeyPanelToggleButton)
-                            .addComponent(genKeyPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -186,7 +185,8 @@ public class ManageKeysFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(deleteKeyButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lockDeletionCheckBox)))
+                                .addComponent(lockDeletionCheckBox))
+                            .addComponent(genKeyPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 238, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -235,19 +235,17 @@ public class ManageKeysFrame extends javax.swing.JFrame {
     }
     
     private void genNewKeyPairButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genNewKeyPairButtonActionPerformed
-        keyGenProgressBar.setIndeterminate(true);
-        genNewKeyPairButton.setEnabled(false);
         final String label = newPairLabelField.getText().trim();
         final int bits = Integer.parseInt(newPairSizeComboBox.getSelectedItem().toString());
         
         if(label.isEmpty()) {
             newPairLabelField.setText("Name required.");
             return;
-        } else if(label.equals("servers")) {
+        } else if(label.equals("servers") || keyLoader.keyExistsByName(label)) {
             newPairLabelField.setText("Invalid name.");
             return;
         }
-
+        
         SwingWorker x = new SwingWorker() {
             @Override
             protected KeyPair doInBackground() throws Exception {
@@ -267,6 +265,8 @@ public class ManageKeysFrame extends javax.swing.JFrame {
             }
         };
         
+        keyGenProgressBar.setIndeterminate(true);
+        genNewKeyPairButton.setEnabled(false);
         x.execute();
 
 

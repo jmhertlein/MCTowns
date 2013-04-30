@@ -87,7 +87,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         hostnameDropDown = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        keypairDropDown = new javax.swing.JComboBox();
+        keyPairDropDown = new javax.swing.JComboBox();
         manageKeysButton = new javax.swing.JButton();
         connectButton = new javax.swing.JButton();
         connectionProgressBar = new javax.swing.JProgressBar();
@@ -100,8 +100,6 @@ public class ConnectionFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         connectionStatusLabel = new javax.swing.JLabel();
         conStatusField = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        usernameField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Connect to a Server");
@@ -127,7 +125,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Key Pair");
+        jLabel2.setText("Identity:");
 
         manageKeysButton.setText("Manage Keys...");
         manageKeysButton.addActionListener(new java.awt.event.ActionListener() {
@@ -187,8 +185,6 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
         conStatusField.setEditable(false);
 
-        jLabel5.setText("Username:");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -196,38 +192,31 @@ public class ConnectionFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(connectionProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(advancedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(connectionStatusLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(conStatusField))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(hostnameDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(hostnameDropDown, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(connectionProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(advancedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(connectionStatusLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(conStatusField)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(advancedButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(manageKeysButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(connectButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(usernameField)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(keypairDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(keyPairDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(advancedButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(manageKeysButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(connectButton)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,22 +229,21 @@ public class ConnectionFrame extends javax.swing.JFrame {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(keypairDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(keyPairDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(connectButton)
+                        .addComponent(advancedButton)
+                        .addComponent(manageKeysButton)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(connectButton)
-                    .addComponent(manageKeysButton)
-                    .addComponent(advancedButton)
                     .addComponent(conStatusField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(connectionStatusLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(connectionProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(advancedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
@@ -263,13 +251,8 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         Object selected = hostnameDropDown.getSelectedItem();
-        if(selected == null)
-            return;
-        
-        final String username = usernameField.getText().trim();
-        
-        if(username.isEmpty()) {
-            conStatusField.setText("Username required.");
+        if(selected == null) {
+            conStatusField.setText("Must specify hostname.");
             return;
         }
         
@@ -278,11 +261,19 @@ public class ConnectionFrame extends javax.swing.JFrame {
         try {
             port = Integer.parseInt(portField.getText());
         } catch(NumberFormatException nfe) {
-            portField.setText("Bad Port: \"" + portField.getText() + "\"");
+            conStatusField.setText("Bad Port: \"" + portField.getText() + "\"");
+            return;
+        }
+        
+        Object selectedKPObject = keyPairDropDown.getSelectedItem();
+        if(selectedKPObject == null) {
+            conStatusField.setText("Must select identity.");
             return;
         }
 
-        final NamedKeyPair selectedKP = keyLoader.getLoadedKey(keypairDropDown.getSelectedItem().toString().trim());
+        final NamedKeyPair selectedKP = keyLoader.getLoadedKey(keyPairDropDown.getSelectedItem().toString().trim());
+        
+        final String username = selectedKP.getName();
 
         connectionProgressBar.setIndeterminate(true);
 
@@ -432,19 +423,17 @@ public class ConnectionFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox keypairDropDown;
+    private javax.swing.JComboBox keyPairDropDown;
     private javax.swing.JButton manageKeysButton;
     private javax.swing.JTextField portField;
     private javax.swing.JTextArea serverPubKeyArea;
-    private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
 
     private void updateKeyComboBox() {
-        keypairDropDown.removeAllItems();
+        keyPairDropDown.removeAllItems();
         for (NamedKeyPair pair : keyLoader.getLoadedPairs()) {
-            keypairDropDown.addItem(pair.getName());
+            keyPairDropDown.addItem(pair.getName());
         }
     }
 
