@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.jmhertlein.mctowns.structure.unmodifiable.UnmodifiablePlot;
+import net.jmhertlein.mctowns.structure.unmodifiable.UnmodifiableTerritory;
+import net.jmhertlein.mctowns.structure.unmodifiable.UnmodifiableTown;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -161,7 +164,7 @@ public class SQLManager {
         //update town
         PreparedStatement s = c.prepareStatement(
                 "UPDATE Town "
-                + "SET defaultPlotPrice = ?, friendlyFire = ?, motdColor = ?, motd = ?, spawnLoc = ?, buyablePlots = ?, economyJoins = ? "
+                + "SET mayorName = ?, defaultPlotPrice = ?, friendlyFire = ?, motdColor = ?, motd = ?, spawnLoc = ?, buyablePlots = ?, economyJoins = ? "
                 + "WHERE townName = ?");
         statements.put(SQLAction.UPDATE_TOWN, s);
 
@@ -306,21 +309,27 @@ public class SQLManager {
         s = c.prepareStatement("INSERT INTO Town2 VALUES (?, ?)");
         statements.put(SQLAction.ADD_ASSISTANT_TO_TOWN, s);
 
+        s = c.prepareStatement("DELETE FROM Town3 WHERE townName = ? AND residentName = ?");
+        statements.put(SQLAction.REMOVE_PLAYER_FROM_TOWN, s);
+
+        s = c.prepareStatement("DELETE FROM Town2 WHERE townName = ? AND assistantName = ?");
+        statements.put(SQLAction.REMOVE_ASSISTANT_FROM_TOWN, s);
+
     }
 
     public boolean createTown(String townName, String mayorName, String worldName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.CREATE_TOWN);
+            PreparedStatement s = retrieveStatement(SQLAction.CREATE_TOWN);
             s.setString(1, townName);
             s.setString(2, mayorName);
             s.setString(3, worldName);
             s.execute();
-            s.clearParameters();
 
-            s = statements.get(SQLAction.CREATE_TOWN_BANK);
+
+            s = retrieveStatement(SQLAction.CREATE_TOWN_BANK);
             s.setString(1, townName);
             s.execute();
-            s.clearParameters();
+
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -331,20 +340,20 @@ public class SQLManager {
 
     public boolean createTerritory(String territoryName, String parentTownName, String worldName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.CREATE_TERRITORY);
+            PreparedStatement s = retrieveStatement(SQLAction.CREATE_TERRITORY);
             s.setString(1, territoryName);
             s.execute();
-            s.clearParameters();
-            s = statements.get(SQLAction.CREATE_TERRITORY_OWNS);
+
+            s = retrieveStatement(SQLAction.CREATE_TERRITORY_OWNS);
             s.setString(1, parentTownName);
             s.setString(2, territoryName);
             s.execute();
-            s.clearParameters();
-            s = statements.get(SQLAction.CREATE_TERRITORY_REGION);
+
+            s = retrieveStatement(SQLAction.CREATE_TERRITORY_REGION);
             s.setString(1, territoryName);
             s.setString(2, worldName);
             s.execute();
-            s.clearParameters();
+
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -355,20 +364,20 @@ public class SQLManager {
 
     public boolean createPlot(String plotName, String parentTerritoryName, String worldName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.CREATE_PLOT);
+            PreparedStatement s = retrieveStatement(SQLAction.CREATE_PLOT);
             s.setString(1, plotName);
             s.execute();
-            s.clearParameters();
-            s = statements.get(SQLAction.CREATE_PLOT_CONTAINS);
+
+            s = retrieveStatement(SQLAction.CREATE_PLOT_CONTAINS);
             s.setString(1, parentTerritoryName);
             s.setString(2, plotName);
             s.execute();
-            s.clearParameters();
-            s = statements.get(SQLAction.CREATE_PLOT_REGION);
+
+            s = retrieveStatement(SQLAction.CREATE_PLOT_REGION);
             s.setString(1, plotName);
             s.setString(2, worldName);
             s.execute();
-            s.clearParameters();
+
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -379,7 +388,7 @@ public class SQLManager {
 
     public boolean deleteTown(String townName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.DELETE_TOWN);
+            PreparedStatement s = retrieveStatement(SQLAction.DELETE_TOWN);
 
             s.setString(1, townName);
             s.execute();
@@ -392,7 +401,7 @@ public class SQLManager {
 
     public boolean deleteTerritory(String regName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.DELETE_TERRITORY);
+            PreparedStatement s = retrieveStatement(SQLAction.DELETE_TERRITORY);
 
             s.setString(1, regName);
             s.execute();
@@ -405,7 +414,7 @@ public class SQLManager {
 
     public boolean deletePlot(String regName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.DELETE_PLOT);
+            PreparedStatement s = retrieveStatement(SQLAction.DELETE_PLOT);
 
             s.setString(1, regName);
             s.execute();
@@ -416,26 +425,126 @@ public class SQLManager {
         return true;
     }
 
-    public void viewTown(String townName) {
+    public UnmodifiableTown viewTown(String townName) {
+        try {
+            UnmodifiableTown ret;
+            
+            PreparedStatement s = retrieveStatement(SQLAction.VIEW_TOWN);
+            s.setString(1, townName);
+            ResultSet rs = s.executeQuery();
+            if(!rs.next())
+                return null;
+            
+            return new UnmodifiableTown(rs.getString("townName"), rs.getString("worldName"), rs.getString("motd"), ChatColor.valueOf(rs.getString("motdColor")), 
+                    rs.getString("spawnLoc"), rs.getString("mayorName"), rs.getString("bankName"), rs.getBoolean("buyablePlots"), rs.getBoolean("economyJoins"), 
+                    rs.getBigDecimal("defaultPlotPrice"), rs.getBoolean("friendlyFire"));
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
-    public void viewTerritory(String territoryName) {
+    public UnmodifiableTerritory viewTerritory(String territoryName) {
+        try {
+            UnmodifiableTerritory ret;
+            
+            PreparedStatement s = retrieveStatement(SQLAction.VIEW_TERRITORY);
+            s.setString(1, territoryName);
+            ResultSet rs = s.executeQuery();
+            if(!rs.next())
+                return null;
+            
+            return new UnmodifiableTerritory(territoryName, rs.getString("worldName"));
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
-    public void viewPlot(String plotName) {
+    public UnmodifiablePlot viewPlot(String plotName) {
+        try {
+            UnmodifiableTerritory ret;
+            
+            PreparedStatement s = retrieveStatement(SQLAction.VIEW_PLOT);
+            s.setString(1, plotName);
+            ResultSet rs = s.executeQuery();
+            if(!rs.next())
+                return null;
+            
+            return new UnmodifiablePlot(plotName, rs.getString("worldName"), rs.getString("signLoc"), rs.getBigDecimal("price"), rs.getBoolean("forSale"));
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
-    public void getTownResidents(String townName) {
+    public List<String> getTownResidents(String townName) {
+        List<String> ret = new LinkedList<>();
+        
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.GET_PLAYERS_IN_TOWN);
+            
+            s.setString(1, townName);
+            ResultSet rs = s.executeQuery();
+            
+            while(rs.next()) {
+                ret.add(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            ret.clear();
+            return ret;
+        }
+        
+        return ret;
+        
+        
     }
 
-    public void updateTown(String townName, BigDecimal defaultPlotPrice, boolean friendlyFireAllowed, ChatColor motdColor, String motd, Location spawnLoc, boolean buyablePlots, boolean economyJoins) {
+    public boolean updateTown(String townName, String mayorName, BigDecimal defaultPlotPrice, boolean friendlyFireAllowed, ChatColor motdColor, String motd, String spawnLoc, boolean buyablePlots, boolean economyJoins) {
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.UPDATE_TOWN);
+            
+            s.setString(1, townName);
+            s.setString(2, mayorName);
+            s.setBigDecimal(3, defaultPlotPrice);
+            s.setBoolean(4, friendlyFireAllowed);
+            s.setString(5, motdColor.name());
+            s.setString(6, motd);
+            s.setString(7, spawnLoc);
+            s.setBoolean(8, buyablePlots);
+            s.setBoolean(9, economyJoins);
+            
+            s.execute();
+            return true;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
     }
 
-    public void updatePlot(String regName, boolean forSale, BigDecimal price, Location signLoc) {
+    public boolean updatePlot(String regName, boolean forSale, BigDecimal price, String signLoc) {
+                try {
+            PreparedStatement s = retrieveStatement(SQLAction.UPDATE_TOWN);
+            
+            s.setString(1, regName);
+            s.setBoolean(2, forSale);
+            s.setBigDecimal(3, price);
+            s.setString(4, signLoc);
+            
+            s.execute();
+            return true;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     public int getNumTowns() {
-        PreparedStatement s = statements.get(SQLAction.COUNT_TOWNS);
+        PreparedStatement s = retrieveStatement(SQLAction.COUNT_TOWNS);
 
         try {
             ResultSet rs = s.executeQuery();
@@ -448,7 +557,7 @@ public class SQLManager {
     }
 
     public int getNumTerritories() {
-        PreparedStatement s = statements.get(SQLAction.COUNT_TERRITORIES);
+        PreparedStatement s = retrieveStatement(SQLAction.COUNT_TERRITORIES);
 
         try {
             ResultSet rs = s.executeQuery();
@@ -461,7 +570,7 @@ public class SQLManager {
     }
 
     public int getNumPlots() {
-        PreparedStatement s = statements.get(SQLAction.COUNT_PLOTS);
+        PreparedStatement s = retrieveStatement(SQLAction.COUNT_PLOTS);
 
         try {
             ResultSet rs = s.executeQuery();
@@ -475,10 +584,11 @@ public class SQLManager {
 
     public String getParentTownForTerritory(String territoryName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.GET_PARENT_TOWN_OF_TERRITORY);
+            PreparedStatement s = retrieveStatement(SQLAction.GET_PARENT_TOWN_OF_TERRITORY);
 
             s.setString(1, territoryName);
             ResultSet rs = s.executeQuery();
+
 
             rs.next();
             return rs.getString(1);
@@ -490,10 +600,11 @@ public class SQLManager {
 
     public String getParentTerritoryOfPlot(String plotName) {
         try {
-            PreparedStatement s = statements.get(SQLAction.GET_PARENT_TERRITORY_OF_PLOT);
+            PreparedStatement s = retrieveStatement(SQLAction.GET_PARENT_TERRITORY_OF_PLOT);
 
             s.setString(1, plotName);
             ResultSet rs = s.executeQuery();
+
 
             rs.next();
             return rs.getString(1);
@@ -506,78 +617,174 @@ public class SQLManager {
     public List<String> getTownsForPlayer(String playerName) {
         List<String> towns = new LinkedList<>();
         try {
-            PreparedStatement s = statements.get(SQLAction.GET_TOWNS_FOR_PLAYER);
+            PreparedStatement s = retrieveStatement(SQLAction.GET_TOWNS_FOR_PLAYER);
 
             s.setString(1, playerName);
             ResultSet rs = s.executeQuery();
 
-            while(rs.next()) {
+
+            while (rs.next()) {
                 towns.add(rs.getString(1));
             }
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return towns;
     }
 
     public List<String> getTerritoriesForTown(String townName) {
         List<String> territs = new LinkedList<>();
         try {
-            PreparedStatement s = statements.get(SQLAction.GET_TERRITORIES_FOR_TOWN);
+            PreparedStatement s = retrieveStatement(SQLAction.GET_TERRITORIES_FOR_TOWN);
 
             s.setString(1, townName);
             ResultSet rs = s.executeQuery();
 
-            while(rs.next()) {
+
+            while (rs.next()) {
                 territs.add(rs.getString(1));
             }
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return territs;
     }
 
     public List<String> getPlotsForTerritory(String territoryName) {
         List<String> plots = new LinkedList<>();
         try {
-            PreparedStatement s = statements.get(SQLAction.GET_PLOTS_FOR_TERRITORY);
+            PreparedStatement s = retrieveStatement(SQLAction.GET_PLOTS_FOR_TERRITORY);
 
             s.setString(1, territoryName);
             ResultSet rs = s.executeQuery();
 
-            while(rs.next()) {
+
+            while (rs.next()) {
                 plots.add(rs.getString(1));
             }
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return plots;
     }
 
-    public void getPlotsForTown(String townName) {
+    public List<String> getPlotsForTown(String townName) {
+        List<String> plots = new LinkedList<>();
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.GET_PLOTS_FOR_TOWN);
+
+            s.setString(1, townName);
+            ResultSet rs = s.executeQuery();
+
+
+            while (rs.next()) {
+                plots.add(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return plots;
     }
 
-    public void getNumBlocksInTownBank(String townName, Material blockType) {
+    public int getNumBlocksInTownBank(String townName, Material blockType) {
+        PreparedStatement s = retrieveStatement(SQLAction.GET_BLOCKS_IN_TOWN_BANK);
+
+        try {
+            s.setString(1, townName);
+            s.setString(2, blockType.name());
+            ResultSet rs = s.executeQuery();
+
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
     }
 
-    public void getCurrencyInTownBank(String townName) {
+    public int getCurrencyInTownBank(String townName) {
+        PreparedStatement s = retrieveStatement(SQLAction.GET_CURRENCY_IN_TOWN_BANK);
+
+        try {
+            s.setString(1, townName);
+            ResultSet rs = s.executeQuery();
+
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
     }
 
-    public void addAssistantToTown(String townName, String assistantName) {
+    public boolean addAssistantToTown(String townName, String assistantName) {
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.ADD_ASSISTANT_TO_TOWN);
+
+            s.setString(1, townName);
+            s.setString(2, assistantName);
+            s.execute();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    public void addPlayerToTown(String townName, String playerName) {
+    public boolean addPlayerToTown(String townName, String playerName) {
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.ADD_PLAYER_TO_TOWN);
+
+            s.setString(1, townName);
+            s.setString(2, playerName);
+            s.execute();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    public void removeAssistantFromTown(String townName, String assistantName) {
+    public boolean removeAssistantFromTown(String townName, String assistantName) {
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.REMOVE_ASSISTANT_FROM_TOWN);
+
+            s.setString(1, townName);
+            s.setString(2, assistantName);
+            s.execute();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    public void removePlayerFromTown(String townName, String playerName) {
+    public boolean removePlayerFromTown(String townName, String playerName) {
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.REMOVE_PLAYER_FROM_TOWN);
+
+            s.setString(1, townName);
+            s.setString(2, playerName);
+            s.execute();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    public void chageMayorForTown(String townName, String newMayorName) {
+    private PreparedStatement retrieveStatement(SQLAction action) {
+        PreparedStatement s = statements.get(action);
+        try {
+            s.clearParameters();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return s;
     }
 }
