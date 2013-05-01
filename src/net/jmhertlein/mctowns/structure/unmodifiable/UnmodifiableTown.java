@@ -84,6 +84,11 @@ public class UnmodifiableTown {
     public boolean isFriendlyFire() {
         return friendlyFire;
     }
+
+    @Override
+    public String toString() {
+        return "UnmodifiableTown{" + "townName=" + townName + ", worldName=" + worldName + ", townMOTD=" + townMOTD + ", motdColor=" + motdColor + ", townSpawn=" + townSpawn + ", mayor=" + mayor + ", bankName=" + bankName + ", buyablePlots=" + buyablePlots + ", economyJoins=" + economyJoins + ", defaultPlotPrice=" + defaultPlotPrice + ", friendlyFire=" + friendlyFire + '}';
+    }
     
     
 

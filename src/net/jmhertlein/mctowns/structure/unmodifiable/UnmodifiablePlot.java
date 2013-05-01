@@ -42,5 +42,10 @@ public class UnmodifiablePlot {
     public boolean isForSale() {
         return forSale;
     }
+
+    @Override
+    public String toString() {
+        return "UnmodifiablePlot{" + "plotName=" + plotName + ", worldName=" + worldName + ", signLoc=" + signLoc + ", price=" + price + ", forSale=" + forSale + '}';
+    }
     
 }

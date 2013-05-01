@@ -122,19 +122,19 @@ public class SQLManager {
 
         //add FK constraints
 
-        c.createStatement().execute("ALTER TABLE Town2 ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
-        c.createStatement().execute("ALTER TABLE Town3 ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
-        c.createStatement().execute("ALTER TABLE Bank ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
-        c.createStatement().execute("ALTER TABLE Bank2 ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
-        c.createStatement().execute("ALTER TABLE Owns ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
+        c.createStatement().execute("ALTER TABLE Town2 ADD FOREIGN KEY (townName) REFERENCES Town(townName) ON DELETE CASCADE");
+        c.createStatement().execute("ALTER TABLE Town3 ADD FOREIGN KEY (townName) REFERENCES Town(townName) ON DELETE CASCADE");
+        c.createStatement().execute("ALTER TABLE Bank ADD FOREIGN KEY (townName) REFERENCES Town(townName) ON DELETE CASCADE");
+        c.createStatement().execute("ALTER TABLE Bank2 ADD FOREIGN KEY (townName) REFERENCES Town(townName) ON DELETE CASCADE");
+        c.createStatement().execute("ALTER TABLE Owns ADD FOREIGN KEY (townName) REFERENCES Town(townName) ON DELETE CASCADE");
 
-        c.createStatement().execute("ALTER TABLE Owns ADD FOREIGN KEY (territoryName) REFERENCES Territory(territoryName)");
-        c.createStatement().execute("ALTER TABLE Contains ADD FOREIGN KEY (territoryName) REFERENCES Territory(territoryName)");
+        c.createStatement().execute("ALTER TABLE Owns ADD FOREIGN KEY (territoryName) REFERENCES Territory(territoryName) ON DELETE CASCADE");
+        c.createStatement().execute("ALTER TABLE Contains ADD FOREIGN KEY (territoryName) REFERENCES Territory(territoryName) ON DELETE CASCADE");
 
-        c.createStatement().execute("ALTER TABLE Contains ADD FOREIGN KEY (plotName) REFERENCES Plot(plotName)");
+        c.createStatement().execute("ALTER TABLE Contains ADD FOREIGN KEY (plotName) REFERENCES Plot(plotName) ON DELETE CASCADE");
 
-        c.createStatement().execute("ALTER TABLE Territory ADD FOREIGN KEY (territoryName) REFERENCES Region(regionName)");
-        c.createStatement().execute("ALTER TABLE Plot ADD FOREIGN KEY (plotName) REFERENCES Region(regionName)");
+        c.createStatement().execute("ALTER TABLE Territory ADD FOREIGN KEY (territoryName) REFERENCES Region(regionName) ON DELETE CASCADE");
+        c.createStatement().execute("ALTER TABLE Plot ADD FOREIGN KEY (plotName) REFERENCES Region(regionName) ON DELETE CASCADE");
     }
 
     public void dropTables() throws SQLException {
@@ -148,11 +148,77 @@ public class SQLManager {
             sqlMan.createTables();
 
             System.out.println("Modifying tables.");
-            sqlMan.createTown("Anvil", "Josh", "world");
-            sqlMan.createTown("Bruma", "Josh", "world");
+            sqlMan.createTown("Anvil", "Josh", "Cyrodil");
+            sqlMan.createTown("Bruma", "Josh", "Cyrodil");
+            sqlMan.createTown("Chorrol", "Josh", "Cyrodil");
+            sqlMan.createTown("Kvatch", "Josh", "Cyrodil");
 
             System.out.println("Num towns: " + sqlMan.getNumTowns());
+            
+            sqlMan.createTerritory("Fort Wariel", "Anvil", "Cyrodil");
+            sqlMan.createTerritory("Belletor's Folly", "Anvil", "Cyrodil");
+            sqlMan.createTerritory("Lord Drad's Estate", "Anvil", "Cyrodil");
+            
+            sqlMan.createTerritory("Fort Ontus", "Kvatch", "Cyrodil");
+            sqlMan.createTerritory("Dagny's Camp", "Kvatch", "Cyrodil");
+            sqlMan.createTerritory("Infested Mine", "Kvatch", "Cyrodil");
+            
+            sqlMan.createTerritory("Frostcrag Spire", "Bruma", "Cyrodil");
+            sqlMan.createTerritory("Toadstool Hollow", "Bruma", "Cyrodil");
+            sqlMan.createTerritory("Dragonclaw Rock", "Bruma", "Cyrodil");
+            
+            System.out.println("Num territs: " + sqlMan.getNumTerritories());
+            
+            sqlMan.createPlot("Ogre Hole", "Dragonclaw Rock", "Cyrodil");
+            sqlMan.createPlot("M'aiq's House", "Fort Ontus", "Cyrodil");
+            sqlMan.createPlot("Black Sacrament Was Performed Here", "Dragonclaw Rock", "Cyrodil");
+            sqlMan.createPlot("Sheogorath's Hidey Hole", "Fort Wariel", "Cyrodil");
+            
+            System.out.println("Num plots: " + sqlMan.getNumPlots());
+            
+            sqlMan.addPlayerToTown("Anvil", "M'aiq");
+            sqlMan.addPlayerToTown("Anvil", "Sheogorath");
+            sqlMan.addPlayerToTown("Anvil", "Talos (WHO IS DEFINITELY A DIVINE)");
+            sqlMan.addPlayerToTown("Kvatch", "Imperial Guard #1485");
+            sqlMan.addPlayerToTown("Kvatch", "Imperial Guard #2237");
+            sqlMan.addPlayerToTown("Kvatch", "Imperial Guard #1749");
+            sqlMan.addPlayerToTown("Chorrol", "Male Beggar");
+            sqlMan.addPlayerToTown("Chorrol", "Female Beggar");
+            sqlMan.addPlayerToTown("Bruma", "Adoring Fan");
+            
+            System.out.println("M'aiq lives in " + sqlMan.getTownsForPlayer("M'aiq"));
+            
+            System.out.println("The following plots are in Bruma:" + sqlMan.getPlotsForTown("Bruma"));
+            
+            System.out.println("The following plots are in Kvatch:" + sqlMan.getPlotsForTown("Kvatch"));
+            
+            System.out.println("The following territories are in Chorrol: " + sqlMan.getTerritoriesForTown("Chorrol"));
+            
+            System.out.println("The following plots are in Dragonclaw Rock: " + sqlMan.getPlotsForTerritory("Dragonclaw Rock"));
 
+            System.out.println("These people live in Anvil:" + sqlMan.getPlayersInTown("Anvil"));
+            
+            System.out.println("These people live in Kvatch:" + sqlMan.getPlayersInTown("Kvatch"));
+            
+            System.out.println(sqlMan.getNumTowns());
+            System.out.println(sqlMan.getNumTerritories());
+            
+            System.out.println("Viewing Chorrol: " + sqlMan.viewTown("Chorrol"));
+            
+            sqlMan.getCurrencyInTownBank("Anvil");
+            
+            sqlMan.addAssistantToTown("Anvil", "M'aiq");
+            sqlMan.updatePlot("M'aiq's House", true, BigDecimal.TEN, "276 475 32 Cyrodil");
+            sqlMan.updateTown("Anvil", "M'aiq", BigDecimal.ONE, true, ChatColor.BLACK, "How to troll:", "0 0 0 Cyrodil", true, false);
+            
+            sqlMan.viewTerritory("Dragonclaw Rock");
+            sqlMan.viewPlot("Ogre Hole");
+            
+            sqlMan.getPlayersInTown("Anvil");
+            sqlMan.getPlayersInTown("aasddasd");
+            
+            sqlMan.getNumBlocksInTownBank("Anvil", Material.STONE);
+            
             System.out.println("Dropping tables.");
             sqlMan.dropTables();
         } catch (SQLException ex) {
@@ -172,7 +238,7 @@ public class SQLManager {
         s = c.prepareStatement(
                 "UPDATE Plot "
                 + "SET forSale = ?, price = ?, signLoc = ? "
-                + "WHERE regName = ?");
+                + "WHERE plotName = ?");
         statements.put(SQLAction.UPDATE_PLOT, s);
 
         //get parent town for territory
@@ -215,11 +281,11 @@ public class SQLManager {
         statements.put(SQLAction.VIEW_TOWN, s);
 
         //get view of plot
-        s = c.prepareStatement("SELECT plotName,worldName,forSale,price,signLoc FROM Plot P, Region R WHERE P.plotName = ? AND R.regionName = ?");
+        s = c.prepareStatement("SELECT plotName,worldName,forSale,price,signLoc FROM Plot P, Region R WHERE P.plotName = R.regionName AND R.regionName = ?");
         statements.put(SQLAction.VIEW_PLOT, s);
 
         //get view of territory
-        s = c.prepareStatement("SELECT territoryName,worldName FROM Territory T, Region R WHERE T.territoryName = ? AND R.regionName = ?");
+        s = c.prepareStatement("SELECT territoryName,worldName FROM Territory T, Region R WHERE T.territoryName = R.regionName AND R.regionName = ?");
         statements.put(SQLAction.VIEW_TERRITORY, s);
 
         //count number of towns
@@ -245,7 +311,7 @@ public class SQLManager {
         s = c.prepareStatement(
                 "SELECT amount "
                 + "FROM Bank2 B, Town T "
-                + "WHERE B.bankName = T.bankName AND T.townName = ?");
+                + "WHERE B.bankName = T.bankName AND T.townName = ? AND B.blockType = ?");
         statements.put(SQLAction.GET_BLOCKS_IN_TOWN_BANK, s);
 
         //get all residents in town
@@ -298,7 +364,7 @@ public class SQLManager {
         statements.put(SQLAction.CREATE_PLOT_REGION, s);
 
         //make a new town
-        s = c.prepareStatement("INSERT INTO Town VALUES(?, ?, 0, false, ?, \"CYAN\", \"Use /town motd <message> to change the town MOTD!\", NULL, false, false, \"Default Bank\")");
+        s = c.prepareStatement("INSERT INTO Town VALUES(?, ?, 0, false, ?, \"AQUA\", \"Use /town motd <message> to change the town MOTD!\", NULL, false, false, \"Default Bank\")");
         statements.put(SQLAction.CREATE_TOWN, s);
         s = c.prepareStatement("INSERT INTO Bank VALUES(?, \"Default Bank\", 0)");
         statements.put(SQLAction.CREATE_TOWN_BANK, s);
@@ -340,18 +406,18 @@ public class SQLManager {
 
     public boolean createTerritory(String territoryName, String parentTownName, String worldName) {
         try {
-            PreparedStatement s = retrieveStatement(SQLAction.CREATE_TERRITORY);
+            PreparedStatement s = retrieveStatement(SQLAction.CREATE_TERRITORY_REGION);
+            s.setString(1, territoryName);
+            s.setString(2, worldName);
+            s.execute();
+            
+            s = retrieveStatement(SQLAction.CREATE_TERRITORY);
             s.setString(1, territoryName);
             s.execute();
 
             s = retrieveStatement(SQLAction.CREATE_TERRITORY_OWNS);
             s.setString(1, parentTownName);
             s.setString(2, territoryName);
-            s.execute();
-
-            s = retrieveStatement(SQLAction.CREATE_TERRITORY_REGION);
-            s.setString(1, territoryName);
-            s.setString(2, worldName);
             s.execute();
 
         } catch (SQLException ex) {
@@ -364,18 +430,19 @@ public class SQLManager {
 
     public boolean createPlot(String plotName, String parentTerritoryName, String worldName) {
         try {
-            PreparedStatement s = retrieveStatement(SQLAction.CREATE_PLOT);
+            
+            PreparedStatement s = retrieveStatement(SQLAction.CREATE_PLOT_REGION);
+            s.setString(1, plotName);
+            s.setString(2, worldName);
+            s.execute();
+            
+            s = retrieveStatement(SQLAction.CREATE_PLOT);
             s.setString(1, plotName);
             s.execute();
 
             s = retrieveStatement(SQLAction.CREATE_PLOT_CONTAINS);
             s.setString(1, parentTerritoryName);
             s.setString(2, plotName);
-            s.execute();
-
-            s = retrieveStatement(SQLAction.CREATE_PLOT_REGION);
-            s.setString(1, plotName);
-            s.setString(2, worldName);
             s.execute();
 
         } catch (SQLException ex) {
@@ -505,15 +572,15 @@ public class SQLManager {
         try {
             PreparedStatement s = retrieveStatement(SQLAction.UPDATE_TOWN);
             
-            s.setString(1, townName);
-            s.setString(2, mayorName);
-            s.setBigDecimal(3, defaultPlotPrice);
-            s.setBoolean(4, friendlyFireAllowed);
-            s.setString(5, motdColor.name());
-            s.setString(6, motd);
-            s.setString(7, spawnLoc);
-            s.setBoolean(8, buyablePlots);
-            s.setBoolean(9, economyJoins);
+            s.setString(9, townName);
+            s.setString(1, mayorName);
+            s.setBigDecimal(2, defaultPlotPrice);
+            s.setBoolean(3, friendlyFireAllowed);
+            s.setString(4, motdColor.name());
+            s.setString(5, motd);
+            s.setString(6, spawnLoc);
+            s.setBoolean(7, buyablePlots);
+            s.setBoolean(8, economyJoins);
             
             s.execute();
             return true;
@@ -527,12 +594,12 @@ public class SQLManager {
 
     public boolean updatePlot(String regName, boolean forSale, BigDecimal price, String signLoc) {
                 try {
-            PreparedStatement s = retrieveStatement(SQLAction.UPDATE_TOWN);
+            PreparedStatement s = retrieveStatement(SQLAction.UPDATE_PLOT);
             
-            s.setString(1, regName);
-            s.setBoolean(2, forSale);
-            s.setBigDecimal(3, price);
-            s.setString(4, signLoc);
+            s.setString(4, regName);
+            s.setBoolean(1, forSale);
+            s.setBigDecimal(2, price);
+            s.setString(3, signLoc);
             
             s.execute();
             return true;
@@ -689,6 +756,24 @@ public class SQLManager {
 
         return plots;
     }
+    
+    public List<String> getPlayersInTown(String townName) {
+        List<String> ret = new LinkedList<>();
+        try {
+            PreparedStatement s = retrieveStatement(SQLAction.GET_PLAYERS_IN_TOWN);
+            
+            s.setString(1, townName);
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                ret.add(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            ret.clear();
+        }
+        
+        return ret;
+    }
 
     public int getNumBlocksInTownBank(String townName, Material blockType) {
         PreparedStatement s = retrieveStatement(SQLAction.GET_BLOCKS_IN_TOWN_BANK);
@@ -698,7 +783,9 @@ public class SQLManager {
             s.setString(2, blockType.name());
             ResultSet rs = s.executeQuery();
 
-            rs.next();
+            if(!rs.next())
+                return 0;
+            
             return rs.getInt(1);
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);

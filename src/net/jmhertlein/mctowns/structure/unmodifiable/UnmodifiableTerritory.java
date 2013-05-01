@@ -23,5 +23,10 @@ public class UnmodifiableTerritory {
     public String getWorldName() {
         return worldName;
     }
+
+    @Override
+    public String toString() {
+        return "UnmodifiableTerritory{" + "territoryName=" + territoryName + ", worldName=" + worldName + '}';
+    }
     
 }
