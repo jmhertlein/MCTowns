@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,11 +22,7 @@ public class SQLManager {
     private Map<SQLAction, PreparedStatement> statements;
     
     public SQLManager(String hostname, int port, String username, String password) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        statements = new HashMap<>();
         try {
             c = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/test", username, password);
         } catch (SQLException ex) {
@@ -32,6 +30,8 @@ public class SQLManager {
         }
         try {
             prepareStatements();
+            System.out.println("Done preparing all statements.");
+            System.out.println(statements.size());
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -111,6 +111,20 @@ public class SQLManager {
                 + ")");
         
         //add FK constraints
+        
+        c.createStatement().execute("ALTER TABLE Town2 ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
+        c.createStatement().execute("ALTER TABLE Town3 ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
+        c.createStatement().execute("ALTER TABLE Bank ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
+        c.createStatement().execute("ALTER TABLE Bank2 ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
+        c.createStatement().execute("ALTER TABLE Owns ADD FOREIGN KEY (townName) REFERENCES Town(townName)");
+        
+        c.createStatement().execute("ALTER TABLE Owns ADD FOREIGN KEY (territoryName) REFERENCES Territory(territoryName)");
+        c.createStatement().execute("ALTER TABLE Contains ADD FOREIGN KEY (territoryName) REFERENCES Territory(territoryName)");
+        
+        c.createStatement().execute("ALTER TABLE Contains ADD FOREIGN KEY (plotName) REFERENCES Plot(plotName)");
+        
+        c.createStatement().execute("ALTER TABLE Territory ADD FOREIGN KEY (territoryName) REFERENCES Region(regionName)");
+        c.createStatement().execute("ALTER TABLE Plot ADD FOREIGN KEY (plotName) REFERENCES Region(regionName)");
     }
     
     private void prepareStatements() throws SQLException {
@@ -176,15 +190,15 @@ public class SQLManager {
          statements.put(SQLAction.VIEW_TERRITORY, s);
          
          //count number of towns
-         s = c.prepareStatement(" SELECT COUNT(townName) FROM Town");
+         s = c.prepareStatement("SELECT COUNT(townName) FROM Town");
          statements.put(SQLAction.COUNT_TOWNS, s);
          
          //count num territories
-         s = c.prepareStatement(" SELECT COUNT(territoryName) FROM Territory");
+         s = c.prepareStatement("SELECT COUNT(territoryName) FROM Territory");
          statements.put(SQLAction.COUNT_TERRITORIES, s);
          
          //count num plots
-         s = c.prepareStatement(" SELECT COUNT(plotName) FROM Plot");
+         s = c.prepareStatement("SELECT COUNT(plotName) FROM Plot");
          statements.put(SQLAction.COUNT_PLOTS, s);
          
          //get currency in town bank
@@ -258,8 +272,7 @@ public class SQLManager {
          
     }
     
-    public void createTown(){
-        
+    public void createTown() throws SQLException{
     }
     
     public void createTerritory(){}
