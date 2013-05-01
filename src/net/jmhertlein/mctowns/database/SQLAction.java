@@ -43,5 +43,8 @@ public enum SQLAction {
     GET_CURRENCY_IN_TOWN_BANK, //
     
     GET_PLOTS_FOR_TOWN, //
-    GET_PLAYERS_IN_TOWN; //
+    GET_PLAYERS_IN_TOWN, //
+    
+    ADD_PLAYER_TO_TOWN,
+    ADD_ASSISTANT_TO_TOWN;
 }
