@@ -208,12 +208,12 @@ public class MCTowns extends JavaPlugin {
     }
 
     private void persistTownManager() {
-        try {
-            townManager.writeYAML(MCT_DATA_FOLDER);
-        } catch (IOException ex) {
-            MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
-            ex.printStackTrace();
-        }
+//        try {
+//            //townManager.writeYAML(MCT_DATA_FOLDER);
+//        } catch (IOException ex) {
+//            MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
+//            ex.printStackTrace();
+//        }
     }
 
     private boolean setupEconomy() {

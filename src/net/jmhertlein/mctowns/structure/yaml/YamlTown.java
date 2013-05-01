@@ -619,18 +619,18 @@ public class YamlTown implements Town {
     }
     
     public static void recursivelyRemovePlayerFromTown(Player p, Town t) {
-        YamlTownManager tMan = MCTowns.getTownManager();
-        
-        for(String teName : t.getTerritoriesCollection()) {
-            Territory te = tMan.getTerritory(teName);
-            for(String plName : te.getPlotsCollection()) {
-                YamlPlot pl = tMan.getPlot(plName);
-                pl.removePlayer(p);
-            }
-            te.removePlayer(p);
-        }
-        
-        t.removePlayer(p);
+//        //YamlTownManager tMan = MCTowns.getTownManager();
+//        
+//        for(String teName : t.getTerritoriesCollection()) {
+//            Territory te = tMan.getTerritory(teName);
+//            for(String plName : te.getPlotsCollection()) {
+//                YamlPlot pl = tMan.getPlot(plName);
+//                pl.removePlayer(p);
+//            }
+//            te.removePlayer(p);
+//        }
+//        
+//        t.removePlayer(p);
     }
 
     private List<String> getTerritoryNames() {

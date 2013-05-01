@@ -225,6 +225,41 @@ public class SQLManager {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void fillWithTestData() {
+        System.out.println("Modifying tables.");
+            createTown("Anvil", "Corvus Umbranox", "Cyrodil");
+            createTown("Bruma", "Countess Narina Carvain", "Cyrodil");
+            createTown("Chorrol", "Countess Arriana Valga", "Cyrodil");
+            createTown("Kvatch", "Mehrunes Dagon", "Cyrodil");
+            
+            createTerritory("Fort Wariel", "Anvil", "Cyrodil");
+            createTerritory("Belletor's Folly", "Anvil", "Cyrodil");
+            createTerritory("Lord Drad's Estate", "Anvil", "Cyrodil");
+            
+            createTerritory("Fort Ontus", "Kvatch", "Cyrodil");
+            createTerritory("Dagny's Camp", "Kvatch", "Cyrodil");
+            createTerritory("Infested Mine", "Kvatch", "Cyrodil");
+            
+            createTerritory("Frostcrag Spire", "Bruma", "Cyrodil");
+            createTerritory("Toadstool Hollow", "Bruma", "Cyrodil");
+            createTerritory("Dragonclaw Rock", "Bruma", "Cyrodil");
+            
+            createPlot("Ogre Hole", "Dragonclaw Rock", "Cyrodil");
+            createPlot("M'aiq's House", "Fort Ontus", "Cyrodil");
+            createPlot("Black Sacrament Was Performed Here", "Dragonclaw Rock", "Cyrodil");
+            createPlot("Sheogorath's Hidey Hole", "Fort Wariel", "Cyrodil");
+            
+            addPlayerToTown("Anvil", "M'aiq");
+            addPlayerToTown("Anvil", "Sheogorath");
+            addPlayerToTown("Anvil", "Talos (WHO IS DEFINITELY A DIVINE)");
+            addPlayerToTown("Kvatch", "Imperial Guard #1485");
+            addPlayerToTown("Kvatch", "Imperial Guard #2237");
+            addPlayerToTown("Kvatch", "Imperial Guard #1749");
+            addPlayerToTown("Chorrol", "Male Beggar");
+            addPlayerToTown("Chorrol", "Female Beggar");
+            addPlayerToTown("Bruma", "Adoring Fan");
+    }
 
     private void prepareStatements() throws SQLException {
         //update town
