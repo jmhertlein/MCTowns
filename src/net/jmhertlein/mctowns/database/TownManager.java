@@ -1,5 +1,6 @@
 package net.jmhertlein.mctowns.database;
 
+import net.jmhertlein.cs238.SQLManager;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
