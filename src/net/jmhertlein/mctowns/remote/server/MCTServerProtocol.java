@@ -33,10 +33,11 @@ public class MCTServerProtocol {
     private PublicKey serverPubKey;
     private String clientName;
     private PrivateKey serverPrivateKey;
-    private Map<String, SecretKey> sessionKeys;
+    private Map<Integer, ClientSession> sessionKeys;
     private Plugin p;
+    private static volatile Integer nextSessionID = 0;
 
-    public MCTServerProtocol(Plugin p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<String, SecretKey> sessionKeys) {
+    public MCTServerProtocol(Plugin p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<Integer, ClientSession> sessionKeys) {
         this.authKeysDir = authKeysDir;
         this.serverPubKey = serverPublicKey;
         this.cMan = new CryptoManager();
@@ -111,7 +112,15 @@ public class MCTServerProtocol {
         oos.writeObject(new EncryptedSecretKey(newKey, outCipher));
         System.out.println("Wrote key.");
         
-        sessionKeys.put(clientName, newKey);
+        int assignedSessionID = nextSessionID;
+        nextSessionID++;
+        
+        sessionKeys.put(assignedSessionID, new ClientSession(assignedSessionID, clientName, newKey));
+        System.out.println("Client assigned session id " + assignedSessionID);
+        
+        System.out.println("Writing session ID.");
+        oos.writeObject(assignedSessionID);
+        System.out.println("Wrote session ID");
 
         System.out.println("Done handling client.");
         return true;
@@ -133,9 +142,16 @@ public class MCTServerProtocol {
                 if (!exchangeKeys(ois))
                     System.err.println("Username " + username + " tried to connect, but was not authorized.");
                 break;
+            case TERMINATE_SESSION:
+                clearSessionKey(username);
+                break;
         }
 
         client.close();
         System.out.println("Finished handling action.");
+    }
+
+    private void clearSessionKey(String username) {
+        sessionKeys.remove(username);
     }
 }

@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -38,6 +39,7 @@ public class MCTClientProtocol {
     
     private PublicKey serverPubKey;
     private SecretKey sessionKey;
+    private byte[] sessionID;
     
     private KeyLoader keyLoader;
 
@@ -127,6 +129,12 @@ public class MCTClientProtocol {
         
         sessionKey = new SecretKeySpec(inCipher.doFinal(encryptedSessionKey.getEncoded()), "AES");
         System.out.println("Read session key.");
+        
+        Integer id = (Integer) ois.readObject();
+        
+        System.out.println("Reading session ID");
+        sessionID = ByteBuffer.allocate(4).putInt(id).array();
+        System.out.println("Reading session ID");
         
     }
     

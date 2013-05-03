@@ -16,7 +16,7 @@ public enum RemoteAction implements Serializable {
     UPDATE_TOWN,
     UPDATE_TERRITORY,
     GET_META_VIEW,
-    TERMINATE_CONNECTION;
+    TERMINATE_SESSION;
     
     private String[] args;
 

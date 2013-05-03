@@ -32,7 +32,7 @@ public class HandleRemoteClientTask implements Runnable {
      * @param authKeysDir Directory to hold pubkeys of authorized users
      * @param client the client socket this task will interface with
      */
-    public HandleRemoteClientTask(Plugin p, PrivateKey privateKey, PublicKey pubKey, File authKeysDir, Socket client, Map<String,SecretKey> sessionKeys) {
+    public HandleRemoteClientTask(Plugin p, PrivateKey privateKey, PublicKey pubKey, File authKeysDir, Socket client, Map<Integer, ClientSession> sessionKeys) {
         protocol = new MCTServerProtocol(p, client, privateKey, pubKey, authKeysDir, sessionKeys);
     }
 

@@ -3,8 +3,6 @@ package net.jmhertlein.mctowns;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import java.io.*;
-import java.util.ArrayDeque;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -141,6 +139,7 @@ public class MCTowns extends JavaPlugin {
         configFiles = new HashSet<>();
         configFiles.add(new File(this.getDataFolder(), TEXT_CONFIG_FILE_NAME));
         configFiles.add(new File(this.getDataFolder(),"config.yml"));
+        
 
         for (File f : configFiles) {
             if (!f.exists())

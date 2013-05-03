@@ -4,18 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import javax.crypto.SecretKey;
 import net.jmhertlein.core.crypto.CryptoManager;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.plugin.Plugin;
@@ -34,7 +30,7 @@ public class RemoteConnectionServer extends Thread {
     private CryptoManager cMan;
     private PrivateKey privateKey;
     private PublicKey pubKey;
-    private Map<String, SecretKey> sessionKeys;
+    private Map<Integer, ClientSession> sessionKeys;
     private Plugin p;
     
     /**
