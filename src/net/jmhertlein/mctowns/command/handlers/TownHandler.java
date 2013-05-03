@@ -63,7 +63,7 @@ public class TownHandler extends CommandHandler {
 
         List<Town> t = townManager.matchPlayerToTowns((Player) localSender.getSender());
 
-        if (t == null) {
+        if (t.isEmpty()) {
             localSender.sendMessage(ERR + "Unable to match you to a town. Are you sure you belong to one?");
             return;
         }
