@@ -96,6 +96,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         serverPubKeyArea = new javax.swing.JTextArea();
+        clearCachedKeyButton = new javax.swing.JButton();
         portField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         connectionStatusLabel = new javax.swing.JLabel();
@@ -155,6 +156,13 @@ public class ConnectionFrame extends javax.swing.JFrame {
         serverPubKeyArea.setRows(5);
         jScrollPane1.setViewportView(serverPubKeyArea);
 
+        clearCachedKeyButton.setText("Clear Cached Key");
+        clearCachedKeyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearCachedKeyButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout advancedPaneLayout = new javax.swing.GroupLayout(advancedPane);
         advancedPane.setLayout(advancedPaneLayout);
         advancedPaneLayout.setHorizontalGroup(
@@ -163,13 +171,18 @@ public class ConnectionFrame extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, advancedPaneLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(clearCachedKeyButton))
         );
         advancedPaneLayout.setVerticalGroup(
             advancedPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(advancedPaneLayout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(clearCachedKeyButton))
         );
 
         portField.setText("3333");
@@ -228,13 +241,14 @@ public class ConnectionFrame extends javax.swing.JFrame {
                     .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(keyPairDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(connectButton)
                         .addComponent(advancedButton)
-                        .addComponent(manageKeysButton)))
+                        .addComponent(manageKeysButton))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(keyPairDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(conStatusField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -243,7 +257,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
                 .addComponent(connectionProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(advancedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -386,6 +400,13 @@ public class ConnectionFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_portFieldActionPerformed
 
+    private void clearCachedKeyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCachedKeyButtonActionPerformed
+        String hostname = hostnameDropDown.getSelectedItem().toString();
+        
+        keyLoader.deleteServerPublicKey(hostname);
+        serverPubKeyArea.setText("");
+    }//GEN-LAST:event_clearCachedKeyButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -423,6 +444,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton advancedButton;
     private javax.swing.JPanel advancedPane;
+    private javax.swing.JButton clearCachedKeyButton;
     private javax.swing.JTextField conStatusField;
     private javax.swing.JButton connectButton;
     private javax.swing.JProgressBar connectionProgressBar;

@@ -1,8 +1,6 @@
 package net.jmhertlein.mctowns.remote.client;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Collection;
@@ -44,6 +42,10 @@ public class KeyLoader {
         }
     }
 
+    /**
+     * Returns a collection of all loaded pairs
+     * @return  a collection of NamedKeyPair objects
+     */
     public Collection<NamedKeyPair> getLoadedPairs() {
         return loadedPairs.values();
     }
@@ -52,6 +54,10 @@ public class KeyLoader {
         return loadedPairs.get(pairName);
     }
 
+    /**
+     * Loads a key from disk and caches it
+     * @param pairName 
+     */
     public final void loadKey(String pairName) {
         File keyDir = new File(rootDir, pairName);
         loadedPairs.put(pairName, new NamedKeyPair(
@@ -59,8 +65,12 @@ public class KeyLoader {
                 cMan.loadPubKey(new File(keyDir, pairName + ".pub")),
                 cMan.loadPrivateKey(new File(keyDir, pairName + ".private"))));
     }
-
-    public void dropKey(String pairName) {
+    
+    /**
+     * Drops a cached key, but does not delete it from disk
+     * @param pairName 
+     */
+    private void dropKey(String pairName) {
         loadedPairs.remove(pairName);
     }
 
@@ -70,6 +80,11 @@ public class KeyLoader {
         return deleteDir(keyDir);
     }
 
+    /**
+     * Adds a new key pair to the cache and immediately saves it to disk
+     * @param label
+     * @param newPair 
+     */
     public void persistAndLoadNewKeyPair(String label, KeyPair newPair) {
         loadedPairs.put(label, new NamedKeyPair(label, newPair.getPublic(), newPair.getPrivate()));
         File keyDir = new File(rootDir, label);
@@ -90,6 +105,11 @@ public class KeyLoader {
         return true;
     }
     
+    /**
+     * Loads the pubkey for the specified server from disk
+     * @param hostname
+     * @return 
+     */
     public final PublicKey loadServerPublicKey(String hostname) {
         File serverKeyFile = new File(serverKeysDir, hostname + ".pub");
         PublicKey ret = cMan.loadPubKey(serverKeyFile);
@@ -98,10 +118,20 @@ public class KeyLoader {
         return ret;
     }
     
+    /**
+     * Gets the loaded server key
+     * @param hostname
+     * @return the key if it's loaded, null if it's not loaded or no key for that server
+     */
     public PublicKey getLoadedServerPublicKey(String hostname) {
         return cachedServerKeys.get(hostname);
     }
     
+    /**
+     * Add the key to the cache and immediately store it on disk
+     * @param hostname
+     * @param pubKey 
+     */
     public void addAndPersistServerPublicKey(String hostname, PublicKey pubKey) {
         cachedServerKeys.put(hostname, pubKey);
         
@@ -109,11 +139,21 @@ public class KeyLoader {
         cMan.storeKey(serverFile.getPath(), pubKey);
     }
     
+    /**
+     * Returns a collection of servers for which keys are currently loaded
+     * @return 
+     */
     public Collection<String> getListOfCachedServers() {
         return Collections.unmodifiableCollection(cachedServerKeys.keySet());
     }
 
     public boolean keyExistsByName(String label) {
         return loadedPairs.containsKey(label);
+    }
+    
+    public void deleteServerPublicKey(String hostname) {
+        cachedServerKeys.remove(hostname);
+        File keyFile = new File(serverKeysDir, hostname + ".pub");
+        keyFile.delete();
     }
 }
