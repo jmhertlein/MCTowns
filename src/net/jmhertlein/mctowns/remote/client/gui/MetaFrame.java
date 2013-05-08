@@ -4,6 +4,7 @@
  */
 package net.jmhertlein.mctowns.remote.client.gui;
 
+import java.awt.CardLayout;
 import javax.swing.UIManager;
 
 /**
@@ -11,13 +12,16 @@ import javax.swing.UIManager;
  * @author joshua
  */
 public class MetaFrame extends javax.swing.JFrame {
-
+    private CardLayout contentPanelLayout;
     /**
      * Creates new form MetaFrame
      */
     public MetaFrame() {
         initComponents();
-        
+        this.contentPanel.add(new OverviewPanel(), overviewMenuButton.getText());
+        this.contentPanel.add(new TownViewPanel(), townMenuButton.getText());
+        contentPanelLayout = (CardLayout) contentPanel.getLayout();
+        this.pack();
     }
 
     /**
@@ -37,13 +41,13 @@ public class MetaFrame extends javax.swing.JFrame {
         territoryMenuButton = new javax.swing.JToggleButton();
         plotMenuButton = new javax.swing.JToggleButton();
         jToggleButton1 = new javax.swing.JToggleButton();
-        jToolBar2 = new javax.swing.JToolBar();
         securityMenuButton = new javax.swing.JToggleButton();
-        contentPane = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        globalSearchField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("MCTowns Remote Client");
 
         jToolBar1.setBackground(new java.awt.Color(185, 185, 185));
         jToolBar1.setBorder(null);
@@ -58,6 +62,11 @@ public class MetaFrame extends javax.swing.JFrame {
         overviewMenuButton.setFocusable(false);
         overviewMenuButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         overviewMenuButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        overviewMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                overviewMenuButtonActionPerformed(evt);
+            }
+        });
         jToolBar1.add(overviewMenuButton);
 
         menuButtonsGroup.add(townMenuButton);
@@ -65,6 +74,11 @@ public class MetaFrame extends javax.swing.JFrame {
         townMenuButton.setFocusable(false);
         townMenuButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         townMenuButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        townMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                townMenuButtonActionPerformed(evt);
+            }
+        });
         jToolBar1.add(townMenuButton);
 
         menuButtonsGroup.add(territoryMenuButton);
@@ -88,17 +102,19 @@ public class MetaFrame extends javax.swing.JFrame {
         jToggleButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(jToggleButton1);
 
-        jToolBar2.setBorder(null);
-        jToolBar2.setFloatable(false);
-        jToolBar2.setForeground(new java.awt.Color(254, 254, 254));
-        jToolBar2.setRollover(true);
-
         menuButtonsGroup.add(securityMenuButton);
         securityMenuButton.setText("Security");
         securityMenuButton.setFocusable(false);
         securityMenuButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         securityMenuButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar2.add(securityMenuButton);
+        jToolBar1.add(securityMenuButton);
+
+        jLabel1.setText("Search:");
+        jLabel1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jLabel1PropertyChange(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -106,56 +122,55 @@ public class MetaFrame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 399, Short.MAX_VALUE)
-                .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 158, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(globalSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(globalSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)))
         );
 
-        javax.swing.GroupLayout contentPaneLayout = new javax.swing.GroupLayout(contentPane);
-        contentPane.setLayout(contentPaneLayout);
-        contentPaneLayout.setHorizontalGroup(
-            contentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        contentPaneLayout.setVerticalGroup(
-            contentPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 399, Short.MAX_VALUE)
-        );
-
-        jLabel1.setText("Search:");
+        contentPanel.setLayout(new java.awt.CardLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(contentPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addComponent(contentPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap())
+                .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jLabel1PropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel1PropertyChange
+
+    private void overviewMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overviewMenuButtonActionPerformed
+        contentPanelLayout.show(contentPanel, overviewMenuButton.getText());
+        globalSearchField.setEnabled(false);
+    }//GEN-LAST:event_overviewMenuButtonActionPerformed
+
+    private void townMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_townMenuButtonActionPerformed
+        contentPanelLayout.show(contentPanel, townMenuButton.getText());
+        globalSearchField.setEnabled(true);
+    }//GEN-LAST:event_townMenuButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -181,13 +196,12 @@ public class MetaFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel contentPane;
+    private javax.swing.JPanel contentPanel;
+    private javax.swing.JTextField globalSearchField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JToolBar jToolBar2;
     private javax.swing.ButtonGroup menuButtonsGroup;
     private javax.swing.JToggleButton overviewMenuButton;
     private javax.swing.JToggleButton plotMenuButton;
