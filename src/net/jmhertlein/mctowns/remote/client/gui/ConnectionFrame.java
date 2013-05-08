@@ -35,23 +35,21 @@ import sun.misc.BASE64Encoder;
  * @author joshua
  */
 public class ConnectionFrame extends javax.swing.JFrame {
+
     private static final String SERVER_FAIL_CHALLENGE_MESSAGE = "The server presented the expected public key, but was unable to pass our authentication challenge.\n"
-            + ". This may be because:\n" + 
-            "* The server operator re-created the server's encryption keys. (Unlikely to cause this error.)\n" +
-            "* You are being redirected to a potentially malicious server (Man-In-The-Middle Attack). (MUCH MORE LIKELY)\n" + 
-            "No security breach has occurred, but this is a very serious security concern. You should not connect to this server.\n"
+            + ". This may be because:\n"
+            + "* The server operator re-created the server's encryption keys. (Unlikely to cause this error.)\n"
+            + "* You are being redirected to a potentially malicious server (Man-In-The-Middle Attack). (MUCH MORE LIKELY)\n"
+            + "No security breach has occurred, but this is a very serious security concern. You should not connect to this server.\n"
             + "If you want to continue connecting anyway, please clear the server's cached public key\n"
             + "under the \"Advanced\" button.",
-            
-            
-            SERVER_KEY_MISMATCH_MESSAGE = "The server's identity has changed. This may be because:\n" + 
-            "* The server operator re-created the server's encryption keys.\n" +
-            "* You are being redirected to a potentially malicious server (Man-In-The-Middle Attack).\n" + 
-            "No security breach has occurred. You should contact the server operator and\n"
+            SERVER_KEY_MISMATCH_MESSAGE = "The server's identity has changed. This may be because:\n"
+            + "* The server operator re-created the server's encryption keys.\n"
+            + "* You are being redirected to a potentially malicious server (Man-In-The-Middle Attack).\n"
+            + "No security breach has occurred. You should contact the server operator and\n"
             + "ask them if this is expected.\n"
             + "If you want to continue connecting anyway, please clear the server's cached public key\n"
             + "under the \"Advanced\" button.";
-
     private KeyLoader keyLoader;
     private File rootKeysDir;
     private JFrame thisFrame;
@@ -279,28 +277,28 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         Object selected = hostnameDropDown.getSelectedItem();
-        if(selected == null) {
+        if (selected == null) {
             conStatusField.setText("Must specify hostname.");
             return;
         }
-        
+
         final String host = selected.toString();
         final int port;
         try {
             port = Integer.parseInt(portField.getText());
-        } catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             conStatusField.setText("Bad Port: \"" + portField.getText() + "\"");
             return;
         }
-        
+
         Object selectedKPObject = keyPairDropDown.getSelectedItem();
-        if(selectedKPObject == null) {
+        if (selectedKPObject == null) {
             conStatusField.setText("Must select identity.");
             return;
         }
 
         final NamedKeyPair selectedKP = keyLoader.getLoadedKey(keyPairDropDown.getSelectedItem().toString().trim());
-        
+
         final String username = selectedKP.getName();
 
         connectionProgressBar.setIndeterminate(true);
@@ -317,12 +315,12 @@ public class ConnectionFrame extends javax.swing.JFrame {
                     return ActionFailReason.CONNECTION_REFUSED;
                 } catch (ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
                     return ActionFailReason.FATAL_ERROR;
-                } catch(AuthenticationAttemptRejectedException ex) {
+                } catch (AuthenticationAttemptRejectedException ex) {
                     return ActionFailReason.CLIENT_FAILED_SERVER_CHALLENGE;
-                } catch(ServerTrustException ex) {
+                } catch (ServerTrustException ex) {
                     return ex.getReason();
                 }
-                
+
                 return ActionFailReason.NO_FAILURE;
             }
 
@@ -332,15 +330,15 @@ public class ConnectionFrame extends javax.swing.JFrame {
                 ActionFailReason failReason;
                 try {
                     failReason = (ActionFailReason) get();
-                } catch (        InterruptedException | ExecutionException ex) {
+                } catch (InterruptedException | ExecutionException ex) {
                     Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
                     failReason = null;
                 }
-                if(failReason == null) {
+                if (failReason == null) {
                     conStatusField.setText("Unknown error.");
                     return;
                 }
-                switch(failReason) {
+                switch (failReason) {
                     case CLIENT_FAILED_SERVER_CHALLENGE:
                         conStatusField.setText("Failed server authentication challenge.");
                         break;
@@ -363,12 +361,18 @@ public class ConnectionFrame extends javax.swing.JFrame {
                         break;
                     case NO_FAILURE:
                         conStatusField.setText("Connection successful.");
+                        java.awt.EventQueue.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                new MetaFrame().setVisible(true);
+                            }
+                        });
+                        thisFrame.setVisible(false);
                         break;
                 }
             }
-            
         };
-        
+
         x.execute();
     }//GEN-LAST:event_connectButtonActionPerformed
 
@@ -388,21 +392,24 @@ public class ConnectionFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowStateChanged
 
     private void advancedButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedButtonActionPerformed
-        if (advancedPane.isVisible())
+        if (advancedPane.isVisible()) {
             advancedPane.setVisible(false);
-        else
+        } else {
             advancedPane.setVisible(true);
+        }
 
         pack();
     }//GEN-LAST:event_advancedButtonActionPerformed
 
     private void hostnameDropDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hostnameDropDownActionPerformed
         Object selected = hostnameDropDown.getSelectedItem();
-        if (selected == null)
+        if (selected == null) {
             return;
+        }
         PublicKey serverPubKey = keyLoader.getLoadedServerPublicKey(selected.toString());
-        if (serverPubKey != null)
+        if (serverPubKey != null) {
             serverPubKeyArea.setText(new BASE64Encoder().encode(serverPubKey.getEncoded()));
+        }
     }//GEN-LAST:event_hostnameDropDownActionPerformed
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
@@ -416,7 +423,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
     private void clearCachedKeyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCachedKeyButtonActionPerformed
         String hostname = hostnameDropDown.getSelectedItem().toString();
-        
+
         keyLoader.deleteServerPublicKey(hostname);
         serverPubKeyArea.setText("");
     }//GEN-LAST:event_clearCachedKeyButtonActionPerformed

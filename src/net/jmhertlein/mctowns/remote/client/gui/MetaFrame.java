@@ -4,8 +4,11 @@
  */
 package net.jmhertlein.mctowns.remote.client.gui;
 
+import net.jmhertlein.mctowns.remote.client.gui.panels.TownViewPanel;
+import net.jmhertlein.mctowns.remote.client.gui.panels.OverviewPanel;
 import java.awt.CardLayout;
 import javax.swing.UIManager;
+import net.jmhertlein.mctowns.remote.client.gui.panels.TerritoryViewPanel;
 
 /**
  *
@@ -20,6 +23,8 @@ public class MetaFrame extends javax.swing.JFrame {
         initComponents();
         this.contentPanel.add(new OverviewPanel(), overviewMenuButton.getText());
         this.contentPanel.add(new TownViewPanel(), townMenuButton.getText());
+        this.contentPanel.add(new TerritoryViewPanel(), territoryMenuButton.getText());
+        
         contentPanelLayout = (CardLayout) contentPanel.getLayout();
         this.pack();
     }
@@ -86,6 +91,11 @@ public class MetaFrame extends javax.swing.JFrame {
         territoryMenuButton.setFocusable(false);
         territoryMenuButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         territoryMenuButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        territoryMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                territoryMenuButtonActionPerformed(evt);
+            }
+        });
         jToolBar1.add(territoryMenuButton);
 
         menuButtonsGroup.add(plotMenuButton);
@@ -171,6 +181,11 @@ public class MetaFrame extends javax.swing.JFrame {
         contentPanelLayout.show(contentPanel, townMenuButton.getText());
         globalSearchField.setEnabled(true);
     }//GEN-LAST:event_townMenuButtonActionPerformed
+
+    private void territoryMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_territoryMenuButtonActionPerformed
+        contentPanelLayout.show(contentPanel, territoryMenuButton.getText());
+        globalSearchField.setEnabled(true);
+    }//GEN-LAST:event_territoryMenuButtonActionPerformed
 
     /**
      * @param args the command line arguments
