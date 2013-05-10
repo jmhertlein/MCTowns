@@ -3,6 +3,7 @@ package net.jmhertlein.mctowns.remote.server;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -13,7 +14,6 @@ import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -53,6 +53,8 @@ public class HandleRemoteClientTask implements Runnable {
         } catch (IllegalBlockSizeException ex) {
             Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BadPaddingException ex) {
+            Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidAlgorithmParameterException ex) {
             Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

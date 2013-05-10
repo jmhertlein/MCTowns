@@ -7,26 +7,34 @@ import java.io.Serializable;
  * @author joshua
  */
 public enum RemoteAction implements Serializable {
+    //session and auth
     KEY_EXCHANGE,
-    HANDSHAKE,
+    TERMINATE_SESSION,
+    
+    //towns
     GET_TOWN_VIEW,
+    UPDATE_TOWN,
+    CREATE_TOWN,
+    DELETE_TOWN,
+    UPDATE_TOWN_MEMBERSHIP,
+    UPDATE_MAYOR,
+    
+    //territs
     GET_TERRITORY_VIEW,
+    UPDATE_TERRITORY,
+    CREATE_TERRITORY,
+    DELETE_TERRITORY,
+    UPDATE_TERRITORY_MEMBERSHIP,
+    
+    //plots
     GET_PLOT_VIEW,
     UPDATE_PLOT,
-    UPDATE_TOWN,
-    UPDATE_TERRITORY,
+    UPDATE_PLOT_MEMBERSHIP,
+    CREATE_PLOT,
+    DELETE_PLOT,
+    
+    //other views
     GET_META_VIEW,
-    TERMINATE_SESSION;
-    
-    private String[] args;
-
-    public String[] getArgs() {
-        return args;
-    }
-
-    public void setArgs(String[] args) {
-        this.args = args;
-    }
-    
-    
+    GET_SECURITY_VIEW,
+    GET_PLAYER_VIEW,
 }

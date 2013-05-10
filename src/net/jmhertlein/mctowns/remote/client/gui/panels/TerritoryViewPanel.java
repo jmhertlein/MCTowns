@@ -4,17 +4,23 @@
  */
 package net.jmhertlein.mctowns.remote.client.gui.panels;
 
+import net.jmhertlein.mctowns.remote.client.LocalClient;
+import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
+
 /**
  *
  * @author joshua
  */
 public class TerritoryViewPanel extends javax.swing.JPanel {
-
+    private final LocalClient localClient;
+    private final MCTClientProtocol protocol;
     /**
      * Creates new form TerritoryViewPanel
      */
-    public TerritoryViewPanel() {
+    public TerritoryViewPanel(LocalClient l, MCTClientProtocol p) {
         initComponents();
+        localClient = l;
+        protocol = p;
         //territoryInfoPanel.setVisible(false);
     }
 
@@ -45,7 +51,7 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         jLabel3.setFont(new java.awt.Font("Cantarell", 1, 15)); // NOI18N
         jLabel3.setText("Territory Details:");
@@ -92,7 +98,7 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
             .addGroup(territoryInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(territoryInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
                     .addGroup(territoryInfoPanelLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -123,8 +129,11 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(jButton1);
 
-        jLabel8.setText("Delete");
-        jToolBar1.add(jLabel8);
+        jButton2.setText("Delete");
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jButton2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -139,7 +148,7 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel2)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(territoryInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -162,6 +171,7 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -170,7 +180,6 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JList jList1;
     private javax.swing.JList jList2;
     private javax.swing.JList jList3;

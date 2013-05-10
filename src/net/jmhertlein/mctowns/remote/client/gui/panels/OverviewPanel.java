@@ -4,17 +4,54 @@
  */
 package net.jmhertlein.mctowns.remote.client.gui.panels;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import net.jmhertlein.mctowns.remote.client.LocalClient;
+import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
+import net.jmhertlein.mctowns.remote.view.OverView;
+
 /**
  *
  * @author joshua
  */
 public class OverviewPanel extends javax.swing.JPanel {
-
+    private final LocalClient localClient;
+    private final MCTClientProtocol protocol;
     /**
      * Creates new form OverviewPanel
      */
-    public OverviewPanel() {
+    public OverviewPanel(LocalClient l, MCTClientProtocol p) {
         initComponents();
+        localClient = l;
+        protocol = p;
+        
+        
+        OverView v;
+        try {
+            v = protocol.getOverView();
+        } catch (IOException ex) {
+            Logger.getLogger(OverviewPanel.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error communicating with server: " + ex.getLocalizedMessage());
+            return;
+        }
+        
+        this.bugReportHostnameField.setText(v.getBugReportHostname());
+        this.bugReportPortField.setText(v.getBugReportPort().toString());
+        this.economyEnabledCheckBox.setSelected(v.getEconomyEnabled());
+        this.logCommandsCheckBox.setSelected(v.getLogCommands());
+        this.mayorsCanBuyTerritoriesCheckBox.setSelected(v.getMayorsCanBuyTerritories());
+        this.minNumPlayersToBuyTerritField.setText(v.getMinNumPlayersToBuyTerritory().toString());
+        this.numPlotsLabel.setText("Eh");
+        this.numTerritsLabel.setText("Meh");
+        this.numTownsLabel.setText("Heh");
+        this.pricePerXZField.setText(v.getPricePerXZBlock().toString());
+        this.quickSelectToolComboBox.setSelectedItem("Not yet...");
+        this.remoteAdminPortField.setText(v.getRemoteAdminPort().toString());
+        this.remoteAdminServerKeyLengthComboBox.setSelectedItem(v.getRemoteAdminKeyLength());
+        this.remoteAdminSessionKeyLengthComboBox.setSelectedItem(v.getRemoteAdminSessionKeyLength());
+        this.townFriendlyFireManagementCheckBox.setSelected(v.getAllowTownFriendlyFireManagement());
     }
 
     /**
@@ -27,45 +64,45 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        overviewTree = new javax.swing.JTree();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        numTownsLabel = new javax.swing.JLabel();
+        numTerritsLabel = new javax.swing.JLabel();
+        numPlotsLabel = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jTextField1 = new javax.swing.JTextField();
+        economyEnabledCheckBox = new javax.swing.JCheckBox();
+        mayorsCanBuyTerritoriesCheckBox = new javax.swing.JCheckBox();
+        pricePerXZField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jCheckBox3 = new javax.swing.JCheckBox();
+        minNumPlayersToBuyTerritField = new javax.swing.JTextField();
+        townFriendlyFireManagementCheckBox = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
-        jCheckBox4 = new javax.swing.JCheckBox();
+        logCommandsCheckBox = new javax.swing.JCheckBox();
         jLabel11 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        quickSelectToolComboBox = new javax.swing.JComboBox();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        bugReportHostnameField = new javax.swing.JTextField();
+        bugReportPortField = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox();
-        jTextField5 = new javax.swing.JTextField();
+        remoteAdminServerKeyLengthComboBox = new javax.swing.JComboBox();
+        remoteAdminPortField = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox();
+        remoteAdminSessionKeyLengthComboBox = new javax.swing.JComboBox();
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jTree1.setRootVisible(false);
-        jScrollPane1.setViewportView(jTree1);
+        overviewTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        overviewTree.setRootVisible(false);
+        jScrollPane1.setViewportView(overviewTree);
 
         jLabel1.setText("Towns:");
 
@@ -73,32 +110,32 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         jLabel3.setText("Plots:");
 
-        jLabel4.setText("nil");
+        numTownsLabel.setText("nil");
 
-        jLabel5.setText("nil");
+        numTerritsLabel.setText("nil");
 
-        jLabel6.setText("nil");
+        numPlotsLabel.setText("nil");
 
         jLabel7.setFont(new java.awt.Font("Cantarell", 3, 15)); // NOI18N
         jLabel7.setText("Global Configuration Options");
 
-        jCheckBox1.setText("Economy Enabled");
+        economyEnabledCheckBox.setText("Economy Enabled");
 
-        jCheckBox2.setText("Mayors Can Buy Territories");
+        mayorsCanBuyTerritoriesCheckBox.setText("Mayors Can Buy Territories");
 
-        jTextField1.setText("nil");
+        pricePerXZField.setText("nil");
 
         jLabel8.setText("Price per column:");
 
         jLabel9.setText("Minimum Numbers of");
 
-        jTextField2.setText("nil");
+        minNumPlayersToBuyTerritField.setText("nil");
 
-        jCheckBox3.setText("Let Towns Disable Friendly Fire");
+        townFriendlyFireManagementCheckBox.setText("Let Towns Disable Friendly Fire");
 
         jLabel10.setText("Players to Buy Territory:");
 
-        jCheckBox4.setText("Verbose Command Logging");
+        logCommandsCheckBox.setText("Verbose Command Logging");
 
         jLabel11.setText("QuickSelect Tool");
 
@@ -109,9 +146,9 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         jLabel14.setText("Port:");
 
-        jTextField3.setText("services.jmhertlein.net");
+        bugReportHostnameField.setText("services.jmhertlein.net");
 
-        jTextField4.setText("9001");
+        bugReportPortField.setText("9001");
 
         jLabel15.setText("Towns Overview");
 
@@ -128,15 +165,15 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         jLabel20.setText("Server Key Length:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096" }));
-        jComboBox2.setSelectedIndex(2);
+        remoteAdminServerKeyLengthComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096" }));
+        remoteAdminServerKeyLengthComboBox.setSelectedIndex(2);
 
-        jTextField5.setText("3333");
+        remoteAdminPortField.setText("3333");
 
         jLabel21.setText("Session Key Length:");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "128", "192", "256" }));
-        jComboBox3.setSelectedIndex(2);
+        remoteAdminSessionKeyLengthComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "128", "192", "256" }));
+        remoteAdminSessionKeyLengthComboBox.setSelectedIndex(2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -153,9 +190,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(numTownsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                            .addComponent(numTerritsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(numPlotsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jLabel15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -168,26 +205,26 @@ public class OverviewPanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(12, 12, 12)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jCheckBox1)
-                                    .addComponent(jCheckBox2)
+                                    .addComponent(economyEnabledCheckBox)
+                                    .addComponent(mayorsCanBuyTerritoriesCheckBox)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(36, 36, 36)
                                         .addComponent(jLabel8)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField1))
+                                        .addComponent(pricePerXZField))
                                     .addComponent(jLabel9)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel10)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField2))
+                                        .addComponent(minNumPlayersToBuyTerritField))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addComponent(jLabel14)
                                             .addComponent(jLabel13))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                            .addComponent(bugReportPortField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(bugReportHostnameField, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                         .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel18)
@@ -197,24 +234,24 @@ public class OverviewPanel extends javax.swing.JPanel {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel20)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(remoteAdminServerKeyLengthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel21)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(remoteAdminSessionKeyLengthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel19)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                        .addComponent(remoteAdminPortField, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jCheckBox4)
+                            .addComponent(logCommandsCheckBox)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel11)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jCheckBox3))))
+                                .addComponent(quickSelectToolComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(townFriendlyFireManagementCheckBox))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -231,73 +268,69 @@ public class OverviewPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel4))
+                            .addComponent(numTownsLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel5))
+                            .addComponent(numTerritsLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel6)))
+                            .addComponent(numPlotsLabel)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel16)
                             .addComponent(jLabel18))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox1)
+                            .addComponent(economyEnabledCheckBox)
                             .addComponent(jLabel20)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(remoteAdminServerKeyLengthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox2)
+                            .addComponent(mayorsCanBuyTerritoriesCheckBox)
                             .addComponent(jLabel21)
-                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(remoteAdminSessionKeyLengthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pricePerXZField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
                             .addComponent(jLabel19)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(remoteAdminPortField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel10))
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(minNumPlayersToBuyTerritField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(bugReportHostnameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel14)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(bugReportPortField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox4)
+                        .addComponent(logCommandsCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(quickSelectToolComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox3)))
+                        .addComponent(townFriendlyFireManagementCheckBox)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
+    private javax.swing.JTextField bugReportHostnameField;
+    private javax.swing.JTextField bugReportPortField;
+    private javax.swing.JCheckBox economyEnabledCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -313,18 +346,22 @@ public class OverviewPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTree jTree1;
+    private javax.swing.JCheckBox logCommandsCheckBox;
+    private javax.swing.JCheckBox mayorsCanBuyTerritoriesCheckBox;
+    private javax.swing.JTextField minNumPlayersToBuyTerritField;
+    private javax.swing.JLabel numPlotsLabel;
+    private javax.swing.JLabel numTerritsLabel;
+    private javax.swing.JLabel numTownsLabel;
+    private javax.swing.JTree overviewTree;
+    private javax.swing.JTextField pricePerXZField;
+    private javax.swing.JComboBox quickSelectToolComboBox;
+    private javax.swing.JTextField remoteAdminPortField;
+    private javax.swing.JComboBox remoteAdminServerKeyLengthComboBox;
+    private javax.swing.JComboBox remoteAdminSessionKeyLengthComboBox;
+    private javax.swing.JCheckBox townFriendlyFireManagementCheckBox;
     // End of variables declaration//GEN-END:variables
 }

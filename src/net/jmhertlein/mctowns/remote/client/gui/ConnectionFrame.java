@@ -16,16 +16,15 @@ import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.swing.PopupFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import net.jmhertlein.mctowns.remote.AuthenticationAttemptRejectedException;
-import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.ServerTrustException;
 import net.jmhertlein.mctowns.remote.client.ActionStatus;
 import net.jmhertlein.mctowns.remote.client.KeyLoader;
+import net.jmhertlein.mctowns.remote.client.LocalClient;
 import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
 import net.jmhertlein.mctowns.remote.client.NamedKeyPair;
 import sun.misc.BASE64Encoder;
@@ -52,7 +51,9 @@ public class ConnectionFrame extends javax.swing.JFrame {
             + "under the \"Advanced\" button.";
     private KeyLoader keyLoader;
     private File rootKeysDir;
-    private JFrame thisFrame;
+    private ConnectionFrame thisFrame;
+    
+    private MCTClientProtocol protocol;
 
     /**
      * Creates new form ConnectionFrame
@@ -306,9 +307,9 @@ public class ConnectionFrame extends javax.swing.JFrame {
         SwingWorker x = new SwingWorker() {
             @Override
             protected ActionStatus doInBackground() {
-                MCTClientProtocol protocol = new MCTClientProtocol(host, port, keyLoader, username, selectedKP.getPubKey(), selectedKP.getPrivateKey());
+                thisFrame.protocol = new MCTClientProtocol(host, port, keyLoader, username, selectedKP.getPubKey(), selectedKP.getPrivateKey());
                 try {
-                    protocol.submitAction(RemoteAction.KEY_EXCHANGE);
+                    protocol.doInitialKeyExchange();
                 } catch (UnknownHostException ex) {
                     return ActionStatus.UNKNOWN_HOST;
                 } catch (IOException ex) {
@@ -364,7 +365,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
                         java.awt.EventQueue.invokeLater(new Runnable() {
                             @Override
                             public void run() {
-                                new MetaFrame().setVisible(true);
+                                new MetaFrame(new LocalClient(), thisFrame.protocol).setVisible(true);
                             }
                         });
                         thisFrame.setVisible(false);

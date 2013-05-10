@@ -8,6 +8,8 @@ import net.jmhertlein.mctowns.remote.client.gui.panels.TownViewPanel;
 import net.jmhertlein.mctowns.remote.client.gui.panels.OverviewPanel;
 import java.awt.CardLayout;
 import javax.swing.UIManager;
+import net.jmhertlein.mctowns.remote.client.LocalClient;
+import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
 import net.jmhertlein.mctowns.remote.client.gui.panels.PlayerViewPanel;
 import net.jmhertlein.mctowns.remote.client.gui.panels.PlotViewPanel;
 import net.jmhertlein.mctowns.remote.client.gui.panels.SecurityPanel;
@@ -19,17 +21,23 @@ import net.jmhertlein.mctowns.remote.client.gui.panels.TerritoryViewPanel;
  */
 public class MetaFrame extends javax.swing.JFrame {
     private CardLayout contentPanelLayout;
+    
+    private final LocalClient localClient;
+    private final MCTClientProtocol protocol;
     /**
      * Creates new form MetaFrame
      */
-    public MetaFrame() {
+    public MetaFrame(LocalClient l, MCTClientProtocol p) {
         initComponents();
-        this.contentPanel.add(new OverviewPanel(), overviewMenuButton.getText());
-        this.contentPanel.add(new TownViewPanel(), townMenuButton.getText());
-        this.contentPanel.add(new TerritoryViewPanel(), territoryMenuButton.getText());
-        this.contentPanel.add(new PlayerViewPanel(), playerMenuButton.getText());
-        this.contentPanel.add(new PlotViewPanel(), plotMenuButton.getText());
-        this.contentPanel.add(new SecurityPanel(), securityMenuButton.getText());
+        localClient = l;
+        protocol = p;
+        
+        this.contentPanel.add(new OverviewPanel(l, p), overviewMenuButton.getText());
+        this.contentPanel.add(new TownViewPanel(l, p), townMenuButton.getText());
+        this.contentPanel.add(new TerritoryViewPanel(l, p), territoryMenuButton.getText());
+        this.contentPanel.add(new PlayerViewPanel(l, p), playerMenuButton.getText());
+        this.contentPanel.add(new PlotViewPanel(l, p), plotMenuButton.getText());
+        this.contentPanel.add(new SecurityPanel(l, p), securityMenuButton.getText());
         
         contentPanelLayout = (CardLayout) contentPanel.getLayout();
         this.pack();
@@ -223,29 +231,6 @@ public class MetaFrame extends javax.swing.JFrame {
         globalSearchField.setEnabled(true);
     }//GEN-LAST:event_securityMenuButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MetaFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MetaFrame().setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contentPanel;
     private javax.swing.JTextField globalSearchField;

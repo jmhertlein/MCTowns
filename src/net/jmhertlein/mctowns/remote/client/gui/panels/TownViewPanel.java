@@ -4,17 +4,23 @@
  */
 package net.jmhertlein.mctowns.remote.client.gui.panels;
 
+import net.jmhertlein.mctowns.remote.client.LocalClient;
+import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
+
 /**
  *
  * @author joshua
  */
 public class TownViewPanel extends javax.swing.JPanel {
-
+    private final LocalClient localClient;
+    private final MCTClientProtocol protocol;
     /**
      * Creates new form TownViewPanel
      */
-    public TownViewPanel() {
+    public TownViewPanel(LocalClient l, MCTClientProtocol p) {
         initComponents();
+        localClient = l;
+        protocol = p;
         //townInfoPanel.setVisible(false);
     }
 

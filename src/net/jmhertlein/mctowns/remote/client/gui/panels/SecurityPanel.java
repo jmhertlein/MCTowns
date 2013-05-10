@@ -4,17 +4,23 @@
  */
 package net.jmhertlein.mctowns.remote.client.gui.panels;
 
+import net.jmhertlein.mctowns.remote.client.LocalClient;
+import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
+
 /**
  *
  * @author joshua
  */
 public class SecurityPanel extends javax.swing.JPanel {
-
+    private final LocalClient localClient;
+    private final MCTClientProtocol protocol;
     /**
      * Creates new form SecurityPanel
      */
-    public SecurityPanel() {
+    public SecurityPanel(LocalClient l, MCTClientProtocol p) {
         initComponents();
+        localClient = l;
+        protocol = p;
         //identityInfoPanel.setVisible(false);
     }
 
