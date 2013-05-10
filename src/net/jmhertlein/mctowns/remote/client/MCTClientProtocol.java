@@ -78,7 +78,7 @@ public class MCTClientProtocol {
             oos.writeObject(true);
         } else {
             oos.writeObject(false);
-            throw new ServerTrustException(ActionFailReason.SERVER_PUBLIC_KEY_MISMATCH);
+            throw new ServerTrustException(ActionStatus.SERVER_PUBLIC_KEY_MISMATCH);
         }
         
         Cipher outCipher = Cipher.getInstance("RSA");
@@ -121,7 +121,7 @@ public class MCTClientProtocol {
         } else {
             System.out.println("Server failed our trust test.");
             oos.writeObject(false);
-            throw new ServerTrustException(ActionFailReason.SERVER_FAILED_CLIENT_CHALLENGE);
+            throw new ServerTrustException(ActionStatus.SERVER_FAILED_CLIENT_CHALLENGE);
         }
         
         System.out.println("Reading session key.");

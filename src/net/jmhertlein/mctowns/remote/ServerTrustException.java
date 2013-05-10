@@ -1,19 +1,19 @@
 package net.jmhertlein.mctowns.remote;
 
-import net.jmhertlein.mctowns.remote.client.ActionFailReason;
+import net.jmhertlein.mctowns.remote.client.ActionStatus;
 
 /**
  *
  * @author joshua
  */
 public class ServerTrustException extends Exception {
-    private ActionFailReason reason;
-    public ServerTrustException(ActionFailReason reason) {
+    private ActionStatus reason;
+    public ServerTrustException(ActionStatus reason) {
         super("Could not trust server.");
         this.reason = reason;
     }
 
-    public ActionFailReason getReason() {
+    public ActionStatus getReason() {
         return reason;
     }
     

@@ -8,6 +8,9 @@ import net.jmhertlein.mctowns.remote.client.gui.panels.TownViewPanel;
 import net.jmhertlein.mctowns.remote.client.gui.panels.OverviewPanel;
 import java.awt.CardLayout;
 import javax.swing.UIManager;
+import net.jmhertlein.mctowns.remote.client.gui.panels.PlayerViewPanel;
+import net.jmhertlein.mctowns.remote.client.gui.panels.PlotViewPanel;
+import net.jmhertlein.mctowns.remote.client.gui.panels.SecurityPanel;
 import net.jmhertlein.mctowns.remote.client.gui.panels.TerritoryViewPanel;
 
 /**
@@ -24,6 +27,9 @@ public class MetaFrame extends javax.swing.JFrame {
         this.contentPanel.add(new OverviewPanel(), overviewMenuButton.getText());
         this.contentPanel.add(new TownViewPanel(), townMenuButton.getText());
         this.contentPanel.add(new TerritoryViewPanel(), territoryMenuButton.getText());
+        this.contentPanel.add(new PlayerViewPanel(), playerMenuButton.getText());
+        this.contentPanel.add(new PlotViewPanel(), plotMenuButton.getText());
+        this.contentPanel.add(new SecurityPanel(), securityMenuButton.getText());
         
         contentPanelLayout = (CardLayout) contentPanel.getLayout();
         this.pack();
@@ -45,7 +51,7 @@ public class MetaFrame extends javax.swing.JFrame {
         townMenuButton = new javax.swing.JToggleButton();
         territoryMenuButton = new javax.swing.JToggleButton();
         plotMenuButton = new javax.swing.JToggleButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        playerMenuButton = new javax.swing.JToggleButton();
         securityMenuButton = new javax.swing.JToggleButton();
         globalSearchField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -103,20 +109,35 @@ public class MetaFrame extends javax.swing.JFrame {
         plotMenuButton.setFocusable(false);
         plotMenuButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         plotMenuButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        plotMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                plotMenuButtonActionPerformed(evt);
+            }
+        });
         jToolBar1.add(plotMenuButton);
 
-        menuButtonsGroup.add(jToggleButton1);
-        jToggleButton1.setText("Player");
-        jToggleButton1.setFocusable(false);
-        jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jToggleButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jToggleButton1);
+        menuButtonsGroup.add(playerMenuButton);
+        playerMenuButton.setText("Player");
+        playerMenuButton.setFocusable(false);
+        playerMenuButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        playerMenuButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        playerMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playerMenuButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(playerMenuButton);
 
         menuButtonsGroup.add(securityMenuButton);
         securityMenuButton.setText("Security");
         securityMenuButton.setFocusable(false);
         securityMenuButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         securityMenuButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        securityMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                securityMenuButtonActionPerformed(evt);
+            }
+        });
         jToolBar1.add(securityMenuButton);
 
         jLabel1.setText("Search:");
@@ -132,7 +153,7 @@ public class MetaFrame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 158, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 154, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(globalSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -187,6 +208,21 @@ public class MetaFrame extends javax.swing.JFrame {
         globalSearchField.setEnabled(true);
     }//GEN-LAST:event_territoryMenuButtonActionPerformed
 
+    private void playerMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playerMenuButtonActionPerformed
+        contentPanelLayout.show(contentPanel, playerMenuButton.getText());
+        globalSearchField.setEnabled(true);
+    }//GEN-LAST:event_playerMenuButtonActionPerformed
+
+    private void plotMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotMenuButtonActionPerformed
+        contentPanelLayout.show(contentPanel, plotMenuButton.getText());
+        globalSearchField.setEnabled(true);
+    }//GEN-LAST:event_plotMenuButtonActionPerformed
+
+    private void securityMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_securityMenuButtonActionPerformed
+        contentPanelLayout.show(contentPanel, securityMenuButton.getText());
+        globalSearchField.setEnabled(true);
+    }//GEN-LAST:event_securityMenuButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -215,10 +251,10 @@ public class MetaFrame extends javax.swing.JFrame {
     private javax.swing.JTextField globalSearchField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.ButtonGroup menuButtonsGroup;
     private javax.swing.JToggleButton overviewMenuButton;
+    private javax.swing.JToggleButton playerMenuButton;
     private javax.swing.JToggleButton plotMenuButton;
     private javax.swing.JToggleButton securityMenuButton;
     private javax.swing.JToggleButton territoryMenuButton;

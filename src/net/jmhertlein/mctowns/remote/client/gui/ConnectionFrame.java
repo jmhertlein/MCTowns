@@ -24,7 +24,7 @@ import javax.swing.UIManager;
 import net.jmhertlein.mctowns.remote.AuthenticationAttemptRejectedException;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.ServerTrustException;
-import net.jmhertlein.mctowns.remote.client.ActionFailReason;
+import net.jmhertlein.mctowns.remote.client.ActionStatus;
 import net.jmhertlein.mctowns.remote.client.KeyLoader;
 import net.jmhertlein.mctowns.remote.client.MCTClientProtocol;
 import net.jmhertlein.mctowns.remote.client.NamedKeyPair;
@@ -305,31 +305,31 @@ public class ConnectionFrame extends javax.swing.JFrame {
 
         SwingWorker x = new SwingWorker() {
             @Override
-            protected ActionFailReason doInBackground() {
+            protected ActionStatus doInBackground() {
                 MCTClientProtocol protocol = new MCTClientProtocol(host, port, keyLoader, username, selectedKP.getPubKey(), selectedKP.getPrivateKey());
                 try {
                     protocol.submitAction(RemoteAction.KEY_EXCHANGE);
                 } catch (UnknownHostException ex) {
-                    return ActionFailReason.UNKNOWN_HOST;
+                    return ActionStatus.UNKNOWN_HOST;
                 } catch (IOException ex) {
-                    return ActionFailReason.CONNECTION_REFUSED;
+                    return ActionStatus.CONNECTION_REFUSED;
                 } catch (ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
-                    return ActionFailReason.FATAL_ERROR;
+                    return ActionStatus.UNHANDLED_ERROR;
                 } catch (AuthenticationAttemptRejectedException ex) {
-                    return ActionFailReason.CLIENT_FAILED_SERVER_CHALLENGE;
+                    return ActionStatus.CLIENT_FAILED_SERVER_CHALLENGE;
                 } catch (ServerTrustException ex) {
                     return ex.getReason();
                 }
 
-                return ActionFailReason.NO_FAILURE;
+                return ActionStatus.NO_FAILURE;
             }
 
             @Override
             protected void done() {
                 connectionProgressBar.setIndeterminate(false);
-                ActionFailReason failReason;
+                ActionStatus failReason;
                 try {
-                    failReason = (ActionFailReason) get();
+                    failReason = (ActionStatus) get();
                 } catch (InterruptedException | ExecutionException ex) {
                     Logger.getLogger(ConnectionFrame.class.getName()).log(Level.SEVERE, null, ex);
                     failReason = null;
@@ -353,7 +353,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
                     case CONNECTION_REFUSED:
                         conStatusField.setText("Connection refused.");
                         break;
-                    case FATAL_ERROR:
+                    case UNHANDLED_ERROR:
                         conStatusField.setText("Unknown error.");
                         break;
                     case UNKNOWN_HOST:

@@ -15,7 +15,7 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
      */
     public TerritoryViewPanel() {
         initComponents();
-        territoryInfoPanel.setVisible(false);
+        //territoryInfoPanel.setVisible(false);
     }
 
     /**
@@ -45,7 +45,7 @@ public class TerritoryViewPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
 
         jLabel3.setFont(new java.awt.Font("Cantarell", 1, 15)); // NOI18N
-        jLabel3.setText("Territory Information:");
+        jLabel3.setText("Territory Details:");
 
         jLabel4.setText("World Name:");
 
