@@ -1,0 +1,4 @@
+Resources from others used according to their license:
+GNOME icons: 
+    License: https://git.gnome.org/browse/gnome-icon-theme/tree/COPYING
+    Author: http://www.gnome.org

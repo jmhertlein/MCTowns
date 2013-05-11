@@ -1,7 +1,5 @@
 package net.jmhertlein.mctowns.remote;
 
-import net.jmhertlein.mctowns.remote.client.ActionStatus;
-
 /**
  *
  * @author joshua
