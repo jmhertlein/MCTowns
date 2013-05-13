@@ -11,6 +11,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -25,6 +27,8 @@ import net.jmhertlein.mctowns.remote.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.view.OverView;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import sun.misc.BASE64Encoder;
@@ -193,6 +197,9 @@ public class MCTServerProtocol {
             case GET_META_VIEW:
                 sendMetaView(oos, ois);
                 break;
+            case GET_ALL_PLAYERS:
+                sendAllPlayersList(oos, ois);
+                break;
         }
 
         client.close();
@@ -210,5 +217,17 @@ public class MCTServerProtocol {
         byte[] keyBytes = new byte[16];
         System.arraycopy(key, 0, keyBytes, 0, Math.min(key.length, keyBytes.length));
         return keyBytes;
+    }
+
+    private void sendAllPlayersList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
+        System.out.println("Creating list of all players ever played.");
+        List<String> playerList = new LinkedList<>();
+        
+        for(OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+            playerList.add(p.getName());
+        }
+        
+        oos.writeObject(playerList);
+        System.out.println("Sent list.");
     }
 }
