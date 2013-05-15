@@ -31,14 +31,14 @@ public class RemoteConnectionServer extends Thread {
     private PrivateKey privateKey;
     private PublicKey pubKey;
     private Map<Integer, ClientSession> sessionKeys;
-    private Plugin p;
+    private MCTowns p;
     
     /**
      * 
      * @param authorizedKeysDirectory
      * @throws IOException if there's an error listening on the port
      */
-    public RemoteConnectionServer(Plugin p, File authorizedKeysDirectory) throws IOException {
+    public RemoteConnectionServer(MCTowns p, File authorizedKeysDirectory) throws IOException {
         authKeysDir = authorizedKeysDirectory;
         threadPool = Executors.newCachedThreadPool();
         done = false;

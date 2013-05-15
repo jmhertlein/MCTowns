@@ -23,10 +23,12 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import net.jmhertlein.core.crypto.CryptoManager;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.remote.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.view.OverView;
+import net.jmhertlein.mctowns.remote.view.PlayerView;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -45,7 +47,7 @@ public class MCTServerProtocol {
     private PublicKey serverPubKey;
     private PrivateKey serverPrivateKey;
     private Map<Integer, ClientSession> sessionKeys;
-    private Plugin p;
+    private MCTowns p;
     private static volatile Integer nextSessionID = 0;
     
     private ClientSession clientSession;
@@ -53,7 +55,7 @@ public class MCTServerProtocol {
     private Socket client;
     private RemoteAction action;
 
-    public MCTServerProtocol(Plugin p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<Integer, ClientSession> sessionKeys) {
+    public MCTServerProtocol(MCTowns p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<Integer, ClientSession> sessionKeys) {
         this.authKeysDir = authKeysDir;
         this.serverPubKey = serverPublicKey;
         this.cMan = new CryptoManager();
@@ -200,6 +202,9 @@ public class MCTServerProtocol {
             case GET_ALL_PLAYERS:
                 sendAllPlayersList(oos, ois);
                 break;
+            case GET_VIEW_FOR_PLAYER:
+                sendPlayerView(oos, ois);
+                break;
         }
 
         client.close();
@@ -229,5 +234,12 @@ public class MCTServerProtocol {
         
         oos.writeObject(playerList);
         System.out.println("Sent list.");
+    }
+
+    private void sendPlayerView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String pName = (String) ois.readObject();
+        PlayerView pView = new PlayerView(p.getServer(), p.getServer().getOfflinePlayer(pName), MCTowns.getTownManager());
+        
+        oos.writeObject(pView);
     }
 }
