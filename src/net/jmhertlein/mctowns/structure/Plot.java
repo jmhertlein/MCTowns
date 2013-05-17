@@ -39,7 +39,7 @@ public class Plot extends MCTownsRegion {
         parTownName = parentTownName;
         
         //note to self- don't put calculateSignLoc() here because it needs the region to already
-        //added to the region manager
+        //be added to the region manager
     }
 
     /**

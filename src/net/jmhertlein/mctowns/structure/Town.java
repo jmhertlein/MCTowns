@@ -128,6 +128,12 @@ public class Town {
         return motdColor + townMOTD;
     }
 
+    public ChatColor getMotdColor() {
+        return motdColor;
+    }
+    
+    
+
     /**
      * Returns the town's name
      *
@@ -295,6 +301,10 @@ public class Town {
      */
     public String[] getResidentNames() {
         return residents.toArray(new String[residents.size()]);
+    }
+    
+    public Set<String> getAssistantNames() {
+        return Collections.unmodifiableSet(assistants);
     }
 
     /**
