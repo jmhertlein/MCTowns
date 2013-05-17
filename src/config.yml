@@ -21,4 +21,7 @@ remoteAdminPort: 3333
 #default is 2048
 remoteAdminKeyLength: 2048
 #valid values: 128, 192 or 256
-remoteAdminSessionKeyLength: 256
+#IMPORTANT: Your JRE may not support key sizes larger than 128.
+#You can try setting your key length to 192 or 256, but if you get errors
+#when clients connect, put it back to 128.
+remoteAdminSessionKeyLength: 128

@@ -179,6 +179,8 @@ public class MCTServerProtocol {
 
         clientSession = sessionKeys.get(clientSessionID);
         
+        System.out.println("Client session key is null: " + (clientSession == null));
+        
         Cipher inCipher = Cipher.getInstance("AES/CFB8/NoPadding"), outCipher = Cipher.getInstance("AES/CFB8/NoPadding");
         IvParameterSpec iv = new IvParameterSpec(getKeyBytes(clientSession.getSessionKey()));
         inCipher.init(Cipher.DECRYPT_MODE, clientSession.getSessionKey(), iv);
