@@ -29,6 +29,7 @@ import net.jmhertlein.mctowns.remote.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
+import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -207,6 +208,9 @@ public class MCTServerProtocol {
             case GET_VIEW_FOR_PLAYER:
                 sendPlayerView(oos, ois);
                 break;
+            case GET_ALL_TOWNS:
+                sendAllTowns(oos, ois);
+                break;
         }
 
         client.close();
@@ -243,5 +247,14 @@ public class MCTServerProtocol {
         PlayerView pView = new PlayerView(p.getServer(), p.getServer().getOfflinePlayer(pName), MCTowns.getTownManager());
         
         oos.writeObject(pView);
+    }
+
+    private void sendAllTowns(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
+        List<String> ret = new LinkedList<>();
+        for(Town t : MCTowns.getTownManager().getTownsCollection()) {
+            ret.add(t.getTownName());
+        }
+        
+        oos.writeObject(ret);
     }
 }

@@ -37,5 +37,5 @@ public enum RemoteAction implements Serializable {
     GET_META_VIEW,
     GET_SECURITY_VIEW,
     GET_ALL_PLAYERS,
-    GET_VIEW_FOR_PLAYER;
+    GET_VIEW_FOR_PLAYER, GET_ALL_TOWNS;
 }
