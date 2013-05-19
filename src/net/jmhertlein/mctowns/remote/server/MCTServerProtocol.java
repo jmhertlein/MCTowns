@@ -29,6 +29,7 @@ import net.jmhertlein.mctowns.remote.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
+import net.jmhertlein.mctowns.remote.view.TownView;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -211,6 +212,9 @@ public class MCTServerProtocol {
             case GET_ALL_TOWNS:
                 sendAllTowns(oos, ois);
                 break;
+            case GET_TOWN_VIEW:
+                sendTownView(oos, ois);
+                break;
         }
 
         client.close();
@@ -254,6 +258,14 @@ public class MCTServerProtocol {
         for(Town t : MCTowns.getTownManager().getTownsCollection()) {
             ret.add(t.getTownName());
         }
+        
+        oos.writeObject(ret);
+    }
+    
+    private void sendTownView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String tName = (String) ois.readObject();
+        
+        TownView ret = new TownView(MCTowns.getTownManager().getTown(tName));
         
         oos.writeObject(ret);
     }

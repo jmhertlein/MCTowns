@@ -238,7 +238,7 @@ public class TownExecutor extends BaseExecutor {
 
                 case "motd":
                     if (command.hasArgAtIndex(2)) {
-                        handler.setMOTD(command.concatAfter(2));
+                        handler.setMOTD(command.concatAfter(3));
                     } else {
                         handler.printMOTD();
                     }
