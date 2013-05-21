@@ -1,4 +1,6 @@
-package net.jmhertlein.mctowns.remote;
+package net.jmhertlein.mctowns.remote.auth;
+
+import net.jmhertlein.mctowns.remote.ActionStatus;
 
 /**
  *

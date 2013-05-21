@@ -1,4 +1,4 @@
-package net.jmhertlein.mctowns.remote;
+package net.jmhertlein.mctowns.remote.auth;
 
 import java.io.Serializable;
 import javax.crypto.BadPaddingException;

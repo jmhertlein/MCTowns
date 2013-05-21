@@ -17,7 +17,7 @@ public enum RemoteAction implements Serializable {
     CREATE_TOWN,
     DELETE_TOWN,
     UPDATE_TOWN_MEMBERSHIP,
-    UPDATE_MAYOR,
+    GET_TOWN_LIST,
     
     //territs
     GET_TERRITORY_VIEW,
@@ -33,9 +33,14 @@ public enum RemoteAction implements Serializable {
     CREATE_PLOT,
     DELETE_PLOT,
     
+    //security
+    GET_IDENTITY_LIST,
+    GET_IDENTITY_VIEW,
+    ADD_IDENTITY,
+    DELETE_IDENTITY,
+    
     //other views
     GET_META_VIEW,
-    GET_SECURITY_VIEW,
-    GET_ALL_PLAYERS,
-    GET_VIEW_FOR_PLAYER, GET_ALL_TOWNS;
+    GET_PLAYER_LIST,
+    GET_VIEW_FOR_PLAYER;
 }

@@ -1,6 +1,7 @@
 package net.jmhertlein.mctowns.remote.server;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,11 +23,13 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import net.jmhertlein.core.crypto.CryptoManager;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.remote.AuthenticationChallenge;
-import net.jmhertlein.mctowns.remote.EncryptedSecretKey;
+import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
+import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
+import net.jmhertlein.mctowns.remote.auth.Identity;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
 import net.jmhertlein.mctowns.remote.view.TownView;
@@ -34,7 +37,6 @@ import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.Plugin;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -203,18 +205,26 @@ public class MCTServerProtocol {
             case GET_META_VIEW:
                 sendMetaView(oos, ois);
                 break;
-            case GET_ALL_PLAYERS:
+            case GET_PLAYER_LIST:
                 sendAllPlayersList(oos, ois);
                 break;
             case GET_VIEW_FOR_PLAYER:
                 sendPlayerView(oos, ois);
                 break;
-            case GET_ALL_TOWNS:
+            case GET_TOWN_LIST:
                 sendAllTowns(oos, ois);
                 break;
             case GET_TOWN_VIEW:
                 sendTownView(oos, ois);
                 break;
+            case ADD_IDENTITY:
+                addIdentity(oos, ois);
+                break;
+                
+            case GET_IDENTITY_LIST:
+                sendIdentityList(oos, ois);
+                break;
+                
         }
 
         client.close();
@@ -266,6 +276,29 @@ public class MCTServerProtocol {
         String tName = (String) ois.readObject();
         
         TownView ret = new TownView(MCTowns.getTownManager().getTown(tName));
+        
+        oos.writeObject(ret);
+    }
+
+    private void addIdentity(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        Identity i = (Identity) ois.readObject();
+        
+        Boolean result = cMan.storeKey(new File(authKeysDir, i.getName() + ".pub"), i.getPubKey());
+        
+        oos.writeObject(result);
+    }
+
+    private void sendIdentityList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
+        FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String string) {
+                return string.endsWith(".pub");
+            }
+        };
+        List<Identity> ret = new LinkedList<>();
+        for(File f : authKeysDir.listFiles(filter)){
+            ret.add(new Identity(Identity.trimFileName(f.getName()), cMan.loadPubKey(f)));
+        }
         
         oos.writeObject(ret);
     }
