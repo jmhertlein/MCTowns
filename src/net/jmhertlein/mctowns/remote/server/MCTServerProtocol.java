@@ -219,9 +219,12 @@ public class MCTServerProtocol {
             case ADD_IDENTITY:
                 addIdentity(oos, ois);
                 break;
-                
             case GET_IDENTITY_LIST:
                 sendIdentityList(oos, ois);
+                break;
+                
+            case DELETE_IDENTITY:
+                deleteIdentity(oos, ois);
                 break;
                 
         }
@@ -300,5 +303,17 @@ public class MCTServerProtocol {
         }
         
         oos.writeObject(ret);
+    }
+
+    private void deleteIdentity(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String deleteMe = (String) ois.readObject();
+        
+        File identityFile = new File(authKeysDir, deleteMe + ".pub");
+        
+        if(identityFile.exists()) {
+            oos.writeObject(identityFile.delete());
+        } else {
+            oos.writeObject(false);
+        }
     }
 }
