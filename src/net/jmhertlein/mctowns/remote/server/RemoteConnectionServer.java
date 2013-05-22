@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import net.jmhertlein.core.crypto.CryptoManager;
+import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.plugin.Plugin;
 
@@ -27,7 +27,7 @@ public class RemoteConnectionServer extends Thread {
     private ExecutorService threadPool;
     private boolean done;
     private ServerSocket server;
-    private CryptoManager cMan;
+    private Keys cMan;
     private PrivateKey privateKey;
     private PublicKey pubKey;
     private Map<Integer, ClientSession> sessionKeys;
@@ -43,7 +43,6 @@ public class RemoteConnectionServer extends Thread {
         threadPool = Executors.newCachedThreadPool();
         done = false;
         server = new ServerSocket(p.getConfig().getInt("remoteAdminPort"));
-        cMan = new CryptoManager();
         this.p = p;
         sessionKeys = new ConcurrentHashMap<>();
         
@@ -105,7 +104,7 @@ public class RemoteConnectionServer extends Thread {
         if(regenKeys) {
             int length = p.getConfig().getInt("remoteAdminKeyLength");
             System.out.println("Generating new key pair of length " + length + ", this may take a moment.");
-            KeyPair pair = CryptoManager.newRSAKeyPair(length);
+            KeyPair pair = Keys.newRSAKeyPair(length);
             System.out.println("New key pair generated.");
             
             cMan.storeKey(pubKeyFile, pair.getPublic());

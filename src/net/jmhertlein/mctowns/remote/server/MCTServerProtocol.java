@@ -24,7 +24,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import net.jmhertlein.core.crypto.CryptoManager;
+import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
@@ -47,7 +47,7 @@ public class MCTServerProtocol {
 
     private static final int NUM_CHECK_BYTES = 50;
     private File authKeysDir;
-    private CryptoManager cMan;
+    private Keys cMan;
     private PublicKey serverPubKey;
     private PrivateKey serverPrivateKey;
     private Map<Integer, ClientSession> sessionKeys;
@@ -62,7 +62,6 @@ public class MCTServerProtocol {
     public MCTServerProtocol(MCTowns p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<Integer, ClientSession> sessionKeys) {
         this.authKeysDir = authKeysDir;
         this.serverPubKey = serverPublicKey;
-        this.cMan = new CryptoManager();
         this.client = client;
         this.serverPrivateKey = serverPrivateKey;
         this.sessionKeys = sessionKeys;
@@ -139,7 +138,7 @@ public class MCTServerProtocol {
         }
 
         System.out.println("Making new session key.");
-        SecretKey newKey = CryptoManager.newAESKey(p.getConfig().getInt("remoteAdminSessionKeyLength"));
+        SecretKey newKey = Keys.newAESKey(p.getConfig().getInt("remoteAdminSessionKeyLength"));
         System.out.println("Session key made.");
 
         System.out.println("Writing key...");
