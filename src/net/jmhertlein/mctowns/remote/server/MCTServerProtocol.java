@@ -23,7 +23,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
@@ -32,6 +31,7 @@ import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.auth.Identity;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
+import net.jmhertlein.mctowns.remote.view.TerritoryView;
 import net.jmhertlein.mctowns.remote.view.TownView;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
@@ -222,9 +222,14 @@ public class MCTServerProtocol {
             case GET_IDENTITY_LIST:
                 sendIdentityList(oos, ois);
                 break;
-                
             case DELETE_IDENTITY:
                 deleteIdentity(oos, ois);
+                break;
+            case GET_TERRITORY_LIST:
+                sendTerritoryList(oos, ois);
+                break;
+            case GET_TERRITORY_VIEW:
+                sendTerritoryView(oos, ois);
                 break;
                 
         }
@@ -315,5 +320,22 @@ public class MCTServerProtocol {
         } else {
             oos.writeObject(false);
         }
+    }
+
+    private void sendTerritoryList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String townName = (String) ois.readObject();
+        
+        List<String> territs = new LinkedList<>();
+        territs.addAll(MCTowns.getTownManager().getTown(townName).getTerritoriesCollection());
+        
+        oos.writeObject(territs);
+    }
+
+    private void sendTerritoryView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String territName = (String) ois.readObject();
+        
+        TerritoryView view = new TerritoryView(MCTowns.getTownManager().getTerritory(territName));
+        
+        oos.writeObject(view);
     }
 }

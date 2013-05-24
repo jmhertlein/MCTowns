@@ -25,6 +25,7 @@ public enum RemoteAction implements Serializable {
     CREATE_TERRITORY,
     DELETE_TERRITORY,
     UPDATE_TERRITORY_MEMBERSHIP,
+    GET_TERRITORY_LIST,
     
     //plots
     GET_PLOT_VIEW,
