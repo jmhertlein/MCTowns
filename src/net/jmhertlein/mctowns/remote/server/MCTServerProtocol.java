@@ -231,6 +231,9 @@ public class MCTServerProtocol {
             case GET_TERRITORY_VIEW:
                 sendTerritoryView(oos, ois);
                 break;
+            case DELETE_TERRITORY:
+                deleteTerritory(oos, ois);
+                break;
                 
         }
 
@@ -337,5 +340,11 @@ public class MCTServerProtocol {
         TerritoryView view = new TerritoryView(MCTowns.getTownManager().getTerritory(territName));
         
         oos.writeObject(view);
+    }
+
+    private void deleteTerritory(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String territName = (String) ois.readObject();
+        Boolean result = MCTowns.getTownManager().removeTerritory(territName);
+        oos.writeObject(result);
     }
 }
