@@ -1,10 +1,12 @@
 package net.jmhertlein.mctowns.structure;
 
+import com.google.common.collect.Sets;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
@@ -22,30 +24,30 @@ public class Town {
     private static final long serialVersionUID = "TOWN".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
     //the town name
-    private String townName;
-    private String worldName;
+    private volatile String townName;
+    private volatile String worldName;
     //the town MOTD
-    private String townMOTD;
-    private ChatColor motdColor;
+    private volatile String townMOTD;
+    private volatile ChatColor motdColor;
     //town spawn point
-    private Location townSpawn;
+    private volatile Location townSpawn;
     //town bank
-    private BlockBank bank;
+    private volatile BlockBank bank;
     //the territories associated with it
-    private HashSet<String> territories;
+    private Set<String> territories;
     //the players in it
-    private HashSet<String> residents;
+    private Set<String> residents;
     //its mayor (string)
     private String mayor;
     //the assistants (strings)
-    private HashSet<String> assistants;
+    private Set<String> assistants;
     //whether or not plots are buyable and thus have a price
     private boolean buyablePlots;
     //turns off the join request/invitation system. Instead, buying a plot in
     //the town makes you a member. Also, if this is false, you need to be a
     //member of the town in order to buy plots.
     private boolean economyJoins;
-    private BigDecimal defaultPlotPrice;
+    private volatile BigDecimal defaultPlotPrice;
     private boolean friendlyFire;
 
     /**
@@ -66,9 +68,10 @@ public class Town {
 
         bank = new BlockBank();
 
-        residents = new HashSet<>();
-        assistants = new HashSet<>();
-        territories = new HashSet<>();
+        //use Collections method to get concurrency benefits from ConcurrHashMap
+        residents = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        assistants = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
         buyablePlots = false;
         economyJoins = false;
@@ -82,7 +85,7 @@ public class Town {
         motdColor = ChatColor.GOLD;
     }
 
-    public Town() {}
+    private Town() {}
 
     /**
      *
@@ -267,11 +270,20 @@ public class Town {
 
     /**
      * Returns the territories this town has.
+     * 
+     * Modifying membership of returned set does not modify which territs
+     * are in this Town
+     * 
+     * Sets returned by this method will not update themselves if subsequent Town method
+     * calls add Territories to it
+     * 
+     * Returned Set is a LinkedHashSet and as such performs well for
+     * iteration and set membership checks
      *
      * @return the town's territories
      */
-    public Collection<String> getTerritoriesCollection() {
-        return (Collection<String>) territories.clone();
+    public Set<String> getTerritoriesCollection() {
+        return new LinkedHashSet<>(territories);
     }
 
     /**
@@ -295,7 +307,16 @@ public class Town {
     }
 
     /**
-     * Returns the list of all
+     * Returns the list of all assistants in the town
+     * 
+     * Modifying membership of returned set does not modify which players
+     * are assistants in this Town
+     * 
+     * Sets returned by this method will not update themselves if subsequent Town method
+     * calls add assistants to it
+     * 
+     * Returned Set is a LinkedHashSet and as such performs well for
+     * iteration and set membership checks
      *
      * @return
      */
@@ -304,7 +325,7 @@ public class Town {
     }
     
     public Set<String> getAssistantNames() {
-        return Collections.unmodifiableSet(assistants);
+        return new LinkedHashSet<>(assistants);
     }
 
     /**

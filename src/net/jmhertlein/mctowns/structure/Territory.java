@@ -1,10 +1,12 @@
 package net.jmhertlein.mctowns.structure;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -17,7 +19,7 @@ public class Territory extends MCTownsRegion{
     private static final int VERSION = 0;
 
     private String parTownName;
-    private HashSet<String> plotNames;
+    private Set<String> plotNames;
 
     /**
      * Constructs a new territory
@@ -27,7 +29,7 @@ public class Territory extends MCTownsRegion{
      */
     public Territory(String name, String worldName, String parentTownName) {
         super(name, worldName);
-        plotNames = new HashSet<>();
+        plotNames = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         parTownName = parentTownName;
     }
 
@@ -51,11 +53,18 @@ public class Territory extends MCTownsRegion{
     }
 
     /**
-     *
+     * Modifying membership of returned set does not modify which plots
+     * are in this territ
+     * 
+     * Sets returned by this method will not update themselves if subsequent Territory method
+     * calls add plots to it
+     * 
+     * Returned Set is a LinkedHashSet and as such performs well for
+     * iteration and set membership checks
      * @return the plots owned by this territory
      */
-    public Collection<String> getPlotsCollection() {
-        return (Collection<String>) plotNames.clone();
+    public Set<String> getPlotsCollection() {
+        return new LinkedHashSet<>(plotNames);
     }
 
     /**

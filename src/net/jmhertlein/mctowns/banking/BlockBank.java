@@ -3,8 +3,10 @@ package net.jmhertlein.mctowns.banking;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -16,14 +18,14 @@ public class BlockBank {
 
     private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 1;
-    private TreeMap<Integer, Integer> bank;
-    private BigDecimal townFunds;
+    private Map<Integer, Integer> bank;
+    private volatile BigDecimal townFunds;
 
     /**
      * Constructs a new empty block bank.
      */
     public BlockBank() {
-        bank = new TreeMap<>();
+        bank = new ConcurrentHashMap<>();
         townFunds = BigDecimal.ZERO;
     }
 

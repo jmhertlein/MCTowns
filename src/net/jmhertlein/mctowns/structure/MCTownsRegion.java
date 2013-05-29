@@ -21,7 +21,7 @@ public abstract class MCTownsRegion {
     /**
      * The name of the region, the name of the world in which the region exists
      */
-    protected String name, worldName;
+    protected volatile String name, worldName;
 
     public MCTownsRegion() {
     }

@@ -18,12 +18,12 @@ public class Plot extends MCTownsRegion {
 
     private static final long serialVersionUID = "PLOT".hashCode(); // DO NOT CHANGE
 
-    private String parTerrName;
-    private String parTownName;
+    private volatile String parTerrName;
+    private volatile String parTownName;
 
     private boolean forSale;
-    private BigDecimal price;
-    private Location signLoc;
+    private volatile BigDecimal price;
+    private volatile Location signLoc;
 
     /**
      * Creates a new plot with the specified properties.
