@@ -141,8 +141,8 @@ public class BlockBank {
         String[] temp;
 
         for(String s : f.getStringList("bank.contents")) {
-            temp = s.split("|");
-            bank.bank.put(Integer.parseInt(temp[0]), Integer.parseInt(temp[1]));
+            temp = s.split("[|]");
+            bank.bank.put(Material.valueOf(temp[0]).getId(), Integer.parseInt(temp[1].trim()));
         }
 
         bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));

@@ -988,8 +988,7 @@ public class TownHandler extends CommandHandler {
         }
 
         if (bank.depositBlocks(block.getId(), quantity)) {
-            Player p = localSender.getPlayer();
-            p.getInventory().removeItem(new ItemStack(block.getId(), quantity));
+            localSender.getPlayer().getInventory().removeItem(new ItemStack(block.getId(), quantity));
             localSender.sendMessage("Blocks deposited.");
         } else {
             localSender.sendMessage(ERR + "Invalid quantity. Please input a number greater than 0.");

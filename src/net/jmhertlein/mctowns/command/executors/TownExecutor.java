@@ -160,7 +160,7 @@ public class TownExecutor extends BaseExecutor {
 
                                 case "hand":
                                     helpMessage = "/town bank deposit hand <quantity>";
-                                    handler.depositHeldItem(command.get(3));
+                                    handler.depositHeldItem(command.get(4));
                                     softFailure = false;
                                     break;
                                 default:
