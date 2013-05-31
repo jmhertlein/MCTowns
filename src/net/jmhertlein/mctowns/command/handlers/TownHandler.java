@@ -19,6 +19,7 @@ import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -849,8 +850,14 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
-        localSender.getPlayer().teleport(t.getTownSpawn(server));
+        
+        Location spawn = t.getTownSpawn(server);
+        if(spawn == null) {
+            localSender.sendMessage(ERR + "Town spawn not set.");
+            return;
+        }
+        
+        localSender.getPlayer().teleport(spawn);
         localSender.sendMessage(ChatColor.DARK_GRAY + "Teleported to " + t.getTownName() + "! Welcome!");
     }
 
@@ -988,8 +995,7 @@ public class TownHandler extends CommandHandler {
         }
 
         if (bank.depositBlocks(block.getId(), quantity)) {
-            Player p = localSender.getPlayer();
-            p.getInventory().removeItem(new ItemStack(block.getId(), quantity));
+            localSender.getPlayer().getInventory().removeItem(new ItemStack(block.getId(), quantity));
             localSender.sendMessage("Blocks deposited.");
         } else {
             localSender.sendMessage(ERR + "Invalid quantity. Please input a number greater than 0.");
