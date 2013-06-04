@@ -31,8 +31,11 @@ import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.auth.Identity;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
+import net.jmhertlein.mctowns.remote.view.PlotView;
 import net.jmhertlein.mctowns.remote.view.TerritoryView;
 import net.jmhertlein.mctowns.remote.view.TownView;
+import net.jmhertlein.mctowns.structure.Plot;
+import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -47,7 +50,6 @@ public class MCTServerProtocol {
 
     private static final int NUM_CHECK_BYTES = 50;
     private File authKeysDir;
-    private Keys cMan;
     private PublicKey serverPubKey;
     private PrivateKey serverPrivateKey;
     private Map<Integer, ClientSession> sessionKeys;
@@ -67,7 +69,7 @@ public class MCTServerProtocol {
         this.sessionKeys = sessionKeys;
         this.p = p;
     }
-
+    
     private boolean doInitialKeyExchange() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         System.out.println("Opening object input stream.");
         ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
@@ -79,7 +81,7 @@ public class MCTServerProtocol {
         clientName = (String) ois.readObject();
         
         System.out.println("Loading client key from disk.");
-        PublicKey clientKey = cMan.loadPubKey(new File(authKeysDir, clientName + ".pub"));
+        PublicKey clientKey = Keys.loadPubKey(new File(authKeysDir, clientName + ".pub"));
 
 
         ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
@@ -234,6 +236,11 @@ public class MCTServerProtocol {
             case DELETE_TERRITORY:
                 deleteTerritory(oos, ois);
                 break;
+            case GET_PLOT_VIEW:
+                sendPlotView(oos, ois);
+                break;
+            case GET_PLOTS_LIST:
+                sendPlotList(oos, ois);
                 
         }
 
@@ -258,8 +265,8 @@ public class MCTServerProtocol {
         System.out.println("Creating list of all players ever played.");
         List<String> playerList = new LinkedList<>();
         
-        for(OfflinePlayer p : Bukkit.getOfflinePlayers()) {
-            playerList.add(p.getName());
+        for(OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
+            playerList.add(offline.getName());
         }
         
         oos.writeObject(playerList);
@@ -268,9 +275,11 @@ public class MCTServerProtocol {
 
     private void sendPlayerView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String pName = (String) ois.readObject();
-        PlayerView pView = new PlayerView(p.getServer(), p.getServer().getOfflinePlayer(pName), MCTowns.getTownManager());
-        
-        oos.writeObject(pView);
+        OfflinePlayer player = p.getServer().getOfflinePlayer(pName);
+        if(player == null)
+            oos.writeObject(null);
+        else
+            oos.writeObject(new PlayerView(p.getServer(), player, MCTowns.getTownManager()));
     }
 
     private void sendAllTowns(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
@@ -284,16 +293,17 @@ public class MCTServerProtocol {
     
     private void sendTownView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String tName = (String) ois.readObject();
-        
-        TownView ret = new TownView(MCTowns.getTownManager().getTown(tName));
-        
-        oos.writeObject(ret);
+        Town t = MCTowns.getTownManager().getTown(tName);
+        if(t == null)
+            oos.writeObject(null);
+        else
+            oos.writeObject(new TownView(t));
     }
 
     private void addIdentity(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         Identity i = (Identity) ois.readObject();
         
-        Boolean result = cMan.storeKey(new File(authKeysDir, i.getName() + ".pub"), i.getPubKey());
+        Boolean result = Keys.storeKey(new File(authKeysDir, i.getName() + ".pub"), i.getPubKey());
         
         oos.writeObject(result);
     }
@@ -307,7 +317,7 @@ public class MCTServerProtocol {
         };
         List<Identity> ret = new LinkedList<>();
         for(File f : authKeysDir.listFiles(filter)){
-            ret.add(new Identity(Identity.trimFileName(f.getName()), cMan.loadPubKey(f)));
+            ret.add(new Identity(Identity.trimFileName(f.getName()), Keys.loadPubKey(f)));
         }
         
         oos.writeObject(ret);
@@ -327,24 +337,46 @@ public class MCTServerProtocol {
 
     private void sendTerritoryList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String townName = (String) ois.readObject();
+        Town t = MCTowns.getTownManager().getTown(townName);
         
-        List<String> territs = new LinkedList<>();
-        territs.addAll(MCTowns.getTownManager().getTown(townName).getTerritoriesCollection());
-        
-        oos.writeObject(territs);
+        if(t == null)
+            oos.writeObject(null);
+        else
+            oos.writeObject(new LinkedList<>(t.getTerritoriesCollection()));
     }
 
     private void sendTerritoryView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String territName = (String) ois.readObject();
-        
-        TerritoryView view = new TerritoryView(MCTowns.getTownManager().getTerritory(territName));
-        
-        oos.writeObject(view);
+        Territory t = MCTowns.getTownManager().getTerritory(territName);
+        if(t == null)
+            oos.writeObject(null);
+        else
+            oos.writeObject(new TerritoryView(t));
     }
 
     private void deleteTerritory(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String territName = (String) ois.readObject();
         Boolean result = MCTowns.getTownManager().removeTerritory(territName);
         oos.writeObject(result);
+    }
+
+    private void sendPlotView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String plotName = (String) ois.readObject();
+        Plot plot = MCTowns.getTownManager().getPlot(plotName);
+        
+        if(plot == null)
+            oos.writeObject(null);
+        else
+            oos.writeObject(new PlotView(plot));
+    }
+
+    private void sendPlotList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String territName = (String) ois.readObject();
+        Territory t = MCTowns.getTownManager().getTerritory(territName);
+        
+        if(t == null)
+            oos.writeObject(null);
+        else
+            oos.writeObject(new LinkedList<>(t.getPlotsCollection()));
     }
 }

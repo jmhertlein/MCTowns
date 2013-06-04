@@ -43,5 +43,5 @@ public enum RemoteAction implements Serializable {
     //other views
     GET_META_VIEW,
     GET_PLAYER_LIST,
-    GET_VIEW_FOR_PLAYER;
+    GET_VIEW_FOR_PLAYER, GET_PLOTS_LIST;
 }
