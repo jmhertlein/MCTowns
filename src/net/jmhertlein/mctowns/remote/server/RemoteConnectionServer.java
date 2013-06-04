@@ -91,13 +91,11 @@ public class RemoteConnectionServer extends Thread {
         
         if(!pubKeyFile.exists()) {
             System.err.println("Error loading pubkey. Will generate new keypair.");
-            pubKeyFile.createNewFile();
             regenKeys = true;
         }
         
         if(!privKeyFile.exists()) {
             System.err.println("Error loading private key. Will generate new keypair.");
-            privKeyFile.createNewFile();
             regenKeys = true;
         }
         
@@ -107,19 +105,17 @@ public class RemoteConnectionServer extends Thread {
             KeyPair pair = Keys.newRSAKeyPair(length);
             System.out.println("New key pair generated.");
             
-            cMan.storeKey(pubKeyFile, pair.getPublic());
-            cMan.storeKey(privKeyFile, pair.getPrivate());
+            Keys.storeKey(pubKeyFile, pair.getPublic());
+            Keys.storeKey(privKeyFile, pair.getPrivate());
             this.privateKey = pair.getPrivate();
             this.pubKey = pair.getPublic();
         } else {
             System.out.println("Loading keys from disk.");
-            this.pubKey = cMan.loadPubKey(pubKeyFile);
-            this.privateKey = cMan.loadPrivateKey(privKeyFile);
+            this.pubKey = Keys.loadPubKey(pubKeyFile);
+            this.privateKey = Keys.loadPrivateKey(privKeyFile);
             System.out.println("Keys loaded from disk.");
         }
         
         System.out.println("Done loading server keys.");
     }
-    
-    
 }

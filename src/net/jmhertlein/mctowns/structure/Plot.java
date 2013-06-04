@@ -35,6 +35,7 @@ public class Plot extends MCTownsRegion {
     public Plot(String name, String worldName, String parentTerritoryName, String parentTownName) {
         super(name, worldName);
 
+        price = MCTowns.getTownManager().getTown(parentTownName).getDefaultPlotPrice();
         parTerrName = parentTerritoryName;
         parTownName = parentTownName;
         
@@ -45,7 +46,7 @@ public class Plot extends MCTownsRegion {
     /**
      * Empty constructor for de-serialization. Recommended: Don't use this.
      */
-    public Plot() {}
+    private Plot() {}
 
     /**
      *
