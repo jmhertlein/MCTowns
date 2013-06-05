@@ -242,8 +242,14 @@ public class TownManager {
 
         regions.remove(territ.getName());
         MCTowns.logDebug(territoryName);
+        
+        World w = Bukkit.getWorld(territ.getWorldName());
 
-        RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(territ.getWorldName()));
+        //Just in case they deleted the world...
+        if(w == null)
+            return true;
+        
+        RegionManager regMan = wgp.getRegionManager(w);
 
         regMan.removeRegion(territ.getName());
 
@@ -273,7 +279,12 @@ public class TownManager {
 
         getTerritory(((Plot)plot).getParentTerritoryName()).removePlot(plotName);
 
-        RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(plot.getWorldName()));
+        World w = Bukkit.getWorld(plot.getWorldName());
+        
+        if(w == null)
+            return true;
+        
+        RegionManager regMan = wgp.getRegionManager(w);
 
         regMan.removeRegion(plotName);
 
