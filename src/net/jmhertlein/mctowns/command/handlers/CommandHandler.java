@@ -187,6 +187,11 @@ public abstract class CommandHandler {
         }
 
         ProtectedRegion wgReg = wgp.getRegionManager(server.getWorld(reg.getWorldName())).getRegion(reg.getName());
+        
+        if(wgReg == null) {
+            localSender.sendMessage("Unable to get world guard region for " + reg.getName() + ". Perhaps the region was deleted outside of MCTowns?");
+            return;
+        }
 
         String temp = "";
         int counter;
