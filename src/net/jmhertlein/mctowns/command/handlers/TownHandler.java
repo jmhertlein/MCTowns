@@ -220,13 +220,15 @@ public class TownHandler extends CommandHandler {
 
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
         boolean admin = cmd.hasFlag(ECommand.ADMIN);
-        if (!localSender.hasExternalPermissions(Perms.ADMIN.toString()) && admin) {
+        boolean adminAllowed = localSender.hasExternalPermissions(Perms.ADMIN.toString());
+        
+        if (!adminAllowed && admin) {
             localSender.sendMessage(ChatColor.DARK_RED + "You're not permitted to run this command with administrative priviliges!");
             return;
         }
 
-        if (!(options.mayorsCanBuyTerritories() || admin)) {
-            localSender.sendMessage(ChatColor.BLUE + "Mayors are not allowed to add territories. If you're an admin, try adding '-admin' to the end of the command.");
+        if (!(options.mayorsCanBuyTerritories() || adminAllowed)) {
+            localSender.sendMessage(ChatColor.BLUE + "Mayors are not allowed to add territories and you're not an admin.");
             return;
         }
 
