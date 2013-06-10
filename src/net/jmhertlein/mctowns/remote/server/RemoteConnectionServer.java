@@ -55,9 +55,7 @@ public class RemoteConnectionServer extends Thread {
         while(!done) {
             Socket client;
             try {
-                System.out.println("Listening on port.");
                 client = server.accept();
-                System.out.println("Got new client.");
             } catch (IOException ex) {
                 System.err.println("Error accepting client connection: " + ex);
                 System.err.println("Bad connection or server socket closing.");
@@ -65,7 +63,6 @@ public class RemoteConnectionServer extends Thread {
             }
             
             threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessionKeys));
-            System.out.println("Submitted client to thread pool.");
         }
     }
     

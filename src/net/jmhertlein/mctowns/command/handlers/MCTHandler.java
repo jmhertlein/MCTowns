@@ -10,7 +10,9 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Town;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
@@ -60,9 +62,6 @@ public class MCTHandler extends CommandHandler {
         } else {
             localSender.sendMessage(ERR + "That town already exists!");
         }
-
-
-
     }
 
     public void removeTown(String townName) {
@@ -80,7 +79,8 @@ public class MCTHandler extends CommandHandler {
         townManager.removeTown(townName);
 
         try {
-            wgp.getRegionManager(server.getWorld(t.getWorldName())).save();
+            for(World w : Bukkit.getWorlds())
+                wgp.getRegionManager(w).save();
         } catch (ProtectionDatabaseException ex) {
             MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
             MCTowns.logSevere(ex.getMessage());
@@ -90,8 +90,6 @@ public class MCTHandler extends CommandHandler {
             MCTowns.logSevere("WG plugin was null: " + (wgp == null));
             MCTowns.logSevere("Server was null: " + (wgp == null));
             MCTowns.logSevere("Town was null: " + (t == null));
-            MCTowns.logSevere("Town's world (String) was null in storage: " + (t.getWorldName() == null));
-            MCTowns.logSevere("Town's world was null: " + (server.getWorld(t.getWorldName()) == null));
         }
 
         //clear active sets to remove pointers to deleted town
@@ -114,13 +112,9 @@ public class MCTHandler extends CommandHandler {
 
         localSender.sendMessage(c + "Name: " + t.getTownName());
         localSender.sendMessage(c + "Mayor: " + t.getMayor());
-        localSender.sendMessage(c + "World: " + t.getWorldName());
         localSender.sendMessage(c + "Number of residents: " + t.getSize());
         localSender.sendMessage(c + "Plots are buyable: " + t.usesBuyablePlots());
         localSender.sendMessage(c + "Join method: " + (t.usesEconomyJoins() ? "Plot purchase" : "invitations"));
-
-
-
     }
 
     public void queryPlayerInfo(String playerName) {

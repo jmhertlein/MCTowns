@@ -25,7 +25,6 @@ public class Town {
     private static final int VERSION = 0;
     //the town name
     private volatile String townName;
-    private volatile String worldName;
     //the town MOTD
     private volatile String townMOTD;
     private volatile ChatColor motdColor;
@@ -62,27 +61,43 @@ public class Town {
     public Town(String townName, Player mayor) {
         this.townName = townName;
         this.mayor = mayor.getName();
-        townMOTD = "Use /town motd set <msg> to set the town MOTD!";
         townSpawn = Location.convertFromBukkitLocation(mayor.getLocation());
-        worldName = mayor.getWorld().getName();
 
-        bank = new BlockBank();
-
-        //use Collections method to get concurrency benefits from ConcurrHashMap
+        //use Collections method to get concurrency benefits from ConcurrentHashMap
         residents = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         assistants = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
+        bank = new BlockBank();
+        townMOTD = "Use /town motd <msg> to set the town MOTD!";
         buyablePlots = false;
         economyJoins = false;
         defaultPlotPrice = BigDecimal.TEN;
         friendlyFire = false;
-
-
-
-        residents.add(mayor.getName());
-
         motdColor = ChatColor.GOLD;
+        
+        residents.add(mayor.getName());
+    }
+    
+    public Town(String townName, String mayorName, Location townSpawnLoc) {
+        this.townName = townName;
+        mayor = mayorName;
+        townSpawn = townSpawnLoc;
+
+        //use Collections method to get concurrency benefits from ConcurrentHashMap
+        residents = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        assistants = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+
+        bank = new BlockBank();
+        townMOTD = "Use /town motd <msg> to set the town MOTD!";
+        buyablePlots = false;
+        economyJoins = false;
+        defaultPlotPrice = BigDecimal.TEN;
+        friendlyFire = false;
+        motdColor = ChatColor.GOLD;
+        
+        residents.add(mayor);
     }
 
     private Town() {}
@@ -144,15 +159,6 @@ public class Town {
      */
     public String getTownName() {
         return townName;
-    }
-
-    /**
-     * Returns the name of the world in which this town resides
-     *
-     * @return the name of the world
-     */
-    public String getWorldName() {
-        return worldName;
     }
 
     /**
@@ -376,46 +382,11 @@ public class Town {
 
     /**
      *
-     * @param obj
-     * @return
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Town other = (Town) obj;
-        if ((this.townName == null) ? (other.townName != null) : !this.townName.equals(other.townName)) {
-            return false;
-        }
-        if ((this.worldName == null) ? (other.worldName != null) : !this.worldName.equals(other.worldName)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     *
      * @param s
      * @return
      */
     public org.bukkit.Location getTownSpawn(Server s) {
         return Location.convertToBukkitLocation(s, townSpawn);
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + (this.townName != null ? this.townName.hashCode() : 0);
-        hash = 67 * hash + (this.worldName != null ? this.worldName.hashCode() : 0);
-        return hash;
     }
 
     /**
@@ -550,7 +521,6 @@ public class Town {
 
     public void writeYAML(FileConfiguration f) {
         f.set("townName", townName);
-        f.set("worldName", worldName);
         f.set("motd", townMOTD);
         f.set("motdColor", motdColor.name());
         f.set("spawnLocation", townSpawn.toList());
@@ -577,7 +547,6 @@ public class Town {
         Town t = new Town();
 
         t.townName = f.getString("townName");
-        t.worldName = f.getString("worldName");
         t.townMOTD = f.getString("motd");
         t.motdColor = ChatColor.valueOf(f.getString("motdColor"));
         t.townSpawn = Location.fromList(f.getStringList("spawnLocation"));

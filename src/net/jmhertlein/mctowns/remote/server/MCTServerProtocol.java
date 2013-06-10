@@ -15,6 +15,7 @@ import java.security.PublicKey;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -71,13 +72,10 @@ public class MCTServerProtocol {
     }
     
     private boolean doInitialKeyExchange() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        System.out.println("Opening object input stream.");
         ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
 
-        System.out.println("Getting action.");
         action = (RemoteAction) ois.readObject();
 
-        System.out.println("Getting username.");
         clientName = (String) ois.readObject();
         
         System.out.println("Loading client key from disk.");
@@ -120,7 +118,6 @@ public class MCTServerProtocol {
 
         if (clientResponse.equals(originalChallenge)) {
             oos.writeObject(true);
-            System.out.println("Accepting client challenge response.");
         } else {
             oos.writeObject(false);
             System.out.println("Rejecting client challenge response.");
@@ -135,17 +132,11 @@ public class MCTServerProtocol {
         if (!clientAcceptsUs) {
             System.out.println("Client did not accept us as server they wanted to connect to.");
             return false;
-        } else {
-            System.out.println("Client accepts us.");
         }
 
-        System.out.println("Making new session key.");
         SecretKey newKey = Keys.newAESKey(p.getConfig().getInt("remoteAdminSessionKeyLength"));
-        System.out.println("Session key made.");
 
-        System.out.println("Writing key...");
         oos.writeObject(new EncryptedSecretKey(newKey, outCipher));
-        System.out.println("Wrote key.");
         
         BASE64Encoder e = new BASE64Encoder();
         System.out.println(e.encode(newKey.getEncoded()));
@@ -157,11 +148,7 @@ public class MCTServerProtocol {
         sessionKeys.put(assignedSessionID, new ClientSession(assignedSessionID, clientName, newKey));
         System.out.println("Client assigned session id " + assignedSessionID);
 
-        System.out.println("Writing session ID.");
         oos.writeObject(assignedSessionID);
-        System.out.println("Wrote session ID");
-
-        System.out.println("Done handling client.");
         
         client.close();
         return true;
@@ -171,7 +158,6 @@ public class MCTServerProtocol {
         //receive session ID
         byte[] clientSessionIDBytes = new byte[4];
         client.getInputStream().read(clientSessionIDBytes);
-        System.out.println("Read initial session ID.");
         int clientSessionID = ByteBuffer.wrap(clientSessionIDBytes).getInt();
 
         //if client indicates it does not have a session ID
@@ -184,7 +170,6 @@ public class MCTServerProtocol {
 
         clientSession = sessionKeys.get(clientSessionID);
         
-        System.out.println("Client session key is null: " + (clientSession == null));
         
         Cipher inCipher = Cipher.getInstance("AES/CFB8/NoPadding"), outCipher = Cipher.getInstance("AES/CFB8/NoPadding");
         IvParameterSpec iv = new IvParameterSpec(getKeyBytes(clientSession.getSessionKey()));
@@ -200,8 +185,8 @@ public class MCTServerProtocol {
         action = (RemoteAction) ois.readObject();
         clientName = (String) ois.readObject();
         
+        p.getLogger().log(Level.INFO, "[RemoteAdmin]: {0} running action {1}", new Object[]{clientName, action.name()});
 
-        System.out.println("Handling action.");
         switch (action) {
             case GET_META_VIEW:
                 sendMetaView(oos, ois);
@@ -241,11 +226,13 @@ public class MCTServerProtocol {
                 break;
             case GET_PLOTS_LIST:
                 sendPlotList(oos, ois);
-                
+                break;
+            case DELETE_TOWN:
+                deleteTown(oos, ois);
+                break;
         }
 
         client.close();
-        System.out.println("Finished handling action.");
     }
     
     private void sendMetaView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
@@ -340,7 +327,7 @@ public class MCTServerProtocol {
         Town t = MCTowns.getTownManager().getTown(townName);
         
         if(t == null)
-            oos.writeObject(null);
+            oos.writeObject(new LinkedList<>());
         else
             oos.writeObject(new LinkedList<>(t.getTerritoriesCollection()));
     }
@@ -378,5 +365,11 @@ public class MCTServerProtocol {
             oos.writeObject(null);
         else
             oos.writeObject(new LinkedList<>(t.getPlotsCollection()));
+    }
+
+    private void deleteTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String townName = (String) ois.readObject();
+        Boolean result = MCTowns.getTownManager().removeTown(townName);
+        oos.writeObject(result);
     }
 }

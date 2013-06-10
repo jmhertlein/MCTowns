@@ -19,7 +19,7 @@ import org.bukkit.ChatColor;
  * @author joshua
  */
 public class TownView implements Serializable {
-    private final String townName, worldName, motd, motdColor;
+    private final String townName, motd, motdColor;
     private final Location spawnLoc;
     private final boolean friendlyFire, economyJoins, buyablePlots;
     private final BigDecimal defaultPlotPrice;
@@ -29,7 +29,6 @@ public class TownView implements Serializable {
     
     public TownView(Town t) {
         townName = t.getTownName();
-        worldName = t.getWorldName();
         motdColor = t.getMotdColor().name();
         motd = t.getTownMOTD();
         
@@ -49,10 +48,6 @@ public class TownView implements Serializable {
 
     public String getTownName() {
         return townName;
-    }
-
-    public String getWorldName() {
-        return worldName;
     }
 
     public String getMotd() {

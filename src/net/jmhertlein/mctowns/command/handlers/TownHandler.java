@@ -198,7 +198,6 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-
         BigDecimal price;
 
         try {
@@ -231,21 +230,10 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-
-
-
-
-
-
         Town t = localSender.getActiveTown();
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
-            return;
-        }
-
-        if (!t.getWorldName().equals(localSender.getPlayer().getWorld().getName())) {
-            localSender.sendMessage(ERR + "You're not in the same world as the town, so you can't add Territories to it in this world.");
             return;
         }
 
@@ -255,28 +243,20 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-
         territName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, territName);
 
-        World w = Bukkit.getWorld(t.getWorldName());
+        World w = localSender.getPlayer().getWorld();
 
         ProtectedRegion region = this.getSelectedRegion(territName);
-
-
 
         if (region == null) {
             localSender.sendMessage(ERR + "No region selected!");
             return;
         }
 
-
-
-
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
         if (!admin && options.getPricePerXZBlock().compareTo(BigDecimal.ZERO) > 0) {
             MCTowns.logAssert(options.mayorsCanBuyTerritories(), "Mayers are unable to buy territories, but a player has managed to do so.");
-
-
 
             BigDecimal price = options.getPricePerXZBlock().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(region)));
 
@@ -307,7 +287,6 @@ public class TownHandler extends CommandHandler {
         if (autoActive) {
             localSender.setActiveTerritory(townManager.getTerritory(territName));
             localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
-
         }
     }
 
