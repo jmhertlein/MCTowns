@@ -25,6 +25,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import net.jmhertlein.core.crypto.Keys;
+import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
@@ -230,6 +231,9 @@ public class MCTServerProtocol {
             case DELETE_TOWN:
                 deleteTown(oos, ois);
                 break;
+            case CREATE_TOWN:
+                createTown(oos, ois);
+                break;
         }
 
         client.close();
@@ -370,6 +374,16 @@ public class MCTServerProtocol {
     private void deleteTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String townName = (String) ois.readObject();
         Boolean result = MCTowns.getTownManager().removeTown(townName);
+        oos.writeObject(result);
+    }
+
+    private void createTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        String townName = (String) ois.readObject();
+        String mayorName = (String) ois.readObject();
+        Location spawn = (Location) ois.readObject();
+        
+        Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
+        
         oos.writeObject(result);
     }
 }

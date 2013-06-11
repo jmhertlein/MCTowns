@@ -90,13 +90,23 @@ public class TownManager {
     public Town addTown(String townName, Player mayor) {
         Town t = new Town(townName, mayor);
 
-        if (towns.containsKey(townName)) {
+        if (towns.containsKey(t.getTownName())) {
             return null;
         }
 
         towns.put(t.getTownName(), t);
         return t;
 
+    }
+    
+    public Town addTown(String townName, String mayorName, Location spawn) {
+        Town t = new Town(townName, mayorName, spawn);
+        
+        if(towns.containsKey(t.getTownName()))
+            return null;
+        
+        towns.put(t.getTownName(), t);
+        return t;
     }
 
     /**
