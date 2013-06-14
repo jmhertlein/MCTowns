@@ -17,10 +17,10 @@ import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -632,11 +632,12 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        Player removeMe = server.getPlayer(playerName);
+        OfflinePlayer removeMe = server.getOfflinePlayer(playerName);
         Town removeFrom = localSender.getActiveTown();
 
         if (removeMe == null) {
-            localSender.sendMessage(INFO + playerName + " is not online. Make sure you typed their name correctly.");
+            localSender.sendMessage(ERR + "No player named '" + playerName + "' has ever played on this server.");
+            return;
         }
 
         if (removeFrom == null) {
@@ -660,8 +661,9 @@ public class TownHandler extends CommandHandler {
         Town.recursivelyRemovePlayerFromTown(removeMe, removeFrom);
 
         localSender.sendMessage("\"" + playerName + "\" was removed from the town.");
-        if (removeMe != null) {
-            removeMe.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + localSender.getPlayer().getName());
+        Player onlinePlayer = removeMe.getPlayer();
+        if (onlinePlayer != null) {
+            onlinePlayer.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + localSender.getPlayer().getName());
         }
     }
 

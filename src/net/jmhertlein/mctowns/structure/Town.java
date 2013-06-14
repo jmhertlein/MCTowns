@@ -12,6 +12,7 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -188,7 +189,7 @@ public class Town {
      *
      * @param p - the player to be removed
      */
-    public void removePlayer(Player p) {
+    public void removePlayer(OfflinePlayer p) {
         removePlayer(p.getName());
     }
 
@@ -568,7 +569,7 @@ public class Town {
         return t;
     }
     
-    public static void recursivelyRemovePlayerFromTown(Player p, Town t) {
+    public static void recursivelyRemovePlayerFromTown(OfflinePlayer p, Town t) {
         TownManager tMan = MCTowns.getTownManager();
         
         for(String teName : t.getTerritoriesCollection()) {

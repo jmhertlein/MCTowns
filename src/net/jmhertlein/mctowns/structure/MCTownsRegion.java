@@ -6,6 +6,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.Objects;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -80,7 +81,7 @@ public abstract class MCTownsRegion {
         return removed;
     }
     
-    public boolean removePlayer(Player p) {
+    public boolean removePlayer(OfflinePlayer p) {
         return this.removePlayer(p.getName());
     }
 
