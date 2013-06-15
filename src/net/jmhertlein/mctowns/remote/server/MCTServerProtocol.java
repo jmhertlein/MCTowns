@@ -19,7 +19,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -454,12 +453,12 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                if(opMode == RemoteAction.ADD_PLAYER) {
+                if(opMode == RemoteAction.MODE_ADD_PLAYER) {
                     if(membershipType == RemoteAction.GUEST)
                         plot.addGuest(playerName);
                     else if(membershipType == RemoteAction.OWNER)
                         plot.addPlayer(playerName);
-                } else if(opMode == RemoteAction.DELETE_PLAYER) {
+                } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
                     plot.removePlayer(playerName);
                 }
                 
@@ -492,13 +491,13 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                if(opMode == RemoteAction.ADD_PLAYER) {
+                if(opMode == RemoteAction.MODE_ADD_PLAYER) {
                     if(membershipType == RemoteAction.GUEST) {
                         territ.addGuest(playerName);
                     } else if(membershipType == RemoteAction.OWNER) {
                         territ.addPlayer(playerName);
                     }
-                } else if(opMode == RemoteAction.DELETE_PLAYER) {
+                } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
                     territ.removePlayer(playerName);
                 }
                 
@@ -526,9 +525,9 @@ public class MCTServerProtocol {
             return;
         }
         
-        if(opMode == RemoteAction.ADD_PLAYER) {
+        if(opMode == RemoteAction.MODE_ADD_PLAYER) {
             town.addPlayer(playerName);
-        } else if(opMode == RemoteAction.DELETE_PLAYER) {
+        } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
             town.removePlayer(playerName);
         }
         
@@ -547,9 +546,9 @@ public class MCTServerProtocol {
             return;
         }
         
-        if(opMode == RemoteAction.ADD_PLAYER) {
+        if(opMode == RemoteAction.MODE_ADD_PLAYER) {
             town.addAssistant(playerName);
-        } else if(opMode == RemoteAction.DELETE_PLAYER) {
+        } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
             town.removeAssistant(playerName);
         }
         

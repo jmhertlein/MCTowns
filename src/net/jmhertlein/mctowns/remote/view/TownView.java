@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
@@ -24,8 +23,24 @@ public class TownView implements Serializable {
     private final boolean friendlyFire, economyJoins, buyablePlots;
     private final BigDecimal defaultPlotPrice;
     
-    private Collection<String> territories, residents, assistants;
-    private String mayorName;
+    private final Collection<String> territories, residents, assistants;
+    private final String mayorName;
+
+    public TownView(String townName, String motd, String motdColor, Location spawnLoc, boolean friendlyFire, boolean economyJoins, boolean buyablePlots, BigDecimal defaultPlotPrice, String mayorName) {
+        this.townName = townName;
+        this.motd = motd;
+        this.motdColor = motdColor;
+        this.spawnLoc = spawnLoc;
+        this.friendlyFire = friendlyFire;
+        this.economyJoins = economyJoins;
+        this.buyablePlots = buyablePlots;
+        this.defaultPlotPrice = defaultPlotPrice;
+        this.mayorName = mayorName;
+        
+        territories = null;
+        residents = null;
+        assistants = null;
+    }
     
     public TownView(Town t) {
         townName = t.getTownName();

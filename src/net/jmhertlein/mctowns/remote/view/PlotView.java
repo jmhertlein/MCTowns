@@ -38,6 +38,18 @@ public class PlotView implements Serializable {
     private final Location signLoc;
     
     private final List<String> playerNames, guestNames;
+
+    public PlotView(String parTownName, String parTerrName, String worldName, String plotName, boolean forSale, BigDecimal price, Location signLoc) {
+        this.parTownName = parTownName;
+        this.parTerrName = parTerrName;
+        this.worldName = worldName;
+        this.plotName = plotName;
+        this.forSale = forSale;
+        this.price = price;
+        this.signLoc = signLoc;
+        playerNames = null;
+        guestNames = null;
+    }
     
     public PlotView(Plot p) {
         worldName = p.getWorldName();
