@@ -8,8 +8,8 @@ import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.remote.view.PlotView;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_5_R3.block.CraftSign;
 
 /**
  *
@@ -143,7 +143,7 @@ public class Plot extends MCTownsRegion {
 
 
 
-        CraftSign sign = (CraftSign) loc.getBlock().getState();
+        Sign sign = (Sign) loc.getBlock().getState();
 
         sign.setLine(0, "[mct]");
         sign.setLine(1, "For sale!");

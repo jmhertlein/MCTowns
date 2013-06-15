@@ -18,7 +18,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_5_R3.block.CraftSign;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -101,7 +101,7 @@ public class MCTPlayerListener implements Listener {
         }
 
         //if the first line of the sign isn't "[mct]" then do nothing
-        if (!((CraftSign) event.getClickedBlock().getState()).getLine(0).equalsIgnoreCase("[mct]")) {
+        if (!((Sign) event.getClickedBlock().getState()).getLine(0).equalsIgnoreCase("[mct]")) {
             return;
         }
 
@@ -141,7 +141,7 @@ public class MCTPlayerListener implements Listener {
 
         MCTowns.logDebug("Material was signpost");
 
-        CraftSign sign = (CraftSign) e.getBlock().getState();
+        Sign sign = (Sign) e.getBlock().getState();
 
         System.out.println("First line: " + e.getLine(0));
 
