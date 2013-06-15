@@ -15,7 +15,11 @@ import java.security.PublicKey;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -251,6 +255,9 @@ public class MCTServerProtocol {
             case UPDATE_PLOT:
                 updatePlot(oos, ois);
                 break;
+            case DELETE_PLOT:
+                deletePlot(oos, ois);
+                break;
                 
         }
 
@@ -364,9 +371,22 @@ public class MCTServerProtocol {
     }
 
     private void deleteTerritory(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        String territName = (String) ois.readObject();
-        Boolean result = MCTowns.getTownManager().removeTerritory(territName);
-        oos.writeObject(result);
+        final String territName = (String) ois.readObject();
+        Future<Boolean> result;
+        
+        Callable<Boolean> c = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                return MCTowns.getTownManager().removeTerritory(territName);
+            }
+        };
+        
+        result = Bukkit.getScheduler().callSyncMethod(p, c);
+        try {
+            oos.writeObject(result.get());
+        } catch (InterruptedException | ExecutionException ex) {
+            oos.writeObject(false);
+        }
     }
 
     private void sendPlotView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -390,9 +410,22 @@ public class MCTServerProtocol {
     }
 
     private void deleteTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        String townName = (String) ois.readObject();
-        Boolean result = MCTowns.getTownManager().removeTown(townName);
-        oos.writeObject(result);
+        final String townName = (String) ois.readObject();
+        Future<Boolean> result;
+        
+        Callable<Boolean> c = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                return MCTowns.getTownManager().removeTown(townName);
+            }
+        };
+        
+        result = Bukkit.getScheduler().callSyncMethod(p, c);
+        try {
+            oos.writeObject(result.get());
+        } catch (InterruptedException | ExecutionException ex) {
+            oos.writeObject(false);
+        }
     }
 
     private void createTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -406,53 +439,79 @@ public class MCTServerProtocol {
     }
 
     private void modifyPlotMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        Integer opMode = (Integer) ois.readObject();
-        Integer membershipType = (Integer) ois.readObject();
-        String playerName = (String) ois.readObject();
+        final Integer opMode = (Integer) ois.readObject();
+        final Integer membershipType = (Integer) ois.readObject();
+        final String playerName = (String) ois.readObject();
         String plotName = (String) ois.readObject();
         
-        Plot plot = MCTowns.getTownManager().getPlot(plotName);
+        final Plot plot = MCTowns.getTownManager().getPlot(plotName);
         
         if(plot == null) {
             oos.writeObject(false);
             return;
         }
         
-        if(opMode == RemoteAction.ADD_PLAYER) {
-            if(membershipType == RemoteAction.GUEST)
-                plot.addGuest(playerName);
-            else if(membershipType == RemoteAction.OWNER)
-                plot.addPlayer(playerName);
-        } else if(opMode == RemoteAction.DELETE_PLAYER) {
-            plot.removePlayer(playerName);
+        Callable<Boolean> c = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                if(opMode == RemoteAction.ADD_PLAYER) {
+                    if(membershipType == RemoteAction.GUEST)
+                        plot.addGuest(playerName);
+                    else if(membershipType == RemoteAction.OWNER)
+                        plot.addPlayer(playerName);
+                } else if(opMode == RemoteAction.DELETE_PLAYER) {
+                    plot.removePlayer(playerName);
+                }
+                
+                return true;
+            }
+        };
+        
+        Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
+        try {
+            oos.writeObject(result.get());
+        } catch (InterruptedException | ExecutionException ex) {
+            oos.writeObject(false);
         }
         
-        oos.writeObject(true);
     }
 
     private void modifyTerritoryMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        Integer opMode = (Integer) ois.readObject();
-        Integer membershipType = (Integer) ois.readObject();
-        String playerName = (String) ois.readObject();
+        final Integer opMode = (Integer) ois.readObject();
+        final Integer membershipType = (Integer) ois.readObject();
+        final String playerName = (String) ois.readObject();
         String territoryName = (String) ois.readObject();
         
-        Territory territ = MCTowns.getTownManager().getTerritory(territoryName);
+        final Territory territ = MCTowns.getTownManager().getTerritory(territoryName);
         
         if(territ == null) {
             oos.writeObject(false);
             return;
         }
         
-        if(opMode == RemoteAction.ADD_PLAYER) {
-            if(membershipType == RemoteAction.GUEST)
-                territ.addGuest(playerName);
-            else if(membershipType == RemoteAction.OWNER)
-                territ.addPlayer(playerName);
-        } else if(opMode == RemoteAction.DELETE_PLAYER) {
-            territ.removePlayer(playerName);
-        }
+        Callable<Boolean> c = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                if(opMode == RemoteAction.ADD_PLAYER) {
+                    if(membershipType == RemoteAction.GUEST) {
+                        territ.addGuest(playerName);
+                    } else if(membershipType == RemoteAction.OWNER) {
+                        territ.addPlayer(playerName);
+                    }
+                } else if(opMode == RemoteAction.DELETE_PLAYER) {
+                    territ.removePlayer(playerName);
+                }
+                
+                return true;
+            }
+        };
         
-        oos.writeObject(true);
+        Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
+        try {
+            oos.writeObject(result.get());
+        } catch (InterruptedException | ExecutionException ex) {
+            oos.writeObject(false);
+        }
     }
 
     private void modifyTownMembership(ObjectOutputStream oos, ObjectInputStream ois) throws ClassNotFoundException, IOException{
@@ -525,5 +584,24 @@ public class MCTServerProtocol {
         plot.updatePlot(view);
         
         oos.writeObject(true);
+    }
+
+    private void deletePlot(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        final String plotName = (String) ois.readObject();
+        Future<Boolean> result;
+        
+        Callable<Boolean> c = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                return MCTowns.getTownManager().removePlot(plotName);
+            }
+        };
+        
+        result = Bukkit.getScheduler().callSyncMethod(p, c);
+        try {
+            oos.writeObject(result.get());
+        } catch (InterruptedException | ExecutionException ex) {
+            oos.writeObject(false);
+        }
     }
 }
