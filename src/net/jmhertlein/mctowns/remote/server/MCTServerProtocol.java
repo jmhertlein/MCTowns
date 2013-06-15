@@ -234,6 +234,24 @@ public class MCTServerProtocol {
             case CREATE_TOWN:
                 createTown(oos, ois);
                 break;
+            case MODIFY_PLOT_MEMBERSHIP:
+                modifyPlotMembership(oos, ois);
+                break;
+            case MODIFY_TERRITORY_MEMBERSHIP:
+                modifyTerritoryMembership(oos, ois);
+                break;
+            case MODIFY_TOWN_MEMBERSHIP:
+                modifyTownMembership(oos, ois);
+                break;
+            case MODIFY_TOWN_ASSISTANTS:
+                modifyTownAssistants(oos, ois);
+            case UPDATE_TOWN:
+                updateTown(oos, ois);
+                break;
+            case UPDATE_PLOT:
+                updatePlot(oos, ois);
+                break;
+                
         }
 
         client.close();
@@ -385,5 +403,127 @@ public class MCTServerProtocol {
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
         
         oos.writeObject(result);
+    }
+
+    private void modifyPlotMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        Integer opMode = (Integer) ois.readObject();
+        Integer membershipType = (Integer) ois.readObject();
+        String playerName = (String) ois.readObject();
+        String plotName = (String) ois.readObject();
+        
+        Plot plot = MCTowns.getTownManager().getPlot(plotName);
+        
+        if(plot == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        if(opMode == RemoteAction.ADD_PLAYER) {
+            if(membershipType == RemoteAction.GUEST)
+                plot.addGuest(playerName);
+            else if(membershipType == RemoteAction.OWNER)
+                plot.addPlayer(playerName);
+        } else if(opMode == RemoteAction.DELETE_PLAYER) {
+            plot.removePlayer(playerName);
+        }
+        
+        oos.writeObject(true);
+    }
+
+    private void modifyTerritoryMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        Integer opMode = (Integer) ois.readObject();
+        Integer membershipType = (Integer) ois.readObject();
+        String playerName = (String) ois.readObject();
+        String territoryName = (String) ois.readObject();
+        
+        Territory territ = MCTowns.getTownManager().getTerritory(territoryName);
+        
+        if(territ == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        if(opMode == RemoteAction.ADD_PLAYER) {
+            if(membershipType == RemoteAction.GUEST)
+                territ.addGuest(playerName);
+            else if(membershipType == RemoteAction.OWNER)
+                territ.addPlayer(playerName);
+        } else if(opMode == RemoteAction.DELETE_PLAYER) {
+            territ.removePlayer(playerName);
+        }
+        
+        oos.writeObject(true);
+    }
+
+    private void modifyTownMembership(ObjectOutputStream oos, ObjectInputStream ois) throws ClassNotFoundException, IOException{
+        Integer opMode = (Integer) ois.readObject();
+        String playerName = (String) ois.readObject();
+        String townName = (String) ois.readObject();
+        
+        Town town = MCTowns.getTownManager().getTown(townName);
+        
+        if(town == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        if(opMode == RemoteAction.ADD_PLAYER) {
+            town.addPlayer(playerName);
+        } else if(opMode == RemoteAction.DELETE_PLAYER) {
+            town.removePlayer(playerName);
+        }
+        
+        oos.writeObject(true);
+    }
+
+    private void modifyTownAssistants(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        Integer opMode = (Integer) ois.readObject();
+        String playerName = (String) ois.readObject();
+        String townName = (String) ois.readObject();
+        
+        Town town = MCTowns.getTownManager().getTown(townName);
+        
+        if(town == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        if(opMode == RemoteAction.ADD_PLAYER) {
+            town.addAssistant(playerName);
+        } else if(opMode == RemoteAction.DELETE_PLAYER) {
+            town.removeAssistant(playerName);
+        }
+        
+        oos.writeObject(true);
+    }
+
+    private void updateTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        TownView view = (TownView) ois.readObject();
+        
+        Town t = MCTowns.getTownManager().getTown(view.getTownName());
+        
+        if(t == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        t.updateTown(view);
+        
+        oos.writeObject(true);
+    }
+
+    private void updatePlot(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        PlotView view = (PlotView) ois.readObject();
+        
+        Plot plot = MCTowns.getTownManager().getPlot(view.getPlotName());
+        
+        if(plot == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        plot.updatePlot(view);
+        
+        oos.writeObject(true);
     }
 }

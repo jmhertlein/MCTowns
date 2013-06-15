@@ -16,21 +16,21 @@ public enum RemoteAction implements Serializable {
     UPDATE_TOWN,
     CREATE_TOWN,
     DELETE_TOWN,
-    UPDATE_TOWN_MEMBERSHIP,
+    MODIFY_TOWN_MEMBERSHIP,
+    MODIFY_TOWN_ASSISTANTS,
     GET_TOWN_LIST,
     
     //territs
     GET_TERRITORY_VIEW,
-    UPDATE_TERRITORY,
     CREATE_TERRITORY,
     DELETE_TERRITORY,
-    UPDATE_TERRITORY_MEMBERSHIP,
+    MODIFY_TERRITORY_MEMBERSHIP,
     GET_TERRITORY_LIST,
     
     //plots
     GET_PLOT_VIEW,
     UPDATE_PLOT,
-    UPDATE_PLOT_MEMBERSHIP,
+    MODIFY_PLOT_MEMBERSHIP,
     CREATE_PLOT,
     DELETE_PLOT,
     
@@ -44,4 +44,24 @@ public enum RemoteAction implements Serializable {
     GET_META_VIEW,
     GET_PLAYER_LIST,
     GET_VIEW_FOR_PLAYER, GET_PLOTS_LIST;
+    
+    /**
+     * Specifies the MODIFY_*_MEMBERSHIP or MODIFY_TOWN_ASSISTANTS action is in ADD mode (to add a player)
+     */
+    public static final int ADD_PLAYER = 0;
+    
+    /**
+     * Specifies the MODIFY_*_MEMBERSHIP or MODIFY_TOWN_ASSISTANTS action action is in DELETE mode (to delete a player)
+     */
+    public static final int DELETE_PLAYER = 1;
+    
+    /**
+     * Adds or deletes the player as a guest in MODIFY_[TERRITORY|PLOT]_MEMBERSHIP
+     */
+    public static final int GUEST = 2;
+    
+    /**
+     * Adds or deletes the player as an owner in MODIFY_[TERRITORY|PLOT]_MEMBERSHIP
+     */
+    public static final int OWNER = 3;
 }
