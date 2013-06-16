@@ -248,6 +248,7 @@ public class MCTServerProtocol {
                 break;
             case MODIFY_TOWN_ASSISTANTS:
                 modifyTownAssistants(oos, ois);
+                break;
             case UPDATE_TOWN:
                 updateTown(oos, ois);
                 break;
@@ -453,16 +454,16 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                if(opMode == RemoteAction.MODE_ADD_PLAYER) {
+                if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
                     if(membershipType == RemoteAction.GUEST)
-                        plot.addGuest(playerName);
+                        return plot.addGuest(playerName);
                     else if(membershipType == RemoteAction.OWNER)
-                        plot.addPlayer(playerName);
-                } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
-                    plot.removePlayer(playerName);
+                        return plot.addPlayer(playerName);
+                } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
+                    return plot.removePlayer(playerName);
                 }
                 
-                return true;
+                return null;
             }
         };
         
@@ -491,17 +492,17 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                if(opMode == RemoteAction.MODE_ADD_PLAYER) {
+                if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
                     if(membershipType == RemoteAction.GUEST) {
-                        territ.addGuest(playerName);
+                        return territ.addGuest(playerName);
                     } else if(membershipType == RemoteAction.OWNER) {
-                        territ.addPlayer(playerName);
+                        return territ.addPlayer(playerName);
                     }
-                } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
-                    territ.removePlayer(playerName);
+                } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
+                    return territ.removePlayer(playerName);
                 }
                 
-                return true;
+                return null;
             }
         };
         
@@ -525,13 +526,15 @@ public class MCTServerProtocol {
             return;
         }
         
-        if(opMode == RemoteAction.MODE_ADD_PLAYER) {
-            town.addPlayer(playerName);
-        } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
+        Boolean result = null;
+        if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
+            result = town.addPlayer(playerName);
+        } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
             town.removePlayer(playerName);
+            result = true;
         }
         
-        oos.writeObject(true);
+        oos.writeObject(result);
     }
 
     private void modifyTownAssistants(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -546,13 +549,14 @@ public class MCTServerProtocol {
             return;
         }
         
-        if(opMode == RemoteAction.MODE_ADD_PLAYER) {
-            town.addAssistant(playerName);
-        } else if(opMode == RemoteAction.MODE_DELETE_PLAYER) {
-            town.removeAssistant(playerName);
+        Boolean result = null;
+        if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
+            result = town.addAssistant(playerName);
+        } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
+            result = town.removeAssistant(playerName);
         }
         
-        oos.writeObject(true);
+        oos.writeObject(result);
     }
 
     private void updateTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
