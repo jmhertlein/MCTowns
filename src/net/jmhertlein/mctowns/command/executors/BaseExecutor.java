@@ -44,10 +44,10 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
     public boolean executeCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
         if (parent.getConfig().getBoolean("logCommands"))
             MCTownsPlugin.logInfo("[Command]: Player: " + cs.getName() + " Command: " + new ECommand(string, strings));
-        
+
         return runCommand(cs, cmnd, string, strings);
     }
-    
+
     public abstract boolean runCommand(CommandSender cs, Command cmnd, String string, String[] strings);
 
     @Override
@@ -69,8 +69,4 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
     protected Plugin getPlugin() {
         return parent;
     }
-    
-    
-    
-    
 }

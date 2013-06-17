@@ -33,7 +33,6 @@ public class MCTExecutor extends BaseExecutor {
 
         String helpMessage = null;
 
-
         try {
             if (!command.get(0).equals("mct")) {
                 MCTownsPlugin.logSevere("Assertion failed: MCTExecutor.java, the command's first argument was not \"mct\"");
