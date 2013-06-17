@@ -259,8 +259,6 @@ public class TownHandler extends CommandHandler {
 
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
         if (!admin && MCTowns.getTerritoryPricePerColumn().compareTo(BigDecimal.ZERO) > 0) {
-            MCTownsPlugin.logAssert(MCTowns.mayorsCanBuyTerritories(), "Mayers are unable to buy territories, but a player has managed to do so.");
-
             BigDecimal price = MCTowns.getTerritoryPricePerColumn().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(region)));
 
             if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {

@@ -83,14 +83,14 @@ public class MCTHandler extends CommandHandler {
             for(World w : Bukkit.getWorlds())
                 wgp.getRegionManager(w).save();
         } catch (ProtectionDatabaseException ex) {
-            MCTownsPlugin.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
-            MCTownsPlugin.logSevere(ex.getMessage());
+            MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
+            MCTowns.logSevere(ex.getMessage());
         } catch (NullPointerException npe) {
-            MCTownsPlugin.logSevere("Couldn't force WG to save its regions. (null)");
-            MCTownsPlugin.logSevere("Debug analysis:");
-            MCTownsPlugin.logSevere("WG plugin was null: " + (wgp == null));
-            MCTownsPlugin.logSevere("Server was null: " + (wgp == null));
-            MCTownsPlugin.logSevere("Town was null: " + (t == null));
+            MCTowns.logSevere("Couldn't force WG to save its regions. (null)");
+            MCTowns.logSevere("Debug analysis:");
+            MCTowns.logSevere("WG plugin was null: " + (wgp == null));
+            MCTowns.logSevere("Server was null: " + (wgp == null));
+            MCTowns.logSevere("Town was null: " + (t == null));
         }
 
         //clear active sets to remove pointers to deleted town

@@ -48,9 +48,7 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
             if(getOppositeDir(cameFrom) != dirToNext) {
                 //add it to the polygon
                 points.add(new BlockVector2D(cur.getBlockX(), cur.getBlockZ()));
-                MCTownsPlugin.logDebug("Added a new point: " + "(" + cur.getBlockX() + "," + cur.getBlockZ() + ")");
             }
-
 
             switch (dirToNext) {
                 case NORTH:

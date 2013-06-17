@@ -107,8 +107,8 @@ public class MCTPlayerListener implements Listener {
         ActiveSet plotToBuy = townManager.getPlotFromSignLocation(event.getClickedBlock().getLocation());
 
         if (plotToBuy == null) {
-            MCTownsPlugin.logSevere("Sign was an MCT plot sign, but no matching plot was found.");
-            MCTownsPlugin.logSevere("Sign's location was: " + event.getClickedBlock().getLocation().toString());
+            MCTowns.logSevere("Sign was an MCT plot sign, but no matching plot was found.");
+            MCTowns.logSevere("Sign's location was: " + event.getClickedBlock().getLocation().toString());
             return;
         }
 
@@ -132,12 +132,8 @@ public class MCTPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.SignChangeEvent e) {
-        MCTownsPlugin.logDebug("Block placed. SCE");
-
         if(e.getBlock().getType() != Material.SIGN_POST)
             return;
-
-        MCTownsPlugin.logDebug("Material was signpost");
 
         Sign sign = (Sign) e.getBlock().getState();
 
@@ -145,10 +141,7 @@ public class MCTPlayerListener implements Listener {
 
         if(! e.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
             return;
-
-        MCTownsPlugin.logDebug("Had our prefix");
-
-        MCTownsPlugin.logDebug("Doing shit.");
+        
         Player p = e.getPlayer();
 
         ActiveSet pActive = plugin.getActiveSets().get(p.getName());
@@ -206,8 +199,6 @@ public class MCTPlayerListener implements Listener {
             signLoc = signLoc.add(deltaVector);
             count ++;
         }
-
-        MCTownsPlugin.logDebug("Found fence at " + signLoc.toString());
 
         if(count >= 100) {
             p.sendMessage(ChatColor.RED + "Error: couldn't find a fence within 100 blocks, aborting.");

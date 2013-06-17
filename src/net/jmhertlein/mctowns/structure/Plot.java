@@ -4,6 +4,7 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import net.jmhertlein.core.location.Location;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.remote.view.PlotView;
 import org.bukkit.Bukkit;
@@ -134,7 +135,7 @@ public class Plot extends MCTownsRegion {
     public void buildSign() {
 
         if (signLoc == null) {
-            MCTownsPlugin.logSevere("The sign's location was null.");
+            MCTowns.logSevere("The sign's location was null.");
         }
 
         org.bukkit.Location loc = Location.convertToBukkitLocation(Bukkit.getServer(), signLoc);

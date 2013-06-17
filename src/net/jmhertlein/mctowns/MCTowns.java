@@ -17,6 +17,7 @@
 package net.jmhertlein.mctowns;
 
 import java.math.BigDecimal;
+import java.util.logging.Level;
 import org.bukkit.Material;
 
 /**
@@ -79,5 +80,17 @@ public class MCTowns {
     public static String getConfigSummary() {
         //TODO: implement this
         return "";
+    }
+    
+    public static void logInfo(String msg) {
+        MCTownsPlugin.getPlugin().getLogger().log(Level.INFO, msg);
+    }
+    
+    public static void logWarning(String msg) {
+        MCTownsPlugin.getPlugin().getLogger().log(Level.WARNING, msg);
+    }
+    
+    public static void logSevere(String msg) {
+        MCTownsPlugin.getPlugin().getLogger().log(Level.SEVERE, msg);
     }
 }

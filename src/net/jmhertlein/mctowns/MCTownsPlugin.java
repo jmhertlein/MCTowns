@@ -43,7 +43,6 @@ public class MCTownsPlugin extends JavaPlugin {
             AUTH_KEYS_DIR_NAME = "auth_keys",
             TEXT_CONFIG_FILE_NAME = "config.txt",
             META_TOWN_YAML_FILE_NAME = ".meta.yml";
-    public static final Logger log = Logger.getLogger("Minecraft");
     private static final String MCT_TEXT_CONFIG_PATH = "plugins" + File.separator + "MCTowns" + File.separator + "config.txt";
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
@@ -63,16 +62,16 @@ public class MCTownsPlugin extends JavaPlugin {
         try {
             saveWorldGuardWorlds();
         } catch (ProtectionDatabaseException ex) {
-            logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
+            MCTowns.logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
         }
 
         if (!abortSave) {
             persistTownManager();
         } else {
-            logInfo("The save was aborted manually, so nothing was saved.");
+            MCTowns.logInfo("The save was aborted manually, so nothing was saved.");
         }
 
-        log.info("[MCTowns]: MCTowns has been successfully disabled.");
+        MCTowns.logInfo("[MCTowns]: MCTowns has been successfully disabled.");
         try {
             trimFiles();
         } catch (FileNotFoundException ex) {
@@ -120,7 +119,7 @@ public class MCTownsPlugin extends JavaPlugin {
         if(MCTowns.remoteAdminServerIsEnabled())
             startRemoteServer();
 
-        log.info("MCTowns is now fully loaded.");
+        MCTowns.logInfo("MCTowns is now fully loaded.");
 
     }
 
@@ -142,8 +141,8 @@ public class MCTownsPlugin extends JavaPlugin {
         try {
             townManager = TownManager.readYAML(this.getDataFolder().getPath());
         } catch (IOException | InvalidConfigurationException ex) {
-            log.log(Level.WARNING, "MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
-            logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
+            MCTowns.logWarning("MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
+            MCTowns.logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
             townManager = new TownManager();
         }
     }
@@ -152,8 +151,8 @@ public class MCTownsPlugin extends JavaPlugin {
         try {
             wgp = (WorldGuardPlugin) this.getServer().getPluginManager().getPlugin("WorldGuard");
         } catch (Exception e) {
-            log.log(Level.SEVERE, "[MCTowns] Error occurred in hooking in to WorldGuard. Is both WorldGuard and WorldEdit installed?");
-            log.log(Level.SEVERE, "[MCTowns] !!!!!NOTICE!!!!! MCTOWNS WILL NOW BE DISABLED.  !!!!!NOTICE!!!!!");
+            MCTowns.logSevere("[MCTowns] Error occurred in hooking in to WorldGuard. Is both WorldGuard and WorldEdit installed?");
+            MCTowns.logSevere("[MCTowns] !!!!!NOTICE!!!!! MCTOWNS WILL NOW BE DISABLED.  !!!!!NOTICE!!!!!");
             this.getPluginLoader().disablePlugin(this);
         }
 
@@ -161,10 +160,10 @@ public class MCTownsPlugin extends JavaPlugin {
             try {
                 boolean success = setupEconomy();
                 if (!success) {
-                    log.log(Level.SEVERE, "MCTowns: Unable to hook-in to Vault (1)!");
+                    MCTowns.logSevere("MCTowns: Unable to hook-in to Vault (1)!");
                 }
             } catch (Exception e) {
-                log.log(Level.SEVERE, "MCTowns: Unable to hook-in to Vault.");
+                MCTowns.logSevere("MCTowns: Unable to hook-in to Vault.");
             }
         }
     }
@@ -184,7 +183,7 @@ public class MCTownsPlugin extends JavaPlugin {
         try {
             townManager.writeYAML(this.getDataFolder().getPath());
         } catch (IOException ex) {
-            MCTownsPlugin.logSevere("Error saving town database: " + ex.getLocalizedMessage());
+            MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
     }
@@ -227,34 +226,6 @@ public class MCTownsPlugin extends JavaPlugin {
 
     }
 
-    public static void logSevere(String msg) {
-        log.log(Level.SEVERE, "[MCTowns]: " + msg);
-    }
-
-    public static void logInfo(String msg) {
-        log.log(Level.INFO, "[MCTowns]: " + msg);
-    }
-
-    public static void logDebug(String msg) {
-        if (DEBUGGING) {
-            logInfo("[DEBUG]:" + msg);
-        }
-    }
-
-    /**
-     * Logged assertion. If the assertion passes, nothing happens. If it fails,
-     * a warning is printed to the log.
-     *
-     * @param bool the boolean expression to assert
-     * @param desc a description of the assertion to be printed to the log file.
-     * i.e. where it is, what it is, what its failure implies, etc
-     */
-    public static void logAssert(boolean bool, String desc) {
-        if (!bool) {
-            logDebug("WARNING: ASSERTION FAILED: " + desc);
-        }
-    }
-
     public boolean willAbortSave() {
         return abortSave;
     }
@@ -292,10 +263,8 @@ public class MCTownsPlugin extends JavaPlugin {
             Metrics metrics = new Metrics(this);
             metrics.start();
         } catch (IOException e) {
-            logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
+            MCTowns.logSevere("Unable to submit plugin information. Please let everdras@gmail.com know. Thanks!");
         }
-
-        MCTownsPlugin.logDebug("Metrics reporting started.");
     }
 
     private void saveWorldGuardWorlds() throws ProtectionDatabaseException {

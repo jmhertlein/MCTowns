@@ -21,6 +21,7 @@ import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.MCTLocalSender;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -113,7 +114,7 @@ public abstract class CommandHandler {
         ProtectedRegion wgReg = regMan.getRegion(reg.getName());
 
         if (wgReg == null) {
-            MCTownsPlugin.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
+            MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
             localSender.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
             return;
         }
@@ -267,7 +268,6 @@ public abstract class CommandHandler {
 
             region = new ProtectedCuboidRegion(desiredName, minVect, maxVect);
         } else {
-            MCTownsPlugin.logDebug("Error: The selection was neither a polygon nor a cuboid");
             throw new RuntimeException("Error: The selection was neither a poly nor a cube.");
         }
 
@@ -282,21 +282,17 @@ public abstract class CommandHandler {
 
     public static boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
         if (reg instanceof ProtectedCuboidRegion) {
-            MCTownsPlugin.logDebug("Test region was cuboid");
             return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
         } else if (reg instanceof ProtectedPolygonalRegion) {
-            MCTownsPlugin.logDebug("Test region was polygon");
             ProtectedPolygonalRegion ppr = (ProtectedPolygonalRegion) reg;
 
             for (BlockVector2D pt : ppr.getPoints()) {
                 if (!parentReg.contains(pt)) {
-                    MCTownsPlugin.logDebug("A point was outside.");
                     return false;
                 }
             }
 
             if (!(parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint()))) {
-                MCTownsPlugin.logDebug("Test region was too tall vertically.");
                 return false;
             }
 
@@ -310,7 +306,7 @@ public abstract class CommandHandler {
         try {
             regMan.save();
         } catch (ProtectionDatabaseException ex) {
-            MCTownsPlugin.logSevere("Issue saving WG region list.");
+            MCTowns.logSevere("Issue saving WG region list.");
         }
     }
 
@@ -388,8 +384,6 @@ public abstract class CommandHandler {
             return;
         }
 
-        MCTownsPlugin.logDebug("Redefining " + reg.getName());
-
         RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
 
         Selection nuRegionBounds;
@@ -415,9 +409,6 @@ public abstract class CommandHandler {
                 nuRegionBounds.getNativeMinimumPoint().toBlockVector());
 
 
-        MCTownsPlugin.logDebug("Comparing:");
-        MCTownsPlugin.logDebug("New: " + nuWGRegion.getMaximumPoint().toString() + " | " + nuWGRegion.getMinimumPoint());
-        MCTownsPlugin.logDebug("Old: " + oldWGReg.getMaximumPoint().toString() + " | " + oldWGReg.getMinimumPoint());
         //To make sure that we can't accidentally "orphan" plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.
         if (!(nuWGRegion.contains(oldWGReg.getMaximumPoint()) && nuWGRegion.contains(oldWGReg.getMinimumPoint()))) {
@@ -439,7 +430,7 @@ public abstract class CommandHandler {
         try {
             nuWGRegion.setParent(oldWGReg.getParent());
         } catch (CircularInheritanceException ex) {
-            MCTownsPlugin.logSevere("Error copying parent during redefine: " + ex.getMessage());
+            MCTowns.logSevere("Error copying parent during redefine: " + ex.getMessage());
             ex.printStackTrace();
             return;
         }

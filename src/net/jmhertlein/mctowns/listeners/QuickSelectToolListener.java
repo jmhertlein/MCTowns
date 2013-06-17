@@ -96,7 +96,6 @@ public class QuickSelectToolListener implements Listener {
         actives.setActiveTown(town);
         actives.setActiveTerritory(territ);
         actives.setActivePlot(plot);
-        MCTownsPlugin.logDebug("Active set is now:" + actives);
         e.getPlayer().sendMessage(net.jmhertlein.core.chat.ChatUtil.INFO + "Active set is now: " + actives);
     }
 }
