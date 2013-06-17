@@ -49,7 +49,6 @@ public abstract class CommandHandler {
     protected MCTownsPlugin plugin;
     protected TownManager townManager;
     protected TownJoinManager joinManager;
-    protected static Economy economy = MCTownsPlugin.getEconomy();
     protected Server server;
 
     protected MCTLocalSender localSender;

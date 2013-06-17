@@ -327,7 +327,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (!economy.withdrawPlayer(localSender.getPlayer().getName(), p.getPrice().floatValue()).transactionSuccess()) {
+        if (!MCTowns.getEconomy().withdrawPlayer(localSender.getPlayer().getName(), p.getPrice().floatValue()).transactionSuccess()) {
             localSender.sendMessage(ERR + "Insufficient funds.");
             return;
         }

@@ -37,7 +37,6 @@ public class MCTPlayerListener implements Listener {
     private MCTownsPlugin plugin;
     private TownManager townManager;
     private TownJoinManager joinManager;
-    private Economy economy;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
 
     /**
@@ -48,7 +47,6 @@ public class MCTPlayerListener implements Listener {
     public MCTPlayerListener(MCTownsPlugin plugin) {
         this.townManager = plugin.getTownManager();
         this.joinManager = plugin.getJoinManager();
-        economy = MCTownsPlugin.getEconomy();
         potentialPlotBuyers = plugin.getPotentialPlotBuyers();
         this.plugin = plugin;
     }
@@ -119,7 +117,7 @@ public class MCTPlayerListener implements Listener {
         }
 
 
-        if (!economy.has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice().floatValue())) {
+        if (!MCTowns.getEconomy().has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice().floatValue())) {
             event.getPlayer().sendMessage(ChatColor.RED + "Insufficient funds (costs " + plotToBuy.getActivePlot().getPrice() + ").");
             return;
         }
@@ -127,7 +125,7 @@ public class MCTPlayerListener implements Listener {
         //if it succeeds...
         potentialPlotBuyers.put(event.getPlayer(), plotToBuy);
         event.getPlayer().sendMessage(ChatColor.YELLOW + "Type \"/mct confirm\" to finish buying this plot.)");
-        event.getPlayer().sendMessage(ChatColor.YELLOW + "Please note, this plot costs " + ChatColor.DARK_RED.toString() + economy.format(plotToBuy.getActivePlot().getPrice().floatValue()) + " and typing \"/mct confirm\" will deduct this amount from your holdings.");
+        event.getPlayer().sendMessage(ChatColor.YELLOW + "Please note, this plot costs " + ChatColor.DARK_RED.toString() + MCTowns.getEconomy().format(plotToBuy.getActivePlot().getPrice().floatValue()) + " and typing \"/mct confirm\" will deduct this amount from your holdings.");
     }
 
     @EventHandler

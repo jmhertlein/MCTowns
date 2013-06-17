@@ -49,7 +49,6 @@ public class MCTownsPlugin extends JavaPlugin {
     private static TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
-    private static Economy economy;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
     private boolean abortSave;
     private Set<File> dataDirs, configFiles;
@@ -84,7 +83,6 @@ public class MCTownsPlugin extends JavaPlugin {
         townManager = null;
         joinManager = null;
         activeSets = null;
-        economy = null;
         potentialPlotBuyers = null;
     }
 
@@ -187,6 +185,7 @@ public class MCTownsPlugin extends JavaPlugin {
     }
 
     private boolean setupEconomy() {
+        Economy economy = null;
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
@@ -242,10 +241,6 @@ public class MCTownsPlugin extends JavaPlugin {
 
     public HashMap<String, ActiveSet> getActiveSets() {
         return activeSets;
-    }
-
-    public static Economy getEconomy() {
-        return economy;
     }
 
     public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {

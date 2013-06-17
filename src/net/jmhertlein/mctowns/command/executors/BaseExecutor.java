@@ -9,7 +9,6 @@ import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.core.reporting.BugReportingCommandExecutor;
 import net.jmhertlein.mctowns.MCTowns;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +25,6 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
     protected TownManager townManager;
     protected TownJoinManager joinManager;
     protected HashMap<String, ActiveSet> activeSets;
-    protected static Economy economy = MCTownsPlugin.getEconomy();
     protected HashMap<Player, ActiveSet> potentialPlotBuyers;
 
     public BaseExecutor(MCTownsPlugin parent) {

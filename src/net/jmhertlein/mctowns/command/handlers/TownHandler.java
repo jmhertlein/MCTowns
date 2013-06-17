@@ -1040,7 +1040,7 @@ public class TownHandler extends CommandHandler {
         amt = t.getBank().withdrawCurrency(amt);
 
 
-        economy.depositPlayer(localSender.getPlayer().getName(), amt.doubleValue());
+        MCTowns.getEconomy().depositPlayer(localSender.getPlayer().getName(), amt.doubleValue());
         localSender.sendMessage(amt + " was withdrawn from " + t.getTownName() + "'s town bank and deposited into your account.");
 
 
@@ -1072,7 +1072,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        EconomyResponse result = economy.withdrawPlayer(localSender.getPlayer().getName(), amt.doubleValue());
+        EconomyResponse result = MCTowns.getEconomy().withdrawPlayer(localSender.getPlayer().getName(), amt.doubleValue());
 
         if (result.transactionSuccess()) {
             t.getBank().depositCurrency(amt);
