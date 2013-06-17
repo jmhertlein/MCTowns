@@ -28,7 +28,7 @@ public class TerritoryView implements Serializable {
         plotNames.addAll(t.getPlotsCollection());
         
         playerNames = new LinkedList<>();
-        playerNames.addAll(MCTowns.getWgp().getRegionManager(Bukkit.getWorld(worldName)).getRegion(name).getMembers().getPlayers());
+        playerNames.addAll(MCTowns.getWgp().getRegionManager(Bukkit.getWorld(worldName)).getRegion(name).getOwners().getPlayers());
     }
 
     public String getName() {
