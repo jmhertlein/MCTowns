@@ -142,7 +142,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void setupTownManager() {
         try {
-            townManager = TownManager.readYAML(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME).getPath());
+            townManager = TownManager.readYAML(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME).getAbsolutePath());
         } catch (IOException | InvalidConfigurationException ex) {
             MCTowns.logWarning("MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             MCTowns.logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
@@ -183,7 +183,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void persistTownManager() {
         try {
-            townManager.writeYAML(TOWNS_SAVE_DIR_NAME);
+            townManager.writeYAML(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME).getAbsolutePath());
         } catch (IOException ex) {
             MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
             ex.printStackTrace();
