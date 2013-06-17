@@ -23,6 +23,7 @@ import net.jmhertlein.mctowns.database.TownManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -124,5 +125,9 @@ public class MCTowns {
     
     public static TownManager getTownManager() {
         return MCTownsPlugin.getPlugin().getTownManager();
+    }
+    
+    public static FileConfiguration getConfig() {
+        return MCTownsPlugin.getPlugin().getConfig();
     }
 }

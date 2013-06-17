@@ -43,8 +43,7 @@ public class MCTownsPlugin extends JavaPlugin {
             RSA_KEYS_DIR_NAME = "rsa_keys",
             AUTH_KEYS_DIR_NAME = "auth_keys",
             TEXT_CONFIG_FILE_NAME = "config.txt",
-            META_TOWN_YAML_FILE_NAME = ".meta.yml";
-    private static final String MCT_TEXT_CONFIG_PATH = "plugins" + File.separator + "MCTowns" + File.separator + "config.txt";
+            META_TOWN_YAML_FILE_NAME = "saves/.meta.yml";
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
     private TownJoinManager joinManager;
@@ -132,11 +131,18 @@ public class MCTownsPlugin extends JavaPlugin {
 
         configFiles = new HashSet<>();
         configFiles.add(new File(this.getDataFolder(),"config.yml"));
+        
+        File savesMetaFile = new File(this.getDataFolder(), META_TOWN_YAML_FILE_NAME);
+        try {
+            savesMetaFile.createNewFile();
+        } catch (IOException ex) {
+            MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
+        }
     }
 
     private void setupTownManager() {
         try {
-            townManager = TownManager.readYAML(this.getDataFolder().getPath());
+            townManager = TownManager.readYAML(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME).getPath());
         } catch (IOException | InvalidConfigurationException ex) {
             MCTowns.logWarning("MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             MCTowns.logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
@@ -177,7 +183,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void persistTownManager() {
         try {
-            townManager.writeYAML(this.getDataFolder().getPath());
+            townManager.writeYAML(TOWNS_SAVE_DIR_NAME);
         } catch (IOException ex) {
             MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
             ex.printStackTrace();
