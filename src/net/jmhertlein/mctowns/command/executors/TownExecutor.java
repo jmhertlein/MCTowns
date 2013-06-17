@@ -2,7 +2,7 @@ package net.jmhertlein.mctowns.command.executors;
 
 import net.jmhertlein.core.command.ArgumentCountException;
 import net.jmhertlein.core.command.ECommand;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.handlers.TownHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,7 +16,7 @@ public class TownExecutor extends BaseExecutor {
 
     private TownHandler handler;
 
-    public TownExecutor(MCTowns parent) {
+    public TownExecutor(MCTownsPlugin parent) {
         super(parent);
         handler = new TownHandler(parent);
     }

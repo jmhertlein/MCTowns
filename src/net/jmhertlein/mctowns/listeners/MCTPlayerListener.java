@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.handlers.CommandHandler;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -11,7 +12,6 @@ import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
-import net.jmhertlein.mctowns.util.Config;
 import net.jmhertlein.mctowns.util.ProtectedFenceRegion;
 import net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException;
 import net.milkbowl.vault.economy.Economy;
@@ -34,10 +34,9 @@ import org.bukkit.util.Vector;
 public class MCTPlayerListener implements Listener {
     private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
 
-    private MCTowns plugin;
+    private MCTownsPlugin plugin;
     private TownManager townManager;
     private TownJoinManager joinManager;
-    private Config options;
     private Economy economy;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
 
@@ -46,11 +45,10 @@ public class MCTPlayerListener implements Listener {
      * @param townManager
      * @param joinManager
      */
-    public MCTPlayerListener(MCTowns plugin) {
-        options = plugin.getOptions();
+    public MCTPlayerListener(MCTownsPlugin plugin) {
         this.townManager = plugin.getTownManager();
         this.joinManager = plugin.getJoinManager();
-        economy = MCTowns.getEconomy();
+        economy = MCTownsPlugin.getEconomy();
         potentialPlotBuyers = plugin.getPotentialPlotBuyers();
         this.plugin = plugin;
     }
@@ -90,7 +88,7 @@ public class MCTPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerClickPurchaseSign(PlayerInteractEvent event) {
 
-        if (!options.isEconomyEnabled()) {
+        if (!MCTowns.economyIsEnabled()) {
             //if economy isn't enabled, do nothing
             return;
         }
@@ -109,8 +107,8 @@ public class MCTPlayerListener implements Listener {
         ActiveSet plotToBuy = townManager.getPlotFromSignLocation(event.getClickedBlock().getLocation());
 
         if (plotToBuy == null) {
-            MCTowns.logSevere("Sign was an MCT plot sign, but no matching plot was found.");
-            MCTowns.logSevere("Sign's location was: " + event.getClickedBlock().getLocation().toString());
+            MCTownsPlugin.logSevere("Sign was an MCT plot sign, but no matching plot was found.");
+            MCTownsPlugin.logSevere("Sign's location was: " + event.getClickedBlock().getLocation().toString());
             return;
         }
 
@@ -134,12 +132,12 @@ public class MCTPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.SignChangeEvent e) {
-        MCTowns.logDebug("Block placed. SCE");
+        MCTownsPlugin.logDebug("Block placed. SCE");
 
         if(e.getBlock().getType() != Material.SIGN_POST)
             return;
 
-        MCTowns.logDebug("Material was signpost");
+        MCTownsPlugin.logDebug("Material was signpost");
 
         Sign sign = (Sign) e.getBlock().getState();
 
@@ -148,9 +146,9 @@ public class MCTPlayerListener implements Listener {
         if(! e.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
             return;
 
-        MCTowns.logDebug("Had our prefix");
+        MCTownsPlugin.logDebug("Had our prefix");
 
-        MCTowns.logDebug("Doing shit.");
+        MCTownsPlugin.logDebug("Doing shit.");
         Player p = e.getPlayer();
 
         ActiveSet pActive = plugin.getActiveSets().get(p.getName());
@@ -209,7 +207,7 @@ public class MCTPlayerListener implements Listener {
             count ++;
         }
 
-        MCTowns.logDebug("Found fence at " + signLoc.toString());
+        MCTownsPlugin.logDebug("Found fence at " + signLoc.toString());
 
         if(count >= 100) {
             p.sendMessage(ChatColor.RED + "Error: couldn't find a fence within 100 blocks, aborting.");

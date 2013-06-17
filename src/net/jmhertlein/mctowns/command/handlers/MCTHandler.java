@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Town;
@@ -20,7 +21,7 @@ import org.bukkit.entity.Player;
  */
 public class MCTHandler extends CommandHandler {
 
-    public MCTHandler(MCTowns parent) {
+    public MCTHandler(MCTownsPlugin parent) {
         super(parent);
     }
 
@@ -45,7 +46,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
+        if (!MCTowns.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
             localSender.sendMessage(ERR + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
             return;
         }
@@ -82,14 +83,14 @@ public class MCTHandler extends CommandHandler {
             for(World w : Bukkit.getWorlds())
                 wgp.getRegionManager(w).save();
         } catch (ProtectionDatabaseException ex) {
-            MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
-            MCTowns.logSevere(ex.getMessage());
+            MCTownsPlugin.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
+            MCTownsPlugin.logSevere(ex.getMessage());
         } catch (NullPointerException npe) {
-            MCTowns.logSevere("Couldn't force WG to save its regions. (null)");
-            MCTowns.logSevere("Debug analysis:");
-            MCTowns.logSevere("WG plugin was null: " + (wgp == null));
-            MCTowns.logSevere("Server was null: " + (wgp == null));
-            MCTowns.logSevere("Town was null: " + (t == null));
+            MCTownsPlugin.logSevere("Couldn't force WG to save its regions. (null)");
+            MCTownsPlugin.logSevere("Debug analysis:");
+            MCTownsPlugin.logSevere("WG plugin was null: " + (wgp == null));
+            MCTownsPlugin.logSevere("Server was null: " + (wgp == null));
+            MCTownsPlugin.logSevere("Town was null: " + (t == null));
         }
 
         //clear active sets to remove pointers to deleted town
@@ -186,7 +187,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (!options.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
+        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
         }
@@ -287,7 +288,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (!options.isEconomyEnabled()) {
+        if (!MCTowns.economyIsEnabled()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -301,7 +302,7 @@ public class MCTHandler extends CommandHandler {
 
         if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             //if players can't join multiple towns AND the town they're buying from isn't their current town
-            if (!options.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
+            if (!MCTowns.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }

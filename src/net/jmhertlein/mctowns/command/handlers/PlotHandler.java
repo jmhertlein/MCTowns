@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
@@ -18,7 +19,7 @@ import org.bukkit.entity.Player;
  */
 public class PlotHandler extends CommandHandler {
 
-    public PlotHandler(MCTowns parent) {
+    public PlotHandler(MCTownsPlugin parent) {
         super(parent);
     }
 
@@ -240,7 +241,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (!options.isEconomyEnabled()) {
+        if (!MCTowns.economyIsEnabled()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -267,7 +268,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (!options.isEconomyEnabled()) {
+        if (!MCTowns.economyIsEnabled()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }

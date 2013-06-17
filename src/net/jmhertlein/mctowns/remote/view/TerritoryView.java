@@ -7,7 +7,7 @@ package net.jmhertlein.mctowns.remote.view;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.Territory;
 import org.bukkit.Bukkit;
 
@@ -28,7 +28,7 @@ public class TerritoryView implements Serializable {
         plotNames.addAll(t.getPlotsCollection());
         
         playerNames = new LinkedList<>();
-        playerNames.addAll(MCTowns.getWgp().getRegionManager(Bukkit.getWorld(worldName)).getRegion(name).getOwners().getPlayers());
+        playerNames.addAll(MCTownsPlugin.getWgp().getRegionManager(Bukkit.getWorld(worldName)).getRegion(name).getOwners().getPlayers());
     }
 
     public String getName() {

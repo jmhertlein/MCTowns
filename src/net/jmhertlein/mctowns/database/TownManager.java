@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.core.location.Location;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
@@ -35,7 +35,7 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class TownManager {
-    private static WorldGuardPlugin wgp = MCTowns.getWgp();
+    private static WorldGuardPlugin wgp = MCTownsPlugin.getWgp();
 
     private static final long serialVersionUID = "TOWNMANAGER".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
@@ -171,7 +171,7 @@ public class TownManager {
         try {
             regMan.save();
         } catch (ProtectionDatabaseException ex) {
-            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            MCTownsPlugin.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
 
@@ -236,7 +236,7 @@ public class TownManager {
      * @return true if successful, false if the Territiry doesn't exist or isn't a territory
      */
     public boolean removeTerritory(String territoryName) {
-        MCTowns.logDebug("removeTerritory()");
+        MCTownsPlugin.logDebug("removeTerritory()");
         MCTownsRegion mctReg = regions.get(territoryName);
 
         if(mctReg == null || !(mctReg instanceof Territory))
@@ -251,7 +251,7 @@ public class TownManager {
         getTown(territ.getParentTown()).removeTerritory(territoryName);
 
         regions.remove(territ.getName());
-        MCTowns.logDebug(territoryName);
+        MCTownsPlugin.logDebug(territoryName);
 
         RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(territ.getWorldName()));
 
@@ -260,7 +260,7 @@ public class TownManager {
         try {
             regMan.save();
         } catch (ProtectionDatabaseException ex) {
-            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            MCTownsPlugin.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
 
@@ -273,7 +273,7 @@ public class TownManager {
      * @return true if removal was successful, false if the plot doesn't exist or isn't a plot
      */
     public boolean removePlot(String plotName) {
-        MCTowns.logDebug("removePlot()");
+        MCTownsPlugin.logDebug("removePlot()");
         MCTownsRegion plot = regions.get(plotName);
 
         if(plot == null || !(plot instanceof Plot))
@@ -290,7 +290,7 @@ public class TownManager {
         try {
             regMan.save();
         } catch (ProtectionDatabaseException ex) {
-            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            MCTownsPlugin.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
 
@@ -349,7 +349,7 @@ public class TownManager {
             }
         }
 
-        MCTowns.log.log(Level.SEVERE, "Couldn't find a match for this plot!");
+        MCTownsPlugin.log.log(Level.SEVERE, "Couldn't find a match for this plot!");
         return null;
         //throw new RuntimeException("Couldn't find a match for this plot.");
     }

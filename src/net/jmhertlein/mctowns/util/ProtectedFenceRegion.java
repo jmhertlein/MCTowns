@@ -4,7 +4,7 @@ import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import java.util.LinkedList;
 import java.util.List;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -48,7 +48,7 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
             if(getOppositeDir(cameFrom) != dirToNext) {
                 //add it to the polygon
                 points.add(new BlockVector2D(cur.getBlockX(), cur.getBlockZ()));
-                MCTowns.logDebug("Added a new point: " + "(" + cur.getBlockX() + "," + cur.getBlockZ() + ")");
+                MCTownsPlugin.logDebug("Added a new point: " + "(" + cur.getBlockX() + "," + cur.getBlockZ() + ")");
             }
 
 

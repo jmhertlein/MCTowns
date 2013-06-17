@@ -11,6 +11,7 @@ playersCanJoinMultipleTowns: true
 #hostname and port of remote bug report handling server
 bugReportHostname: services.jmhertlein.net
 bugReportPort: 9001
+remoteAdminServerEnabled: false
 #Port remote admin server will listen for clients on
 remoteAdminPort: 3333
 #length of encryption keys used for remote admin server

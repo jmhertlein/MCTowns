@@ -3,7 +3,7 @@ package net.jmhertlein.mctowns.command.handlers;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
  */
 public class TerritoryHandler extends CommandHandler {
 
-    public TerritoryHandler(MCTowns parent) {
+    public TerritoryHandler(MCTownsPlugin parent) {
         super(parent);
     }
 

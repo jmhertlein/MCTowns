@@ -4,7 +4,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.List;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.Plot;
@@ -27,13 +27,13 @@ public class QuickSelectToolListener implements Listener {
 
     public static Material SELECT_TOOL;
     private WorldGuardPlugin wgp;
-    private MCTowns mctp;
+    private MCTownsPlugin mctp;
     private TownManager townMan;
 
-    public QuickSelectToolListener(WorldGuardPlugin wgp, MCTowns mctp) {
+    public QuickSelectToolListener(WorldGuardPlugin wgp, MCTownsPlugin mctp) {
         this.wgp = wgp;
         this.mctp = mctp;
-        this.townMan = MCTowns.getTownManager();
+        this.townMan = MCTownsPlugin.getTownManager();
     }
 
     @EventHandler
@@ -96,7 +96,7 @@ public class QuickSelectToolListener implements Listener {
         actives.setActiveTown(town);
         actives.setActiveTerritory(territ);
         actives.setActivePlot(plot);
-        MCTowns.logDebug("Active set is now:" + actives);
+        MCTownsPlugin.logDebug("Active set is now:" + actives);
         e.getPlayer().sendMessage(net.jmhertlein.core.chat.ChatUtil.INFO + "Active set is now: " + actives);
     }
 }

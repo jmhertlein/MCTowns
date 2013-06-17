@@ -4,7 +4,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.Objects;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 public abstract class MCTownsRegion {
     private static final long serialVersionUID = "MCTOWNSREGION".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
-    protected static WorldGuardPlugin wgp = MCTowns.getWgp();
+    protected static WorldGuardPlugin wgp = MCTownsPlugin.getWgp();
 
     /**
      * The name of the region, the name of the world in which the region exists

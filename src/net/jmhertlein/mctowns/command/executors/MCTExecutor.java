@@ -2,7 +2,7 @@ package net.jmhertlein.mctowns.command.executors;
 
 import net.jmhertlein.core.command.ArgumentCountException;
 import net.jmhertlein.core.command.ECommand;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.handlers.MCTHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,7 +16,7 @@ public class MCTExecutor extends BaseExecutor {
 
     private MCTHandler handler;
 
-    public MCTExecutor(MCTowns parent) {
+    public MCTExecutor(MCTownsPlugin parent) {
         super(parent);
         handler = new MCTHandler(parent);
     }
@@ -36,14 +36,14 @@ public class MCTExecutor extends BaseExecutor {
 
         try {
             if (!command.get(0).equals("mct")) {
-                MCTowns.logSevere("Assertion failed: MCTExecutor.java, the command's first argument was not \"mct\"");
+                MCTownsPlugin.logSevere("Assertion failed: MCTExecutor.java, the command's first argument was not \"mct\"");
             }
 
 
             switch (command.get(1)) {
                 case "break":
-                    if(MCTowns.isDebugging()) {
-                        MCTowns.logDebug(cs.getName() + " intentionally broke the server.");
+                    if(MCTownsPlugin.isDebugging()) {
+                        MCTownsPlugin.logDebug(cs.getName() + " intentionally broke the server.");
                         throw new RuntimeException("Intentionally broke.");
                     }
                     break;

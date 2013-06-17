@@ -2,7 +2,7 @@ package net.jmhertlein.mctowns.command.executors;
 
 import net.jmhertlein.core.command.ArgumentCountException;
 import net.jmhertlein.core.command.ECommand;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.handlers.PlotHandler;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
@@ -17,7 +17,7 @@ public class PlotExecutor extends BaseExecutor {
 
     private PlotHandler handler;
 
-    public PlotExecutor(MCTowns parent) {
+    public PlotExecutor(MCTownsPlugin parent) {
         super(parent);
         handler = new PlotHandler(parent);
     }

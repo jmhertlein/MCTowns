@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import net.jmhertlein.core.location.Location;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.remote.view.TownView;
@@ -439,10 +439,10 @@ public class Town {
      */
     public boolean playerIsInsideTownBorders(Player p) {
         org.bukkit.Location playerLoc = p.getLocation();
-        RegionManager regMan = MCTowns.getWgp().getRegionManager(p.getWorld());
+        RegionManager regMan = MCTownsPlugin.getWgp().getRegionManager(p.getWorld());
 
         ProtectedRegion tempReg;
-        for (MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
+        for (MCTownsRegion mctReg : MCTownsPlugin.getTownManager().getRegionsCollection()) {
             if(mctReg instanceof Territory) {
                 tempReg = regMan.getRegion( ((Territory)mctReg).getName());
                 if (tempReg != null) {
@@ -576,7 +576,7 @@ public class Town {
     }
     
     public static void recursivelyRemovePlayerFromTown(OfflinePlayer p, Town t) {
-        TownManager tMan = MCTowns.getTownManager();
+        TownManager tMan = MCTownsPlugin.getTownManager();
         
         for(String teName : t.getTerritoriesCollection()) {
             Territory te = tMan.getTerritory(teName);

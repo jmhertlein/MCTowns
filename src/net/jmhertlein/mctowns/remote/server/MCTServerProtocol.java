@@ -29,7 +29,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.core.location.Location;
-import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
@@ -58,7 +58,7 @@ public class MCTServerProtocol {
     private PublicKey serverPubKey;
     private PrivateKey serverPrivateKey;
     private Map<Integer, ClientSession> sessionKeys;
-    private MCTowns p;
+    private MCTownsPlugin p;
     private static volatile Integer nextSessionID = 0;
     
     private ClientSession clientSession;
@@ -66,7 +66,7 @@ public class MCTServerProtocol {
     private Socket client;
     private RemoteAction action;
 
-    public MCTServerProtocol(MCTowns p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<Integer, ClientSession> sessionKeys) {
+    public MCTServerProtocol(MCTownsPlugin p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<Integer, ClientSession> sessionKeys) {
         this.authKeysDir = authKeysDir;
         this.serverPubKey = serverPublicKey;
         this.client = client;
@@ -259,7 +259,7 @@ public class MCTServerProtocol {
                 deletePlot(oos, ois);
                 break;
             case UPDATE_CONFIG:
-                
+                updateConfig(oos, ois);
                 break;
                 
         }
@@ -298,12 +298,12 @@ public class MCTServerProtocol {
         if(player == null)
             oos.writeObject(null);
         else
-            oos.writeObject(new PlayerView(p.getServer(), player, MCTowns.getTownManager()));
+            oos.writeObject(new PlayerView(p.getServer(), player, MCTownsPlugin.getTownManager()));
     }
 
     private void sendAllTowns(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
         List<String> ret = new LinkedList<>();
-        for(Town t : MCTowns.getTownManager().getTownsCollection()) {
+        for(Town t : MCTownsPlugin.getTownManager().getTownsCollection()) {
             ret.add(t.getTownName());
         }
         
@@ -312,7 +312,7 @@ public class MCTServerProtocol {
     
     private void sendTownView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String tName = (String) ois.readObject();
-        Town t = MCTowns.getTownManager().getTown(tName);
+        Town t = MCTownsPlugin.getTownManager().getTown(tName);
         if(t == null)
             oos.writeObject(null);
         else
@@ -356,7 +356,7 @@ public class MCTServerProtocol {
 
     private void sendTerritoryList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String townName = (String) ois.readObject();
-        Town t = MCTowns.getTownManager().getTown(townName);
+        Town t = MCTownsPlugin.getTownManager().getTown(townName);
         
         if(t == null)
             oos.writeObject(new LinkedList<>());
@@ -366,7 +366,7 @@ public class MCTServerProtocol {
 
     private void sendTerritoryView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String territName = (String) ois.readObject();
-        Territory t = MCTowns.getTownManager().getTerritory(territName);
+        Territory t = MCTownsPlugin.getTownManager().getTerritory(territName);
         if(t == null)
             oos.writeObject(null);
         else
@@ -380,7 +380,7 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                return MCTowns.getTownManager().removeTerritory(territName);
+                return MCTownsPlugin.getTownManager().removeTerritory(territName);
             }
         };
         
@@ -394,7 +394,7 @@ public class MCTServerProtocol {
 
     private void sendPlotView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String plotName = (String) ois.readObject();
-        Plot plot = MCTowns.getTownManager().getPlot(plotName);
+        Plot plot = MCTownsPlugin.getTownManager().getPlot(plotName);
         
         if(plot == null)
             oos.writeObject(null);
@@ -404,7 +404,7 @@ public class MCTServerProtocol {
 
     private void sendPlotList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String territName = (String) ois.readObject();
-        Territory t = MCTowns.getTownManager().getTerritory(territName);
+        Territory t = MCTownsPlugin.getTownManager().getTerritory(territName);
         
         if(t == null)
             oos.writeObject(null);
@@ -419,7 +419,7 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                return MCTowns.getTownManager().removeTown(townName);
+                return MCTownsPlugin.getTownManager().removeTown(townName);
             }
         };
         
@@ -436,7 +436,7 @@ public class MCTServerProtocol {
         String mayorName = (String) ois.readObject();
         Location spawn = (Location) ois.readObject();
         
-        Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
+        Boolean result = MCTownsPlugin.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
         
         oos.writeObject(result);
     }
@@ -447,7 +447,7 @@ public class MCTServerProtocol {
         final String playerName = (String) ois.readObject();
         String plotName = (String) ois.readObject();
         
-        final Plot plot = MCTowns.getTownManager().getPlot(plotName);
+        final Plot plot = MCTownsPlugin.getTownManager().getPlot(plotName);
         
         if(plot == null) {
             oos.writeObject(false);
@@ -485,7 +485,7 @@ public class MCTServerProtocol {
         final String playerName = (String) ois.readObject();
         String territoryName = (String) ois.readObject();
         
-        final Territory territ = MCTowns.getTownManager().getTerritory(territoryName);
+        final Territory territ = MCTownsPlugin.getTownManager().getTerritory(territoryName);
         
         if(territ == null) {
             oos.writeObject(false);
@@ -522,7 +522,7 @@ public class MCTServerProtocol {
         String playerName = (String) ois.readObject();
         String townName = (String) ois.readObject();
         
-        Town town = MCTowns.getTownManager().getTown(townName);
+        Town town = MCTownsPlugin.getTownManager().getTown(townName);
         
         if(town == null) {
             oos.writeObject(false);
@@ -545,7 +545,7 @@ public class MCTServerProtocol {
         String playerName = (String) ois.readObject();
         String townName = (String) ois.readObject();
         
-        Town town = MCTowns.getTownManager().getTown(townName);
+        Town town = MCTownsPlugin.getTownManager().getTown(townName);
         
         if(town == null) {
             oos.writeObject(false);
@@ -565,7 +565,7 @@ public class MCTServerProtocol {
     private void updateTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         TownView view = (TownView) ois.readObject();
         
-        Town t = MCTowns.getTownManager().getTown(view.getTownName());
+        Town t = MCTownsPlugin.getTownManager().getTown(view.getTownName());
         
         if(t == null) {
             oos.writeObject(false);
@@ -580,7 +580,7 @@ public class MCTServerProtocol {
     private void updatePlot(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         PlotView view = (PlotView) ois.readObject();
         
-        Plot plot = MCTowns.getTownManager().getPlot(view.getPlotName());
+        Plot plot = MCTownsPlugin.getTownManager().getPlot(view.getPlotName());
         
         if(plot == null) {
             oos.writeObject(false);
@@ -599,7 +599,7 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                return MCTowns.getTownManager().removePlot(plotName);
+                return MCTownsPlugin.getTownManager().removePlot(plotName);
             }
         };
         
@@ -609,5 +609,9 @@ public class MCTServerProtocol {
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
+    }
+
+    private void updateConfig(ObjectOutputStream oos, ObjectInputStream ois) {
+        
     }
 }
