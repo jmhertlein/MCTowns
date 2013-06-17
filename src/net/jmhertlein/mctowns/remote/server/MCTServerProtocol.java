@@ -258,6 +258,9 @@ public class MCTServerProtocol {
             case DELETE_PLOT:
                 deletePlot(oos, ois);
                 break;
+            case UPDATE_CONFIG:
+                
+                break;
                 
         }
 
