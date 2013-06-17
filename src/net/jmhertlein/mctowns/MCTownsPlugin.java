@@ -117,7 +117,8 @@ public class MCTownsPlugin extends JavaPlugin {
 
         startMetricsCollection();
 
-        startRemoteServer();
+        if(MCTowns.remoteAdminServerIsEnabled())
+            startRemoteServer();
 
         log.info("MCTowns is now fully loaded.");
 
