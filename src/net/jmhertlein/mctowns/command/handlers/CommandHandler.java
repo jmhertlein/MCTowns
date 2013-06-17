@@ -61,7 +61,7 @@ public abstract class CommandHandler {
      */
     public CommandHandler(MCTownsPlugin parent) {
         plugin = parent;
-        townManager = MCTownsPlugin.getTownManager();
+        townManager = MCTowns.getTownManager();
         joinManager = parent.getJoinManager();
         server = parent.getServer();
     }

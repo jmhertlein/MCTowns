@@ -38,7 +38,7 @@ public class Plot extends MCTownsRegion {
     public Plot(String name, String worldName, String parentTerritoryName, String parentTownName) {
         super(name, worldName);
 
-        price = MCTownsPlugin.getTownManager().getTown(parentTownName).getDefaultPlotPrice();
+        price = MCTowns.getTownManager().getTown(parentTownName).getDefaultPlotPrice();
         parTerrName = parentTerritoryName;
         parTownName = parentTownName;
         

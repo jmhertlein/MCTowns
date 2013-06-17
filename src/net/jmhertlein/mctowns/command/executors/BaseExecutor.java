@@ -29,7 +29,7 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
 
     public BaseExecutor(MCTownsPlugin parent) {
         this.parent = parent;
-        this.townManager = MCTownsPlugin.getTownManager();
+        this.townManager = MCTowns.getTownManager();
         this.joinManager = parent.getJoinManager();
         this.activeSets = parent.getActiveSets();
         this.potentialPlotBuyers = parent.getPotentialPlotBuyers();

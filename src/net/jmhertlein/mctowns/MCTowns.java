@@ -19,6 +19,7 @@ package net.jmhertlein.mctowns;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.math.BigDecimal;
 import java.util.logging.Level;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -119,5 +120,9 @@ public class MCTowns {
             wgp = null;
         
         return wgp;
+    }
+    
+    public static TownManager getTownManager() {
+        return MCTownsPlugin.getPlugin().getTownManager();
     }
 }

@@ -4,6 +4,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.List;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -33,7 +34,7 @@ public class QuickSelectToolListener implements Listener {
     public QuickSelectToolListener(WorldGuardPlugin wgp, MCTownsPlugin mctp) {
         this.wgp = wgp;
         this.mctp = mctp;
-        this.townMan = MCTownsPlugin.getTownManager();
+        this.townMan = MCTowns.getTownManager();
     }
 
     @EventHandler

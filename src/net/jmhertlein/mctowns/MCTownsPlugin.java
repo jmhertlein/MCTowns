@@ -230,8 +230,8 @@ public class MCTownsPlugin extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
-
-    public static TownManager getTownManager() {
+    
+    public TownManager getTownManager() {
         return townManager;
     }
 

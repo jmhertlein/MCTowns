@@ -443,7 +443,7 @@ public class Town {
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(p.getWorld());
 
         ProtectedRegion tempReg;
-        for (MCTownsRegion mctReg : MCTownsPlugin.getTownManager().getRegionsCollection()) {
+        for (MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
             if(mctReg instanceof Territory) {
                 tempReg = regMan.getRegion( ((Territory)mctReg).getName());
                 if (tempReg != null) {
@@ -577,7 +577,7 @@ public class Town {
     }
     
     public static void recursivelyRemovePlayerFromTown(OfflinePlayer p, Town t) {
-        TownManager tMan = MCTownsPlugin.getTownManager();
+        TownManager tMan = MCTowns.getTownManager();
         
         for(String teName : t.getTerritoriesCollection()) {
             Territory te = tMan.getTerritory(teName);
