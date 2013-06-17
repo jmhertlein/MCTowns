@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import net.jmhertlein.core.location.Location;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -439,7 +440,7 @@ public class Town {
      */
     public boolean playerIsInsideTownBorders(Player p) {
         org.bukkit.Location playerLoc = p.getLocation();
-        RegionManager regMan = MCTownsPlugin.getWgp().getRegionManager(p.getWorld());
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(p.getWorld());
 
         ProtectedRegion tempReg;
         for (MCTownsRegion mctReg : MCTownsPlugin.getTownManager().getRegionsCollection()) {

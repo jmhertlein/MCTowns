@@ -1,6 +1,7 @@
 package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import net.jmhertlein.core.location.Location;
@@ -165,6 +166,7 @@ public class Plot extends MCTownsRegion {
      * Tries to place the sign's location in the middle of the plot.
      */
     public final void calculateSignLoc() {
+        WorldGuardPlugin wgp = MCTowns.getWorldGuardPlugin();
         ProtectedRegion reg = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name);
         Vector middle = reg.getMaximumPoint().add(reg.getMinimumPoint());
         middle = middle.divide(2);

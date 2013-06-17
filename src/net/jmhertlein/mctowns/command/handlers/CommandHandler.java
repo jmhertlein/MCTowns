@@ -49,7 +49,6 @@ public abstract class CommandHandler {
     protected MCTownsPlugin plugin;
     protected TownManager townManager;
     protected TownJoinManager joinManager;
-    protected static WorldGuardPlugin wgp = MCTownsPlugin.getWgp();
     protected static Economy economy = MCTownsPlugin.getEconomy();
     protected Server server;
 
@@ -109,7 +108,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(reg.getWorldName()));
 
         ProtectedRegion wgReg = regMan.getRegion(reg.getName());
 
@@ -185,7 +184,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        ProtectedRegion wgReg = wgp.getRegionManager(server.getWorld(reg.getWorldName())).getRegion(reg.getName());
+        ProtectedRegion wgReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(reg.getWorldName())).getRegion(reg.getName());
         
         if(wgReg == null) {
             localSender.sendMessage("Unable to get world guard region for " + reg.getName() + ". Perhaps the region was deleted outside of MCTowns?");
@@ -239,7 +238,7 @@ public abstract class CommandHandler {
     protected ProtectedRegion getSelectedRegion(String desiredName) {
         Selection selection;
         try {
-            selection = wgp.getWorldEdit().getSelection((Player) localSender.getSender());
+            selection = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection((Player) localSender.getSender());
             if (selection == null) {
                 throw new NullPointerException();
             }
@@ -275,7 +274,8 @@ public abstract class CommandHandler {
     }
 
     public static boolean selectionIsWithinParent(ProtectedRegion reg, MCTownsRegion parent) {
-        ProtectedRegion parentReg = wgp.getRegionManager(wgp.getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
+        ProtectedRegion parentReg = MCTowns.getWorldGuardPlugin().getRegionManager(
+                MCTowns.getWorldGuardPlugin().getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
 
         return selectionIsWithinParent(reg, parentReg);
     }
@@ -345,7 +345,7 @@ public abstract class CommandHandler {
     }
 
     public <V> void setFlag(ProtectedRegion region, Flag<V> flag, CommandSender sender, String value) throws InvalidFlagFormat {
-        region.setFlag(flag, flag.parseInput(wgp, sender, value));
+        region.setFlag(flag, flag.parseInput(MCTowns.getWorldGuardPlugin(), sender, value));
     }
 
     protected void runCommandAsConsole(String command) {
@@ -384,11 +384,11 @@ public abstract class CommandHandler {
             return;
         }
 
-        RegionManager regMan = wgp.getRegionManager(server.getWorld(reg.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(reg.getWorldName()));
 
         Selection nuRegionBounds;
         try {
-            nuRegionBounds = wgp.getWorldEdit().getSelection(localSender.getPlayer());
+            nuRegionBounds = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection(localSender.getPlayer());
         } catch(CommandException ce) {
             localSender.sendMessage("Error hooking the world edit plugn. Please inform your server owner.");
             ce.printStackTrace();

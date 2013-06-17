@@ -36,8 +36,6 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class TownManager {
-    private static WorldGuardPlugin wgp = MCTownsPlugin.getWgp();
-
     private static final long serialVersionUID = "TOWNMANAGER".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
 
@@ -146,7 +144,7 @@ public class TownManager {
             return false;
 
         parentTerritory.addPlot(p);
-        RegionManager regMan = wgp.getRegionManager(worldPlotIsIn);
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(worldPlotIsIn);
         try {
             reg.setParent(regMan.getRegion(parentTerritory.getName()));
         } catch (CircularInheritanceException ex) {
@@ -159,7 +157,7 @@ public class TownManager {
     }
 
     private boolean addMCTRegion(String fullPlotName, MCTownsRegion mctReg, World w, ProtectedRegion reg) {
-        RegionManager regMan = wgp.getRegionManager(w);
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(w);
         if(! reg.getId().equals(mctReg.getName()))
             throw new InvalidWorldGuardRegionNameException(fullPlotName, reg.getId());
 
@@ -252,7 +250,7 @@ public class TownManager {
 
         regions.remove(territ.getName());
 
-        RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(territ.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getWorld(territ.getWorldName()));
 
         regMan.removeRegion(territ.getName());
 
@@ -281,7 +279,7 @@ public class TownManager {
 
         getTerritory(((Plot)plot).getParentTerritoryName()).removePlot(plotName);
 
-        RegionManager regMan = wgp.getRegionManager(Bukkit.getWorld(plot.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getWorld(plot.getWorldName()));
 
         regMan.removeRegion(plotName);
 

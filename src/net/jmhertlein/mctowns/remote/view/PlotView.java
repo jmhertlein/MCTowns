@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import net.jmhertlein.core.location.Location;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.Plot;
 import org.bukkit.Bukkit;
@@ -60,7 +61,7 @@ public class PlotView implements Serializable {
         price = p.getPrice();
         signLoc = p.getSignLoc();
         
-        ProtectedRegion r = MCTownsPlugin.getWgp().getRegionManager(Bukkit.getWorld(worldName)).getRegion(plotName);
+        ProtectedRegion r = MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getWorld(worldName)).getRegion(plotName);
         playerNames = new LinkedList<>(r.getOwners().getPlayers());
         guestNames = new LinkedList<>(r.getMembers().getPlayers());
     }

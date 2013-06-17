@@ -16,15 +16,22 @@
  */
 package net.jmhertlein.mctowns;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.math.BigDecimal;
 import java.util.logging.Level;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 /**
  *
  * @author joshua
  */
 public class MCTowns {
+    private static WorldGuardPlugin wgp;
+    
     public static boolean economyIsEnabled() {
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("economyEnabled");
     }
@@ -92,5 +99,25 @@ public class MCTowns {
     
     public static void logSevere(String msg) {
         MCTownsPlugin.getPlugin().getLogger().log(Level.SEVERE, msg);
+    }
+    
+    public static Economy getEconomy() {
+        RegisteredServiceProvider<Economy> 
+                economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        
+        return economyProvider != null ? economyProvider.getProvider() : null;
+    }
+    
+    public static WorldGuardPlugin getWorldGuardPlugin() {
+        if(wgp != null)
+            return wgp;
+        
+        Plugin p = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
+        if(p instanceof WorldGuardPlugin)
+            wgp = (WorldGuardPlugin) p;
+        else
+            wgp = null;
+        
+        return wgp;
     }
 }

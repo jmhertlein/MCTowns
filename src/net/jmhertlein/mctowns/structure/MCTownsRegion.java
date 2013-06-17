@@ -4,6 +4,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.Objects;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -17,7 +18,6 @@ import org.bukkit.entity.Player;
 public abstract class MCTownsRegion {
     private static final long serialVersionUID = "MCTOWNSREGION".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
-    protected static WorldGuardPlugin wgp = MCTownsPlugin.getWgp();
 
     /**
      * The name of the region, the name of the world in which the region exists
@@ -64,7 +64,8 @@ public abstract class MCTownsRegion {
     public boolean removePlayer(String p) {
         DefaultDomain members, owners;
         boolean removed = false;
-
+        WorldGuardPlugin wgp = MCTowns.getWorldGuardPlugin();
+        
         members = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getMembers();
         owners = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getOwners();
 
@@ -96,7 +97,8 @@ public abstract class MCTownsRegion {
     }
 
     public boolean addPlayer(String playerName) {
-        DefaultDomain dd = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getOwners();
+        DefaultDomain dd = MCTowns.getWorldGuardPlugin().getRegionManager(
+                MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName)).getRegion(name).getOwners();
 
         if (!dd.getPlayers().contains(playerName)) {
             dd.addPlayer(playerName);
@@ -106,7 +108,8 @@ public abstract class MCTownsRegion {
     }
 
     public boolean addGuest(String playerName) {
-        DefaultDomain members = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getMembers();
+        DefaultDomain members = MCTowns.getWorldGuardPlugin().getRegionManager(
+                MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName)).getRegion(name).getMembers();
 
         if (!members.getPlayers().contains(playerName)) {
             members.addPlayer(playerName);
@@ -117,7 +120,7 @@ public abstract class MCTownsRegion {
     }
 
     public ProtectedRegion getWGRegion() {
-        return wgp.getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegionExact(name);
+        return MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegionExact(name);
     }
 
     @Override

@@ -26,7 +26,6 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
     protected TownManager townManager;
     protected TownJoinManager joinManager;
     protected HashMap<String, ActiveSet> activeSets;
-    protected static WorldGuardPlugin wgp = MCTownsPlugin.getWgp();
     protected static Economy economy = MCTownsPlugin.getEconomy();
     protected HashMap<Player, ActiveSet> potentialPlotBuyers;
 

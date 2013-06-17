@@ -81,15 +81,15 @@ public class MCTHandler extends CommandHandler {
 
         try {
             for(World w : Bukkit.getWorlds())
-                wgp.getRegionManager(w).save();
+                MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
         } catch (ProtectionDatabaseException ex) {
             MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
             MCTowns.logSevere(ex.getMessage());
         } catch (NullPointerException npe) {
             MCTowns.logSevere("Couldn't force WG to save its regions. (null)");
             MCTowns.logSevere("Debug analysis:");
-            MCTowns.logSevere("WG plugin was null: " + (wgp == null));
-            MCTowns.logSevere("Server was null: " + (wgp == null));
+            MCTowns.logSevere("WG plugin was null: " + (MCTowns.getWorldGuardPlugin() == null));
+            MCTowns.logSevere("Server was null: " + (MCTowns.getWorldGuardPlugin() == null));
             MCTowns.logSevere("Town was null: " + (t == null));
         }
 
@@ -336,13 +336,13 @@ public class MCTHandler extends CommandHandler {
 
         p.setPrice(BigDecimal.ZERO);
         p.setForSale(false);
-        ProtectedRegion plotReg = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
+        ProtectedRegion plotReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
         p.demolishSign();
 
         plotReg.getOwners().addPlayer(localSender.getPlayer().getName());
 
         localSender.sendMessage(ChatColor.GREEN + "You are now the proud owner of this plot.");
-        doRegManSave(wgp.getRegionManager(server.getWorld(p.getWorldName())));
+        doRegManSave(MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())));
 
 
         if (!townManager.playerIsAlreadyInATown(localSender.getPlayer())) {

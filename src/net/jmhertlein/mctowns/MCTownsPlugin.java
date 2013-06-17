@@ -27,6 +27,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -48,7 +49,6 @@ public class MCTownsPlugin extends JavaPlugin {
     private static TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
-    private static WorldGuardPlugin wgp;
     private static Economy economy;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
     private boolean abortSave;
@@ -86,7 +86,6 @@ public class MCTownsPlugin extends JavaPlugin {
         activeSets = null;
         economy = null;
         potentialPlotBuyers = null;
-        wgp = null;
     }
 
     /**
@@ -148,9 +147,8 @@ public class MCTownsPlugin extends JavaPlugin {
     }
 
     private void hookInDependencies() {
-        try {
-            wgp = (WorldGuardPlugin) this.getServer().getPluginManager().getPlugin("WorldGuard");
-        } catch (Exception e) {
+        Plugin wgp = this.getServer().getPluginManager().getPlugin("WorldGuard");
+        if(wgp == null) {
             MCTowns.logSevere("[MCTowns] Error occurred in hooking in to WorldGuard. Is both WorldGuard and WorldEdit installed?");
             MCTowns.logSevere("[MCTowns] !!!!!NOTICE!!!!! MCTOWNS WILL NOW BE DISABLED.  !!!!!NOTICE!!!!!");
             this.getPluginLoader().disablePlugin(this);
@@ -170,7 +168,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void regEventListeners() {
         MCTPlayerListener playerListener = new MCTPlayerListener(this);
-        QuickSelectToolListener qsToolListener = new QuickSelectToolListener(wgp, this);
+        QuickSelectToolListener qsToolListener = new QuickSelectToolListener(MCTowns.getWorldGuardPlugin(), this);
 
         //configure the tool listener as per the config
         QuickSelectToolListener.SELECT_TOOL = MCTowns.getQuickSelectTool();
@@ -254,10 +252,6 @@ public class MCTownsPlugin extends JavaPlugin {
         return potentialPlotBuyers;
     }
 
-    public static WorldGuardPlugin getWgp() {
-        return wgp;
-    }
-
     private void startMetricsCollection() {
         try {
             Metrics metrics = new Metrics(this);
@@ -269,7 +263,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void saveWorldGuardWorlds() throws ProtectionDatabaseException {
         for (World w : this.getServer().getWorlds()) {
-            getWgp().getRegionManager(w).save();
+            MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
         }
     }
 

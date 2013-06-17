@@ -58,12 +58,12 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        RegionManager regMan = wgp.getRegionManager(server.getWorld(p.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName()));
 
         ProtectedRegion wg_plot = regMan.getRegion(p.getName());
 
         //if they are neither mayor nor owner
-        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(wgp.wrapPlayer(localSender.getPlayer())))) {
+        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -137,12 +137,12 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        RegionManager regMan = wgp.getRegionManager(server.getWorld(p.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName()));
 
         ProtectedRegion wg_plot = regMan.getRegion(p.getName());
 
         //if they are neither mayor nor owner
-        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(wgp.wrapPlayer(localSender.getPlayer())))) {
+        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -340,9 +340,9 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        ProtectedRegion reg = wgp.getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
+        ProtectedRegion reg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
 
-        if (!reg.isOwner(wgp.wrapPlayer(localSender.getPlayer()))) {
+        if (!reg.isOwner(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer()))) {
             localSender.sendMessage(ERR + "You don't own this plot, so you can't surrender it!");
             return;
         }
