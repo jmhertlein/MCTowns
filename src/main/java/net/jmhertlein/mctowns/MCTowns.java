@@ -17,6 +17,7 @@
 package net.jmhertlein.mctowns;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -181,5 +182,13 @@ public class MCTowns {
     
     public static void setRemoteAdminPort(int port) {
         MCTownsPlugin.getPlugin().getConfig().set("remoteAdminPort", port);
+    }
+    
+    public static File getServerKeysDir() {
+        return MCTownsPlugin.getPlugin().getServerKeysDir();
+    }
+    
+    public static File getAuthKeysDir() {
+        return MCTownsPlugin.getPlugin().getAuthKeysDir();
     }
 }

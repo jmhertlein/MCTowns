@@ -13,8 +13,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.jmhertlein.core.crypto.Keys;
+import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
-import org.bukkit.plugin.Plugin;
 
 
 /**
@@ -79,7 +79,7 @@ public class RemoteConnectionServer extends Thread {
     }
 
     private void loadServerKeys() throws IOException {
-        File keysDir = new File(p.getDataFolder(), MCTownsPlugin.RSA_KEYS_DIR_NAME);
+        File keysDir = MCTowns.getServerKeysDir();
         
         File pubKeyFile = new File(keysDir, "server.pub"),
                 privKeyFile = new File(keysDir, "server.private");

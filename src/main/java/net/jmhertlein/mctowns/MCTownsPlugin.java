@@ -39,11 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MCTownsPlugin extends JavaPlugin {
     private static MCTownsPlugin singleton;
 
-    public static final String TOWNS_SAVE_DIR_NAME = "saves",
-            RSA_KEYS_DIR_NAME = "rsa_keys",
-            AUTH_KEYS_DIR_NAME = "auth_keys",
-            TEXT_CONFIG_FILE_NAME = "config.txt",
-            META_TOWN_YAML_FILE_NAME = "saves/.meta.yml";
+    private File authKeysDir, rsaKeysDir, savesDir, configFile, metaFile;
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
     private TownJoinManager joinManager;
@@ -92,7 +88,7 @@ public class MCTownsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         singleton = this;
-        checkFiles();
+        setupFiles();
 
         joinManager = new TownJoinManager();
 
@@ -119,30 +115,40 @@ public class MCTownsPlugin extends JavaPlugin {
 
     }
 
-    private void checkFiles() {
+    private void setupFiles() {
         saveDefaultConfig();
+        
+        authKeysDir = new File(this.getDataFolder(), "auth_keys");
+        rsaKeysDir = new File(this.getDataFolder(), "rsa_keys");
+        savesDir = new File(this.getDataFolder(), "saves");
+        
+        configFile = new File(this.getDataFolder(), "config.yml");
+        metaFile = new File(savesDir, ".meta.yml");
+        
         dataDirs = new HashSet<>();
-        dataDirs.add(new File(this.getDataFolder(), RSA_KEYS_DIR_NAME));
-        dataDirs.add(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME));
-        dataDirs.add(new File(this.getDataFolder(), AUTH_KEYS_DIR_NAME));
+        dataDirs.add(authKeysDir);
+        dataDirs.add(rsaKeysDir);
+        dataDirs.add(savesDir);
 
         for (File f : dataDirs)
             f.mkdirs();
 
         configFiles = new HashSet<>();
-        configFiles.add(new File(this.getDataFolder(),"config.yml"));
+        configFiles.add(configFile);
+        configFiles.add(metaFile);
         
-        File savesMetaFile = new File(this.getDataFolder(), META_TOWN_YAML_FILE_NAME);
-        try {
-            savesMetaFile.createNewFile();
-        } catch (IOException ex) {
-            MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
+        if(!metaFile.exists()) {
+            try {
+                metaFile.createNewFile();
+            } catch (IOException ex) {
+                MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
+            }
         }
     }
 
     private void setupTownManager() {
         try {
-            townManager = TownManager.readYAML(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME).getAbsolutePath());
+            townManager = TownManager.readYAML(savesDir.getAbsolutePath());
         } catch (IOException | InvalidConfigurationException ex) {
             MCTowns.logWarning("MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             MCTowns.logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
@@ -183,7 +189,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void persistTownManager() {
         try {
-            townManager.writeYAML(new File(this.getDataFolder(), TOWNS_SAVE_DIR_NAME).getAbsolutePath());
+            townManager.writeYAML(savesDir.getAbsolutePath());
         } catch (IOException ex) {
             MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
             ex.printStackTrace();
@@ -208,16 +214,15 @@ public class MCTownsPlugin extends JavaPlugin {
     }
 
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
-        File root = this.getDataFolder();
-        File meta = new File(root, META_TOWN_YAML_FILE_NAME);
+        File root = savesDir;
         FileConfiguration fileConfig = new YamlConfiguration();
-        fileConfig.load(meta);
+        fileConfig.load(metaFile);
 
         List<String> towns = fileConfig.getStringList("towns"),
                 regions = fileConfig.getStringList("regions");
 
         for (File f : root.listFiles()) {
-            if (f.getName().equals(META_TOWN_YAML_FILE_NAME) || dataDirs.contains(f) || configFiles.contains(f))
+            if (dataDirs.contains(f) || configFiles.contains(f)) //not really necessary since nothing but town files are in saves now, but... better safe.
                 continue;
 
             String trunc = f.getName().substring(0, f.getName().lastIndexOf('.'));
@@ -226,7 +231,6 @@ public class MCTownsPlugin extends JavaPlugin {
                 f.delete();
             }
         }
-
     }
 
     public boolean willAbortSave() {
@@ -282,6 +286,14 @@ public class MCTownsPlugin extends JavaPlugin {
         }
 
         s.start();
+    }
+
+    public File getAuthKeysDir() {
+        return authKeysDir;
+    }
+
+    public File getServerKeysDir() {
+        return rsaKeysDir;
     }
     
     public static MCTownsPlugin getPlugin() {
