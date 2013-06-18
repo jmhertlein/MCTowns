@@ -5,6 +5,10 @@
 package net.jmhertlein.mctowns.remote.view;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -114,6 +118,22 @@ public class OverView implements Serializable {
 
     public String getBugReportHostname() {
         return bugReportHostname;
+    }
+
+    public void applyUpdates() {
+        MCTowns.setBugReportHostname(bugReportHostname);
+        MCTowns.setBugReportPort(bugReportPort);
+        MCTowns.setEconomyIsEnabled(economyEnabled);
+        MCTowns.setIsLoggingCommands(logCommands);
+        MCTowns.setMayorsCanBuyTerritories(mayorsCanBuyTerritories);
+        MCTowns.setMinNumPlayersToBuyTerritory(minNumPlayersToBuyTerritory);
+        MCTowns.setPlayersCanJoinMultipleTowns(playerCanJoinMultipleTowns);
+        MCTowns.setQuickSelectTool(Material.getMaterial(quickSelectTool));
+        MCTowns.setRemoteAdminKeyLength(remoteAdminKeyLength);
+        MCTowns.setRemoteAdminPort(remoteAdminPort);
+        MCTowns.setRemoteAdminSessionKeyLength(remoteAdminSessionKeyLength);
+        MCTowns.setTerritoryPricePerColumn(new BigDecimal(pricePerXZBlock));
+        MCTownsPlugin.getPlugin().saveConfig();
     }
     
     

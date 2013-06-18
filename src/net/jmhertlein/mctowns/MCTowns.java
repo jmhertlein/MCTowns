@@ -43,7 +43,7 @@ public class MCTowns {
     }
     
     public static BigDecimal getTerritoryPricePerColumn() {
-        return new BigDecimal(MCTownsPlugin.getPlugin().getConfig().getInt("pricePerXZBlock"));
+        return new BigDecimal(MCTownsPlugin.getPlugin().getConfig().getString("pricePerXZBlock"));
     }
     
     public static int getMinNumPlayersToBuyTerritory() {
@@ -129,5 +129,57 @@ public class MCTowns {
     
     public static FileConfiguration getConfig() {
         return MCTownsPlugin.getPlugin().getConfig();
+    }
+    
+    public static void setEconomyIsEnabled(boolean value) {
+        MCTownsPlugin.getPlugin().getConfig().set("economyEnabled", value);
+    }
+    
+    public static void setMayorsCanBuyTerritories(boolean value) {
+        MCTownsPlugin.getPlugin().getConfig().set("mayorsCanBuyTerritories", value);
+    }
+    
+    public static void setTerritoryPricePerColumn(BigDecimal val) {
+        MCTownsPlugin.getPlugin().getConfig().set("pricePerXZBlock", val.toPlainString());
+    }
+    
+    public static void setMinNumPlayersToBuyTerritory(int n) {
+        MCTownsPlugin.getPlugin().getConfig().set("minNumPlayersToBuyTerritory", n);
+    }
+    
+    public static void setQuickSelectTool(Material m) {
+        MCTownsPlugin.getPlugin().getConfig().set("quickSelectTool", m.getId());
+    }
+    
+    public static void setIsLoggingCommands(boolean value) {
+        MCTownsPlugin.getPlugin().getConfig().set("logCommands", value);
+    }
+    
+    public static void setPlayersCanJoinMultipleTowns(boolean value) {
+        MCTownsPlugin.getPlugin().getConfig().set("playersCanJoinMultipleTowns", value);
+    }
+    
+    public static void setBugReportHostname(String s) {
+        MCTownsPlugin.getPlugin().getConfig().set("bugReportHostName", s);
+    }
+    
+    public static void setBugReportPort(int port) {
+        MCTownsPlugin.getPlugin().getConfig().set("bugReportPort", port);
+    }
+    
+    public static void setRemoteAdminServerIsEnabled(boolean value) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminServerEnabled", value);
+    }
+    
+    public static void setRemoteAdminKeyLength(int ln) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminKeyLength", ln);
+    }
+    
+    public static void setRemoteAdminSessionKeyLength(int ln) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminSessionKeyLength", ln);
+    }
+    
+    public static void setRemoteAdminPort(int port) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminPort", port);
     }
 }

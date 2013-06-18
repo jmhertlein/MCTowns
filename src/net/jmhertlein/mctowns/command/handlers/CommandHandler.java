@@ -167,6 +167,10 @@ public abstract class CommandHandler {
     }
 
     public void listPlayers(TownLevel level) {
+        if(localSender.isConsole()) {
+            localSender.notifyConsoleNotSupported();
+            return;
+        }
         MCTownsRegion reg = null;
 
         switch (level) {

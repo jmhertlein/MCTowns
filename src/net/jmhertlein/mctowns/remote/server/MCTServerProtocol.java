@@ -612,7 +612,24 @@ public class MCTServerProtocol {
         }
     }
 
-    private void updateConfig(ObjectOutputStream oos, ObjectInputStream ois) {
+    private void updateConfig(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        final OverView v = (OverView) ois.readObject();
         
+        Future<Boolean> result;
+        
+        Callable<Boolean> c = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                v.applyUpdates();
+                return true;
+            }
+        };
+        
+        result = Bukkit.getScheduler().callSyncMethod(p, c);
+        try {
+            oos.writeObject(result.get());
+        } catch (InterruptedException | ExecutionException ex) {
+            oos.writeObject(false);
+        }
     }
 }
