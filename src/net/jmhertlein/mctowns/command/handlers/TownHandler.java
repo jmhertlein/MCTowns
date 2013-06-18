@@ -615,9 +615,6 @@ public class TownHandler extends CommandHandler {
         for (String s : getOutputFriendlyTownJoinListMessages(invitedPlayers)) {
             localSender.sendMessage(ChatColor.YELLOW + s);
         }
-
-
-
     }
 
     public void removePlayerFromTown(String playerName) {
