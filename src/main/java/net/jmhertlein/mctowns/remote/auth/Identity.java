@@ -3,7 +3,7 @@ package net.jmhertlein.mctowns.remote.auth;
 import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -27,11 +27,11 @@ public class Identity extends PublicIdentity implements Serializable {
     }
     
     public String getPublicEncoded() {
-        return new BASE64Encoder().encode(this.getPubKey().getEncoded());
+        return Base64.encodeBase64String(this.getPubKey().getEncoded());
     }
     
     public String getPrivateEncoded() {
-        return new BASE64Encoder().encode(privateKey.getEncoded());
+        return  Base64.encodeBase64String(privateKey.getEncoded());
     }
     
     /**
