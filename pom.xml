@@ -74,4 +74,5 @@
       </plugin>
     </plugins>
   </build>
+    <description>A flexible town-management plugin for the Bukkit API, using the popular WorldGuard plugin for regions and WorldEdit for selection.</description>
 </project>

@@ -206,12 +206,12 @@ public class MCTServerProtocol {
         ObjectInputStream ois = new ObjectInputStream(cis);
 
         action = (RemoteAction) ois.readObject();
+        applicableGroup = permissions.getGroups().get(clientSession.getIdentity().getPermissionGroup());
 
         p.getLogger().log(Level.INFO, "[RemoteAdmin]: {0} running action {1}", new Object[]{clientName, action.name()});
         
         if(permissions.userHasPermission(clientSession.getIdentity(), action)) {
             oos.writeObject(true);
-            applicableGroup = permissions.getGroups().get(clientSession.getIdentity().getPermissionGroup());
             executeAction(oos, ois);
         }
         else {
