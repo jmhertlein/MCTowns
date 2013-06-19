@@ -27,10 +27,11 @@ public class PlayerView implements Serializable {
         playerName = p.getName();
         banned = p.isBanned();
         firstPlayed = p.getFirstPlayed();
-        lastPlayed = p.getLastPlayed();
         towns = new ArrayList<>();
         isAssistant = new ArrayList<>();
         isMayor = new ArrayList<>();
+        
+        lastPlayed = p.isOnline() ? -1 : p.getLastPlayed();
         
         for(Town t : tMan.matchPlayerToTowns(playerName)) {
             towns.add(t.getTownName());

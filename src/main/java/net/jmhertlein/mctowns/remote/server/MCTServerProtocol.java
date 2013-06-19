@@ -44,6 +44,7 @@ import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import sun.misc.BASE64Encoder;
@@ -436,6 +437,17 @@ public class MCTServerProtocol {
         String townName = (String) ois.readObject();
         String mayorName = (String) ois.readObject();
         Location spawn = (Location) ois.readObject();
+        
+        if(Bukkit.getServer().getWorld(spawn.getWorld()) == null ||
+                Bukkit.getServer().getOfflinePlayer(mayorName) == null) {
+            oos.writeObject(false);
+            return;
+        }
+        org.bukkit.Location bukkitSpawn = Location.convertToBukkitLocation(Bukkit.getServer(), spawn);
+        
+        while(bukkitSpawn.getY()+1 < bukkitSpawn.getWorld().getMaxHeight() && bukkitSpawn.getBlock().getType() != Material.AIR) {
+            bukkitSpawn.setY(bukkitSpawn.getBlockY() + 1);
+        }
         
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
         
