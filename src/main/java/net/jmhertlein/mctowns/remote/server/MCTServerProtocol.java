@@ -31,11 +31,14 @@ import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
 import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
+import net.jmhertlein.mctowns.remote.auth.permissions.PermissionGroup;
+import net.jmhertlein.mctowns.remote.auth.permissions.PermissionGroupType;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
 import net.jmhertlein.mctowns.remote.view.PlotView;
@@ -70,6 +73,7 @@ public class MCTServerProtocol {
     private String clientName;
     private Socket client;
     private RemoteAction action;
+    private PermissionGroup applicableGroup;
 
     public MCTServerProtocol(MCTownsPlugin p, 
             Socket client, 
@@ -204,78 +208,14 @@ public class MCTServerProtocol {
         action = (RemoteAction) ois.readObject();
 
         p.getLogger().log(Level.INFO, "[RemoteAdmin]: {0} running action {1}", new Object[]{clientName, action.name()});
-
-        switch (action) {
-            case GET_META_VIEW:
-                sendMetaView(oos, ois);
-                break;
-            case GET_PLAYER_LIST:
-                sendAllPlayersList(oos, ois);
-                break;
-            case GET_VIEW_FOR_PLAYER:
-                sendPlayerView(oos, ois);
-                break;
-            case GET_TOWN_LIST:
-                sendAllTowns(oos, ois);
-                break;
-            case GET_TOWN_VIEW:
-                sendTownView(oos, ois);
-                break;
-            case ADD_IDENTITY:
-                addIdentity(oos, ois);
-                break;
-            case GET_IDENTITY_LIST:
-                sendIdentityList(oos, ois);
-                break;
-            case DELETE_IDENTITY:
-                deleteIdentity(oos, ois);
-                break;
-            case GET_TERRITORY_LIST:
-                sendTerritoryList(oos, ois);
-                break;
-            case GET_TERRITORY_VIEW:
-                sendTerritoryView(oos, ois);
-                break;
-            case DELETE_TERRITORY:
-                deleteTerritory(oos, ois);
-                break;
-            case GET_PLOT_VIEW:
-                sendPlotView(oos, ois);
-                break;
-            case GET_PLOTS_LIST:
-                sendPlotList(oos, ois);
-                break;
-            case DELETE_TOWN:
-                deleteTown(oos, ois);
-                break;
-            case CREATE_TOWN:
-                createTown(oos, ois);
-                break;
-            case MODIFY_PLOT_MEMBERSHIP:
-                modifyPlotMembership(oos, ois);
-                break;
-            case MODIFY_TERRITORY_MEMBERSHIP:
-                modifyTerritoryMembership(oos, ois);
-                break;
-            case MODIFY_TOWN_MEMBERSHIP:
-                modifyTownMembership(oos, ois);
-                break;
-            case MODIFY_TOWN_ASSISTANTS:
-                modifyTownAssistants(oos, ois);
-                break;
-            case UPDATE_TOWN:
-                updateTown(oos, ois);
-                break;
-            case UPDATE_PLOT:
-                updatePlot(oos, ois);
-                break;
-            case DELETE_PLOT:
-                deletePlot(oos, ois);
-                break;
-            case UPDATE_CONFIG:
-                updateConfig(oos, ois);
-                break;
-
+        
+        if(permissions.userHasPermission(clientSession.getIdentity(), action)) {
+            oos.writeObject(true);
+            applicableGroup = permissions.getGroups().get(clientSession.getIdentity().getPermissionGroup());
+            executeAction(oos, ois);
+        }
+        else {
+            oos.writeObject(false);
         }
 
         client.close();
@@ -407,7 +347,11 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                return MCTowns.getTownManager().removeTerritory(territName);
+                Town parentTown = MCTowns.getTownManager().getTown(MCTowns.getTownManager().getTerritory(territName).getParentTown());
+                if((applicableGroup.getType() == PermissionGroupType.MAYOR && parentTown.playerIsMayor(clientName)) || applicableGroup.getType() == PermissionGroupType.ADMIN)
+                    return MCTowns.getTownManager().removeTerritory(territName);
+                else
+                    return false;
             }
         };
 
@@ -448,7 +392,15 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                return MCTowns.getTownManager().removeTown(townName);
+                Town t = MCTowns.getTownManager().getTown(townName);
+                if((t.playerIsMayor(clientName) && 
+                        applicableGroup.getType() == PermissionGroupType.MAYOR && 
+                        Bukkit.getPlayerExact(clientName).hasPermission(Perms.REMOVE_TOWN.toString()))
+                        ||
+                        applicableGroup.getType() == PermissionGroupType.ADMIN)
+                    return MCTowns.getTownManager().removeTown(townName);
+                else
+                    return false;
             }
         };
 
@@ -475,9 +427,9 @@ public class MCTServerProtocol {
         while (bukkitSpawn.getY() + 1 < bukkitSpawn.getWorld().getMaxHeight() && bukkitSpawn.getBlock().getType() != Material.AIR) {
             bukkitSpawn.setY(bukkitSpawn.getBlockY() + 1);
         }
-
+        
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
-
+        
         oos.writeObject(result);
     }
 
@@ -488,7 +440,7 @@ public class MCTServerProtocol {
         String plotName = (String) ois.readObject();
 
         final Plot plot = MCTowns.getTownManager().getPlot(plotName);
-
+        
         if (plot == null) {
             oos.writeObject(false);
             return;
@@ -497,6 +449,12 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
+                Town t = MCTowns.getTownManager().getTown(plot.getParentTownName());
+                if(! ((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
+                        applicableGroup.getType() == PermissionGroupType.ADMIN))
+                    return false;
+                    
+                
                 if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
                     if (membershipType == RemoteAction.GUEST) {
                         return plot.addGuest(playerName);
@@ -536,6 +494,10 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
+                Town t = MCTowns.getTownManager().getTown(territ.getParentTown());
+                if(! ((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
+                        applicableGroup.getType() == PermissionGroupType.ADMIN))
+                    return false;
                 if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
                     if (membershipType == RemoteAction.GUEST) {
                         return territ.addGuest(playerName);
@@ -569,13 +531,20 @@ public class MCTServerProtocol {
         }
 
         Town town = MCTowns.getTownManager().getTown(townName);
-
+        
         if (town == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        if(! ((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
+                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
             oos.writeObject(false);
             return;
         }
 
         Boolean result = null;
+        
         if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
             result = town.addPlayer(playerName);
         } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
@@ -594,6 +563,12 @@ public class MCTServerProtocol {
         Town town = MCTowns.getTownManager().getTown(townName);
 
         if (town == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        if(! ((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
+                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
             oos.writeObject(false);
             return;
         }
@@ -617,6 +592,12 @@ public class MCTServerProtocol {
             oos.writeObject(false);
             return;
         }
+        
+        if(! ((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
+                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
+            oos.writeObject(false);
+            return;
+        }
 
         t.updateTown(view);
 
@@ -629,6 +610,14 @@ public class MCTServerProtocol {
         Plot plot = MCTowns.getTownManager().getPlot(view.getPlotName());
 
         if (plot == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
+        Town town = MCTowns.getTownManager().getTown(plot.getParentTownName());
+        
+        if(! ((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
+                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
             oos.writeObject(false);
             return;
         }
@@ -645,7 +634,13 @@ public class MCTServerProtocol {
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                return MCTowns.getTownManager().removePlot(plotName);
+                Town t = MCTowns.getTownManager().getTown(MCTowns.getTownManager().getPlot(plotName).getParentTownName());
+                
+                if((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
+                        applicableGroup.getType() == PermissionGroupType.ADMIN)
+                    return MCTowns.getTownManager().removePlot(plotName);
+                else
+                    return false;
             }
         };
 
@@ -698,5 +693,80 @@ public class MCTServerProtocol {
         }
 
         return null;
+    }
+    
+    private void executeAction(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        switch (action) {
+            case GET_META_VIEW:
+                sendMetaView(oos, ois);
+                break;
+            case GET_PLAYER_LIST:
+                sendAllPlayersList(oos, ois);
+                break;
+            case GET_VIEW_FOR_PLAYER:
+                sendPlayerView(oos, ois);
+                break;
+            case GET_TOWN_LIST:
+                sendAllTowns(oos, ois);
+                break;
+            case GET_TOWN_VIEW:
+                sendTownView(oos, ois);
+                break;
+            case ADD_IDENTITY:
+                addIdentity(oos, ois);
+                break;
+            case GET_IDENTITY_LIST:
+                sendIdentityList(oos, ois);
+                break;
+            case DELETE_IDENTITY:
+                deleteIdentity(oos, ois);
+                break;
+            case GET_TERRITORY_LIST:
+                sendTerritoryList(oos, ois);
+                break;
+            case GET_TERRITORY_VIEW:
+                sendTerritoryView(oos, ois);
+                break;
+            case DELETE_TERRITORY:
+                deleteTerritory(oos, ois);
+                break;
+            case GET_PLOT_VIEW:
+                sendPlotView(oos, ois);
+                break;
+            case GET_PLOTS_LIST:
+                sendPlotList(oos, ois);
+                break;
+            case DELETE_TOWN:
+                deleteTown(oos, ois);
+                break;
+            case CREATE_TOWN:
+                createTown(oos, ois);
+                break;
+            case MODIFY_PLOT_MEMBERSHIP:
+                modifyPlotMembership(oos, ois);
+                break;
+            case MODIFY_TERRITORY_MEMBERSHIP:
+                modifyTerritoryMembership(oos, ois);
+                break;
+            case MODIFY_TOWN_MEMBERSHIP:
+                modifyTownMembership(oos, ois);
+                break;
+            case MODIFY_TOWN_ASSISTANTS:
+                modifyTownAssistants(oos, ois);
+                break;
+            case UPDATE_TOWN:
+                updateTown(oos, ois);
+                break;
+            case UPDATE_PLOT:
+                updatePlot(oos, ois);
+                break;
+            case DELETE_PLOT:
+                deletePlot(oos, ois);
+                break;
+            case UPDATE_CONFIG:
+                updateConfig(oos, ois);
+                break;
+
+        }
     }
 }
