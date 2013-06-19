@@ -19,6 +19,7 @@ package net.jmhertlein.mctowns.remote.auth;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.PublicKey;
 import java.util.Objects;
 import net.jmhertlein.core.crypto.Keys;
@@ -31,7 +32,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  *
  * @author joshua
  */
-public class PublicIdentity {
+public class PublicIdentity implements Serializable {
     private String username;
     private PublicKey pubKey;
     

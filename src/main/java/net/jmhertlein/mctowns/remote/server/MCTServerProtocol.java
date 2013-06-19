@@ -2,7 +2,6 @@ package net.jmhertlein.mctowns.remote.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,7 +19,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -37,7 +35,6 @@ import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
-import net.jmhertlein.mctowns.remote.auth.Identity;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
 import net.jmhertlein.mctowns.remote.view.PlotView;
@@ -51,6 +48,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -179,6 +177,8 @@ public class MCTServerProtocol {
         }
 
         clientSession = sessionKeys.get(clientSessionID);
+        
+        clientName = clientSession.getIdentity().getUsername();
 
 
         Cipher inCipher = Cipher.getInstance("AES/CFB8/NoPadding"), outCipher = Cipher.getInstance("AES/CFB8/NoPadding");
@@ -327,23 +327,32 @@ public class MCTServerProtocol {
     }
 
     private void addIdentity(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        Identity i = (Identity) ois.readObject();
+        PublicIdentity i = (PublicIdentity) ois.readObject();
 
-        Boolean result = Keys.storeKey(new File(authKeysDir, i.getName() + ".pub"), i.getPubKey());
+        Boolean result;
+        
+        FileConfiguration f = new YamlConfiguration();
+        i.exportToConfiguration(f);
+        
+        f.save(i.getUsername() + ".pub");
 
-        oos.writeObject(result);
+        oos.writeObject(true);
     }
 
     private void sendIdentityList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String string) {
-                return string.endsWith(".pub");
+        List<PublicIdentity> ret = new LinkedList<>();
+        for (File f : authKeysDir.listFiles()) {
+            if(!f.getName().endsWith(".pub"))
+                continue;
+            PublicIdentity i;
+            try {
+                i = new PublicIdentity(f);
+            } catch (FileNotFoundException | InvalidConfigurationException ex) {
+                MCTowns.logSevere(String.format("Error parsing identity \"%s\": %s", f.getName(), ex.getLocalizedMessage()));
+                continue;
             }
-        };
-        List<Identity> ret = new LinkedList<>();
-        for (File f : authKeysDir.listFiles(filter)) {
-            ret.add(new Identity(Identity.trimFileName(f.getName()), Keys.loadPubKey(f)));
+            
+            ret.add(i);
         }
 
         oos.writeObject(ret);

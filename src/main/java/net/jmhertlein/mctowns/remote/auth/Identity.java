@@ -9,29 +9,17 @@ import sun.misc.BASE64Encoder;
  *
  * @author joshua
  */
-public class Identity implements Serializable {
-    private final String name;
-    private final PublicKey pubKey;
+public class Identity extends PublicIdentity implements Serializable {
     private final PrivateKey privateKey;
 
     public Identity(String name, PublicKey pubKey, PrivateKey privateKey) {
-        this.name = name;
-        this.pubKey = pubKey;
+        super(name, pubKey);
         this.privateKey = privateKey;
     }
     
     public Identity(String name, PublicKey pubKey) {
-        this.name = name;
-        this.pubKey = pubKey;
+        super(name, pubKey);
         this.privateKey = null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public PublicKey getPubKey() {
-        return pubKey;
     }
 
     public PrivateKey getPrivateKey() {
@@ -39,11 +27,11 @@ public class Identity implements Serializable {
     }
     
     public String getPublicEncoded() {
-        return new BASE64Encoder().encode(pubKey.getEncoded());
+        return new BASE64Encoder().encode(this.getPubKey().getEncoded());
     }
     
     public String getPrivateEncoded() {
-        return (privateKey == null) ? (null) : (new BASE64Encoder().encode(privateKey.getEncoded()));
+        return new BASE64Encoder().encode(privateKey.getEncoded());
     }
     
     /**
