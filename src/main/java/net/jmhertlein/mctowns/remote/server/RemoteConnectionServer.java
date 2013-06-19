@@ -30,7 +30,7 @@ public class RemoteConnectionServer extends Thread {
     private Keys cMan;
     private PrivateKey privateKey;
     private PublicKey pubKey;
-    private Map<Integer, ClientSession> sessionKeys;
+    private Map<Integer, ClientSession> sessions;
     private MCTownsPlugin p;
     
     /**
@@ -44,7 +44,7 @@ public class RemoteConnectionServer extends Thread {
         done = false;
         server = new ServerSocket(p.getConfig().getInt("remoteAdminPort"));
         this.p = p;
-        sessionKeys = new ConcurrentHashMap<>();
+        sessions = new ConcurrentHashMap<>();
         
         loadServerKeys();
         
@@ -62,7 +62,7 @@ public class RemoteConnectionServer extends Thread {
                 continue;
             }
             
-            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessionKeys));
+            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessions));
         }
     }
     

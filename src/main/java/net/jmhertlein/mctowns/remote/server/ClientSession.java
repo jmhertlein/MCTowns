@@ -7,6 +7,7 @@ package net.jmhertlein.mctowns.remote.server;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
+import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
 
 /**
  *
@@ -14,18 +15,17 @@ import javax.crypto.SecretKey;
  */
 public class ClientSession {
     private final byte[] sessionID;
-    private final String username;
+    private final PublicIdentity identity;
     private final SecretKey sessionKey;
 
-    public ClientSession(int sessionID, String username, SecretKey sessionKey) {
-        this.username = username;
+    public ClientSession(int sessionID, PublicIdentity i, SecretKey sessionKey) {
+        this.identity = i;
         this.sessionKey = sessionKey;
         this.sessionID = ByteBuffer.allocate(4).putInt(sessionID).array();
     }
 
-
-    public String getUsername() {
-        return username;
+    public PublicIdentity getIdentity() {
+        return identity;
     }
 
     public SecretKey getSessionKey() {

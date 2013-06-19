@@ -1,6 +1,7 @@
 package net.jmhertlein.mctowns.remote.server;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,6 +20,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -34,6 +36,7 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
+import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
 import net.jmhertlein.mctowns.remote.auth.Identity;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
@@ -46,6 +49,7 @@ import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import sun.misc.BASE64Encoder;
 
@@ -62,7 +66,6 @@ public class MCTServerProtocol {
     private Map<Integer, ClientSession> sessionKeys;
     private MCTownsPlugin p;
     private static volatile Integer nextSessionID = 0;
-    
     private ClientSession clientSession;
     private String clientName;
     private Socket client;
@@ -76,21 +79,22 @@ public class MCTServerProtocol {
         this.sessionKeys = sessionKeys;
         this.p = p;
     }
-    
+
     private boolean doInitialKeyExchange() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
 
         action = (RemoteAction) ois.readObject();
 
         clientName = (String) ois.readObject();
-        
+
         System.out.println("Loading client key from disk.");
-        PublicKey clientKey = Keys.loadPubKey(new File(authKeysDir, clientName + ".pub"));
+        //PublicKey clientKey = Keys.loadPubKey(new File(authKeysDir, clientName + ".pub"));
+        PublicIdentity identity = loadIdentityFromDisk();
 
 
         ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
 
-        if (clientKey == null) {
+        if (identity == null) {
             System.out.println("Didnt have public key for user. Exiting.");
             oos.writeObject(false);
             return false;
@@ -100,7 +104,7 @@ public class MCTServerProtocol {
 
         //init ciphers
         Cipher outCipher = Cipher.getInstance("RSA");
-        outCipher.init(Cipher.ENCRYPT_MODE, clientKey);
+        outCipher.init(Cipher.ENCRYPT_MODE, identity.getPubKey());
 
         Cipher inCipher = Cipher.getInstance("RSA");
         inCipher.init(Cipher.DECRYPT_MODE, serverPrivateKey);
@@ -143,19 +147,19 @@ public class MCTServerProtocol {
         SecretKey newKey = Keys.newAESKey(p.getConfig().getInt("remoteAdminSessionKeyLength"));
 
         oos.writeObject(new EncryptedSecretKey(newKey, outCipher));
-        
+
         BASE64Encoder e = new BASE64Encoder();
         System.out.println(e.encode(newKey.getEncoded()));
-        
+
 
         int assignedSessionID = nextSessionID;
         nextSessionID++;
 
-        sessionKeys.put(assignedSessionID, new ClientSession(assignedSessionID, clientName, newKey));
+        sessionKeys.put(assignedSessionID, new ClientSession(assignedSessionID, identity, newKey));
         System.out.println("Client assigned session id " + assignedSessionID);
 
         oos.writeObject(assignedSessionID);
-        
+
         client.close();
         return true;
     }
@@ -175,8 +179,8 @@ public class MCTServerProtocol {
         }
 
         clientSession = sessionKeys.get(clientSessionID);
-        
-        
+
+
         Cipher inCipher = Cipher.getInstance("AES/CFB8/NoPadding"), outCipher = Cipher.getInstance("AES/CFB8/NoPadding");
         IvParameterSpec iv = new IvParameterSpec(getKeyBytes(clientSession.getSessionKey()));
         inCipher.init(Cipher.DECRYPT_MODE, clientSession.getSessionKey(), iv);
@@ -184,13 +188,12 @@ public class MCTServerProtocol {
 
         CipherOutputStream cos = new CipherOutputStream(client.getOutputStream(), outCipher);
         CipherInputStream cis = new CipherInputStream(client.getInputStream(), inCipher);
-        
+
         ObjectOutputStream oos = new ObjectOutputStream(cos);
         ObjectInputStream ois = new ObjectInputStream(cis);
-        
+
         action = (RemoteAction) ois.readObject();
-        clientName = (String) ois.readObject();
-        
+
         p.getLogger().log(Level.INFO, "[RemoteAdmin]: {0} running action {1}", new Object[]{clientName, action.name()});
 
         switch (action) {
@@ -263,18 +266,18 @@ public class MCTServerProtocol {
             case UPDATE_CONFIG:
                 updateConfig(oos, ois);
                 break;
-                
+
         }
 
         client.close();
     }
-    
+
     private void sendMetaView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
         FileConfiguration f = p.getConfig();
-        
+
         oos.writeObject(new OverView(f));
     }
-    
+
     private byte[] getKeyBytes(SecretKey k) {
         byte[] key = k.getEncoded();
         byte[] keyBytes = new byte[16];
@@ -285,11 +288,11 @@ public class MCTServerProtocol {
     private void sendAllPlayersList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
         System.out.println("Creating list of all players ever played.");
         List<String> playerList = new LinkedList<>();
-        
-        for(OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
+
+        for (OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
             playerList.add(offline.getName());
         }
-        
+
         oos.writeObject(playerList);
         System.out.println("Sent list.");
     }
@@ -297,35 +300,37 @@ public class MCTServerProtocol {
     private void sendPlayerView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String pName = (String) ois.readObject();
         OfflinePlayer player = p.getServer().getOfflinePlayer(pName);
-        if(player == null)
+        if (player == null) {
             oos.writeObject(null);
-        else
+        } else {
             oos.writeObject(new PlayerView(p.getServer(), player, MCTowns.getTownManager()));
+        }
     }
 
     private void sendAllTowns(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
         List<String> ret = new LinkedList<>();
-        for(Town t : MCTowns.getTownManager().getTownsCollection()) {
+        for (Town t : MCTowns.getTownManager().getTownsCollection()) {
             ret.add(t.getTownName());
         }
-        
+
         oos.writeObject(ret);
     }
-    
+
     private void sendTownView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String tName = (String) ois.readObject();
         Town t = MCTowns.getTownManager().getTown(tName);
-        if(t == null)
+        if (t == null) {
             oos.writeObject(null);
-        else
+        } else {
             oos.writeObject(new TownView(t));
+        }
     }
 
     private void addIdentity(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         Identity i = (Identity) ois.readObject();
-        
+
         Boolean result = Keys.storeKey(new File(authKeysDir, i.getName() + ".pub"), i.getPubKey());
-        
+
         oos.writeObject(result);
     }
 
@@ -337,19 +342,19 @@ public class MCTServerProtocol {
             }
         };
         List<Identity> ret = new LinkedList<>();
-        for(File f : authKeysDir.listFiles(filter)){
+        for (File f : authKeysDir.listFiles(filter)) {
             ret.add(new Identity(Identity.trimFileName(f.getName()), Keys.loadPubKey(f)));
         }
-        
+
         oos.writeObject(ret);
     }
 
     private void deleteIdentity(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String deleteMe = (String) ois.readObject();
-        
+
         File identityFile = new File(authKeysDir, deleteMe + ".pub");
-        
-        if(identityFile.exists()) {
+
+        if (identityFile.exists()) {
             oos.writeObject(identityFile.delete());
         } else {
             oos.writeObject(false);
@@ -359,33 +364,35 @@ public class MCTServerProtocol {
     private void sendTerritoryList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String townName = (String) ois.readObject();
         Town t = MCTowns.getTownManager().getTown(townName);
-        
-        if(t == null)
+
+        if (t == null) {
             oos.writeObject(new LinkedList<>());
-        else
+        } else {
             oos.writeObject(new LinkedList<>(t.getTerritoriesCollection()));
+        }
     }
 
     private void sendTerritoryView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String territName = (String) ois.readObject();
         Territory t = MCTowns.getTownManager().getTerritory(territName);
-        if(t == null)
+        if (t == null) {
             oos.writeObject(null);
-        else
+        } else {
             oos.writeObject(new TerritoryView(t));
+        }
     }
 
     private void deleteTerritory(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         final String territName = (String) ois.readObject();
         Future<Boolean> result;
-        
+
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
                 return MCTowns.getTownManager().removeTerritory(territName);
             }
         };
-        
+
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
@@ -397,34 +404,36 @@ public class MCTServerProtocol {
     private void sendPlotView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String plotName = (String) ois.readObject();
         Plot plot = MCTowns.getTownManager().getPlot(plotName);
-        
-        if(plot == null)
+
+        if (plot == null) {
             oos.writeObject(null);
-        else
+        } else {
             oos.writeObject(new PlotView(plot));
+        }
     }
 
     private void sendPlotList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String territName = (String) ois.readObject();
         Territory t = MCTowns.getTownManager().getTerritory(territName);
-        
-        if(t == null)
+
+        if (t == null) {
             oos.writeObject(null);
-        else
+        } else {
             oos.writeObject(new LinkedList<>(t.getPlotsCollection()));
+        }
     }
 
     private void deleteTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         final String townName = (String) ois.readObject();
         Future<Boolean> result;
-        
+
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
                 return MCTowns.getTownManager().removeTown(townName);
             }
         };
-        
+
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
@@ -437,20 +446,20 @@ public class MCTServerProtocol {
         String townName = (String) ois.readObject();
         String mayorName = (String) ois.readObject();
         Location spawn = (Location) ois.readObject();
-        
-        if(Bukkit.getServer().getWorld(spawn.getWorld()) == null ||
-                Bukkit.getServer().getOfflinePlayer(mayorName) == null) {
+
+        if (Bukkit.getServer().getWorld(spawn.getWorld()) == null
+                || Bukkit.getServer().getOfflinePlayer(mayorName) == null) {
             oos.writeObject(false);
             return;
         }
         org.bukkit.Location bukkitSpawn = Location.convertToBukkitLocation(Bukkit.getServer(), spawn);
-        
-        while(bukkitSpawn.getY()+1 < bukkitSpawn.getWorld().getMaxHeight() && bukkitSpawn.getBlock().getType() != Material.AIR) {
+
+        while (bukkitSpawn.getY() + 1 < bukkitSpawn.getWorld().getMaxHeight() && bukkitSpawn.getBlock().getType() != Material.AIR) {
             bukkitSpawn.setY(bukkitSpawn.getBlockY() + 1);
         }
-        
+
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
-        
+
         oos.writeObject(result);
     }
 
@@ -459,37 +468,38 @@ public class MCTServerProtocol {
         final Integer membershipType = (Integer) ois.readObject();
         final String playerName = (String) ois.readObject();
         String plotName = (String) ois.readObject();
-        
+
         final Plot plot = MCTowns.getTownManager().getPlot(plotName);
-        
-        if(plot == null) {
+
+        if (plot == null) {
             oos.writeObject(false);
             return;
         }
-        
+
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
-                    if(membershipType == RemoteAction.GUEST)
+                if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
+                    if (membershipType == RemoteAction.GUEST) {
                         return plot.addGuest(playerName);
-                    else if(membershipType == RemoteAction.OWNER)
+                    } else if (membershipType == RemoteAction.OWNER) {
                         return plot.addPlayer(playerName);
-                } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
+                    }
+                } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
                     return plot.removePlayer(playerName);
                 }
-                
+
                 return null;
             }
         };
-        
+
         Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
-        
+
     }
 
     private void modifyTerritoryMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -497,31 +507,31 @@ public class MCTServerProtocol {
         final Integer membershipType = (Integer) ois.readObject();
         final String playerName = (String) ois.readObject();
         String territoryName = (String) ois.readObject();
-        
+
         final Territory territ = MCTowns.getTownManager().getTerritory(territoryName);
-        
-        if(territ == null) {
+
+        if (territ == null) {
             oos.writeObject(false);
             return;
         }
-        
+
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
-                if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
-                    if(membershipType == RemoteAction.GUEST) {
+                if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
+                    if (membershipType == RemoteAction.GUEST) {
                         return territ.addGuest(playerName);
-                    } else if(membershipType == RemoteAction.OWNER) {
+                    } else if (membershipType == RemoteAction.OWNER) {
                         return territ.addPlayer(playerName);
                     }
-                } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
+                } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
                     return territ.removePlayer(playerName);
                 }
-                
+
                 return null;
             }
         };
-        
+
         Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
@@ -530,31 +540,31 @@ public class MCTServerProtocol {
         }
     }
 
-    private void modifyTownMembership(ObjectOutputStream oos, ObjectInputStream ois) throws ClassNotFoundException, IOException{
+    private void modifyTownMembership(ObjectOutputStream oos, ObjectInputStream ois) throws ClassNotFoundException, IOException {
         Integer opMode = (Integer) ois.readObject();
         String playerName = (String) ois.readObject();
         String townName = (String) ois.readObject();
-        
-        if(Bukkit.getServer().getOfflinePlayer(playerName) == null) {
+
+        if (Bukkit.getServer().getOfflinePlayer(playerName) == null) {
             oos.writeObject(false);
             return;
         }
-        
+
         Town town = MCTowns.getTownManager().getTown(townName);
-        
-        if(town == null) {
+
+        if (town == null) {
             oos.writeObject(false);
             return;
         }
-        
+
         Boolean result = null;
-        if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
+        if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
             result = town.addPlayer(playerName);
-        } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
+        } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
             town.removePlayer(playerName);
             result = true;
         }
-        
+
         oos.writeObject(result);
     }
 
@@ -562,65 +572,65 @@ public class MCTServerProtocol {
         Integer opMode = (Integer) ois.readObject();
         String playerName = (String) ois.readObject();
         String townName = (String) ois.readObject();
-        
+
         Town town = MCTowns.getTownManager().getTown(townName);
-        
-        if(town == null) {
+
+        if (town == null) {
             oos.writeObject(false);
             return;
         }
-        
+
         Boolean result = null;
-        if(opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
+        if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
             result = town.addAssistant(playerName);
-        } else if(opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
+        } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
             result = town.removeAssistant(playerName);
         }
-        
+
         oos.writeObject(result);
     }
 
     private void updateTown(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         TownView view = (TownView) ois.readObject();
-        
+
         Town t = MCTowns.getTownManager().getTown(view.getTownName());
-        
-        if(t == null) {
+
+        if (t == null) {
             oos.writeObject(false);
             return;
         }
-        
+
         t.updateTown(view);
-        
+
         oos.writeObject(true);
     }
 
     private void updatePlot(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         PlotView view = (PlotView) ois.readObject();
-        
+
         Plot plot = MCTowns.getTownManager().getPlot(view.getPlotName());
-        
-        if(plot == null) {
+
+        if (plot == null) {
             oos.writeObject(false);
             return;
         }
-        
+
         plot.updatePlot(view);
-        
+
         oos.writeObject(true);
     }
 
     private void deletePlot(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         final String plotName = (String) ois.readObject();
         Future<Boolean> result;
-        
+
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
                 return MCTowns.getTownManager().removePlot(plotName);
             }
         };
-        
+
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
@@ -631,9 +641,9 @@ public class MCTServerProtocol {
 
     private void updateConfig(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         final OverView v = (OverView) ois.readObject();
-        
+
         Future<Boolean> result;
-        
+
         Callable<Boolean> c = new Callable<Boolean>() {
             @Override
             public Boolean call() {
@@ -641,12 +651,34 @@ public class MCTServerProtocol {
                 return true;
             }
         };
-        
+
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
+    }
+
+    private PublicIdentity loadIdentityFromDisk() throws IOException {
+        for (File f : authKeysDir.listFiles()) {
+            if (!f.getName().endsWith(".pub")) {
+                continue;
+            }
+            
+            PublicIdentity i;
+            try {
+                i = new PublicIdentity(f);
+            } catch (FileNotFoundException | InvalidConfigurationException ex) {
+                MCTowns.logWarning(String.format("Error parsing identity file \"%s\": %s", f.getName(), ex.getLocalizedMessage()));
+                continue;
+            }
+
+            if (i.getUsername().equals(clientName)) {
+                return i;
+            }
+        }
+
+        return null;
     }
 }
