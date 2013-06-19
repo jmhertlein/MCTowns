@@ -535,6 +535,11 @@ public class MCTServerProtocol {
         String playerName = (String) ois.readObject();
         String townName = (String) ois.readObject();
         
+        if(Bukkit.getServer().getOfflinePlayer(playerName) == null) {
+            oos.writeObject(false);
+            return;
+        }
+        
         Town town = MCTowns.getTownManager().getTown(townName);
         
         if(town == null) {
