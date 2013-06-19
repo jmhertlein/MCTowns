@@ -33,7 +33,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author joshua
  */
 public class PublicIdentity implements Serializable {
-    private String username;
+    private String username, permissionGroup;
     private PublicKey pubKey;
     
     public PublicIdentity(File f) throws FileNotFoundException, IOException, InvalidConfigurationException {
@@ -54,6 +54,7 @@ public class PublicIdentity implements Serializable {
     private void loadFromFileConfiguration(FileConfiguration f) {
         username = f.getString("username");
         pubKey = Keys.getPublicKeyFromBASE64X509Encoded(f.getString("pubKey"));
+        permissionGroup = (f.getString("group") == null ? "default" : f.getString("group"));
     }
 
     public String getUsername() {
@@ -62,6 +63,10 @@ public class PublicIdentity implements Serializable {
 
     public PublicKey getPubKey() {
         return pubKey;
+    }
+
+    public String getPermissionGroup() {
+        return permissionGroup;
     }
 
     @Override
@@ -93,5 +98,6 @@ public class PublicIdentity implements Serializable {
     public void exportToConfiguration(FileConfiguration f) {
         f.set("username", username);
         f.set("pubKey", Keys.getBASE64ForPublicKey(pubKey));
+        f.set("group", permissionGroup);
     }
 }

@@ -35,6 +35,7 @@ import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
+import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 import net.jmhertlein.mctowns.remote.view.OverView;
 import net.jmhertlein.mctowns.remote.view.PlayerView;
 import net.jmhertlein.mctowns.remote.view.PlotView;
@@ -63,19 +64,27 @@ public class MCTServerProtocol {
     private PrivateKey serverPrivateKey;
     private Map<Integer, ClientSession> sessionKeys;
     private MCTownsPlugin p;
+    private PermissionContext permissions;
     private static volatile Integer nextSessionID = 0;
     private ClientSession clientSession;
     private String clientName;
     private Socket client;
     private RemoteAction action;
 
-    public MCTServerProtocol(MCTownsPlugin p, Socket client, PrivateKey serverPrivateKey, PublicKey serverPublicKey, File authKeysDir, Map<Integer, ClientSession> sessionKeys) {
+    public MCTServerProtocol(MCTownsPlugin p, 
+            Socket client, 
+            PrivateKey serverPrivateKey, 
+            PublicKey serverPublicKey, 
+            File authKeysDir, 
+            Map<Integer, ClientSession> sessionKeys,
+            PermissionContext permissions) {
         this.authKeysDir = authKeysDir;
         this.serverPubKey = serverPublicKey;
         this.client = client;
         this.serverPrivateKey = serverPrivateKey;
         this.sessionKeys = sessionKeys;
         this.p = p;
+        this.permissions = permissions;
     }
 
     private boolean doInitialKeyExchange() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {

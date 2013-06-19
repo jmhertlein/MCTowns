@@ -39,7 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MCTownsPlugin extends JavaPlugin {
     private static MCTownsPlugin singleton;
 
-    private File authKeysDir, rsaKeysDir, savesDir, configFile, metaFile;
+    private File authKeysDir, rsaKeysDir, savesDir, configFile, metaFile, remoteConfigFile;
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
     private TownJoinManager joinManager;
@@ -47,6 +47,7 @@ public class MCTownsPlugin extends JavaPlugin {
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
     private boolean abortSave;
     private Set<File> dataDirs, configFiles;
+    private FileConfiguration remoteConfig;
 
     /**
      * Persist any data that needs to be persisted.
@@ -123,6 +124,7 @@ public class MCTownsPlugin extends JavaPlugin {
         savesDir = new File(this.getDataFolder(), "saves");
         
         configFile = new File(this.getDataFolder(), "config.yml");
+        remoteConfigFile = new File(this.getDataFolder(), "remote-config.yml");
         metaFile = new File(savesDir, ".meta.yml");
         
         dataDirs = new HashSet<>();
@@ -144,6 +146,9 @@ public class MCTownsPlugin extends JavaPlugin {
                 MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
             }
         }
+        
+        saveDefaultRemoteConfig();
+        loadRemoteConfig();
     }
 
     private void setupTownManager() {
@@ -298,5 +303,31 @@ public class MCTownsPlugin extends JavaPlugin {
     
     public static MCTownsPlugin getPlugin() {
         return singleton;
+    }
+
+    private void saveDefaultRemoteConfig(){
+        FileConfiguration f = new YamlConfiguration();
+        if(remoteConfigFile.exists())
+            return;
+        
+        try {
+            f.load(getClass().getResourceAsStream("/" + remoteConfigFile.getName()));
+            f.save(remoteConfigFile);
+        } catch (IOException | InvalidConfigurationException ex) {
+            Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadRemoteConfig() {
+        remoteConfig = new YamlConfiguration();
+        try {
+            remoteConfig.load(remoteConfigFile);
+        } catch (IOException | InvalidConfigurationException ex) {
+            Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public FileConfiguration getRemoteConfig() {
+        return remoteConfig;
     }
 }

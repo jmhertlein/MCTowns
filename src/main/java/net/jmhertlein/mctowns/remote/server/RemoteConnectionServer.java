@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 
 
 /**
@@ -22,15 +23,14 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
  * @author joshua
  */
 public class RemoteConnectionServer extends Thread {
-    
     private File authKeysDir;
     private ExecutorService threadPool;
     private boolean done;
     private ServerSocket server;
-    private Keys cMan;
     private PrivateKey privateKey;
     private PublicKey pubKey;
     private Map<Integer, ClientSession> sessions;
+    private PermissionContext permissions;
     private MCTownsPlugin p;
     
     /**
@@ -46,8 +46,9 @@ public class RemoteConnectionServer extends Thread {
         this.p = p;
         sessions = new ConcurrentHashMap<>();
         
-        loadServerKeys();
+        permissions = new PermissionContext(MCTowns.getRemoteConfig());
         
+        loadServerKeys();
     }
 
     @Override
@@ -62,7 +63,7 @@ public class RemoteConnectionServer extends Thread {
                 continue;
             }
             
-            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessions));
+            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessions, permissions));
         }
     }
     

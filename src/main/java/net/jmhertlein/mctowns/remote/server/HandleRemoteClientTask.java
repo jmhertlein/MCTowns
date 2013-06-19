@@ -15,7 +15,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import net.jmhertlein.mctowns.MCTownsPlugin;
-import org.bukkit.plugin.Plugin;
+import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 
 /**
  *
@@ -33,8 +33,14 @@ public class HandleRemoteClientTask implements Runnable {
      * @param authKeysDir Directory to hold pubkeys of authorized users
      * @param client the client socket this task will interface with
      */
-    public HandleRemoteClientTask(MCTownsPlugin p, PrivateKey privateKey, PublicKey pubKey, File authKeysDir, Socket client, Map<Integer, ClientSession> sessionKeys) {
-        protocol = new MCTServerProtocol(p, client, privateKey, pubKey, authKeysDir, sessionKeys);
+    public HandleRemoteClientTask(MCTownsPlugin p, 
+            PrivateKey privateKey, 
+            PublicKey pubKey, 
+            File authKeysDir, 
+            Socket client, 
+            Map<Integer, ClientSession> sessionKeys,
+            PermissionContext permissions) {
+        protocol = new MCTServerProtocol(p, client, privateKey, pubKey, authKeysDir, sessionKeys, permissions);
     }
 
     @Override

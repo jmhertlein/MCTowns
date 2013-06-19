@@ -191,4 +191,8 @@ public class MCTowns {
     public static File getAuthKeysDir() {
         return MCTownsPlugin.getPlugin().getAuthKeysDir();
     }
+    
+    public static FileConfiguration getRemoteConfig() {
+        return MCTownsPlugin.getPlugin().getRemoteConfig();
+    }
 }
