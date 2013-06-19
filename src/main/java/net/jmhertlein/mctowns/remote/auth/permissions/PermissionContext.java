@@ -69,6 +69,7 @@ public class PermissionContext {
     }
     
     public PermissionContext(FileConfiguration f) {
+        groups = new HashMap<>();
         initializeFromFileConfiguration(f);
     }
     
