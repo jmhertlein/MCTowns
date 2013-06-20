@@ -77,6 +77,7 @@ import sun.misc.BASE64Encoder;
  */
 public class MCTServerProtocol {
 
+    private static final String PROTOCOL_VERSION = "1";
     private static final int NUM_CHECK_BYTES = 50;
     private File authKeysDir;
     private PublicKey serverPubKey;
@@ -90,6 +91,10 @@ public class MCTServerProtocol {
     private Socket client;
     private RemoteAction action;
     private PermissionGroup applicableGroup;
+
+    public static String getProtocolVersion() {
+        return PROTOCOL_VERSION;
+    }
 
     public MCTServerProtocol(MCTownsPlugin p,
             Socket client,
@@ -108,20 +113,21 @@ public class MCTServerProtocol {
     }
 
     private boolean doInitialKeyExchange() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
         ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
-        
-        oos.writeObject(MCTownsPlugin.getPlugin().getDescription().getVersion());
-        
+        ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+
+        oos.writeObject(PROTOCOL_VERSION);
+
         action = (RemoteAction) ois.readObject();
+
+        if (action == RemoteAction.ABORT_CONNECTION) {
+            return false;
+        }
 
         clientName = (String) ois.readObject();
 
         System.out.println("Loading client key from disk.");
         PublicIdentity identity = loadIdentityFromDisk();
-
-
-        
 
         if (identity == null) {
             System.out.println("Didnt have public key for user. Exiting.");

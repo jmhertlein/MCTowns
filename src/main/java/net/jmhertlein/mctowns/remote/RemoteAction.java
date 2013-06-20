@@ -57,7 +57,8 @@ public enum RemoteAction implements Serializable {
     GET_PLAYER_LIST,
     GET_VIEW_FOR_PLAYER,
     GET_PLOTS_LIST,
-    UPDATE_CONFIG;
+    UPDATE_CONFIG, 
+    ABORT_CONNECTION;
     public static final int MODE_NONE = -1;
     /**
      * Specifies the MODIFY_*_MEMBERSHIP or MODIFY_TOWN_ASSISTANTS action is in
