@@ -44,10 +44,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.command.handlers.TownHandler;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.remote.auth.AuthenticationChallenge;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
@@ -64,6 +66,7 @@ import net.jmhertlein.mctowns.remote.view.TownView;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -79,7 +82,7 @@ import sun.misc.BASE64Encoder;
  * @author joshua
  */
 public class MCTServerProtocol {
-    
+
     private static final Logger log = MCTowns.getRemoteAdminDaemonLogger();
     private static final String PROTOCOL_VERSION = "1";
     private static final int NUM_CHECK_BYTES = 50;
@@ -383,8 +386,9 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
-            if(result.get())
+            if (result.get()) {
                 logInfo(String.format("%s deleted a territory (%s).", clientName, territName));
+            }
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -434,7 +438,7 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
-            if(result.get()) {
+            if (result.get()) {
                 logInfo(String.format("%s deleted a town (%s).", clientName, townName));
                 MCTowns.logInfo(clientName + " has deleted the town " + townName + " from the remote admin client.");
                 Bukkit.getServer().broadcastMessage(ChatColor.DARK_RED + "The town " + townName + " has been disbanded.");
@@ -463,7 +467,7 @@ public class MCTServerProtocol {
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
 
         oos.writeObject(result);
-        if(result) {
+        if (result) {
             logInfo(String.format("%s created a town (%s).", clientName, townName));
             Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "The town " + townName + " has been founded!");
         }
@@ -509,13 +513,14 @@ public class MCTServerProtocol {
         Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
-            if(result.get())
-                logInfo(String.format("%s %s %s to/from the plot \"%s\".", 
+            if (result.get()) {
+                logInfo(String.format("%s %s %s to/from the plot \"%s\".",
                         clientName, opMode == RemoteAction.MODE_ADD_PLAYER ? "added" : "removed", playerName, plotName));
+            }
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
-        
+
     }
 
     private void modifyTerritoryMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -556,9 +561,10 @@ public class MCTServerProtocol {
         Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
-            if(result.get())
-                logInfo(String.format("%s %s %s to/from the territory \"%s\".", 
+            if (result.get()) {
+                logInfo(String.format("%s %s %s to/from the territory \"%s\".",
                         clientName, opMode == RemoteAction.MODE_ADD_PLAYER ? "added" : "removed", playerName, territoryName));
+            }
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -590,13 +596,27 @@ public class MCTServerProtocol {
         Boolean result = null;
 
         if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
-            MCTownsPlugin.getPlugin().getJoinManager().invitePlayerToTown(playerName, town);
             Bukkit.getScheduler().callSyncMethod(p, new Callable() {
                 @Override
                 public Object call() throws Exception {
                     Player p = Bukkit.getPlayerExact(playerName);
-                    p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + town.getTownName() + "!");
-                p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + town.getTownName());
+                    TownJoinManager joinManager = MCTownsPlugin.getPlugin().getJoinManager();
+                    Town t = town;
+                    String invitee = playerName;
+                    
+                    if (joinManager.townHasRequestFromPlayer(t, invitee)) {
+                        t.addPlayer(invitee);
+                        if (p != null) {
+                            p.sendMessage("You have joined " + t.getTownName() + "!");
+                        }
+                        TownHandler.broadcastTownJoin(t, invitee);
+                    } else {
+                        joinManager.invitePlayerToTown(invitee, t);
+                        if (p != null) {
+                            p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
+                            p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
+                        }
+                    }
                     return null;
                 }
             });
@@ -631,12 +651,14 @@ public class MCTServerProtocol {
         Boolean result = null;
         if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
             result = town.addAssistant(playerName);
-            if(result)
+            if (result) {
                 logInfo(String.format("%s promoted %s to assistant of the town %s", clientName, playerName, townName));
+            }
         } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
             result = town.removeAssistant(playerName);
-            if(result)
+            if (result) {
                 logInfo(String.format("%s demoted %s from assistant of the town %s", clientName, playerName, townName));
+            }
         }
 
         oos.writeObject(result);
@@ -659,7 +681,7 @@ public class MCTServerProtocol {
         }
 
         t.updateTown(view);
-        
+
         logInfo(String.format("%s updated settings for the town %s", clientName, view.getTownName()));
 
         oos.writeObject(true);
@@ -709,8 +731,9 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
-            if(result.get())
+            if (result.get()) {
                 logInfo(String.format("%s deleted the plot %s", clientName, plotName));
+            }
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -732,8 +755,9 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
-            if(result.get())
+            if (result.get()) {
                 logInfo(String.format("%s updated the global MCTowns config.", clientName));
+            }
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -834,15 +858,15 @@ public class MCTServerProtocol {
                 break;
         }
     }
-    
+
     private void logWarning(String s) {
         log.log(Level.WARNING, s);
     }
-    
+
     private void logInfo(String s) {
         log.log(Level.INFO, s);
     }
-    
+
     private void logSevere(String s) {
         log.log(Level.SEVERE, s);
     }

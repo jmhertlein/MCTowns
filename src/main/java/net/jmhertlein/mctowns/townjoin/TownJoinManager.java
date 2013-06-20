@@ -17,11 +17,12 @@
 package net.jmhertlein.mctowns.townjoin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import net.jmhertlein.mctowns.structure.Town;
 
 /**
@@ -34,15 +35,15 @@ public class TownJoinManager {
      * Key- Player name Value- Set of towns the player is currently invited to
      * join
      */
-    private HashMap<String, Set<Town>> joinInvitations;
+    private Map<String, Set<Town>> joinInvitations;
     /**
      * Key- Town Value- Set of players who have requested membership to the town
      */
-    private HashMap<Town, Set<String>> joinRequests;
+    private Map<Town, Set<String>> joinRequests;
 
     public TownJoinManager() {
-        joinInvitations = new HashMap<>();
-        joinRequests = new HashMap<>();
+        joinInvitations = new ConcurrentHashMap<>();
+        joinRequests = new ConcurrentHashMap<>();
     }
 
     public void invitePlayerToTown(final String playerName, final Town invitedTo) {

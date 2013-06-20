@@ -47,6 +47,7 @@ import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -333,13 +334,12 @@ public abstract class CommandHandler {
         broadcastTownJoin(t, whoJoined.getName());
     }
 
-    protected void broadcastTownJoin(Town t, String s_playerWhoJoined) {
+    public static void broadcastTownJoin(Town t, String player) {
         for (String pl : t.getResidentNames()) {
-            try {
-                //broadcast the join to everyone BUT the player who joined.
-                (pl.equals(s_playerWhoJoined) ? null : server.getPlayer(pl)).sendMessage(s_playerWhoJoined + " just joined " + t.getTownName() + "!");
-            } catch (NullPointerException ignore) {
-            }
+            Player p = Bukkit.getPlayer(pl);
+            if(p == null || pl.equals(player))
+                continue;
+            p.sendMessage(player + " just joined " + t.getTownName() + "!");
         }
     }
 
