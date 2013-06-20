@@ -97,7 +97,7 @@ public class PublicIdentity implements Serializable {
 
     public void exportToConfiguration(FileConfiguration f) {
         f.set("username", username);
-        f.set("pubKey", Keys.getBASE64ForPublicKey(pubKey));
+        f.set("pubKey", Keys.getBASE64ForKey(pubKey));
         f.set("group", permissionGroup);
     }
 }
