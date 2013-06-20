@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.command.ActiveSet;
@@ -54,7 +55,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MCTownsPlugin extends JavaPlugin {
 
     private static MCTownsPlugin singleton;
-    private File authKeysDir, rsaKeysDir, savesDir, configFile, metaFile, remoteConfigFile;
+    public static final Logger remoteDaemonLogger = Logger.getLogger("MCTRAD");
+    private File authKeysDir, rsaKeysDir, savesDir, configFile, 
+            metaFile, remoteConfigFile, remoteAdminDaemonLogFile;
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
     private TownJoinManager joinManager;
@@ -142,6 +145,8 @@ public class MCTownsPlugin extends JavaPlugin {
         configFile = new File(this.getDataFolder(), "config.yml");
         remoteConfigFile = new File(this.getDataFolder(), "remote-config.yml");
         metaFile = new File(savesDir, ".meta.yml");
+        
+        remoteAdminDaemonLogFile = new File(this.getDataFolder(), "remote-daemon.log");
 
         dataDirs = new HashSet<>();
         dataDirs.add(authKeysDir);
@@ -155,14 +160,16 @@ public class MCTownsPlugin extends JavaPlugin {
         configFiles = new HashSet<>();
         configFiles.add(configFile);
         configFiles.add(metaFile);
-
-        if (!metaFile.exists()) {
-            try {
+        
+        try{
+            if (!metaFile.exists()) 
                 metaFile.createNewFile();
-            } catch (IOException ex) {
-                MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
-            }
+            if(!remoteAdminDaemonLogFile.exists())
+                remoteAdminDaemonLogFile.createNewFile();
+        } catch(IOException ex) {
+            MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
         }
+        
 
         saveDefaultRemoteConfig();
         loadRemoteConfig();
@@ -303,6 +310,7 @@ public class MCTownsPlugin extends JavaPlugin {
     private void startRemoteServer() {
         RemoteConnectionServer s;
         try {
+            remoteDaemonLogger.addHandler(new FileHandler(remoteAdminDaemonLogFile.getAbsolutePath(), true));
             s = new RemoteConnectionServer(this, new File(this.getDataFolder(), "auth_keys"));
         } catch (IOException ex) {
             Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);

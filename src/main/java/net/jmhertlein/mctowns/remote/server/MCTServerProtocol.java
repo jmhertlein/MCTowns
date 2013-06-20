@@ -35,6 +35,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -76,7 +77,8 @@ import sun.misc.BASE64Encoder;
  * @author joshua
  */
 public class MCTServerProtocol {
-
+    
+    private static final Logger log = MCTowns.getRemoteAdminDaemonLogger();
     private static final String PROTOCOL_VERSION = "1";
     private static final int NUM_CHECK_BYTES = 50;
     private File authKeysDir;
@@ -147,7 +149,7 @@ public class MCTServerProtocol {
         Boolean clientAcceptsPublicKey = (Boolean) ois.readObject();
 
         if (!clientAcceptsPublicKey) {
-            MCTowns.logWarning("Client did not accept our public key- did not match their cached copy.");
+            logWarning(clientName + " did not accept our public key- did not match their cached copy.");
             return false;
         }
 
@@ -162,7 +164,7 @@ public class MCTServerProtocol {
             oos.writeObject(true);
         } else {
             oos.writeObject(false);
-            MCTowns.logWarning("Rejecting client challenge response.");
+            logWarning("Rejecting " + clientName + "'s challenge response.");
             return false;
         }
 
@@ -172,7 +174,7 @@ public class MCTServerProtocol {
         Boolean clientAcceptsUs = (Boolean) ois.readObject();
 
         if (!clientAcceptsUs) {
-            MCTowns.logWarning("Client did not accept us as server they wanted to connect to.");
+            logWarning(clientName + " did not accept us as server they wanted to connect to.");
             return false;
         }
 
@@ -187,10 +189,10 @@ public class MCTServerProtocol {
         nextSessionID++;
 
         sessionKeys.put(assignedSessionID, new ClientSession(assignedSessionID, identity, newKey));
-        MCTowns.logInfo("Client assigned session id " + assignedSessionID);
+        logInfo(clientName + " assigned session id " + assignedSessionID);
 
         oos.writeObject(assignedSessionID);
-
+        MCTowns.logInfo(String.format("%s logged in via the Remote Admin Client (%s)", clientName, client.getInetAddress().toString()));
         client.close();
         return true;
     }
@@ -204,7 +206,7 @@ public class MCTServerProtocol {
         //if client indicates it does not have a session ID
         if (clientSessionID < 0) {
             if (!doInitialKeyExchange()) {
-                MCTowns.logWarning("User from " + client.getInetAddress() + " (Username: " + clientName + ")" + " tried to connect, but was not authorized.");
+                logWarning("User from " + client.getInetAddress() + " (Username: " + clientName + ")" + " tried to connect, but was not authorized.");
             }
             return;
         }
@@ -302,6 +304,7 @@ public class MCTServerProtocol {
 
         f.save(i.getUsername() + ".pub");
 
+        logInfo(String.format("%s added an identity for user %s to auth_keys", clientName, i.getUsername()));
         oos.writeObject(true);
     }
 
@@ -332,6 +335,7 @@ public class MCTServerProtocol {
 
         if (identityFile.exists()) {
             oos.writeObject(identityFile.delete());
+            logInfo(String.format("%s deleted an identity file (%s) from auth_keys", clientName, identityFile.getName()));
         } else {
             oos.writeObject(false);
         }
@@ -377,6 +381,8 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
+            if(result.get())
+                logInfo(String.format("%s deleted a territory (%s).", clientName, territName));
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -426,6 +432,8 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
+            if(result.get())
+                logInfo(String.format("%s deleted a town (%s).", clientName, townName));
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -450,6 +458,8 @@ public class MCTServerProtocol {
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
 
         oos.writeObject(result);
+        if(result)
+            logInfo(String.format("%s created a town (%s).", clientName, townName));
     }
 
     private void modifyPlotMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -492,10 +502,13 @@ public class MCTServerProtocol {
         Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
+            if(result.get())
+                logInfo(String.format("%s %s %s to/from the plot \"%s\".", 
+                        clientName, opMode == RemoteAction.MODE_ADD_PLAYER ? "added" : "removed", playerName, plotName));
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
-
+        
     }
 
     private void modifyTerritoryMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -536,6 +549,9 @@ public class MCTServerProtocol {
         Future<Boolean> result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
+            if(result.get())
+                logInfo(String.format("%s %s %s to/from the territory \"%s\".", 
+                        clientName, opMode == RemoteAction.MODE_ADD_PLAYER ? "added" : "removed", playerName, territoryName));
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -568,8 +584,11 @@ public class MCTServerProtocol {
 
         if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
             result = town.addPlayer(playerName);
+            if(result)
+                logInfo(String.format("%s added %s to the town %s", clientName, playerName, townName));
         } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
             town.removePlayer(playerName);
+            logInfo(String.format("%s removed %s from the town %s", clientName, playerName, townName));
             result = true;
         }
 
@@ -597,8 +616,12 @@ public class MCTServerProtocol {
         Boolean result = null;
         if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
             result = town.addAssistant(playerName);
+            if(result)
+                logInfo(String.format("%s promoted %s to assistant of the town %s", clientName, playerName, townName));
         } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
             result = town.removeAssistant(playerName);
+            if(result)
+                logInfo(String.format("%s demoted %s from assistant of the town %s", clientName, playerName, townName));
         }
 
         oos.writeObject(result);
@@ -621,6 +644,8 @@ public class MCTServerProtocol {
         }
 
         t.updateTown(view);
+        
+        logInfo(String.format("%s updated settings for the town %s", clientName, view.getTownName()));
 
         oos.writeObject(true);
     }
@@ -644,7 +669,7 @@ public class MCTServerProtocol {
         }
 
         plot.updatePlot(view);
-
+        logInfo(String.format("%s updated settings for the plot %s", clientName, view.getPlotName()));
         oos.writeObject(true);
     }
 
@@ -669,6 +694,8 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
+            if(result.get())
+                logInfo(String.format("%s deleted the plot %s", clientName, plotName));
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -690,6 +717,8 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
+            if(result.get())
+                logInfo(String.format("%s updated the global MCTowns config.", clientName));
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -788,7 +817,18 @@ public class MCTServerProtocol {
             case UPDATE_CONFIG:
                 updateConfig(oos, ois);
                 break;
-
         }
+    }
+    
+    private void logWarning(String s) {
+        log.log(Level.WARNING, s);
+    }
+    
+    private void logInfo(String s) {
+        log.log(Level.INFO, s);
+    }
+    
+    private void logSevere(String s) {
+        log.log(Level.SEVERE, s);
     }
 }
