@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 joshua
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,30 +27,30 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-
 /**
  *
  * @author joshua
  */
 public class PublicIdentity implements Serializable {
+
     private String username, permissionGroup;
     private PublicKey pubKey;
-    
+
     public PublicIdentity(File f) throws FileNotFoundException, IOException, InvalidConfigurationException {
         YamlConfiguration c = new YamlConfiguration();
         c.load(f);
         loadFromFileConfiguration(c);
     }
-    
+
     public PublicIdentity(FileConfiguration f) {
         loadFromFileConfiguration(f);
     }
-    
+
     public PublicIdentity(String username, PublicKey pubKey) {
         this.username = username;
         this.pubKey = pubKey;
     }
-    
+
     private void loadFromFileConfiguration(FileConfiguration f) {
         username = f.getString("username");
         pubKey = Keys.getPublicKeyFromBASE64X509Encoded(f.getString("pubKey"));
@@ -94,7 +94,7 @@ public class PublicIdentity implements Serializable {
         }
         return true;
     }
-    
+
     public void exportToConfiguration(FileConfiguration f) {
         f.set("username", username);
         f.set("pubKey", Keys.getBASE64ForPublicKey(pubKey));

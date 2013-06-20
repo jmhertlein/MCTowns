@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.remote.server;
 
 import java.io.File;
@@ -75,11 +91,11 @@ public class MCTServerProtocol {
     private RemoteAction action;
     private PermissionGroup applicableGroup;
 
-    public MCTServerProtocol(MCTownsPlugin p, 
-            Socket client, 
-            PrivateKey serverPrivateKey, 
-            PublicKey serverPublicKey, 
-            File authKeysDir, 
+    public MCTServerProtocol(MCTownsPlugin p,
+            Socket client,
+            PrivateKey serverPrivateKey,
+            PublicKey serverPublicKey,
+            File authKeysDir,
             Map<Integer, ClientSession> sessionKeys,
             PermissionContext permissions) {
         this.authKeysDir = authKeysDir;
@@ -190,7 +206,7 @@ public class MCTServerProtocol {
         }
 
         clientSession = sessionKeys.get(clientSessionID);
-        
+
         clientName = clientSession.getIdentity().getUsername();
 
 
@@ -209,12 +225,11 @@ public class MCTServerProtocol {
         applicableGroup = permissions.getGroups().get(clientSession.getIdentity().getPermissionGroup());
 
         p.getLogger().log(Level.INFO, "[RemoteAdmin]: {0} running action {1}", new Object[]{clientName, action.name()});
-        
-        if(permissions.userHasPermission(clientSession.getIdentity(), action)) {
+
+        if (permissions.userHasPermission(clientSession.getIdentity(), action)) {
             oos.writeObject(true);
             executeAction(oos, ois);
-        }
-        else {
+        } else {
             oos.writeObject(false);
         }
 
@@ -279,10 +294,10 @@ public class MCTServerProtocol {
         PublicIdentity i = (PublicIdentity) ois.readObject();
 
         Boolean result;
-        
+
         FileConfiguration f = new YamlConfiguration();
         i.exportToConfiguration(f);
-        
+
         f.save(i.getUsername() + ".pub");
 
         oos.writeObject(true);
@@ -291,8 +306,9 @@ public class MCTServerProtocol {
     private void sendIdentityList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
         List<PublicIdentity> ret = new LinkedList<>();
         for (File f : authKeysDir.listFiles()) {
-            if(!f.getName().endsWith(".pub"))
+            if (!f.getName().endsWith(".pub")) {
                 continue;
+            }
             PublicIdentity i;
             try {
                 i = new PublicIdentity(f);
@@ -300,7 +316,7 @@ public class MCTServerProtocol {
                 MCTowns.logSevere(String.format("Error parsing identity \"%s\": %s", f.getName(), ex.getLocalizedMessage()));
                 continue;
             }
-            
+
             ret.add(i);
         }
 
@@ -348,10 +364,11 @@ public class MCTServerProtocol {
             @Override
             public Boolean call() {
                 Town parentTown = MCTowns.getTownManager().getTown(MCTowns.getTownManager().getTerritory(territName).getParentTown());
-                if((applicableGroup.getType() == PermissionGroupType.MAYOR && parentTown.playerIsMayor(clientName)) || applicableGroup.getType() == PermissionGroupType.ADMIN)
+                if ((applicableGroup.getType() == PermissionGroupType.MAYOR && parentTown.playerIsMayor(clientName)) || applicableGroup.getType() == PermissionGroupType.ADMIN) {
                     return MCTowns.getTownManager().removeTerritory(territName);
-                else
+                } else {
                     return false;
+                }
             }
         };
 
@@ -393,14 +410,14 @@ public class MCTServerProtocol {
             @Override
             public Boolean call() {
                 Town t = MCTowns.getTownManager().getTown(townName);
-                if((t.playerIsMayor(clientName) && 
-                        applicableGroup.getType() == PermissionGroupType.MAYOR && 
-                        Bukkit.getPlayerExact(clientName).hasPermission(Perms.REMOVE_TOWN.toString()))
-                        ||
-                        applicableGroup.getType() == PermissionGroupType.ADMIN)
+                if ((t.playerIsMayor(clientName)
+                        && applicableGroup.getType() == PermissionGroupType.MAYOR
+                        && Bukkit.getPlayerExact(clientName).hasPermission(Perms.REMOVE_TOWN.toString()))
+                        || applicableGroup.getType() == PermissionGroupType.ADMIN) {
                     return MCTowns.getTownManager().removeTown(townName);
-                else
+                } else {
                     return false;
+                }
             }
         };
 
@@ -427,9 +444,9 @@ public class MCTServerProtocol {
         while (bukkitSpawn.getY() + 1 < bukkitSpawn.getWorld().getMaxHeight() && bukkitSpawn.getBlock().getType() != Material.AIR) {
             bukkitSpawn.setY(bukkitSpawn.getBlockY() + 1);
         }
-        
+
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
-        
+
         oos.writeObject(result);
     }
 
@@ -440,7 +457,7 @@ public class MCTServerProtocol {
         String plotName = (String) ois.readObject();
 
         final Plot plot = MCTowns.getTownManager().getPlot(plotName);
-        
+
         if (plot == null) {
             oos.writeObject(false);
             return;
@@ -450,11 +467,12 @@ public class MCTServerProtocol {
             @Override
             public Boolean call() {
                 Town t = MCTowns.getTownManager().getTown(plot.getParentTownName());
-                if(! ((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
-                        applicableGroup.getType() == PermissionGroupType.ADMIN))
+                if (!((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR)
+                        || applicableGroup.getType() == PermissionGroupType.ADMIN)) {
                     return false;
-                    
-                
+                }
+
+
                 if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
                     if (membershipType == RemoteAction.GUEST) {
                         return plot.addGuest(playerName);
@@ -495,9 +513,10 @@ public class MCTServerProtocol {
             @Override
             public Boolean call() {
                 Town t = MCTowns.getTownManager().getTown(territ.getParentTown());
-                if(! ((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
-                        applicableGroup.getType() == PermissionGroupType.ADMIN))
+                if (!((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR)
+                        || applicableGroup.getType() == PermissionGroupType.ADMIN)) {
                     return false;
+                }
                 if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
                     if (membershipType == RemoteAction.GUEST) {
                         return territ.addGuest(playerName);
@@ -531,20 +550,20 @@ public class MCTServerProtocol {
         }
 
         Town town = MCTowns.getTownManager().getTown(townName);
-        
+
         if (town == null) {
             oos.writeObject(false);
             return;
         }
-        
-        if(! ((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
-                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
+
+        if (!((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR)
+                || applicableGroup.getType() == PermissionGroupType.ADMIN)) {
             oos.writeObject(false);
             return;
         }
 
         Boolean result = null;
-        
+
         if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
             result = town.addPlayer(playerName);
         } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
@@ -566,9 +585,9 @@ public class MCTServerProtocol {
             oos.writeObject(false);
             return;
         }
-        
-        if(! ((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
-                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
+
+        if (!((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR)
+                || applicableGroup.getType() == PermissionGroupType.ADMIN)) {
             oos.writeObject(false);
             return;
         }
@@ -592,9 +611,9 @@ public class MCTServerProtocol {
             oos.writeObject(false);
             return;
         }
-        
-        if(! ((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
-                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
+
+        if (!((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR)
+                || applicableGroup.getType() == PermissionGroupType.ADMIN)) {
             oos.writeObject(false);
             return;
         }
@@ -613,11 +632,11 @@ public class MCTServerProtocol {
             oos.writeObject(false);
             return;
         }
-        
+
         Town town = MCTowns.getTownManager().getTown(plot.getParentTownName());
-        
-        if(! ((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
-                        applicableGroup.getType() == PermissionGroupType.ADMIN)) {
+
+        if (!((town.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR)
+                || applicableGroup.getType() == PermissionGroupType.ADMIN)) {
             oos.writeObject(false);
             return;
         }
@@ -635,12 +654,13 @@ public class MCTServerProtocol {
             @Override
             public Boolean call() {
                 Town t = MCTowns.getTownManager().getTown(MCTowns.getTownManager().getPlot(plotName).getParentTownName());
-                
-                if((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR) || 
-                        applicableGroup.getType() == PermissionGroupType.ADMIN)
+
+                if ((t.playerIsMayor(clientName) && applicableGroup.getType() == PermissionGroupType.MAYOR)
+                        || applicableGroup.getType() == PermissionGroupType.ADMIN) {
                     return MCTowns.getTownManager().removePlot(plotName);
-                else
+                } else {
                     return false;
+                }
             }
         };
 
@@ -678,7 +698,7 @@ public class MCTServerProtocol {
             if (!f.getName().endsWith(".pub")) {
                 continue;
             }
-            
+
             PublicIdentity i;
             try {
                 i = new PublicIdentity(f);
@@ -694,7 +714,7 @@ public class MCTServerProtocol {
 
         return null;
     }
-    
+
     private void executeAction(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         switch (action) {
             case GET_META_VIEW:

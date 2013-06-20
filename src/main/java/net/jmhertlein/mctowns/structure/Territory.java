@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.structure;
 
 import java.util.Collections;
@@ -13,11 +29,10 @@ import org.bukkit.configuration.file.FileConfiguration;
  *
  * @author joshua
  */
-public class Territory extends MCTownsRegion{
+public class Territory extends MCTownsRegion {
 
     private static final long serialVersionUID = "TERRITORY".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
-
     private String parTownName;
     private Set<String> plotNames;
 
@@ -33,7 +48,8 @@ public class Territory extends MCTownsRegion{
         parTownName = parentTownName;
     }
 
-    public Territory(){}
+    public Territory() {
+    }
 
     /**
      * Adds a plot to the territory. Registering the WG region of the territory
@@ -53,14 +69,15 @@ public class Territory extends MCTownsRegion{
     }
 
     /**
-     * Modifying membership of returned set does not modify which plots
-     * are in this territ
-     * 
-     * Sets returned by this method will not update themselves if subsequent Territory method
-     * calls add plots to it
-     * 
-     * Returned Set is a LinkedHashSet and as such performs well for
-     * iteration and set membership checks
+     * Modifying membership of returned set does not modify which plots are in
+     * this territ
+     *
+     * Sets returned by this method will not update themselves if subsequent
+     * Territory method calls add plots to it
+     *
+     * Returned Set is a LinkedHashSet and as such performs well for iteration
+     * and set membership checks
+     *
      * @return the plots owned by this territory
      */
     public Set<String> getPlotsCollection() {
@@ -106,12 +123,10 @@ public class Territory extends MCTownsRegion{
     private List<String> getPlotNameList() {
         LinkedList<String> ret = new LinkedList<>();
 
-        for(String s : plotNames) {
+        for (String s : plotNames) {
             ret.add(s);
         }
 
         return ret;
     }
-
-
 }

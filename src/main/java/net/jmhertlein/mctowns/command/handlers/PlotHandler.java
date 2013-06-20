@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -24,11 +40,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void printPlotInfo() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Plot p = localSender.getActivePlot();
 
         if (p == null) {
@@ -45,11 +61,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void removePlayerFromPlot(String player) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Plot p = localSender.getActivePlot();
         player = player.toLowerCase();
 
@@ -76,11 +92,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void addPlayerToPlot(String playerName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -89,19 +105,19 @@ public class PlotHandler extends CommandHandler {
         Plot p = localSender.getActivePlot();
         Player player = server.getPlayer(playerName);
         Town t = localSender.getActiveTown();
-        
-        if(t == null) {
+
+        if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
-        if(player == null) {
-            if(!t.playerIsResident(playerName)) {
+
+        if (player == null) {
+            if (!t.playerIsResident(playerName)) {
                 localSender.sendMessage(ERR + "That player is not a member of the town.");
                 return;
             }
         } else {
-            if(!t.playerIsResident(player)) {
+            if (!t.playerIsResident(player)) {
                 localSender.sendMessage(ERR + "That player is not a member of the town.");
                 return;
             }
@@ -125,11 +141,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void addPlayerToPlotAsGuest(String playername) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Plot p = localSender.getActivePlot();
 
         if (p == null) {
@@ -157,11 +173,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setPlotBuyability(String s_forSale) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -199,11 +215,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setPlotPrice(String s_price) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -231,11 +247,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void buildSign() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -258,11 +274,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void demolishSign() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -285,11 +301,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setPlotSignPosition() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -315,13 +331,15 @@ public class PlotHandler extends CommandHandler {
 
         //use the block ABOVE the one the player is staring at.
         mctLoc.setY(mctLoc.getY() + 1);
-        if (!cmd.hasFlag("--no-rebuild"))
+        if (!cmd.hasFlag("--no-rebuild")) {
             p.demolishSign();
+        }
 
         p.setSignLoc(mctLoc);
 
-        if (!cmd.hasFlag("--no-rebuild"))
+        if (!cmd.hasFlag("--no-rebuild")) {
             p.buildSign();
+        }
 
         localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
 
@@ -329,11 +347,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void surrenderPlot() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Plot p = localSender.getActivePlot();
         if (p == null) {
             localSender.notifyActivePlotNotSet();
@@ -362,11 +380,11 @@ public class PlotHandler extends CommandHandler {
     }
 
     public void setActivePlot(String plotName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
 
         boolean quickSelect = cmd.hasFlag("-q");
@@ -417,8 +435,9 @@ public class PlotHandler extends CommandHandler {
         }
 
         localSender.setActivePlot(nuActive);
-        if (nuActiveTerrit != null)
+        if (nuActiveTerrit != null) {
             localSender.setActiveTerritory(nuActiveTerrit);
+        }
         localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
 }

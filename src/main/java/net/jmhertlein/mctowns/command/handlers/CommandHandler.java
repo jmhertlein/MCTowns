@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.minecraft.util.commands.CommandException;
@@ -45,12 +61,12 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public abstract class CommandHandler {
+
     protected static final int RESULTS_PER_PAGE = 10;
     protected MCTownsPlugin plugin;
     protected TownManager townManager;
     protected TownJoinManager joinManager;
     protected Server server;
-
     protected MCTLocalSender localSender;
     protected ECommand cmd;
 
@@ -167,7 +183,7 @@ public abstract class CommandHandler {
     }
 
     public void listPlayers(TownLevel level) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
@@ -188,8 +204,8 @@ public abstract class CommandHandler {
         }
 
         ProtectedRegion wgReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(reg.getWorldName())).getRegion(reg.getName());
-        
-        if(wgReg == null) {
+
+        if (wgReg == null) {
             localSender.sendMessage("Unable to get world guard region for " + reg.getName() + ". Perhaps the region was deleted outside of MCTowns?");
             return;
         }
@@ -249,7 +265,7 @@ public abstract class CommandHandler {
 
             localSender.sendMessage("Error getting your WorldEdit selection. Did you forget to make a selection?");
             return null;
-        } catch(CommandException ce) {
+        } catch (CommandException ce) {
             localSender.sendMessage("Error hooking the WorldEdit plugin. Please tell your server owner.");
             ce.printStackTrace();
             return null;
@@ -329,17 +345,17 @@ public abstract class CommandHandler {
 
     protected ArrayList<String> getOutputFriendlyTownJoinListMessages(Set<String> playerNames) {
         ArrayList<String> msgs = new ArrayList<>();
-        
+
         int numNamesOnCurrentLine = 0;
         String curLine = "";
-        for(String s : playerNames) {
-            if(numNamesOnCurrentLine == 3) {
+        for (String s : playerNames) {
+            if (numNamesOnCurrentLine == 3) {
                 curLine.substring(0, curLine.length() - 3);
                 msgs.add(curLine);
                 numNamesOnCurrentLine = 0;
                 curLine = "";
             }
-            
+
             curLine += s + ", ";
             numNamesOnCurrentLine++;
         }
@@ -392,7 +408,7 @@ public abstract class CommandHandler {
         Selection nuRegionBounds;
         try {
             nuRegionBounds = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection(localSender.getPlayer());
-        } catch(CommandException ce) {
+        } catch (CommandException ce) {
             localSender.sendMessage("Error hooking the world edit plugn. Please inform your server owner.");
             ce.printStackTrace();
             return;

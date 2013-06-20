@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.jmhertlein.mctowns.remote.view;
 
@@ -16,26 +28,24 @@ import org.bukkit.configuration.file.FileConfiguration;
  * @author joshua
  */
 public class OverView implements Serializable {
-    private final Boolean economyEnabled, 
-            mayorsCanBuyTerritories, 
+
+    private final Boolean economyEnabled,
+            mayorsCanBuyTerritories,
             allowTownFriendlyFireManagement,
             logCommands,
             playerCanJoinMultipleTowns;
-    
     private final Float pricePerXZBlock;
-    
-    private final Integer minNumPlayersToBuyTerritory, 
-            bugReportPort, 
-            remoteAdminPort, 
+    private final Integer minNumPlayersToBuyTerritory,
+            bugReportPort,
+            remoteAdminPort,
             quickSelectTool,
             remoteAdminKeyLength,
             remoteAdminSessionKeyLength;
-    
     private final String bugReportHostname;
 
-    public OverView(Boolean economyEnabled, Boolean mayorsCanBuyTerritories, Boolean allowTownFriendlyFireManagement, Boolean logCommands, Boolean playerCanJoinMultipleTowns, 
+    public OverView(Boolean economyEnabled, Boolean mayorsCanBuyTerritories, Boolean allowTownFriendlyFireManagement, Boolean logCommands, Boolean playerCanJoinMultipleTowns,
             Float pricePerXZBlock, Integer minNumPlayersToBuyTerritory, Integer quickSelectTool,
-            String bugReportHostname, Integer bugReportPort, 
+            String bugReportHostname, Integer bugReportPort,
             Integer remoteAdminPort, Integer remoteAdminKeyLength, Integer remoteAdminSessionKeyLength) {
         this.economyEnabled = economyEnabled;
         this.mayorsCanBuyTerritories = mayorsCanBuyTerritories;
@@ -135,8 +145,4 @@ public class OverView implements Serializable {
         MCTowns.setTerritoryPricePerColumn(new BigDecimal(pricePerXZBlock));
         MCTownsPlugin.getPlugin().saveConfig();
     }
-    
-    
-    
-    
 }

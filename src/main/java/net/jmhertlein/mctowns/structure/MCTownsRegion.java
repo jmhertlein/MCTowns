@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -5,7 +21,6 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.Objects;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.MCTownsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,9 +31,9 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public abstract class MCTownsRegion {
+
     private static final long serialVersionUID = "MCTOWNSREGION".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
-
     /**
      * The name of the region, the name of the world in which the region exists
      */
@@ -65,7 +80,7 @@ public abstract class MCTownsRegion {
         DefaultDomain members, owners;
         boolean removed = false;
         WorldGuardPlugin wgp = MCTowns.getWorldGuardPlugin();
-        
+
         members = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getMembers();
         owners = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getOwners();
 
@@ -81,7 +96,7 @@ public abstract class MCTownsRegion {
 
         return removed;
     }
-    
+
     public boolean removePlayer(OfflinePlayer p) {
         return this.removePlayer(p.getName());
     }
@@ -158,23 +173,23 @@ public abstract class MCTownsRegion {
         plotName = plotName.toLowerCase();
 
         String infix;
-        if(type == TownLevel.PLOT)
+        if (type == TownLevel.PLOT) {
             infix = TownLevel.PLOT_INFIX;
-        else if(type == TownLevel.TERRITORY)
+        } else if (type == TownLevel.TERRITORY) {
             infix = TownLevel.TERRITORY_INFIX;
-        else
+        } else {
             infix = "";
+        }
 
         return (owner.getTownName() + infix + plotName).toLowerCase();
     }
-    
+
     public String getReadableName() {
-        return name.substring(name.lastIndexOf('_')+1);
+        return name.substring(name.lastIndexOf('_') + 1);
     }
 
     public void writeYAML(FileConfiguration f) {
         f.set("name", name);
         f.set("worldName", worldName);
     }
-
 }

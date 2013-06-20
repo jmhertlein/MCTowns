@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.remote.auth;
 
 import java.io.Serializable;
@@ -10,13 +26,14 @@ import org.apache.commons.codec.binary.Base64;
  * @author joshua
  */
 public class Identity extends PublicIdentity implements Serializable {
+
     private final PrivateKey privateKey;
 
     public Identity(String name, PublicKey pubKey, PrivateKey privateKey) {
         super(name, pubKey);
         this.privateKey = privateKey;
     }
-    
+
     public Identity(String name, PublicKey pubKey) {
         super(name, pubKey);
         this.privateKey = null;
@@ -25,19 +42,20 @@ public class Identity extends PublicIdentity implements Serializable {
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
-    
+
     public String getPublicEncoded() {
         return Base64.encodeBase64String(this.getPubKey().getEncoded());
     }
-    
+
     public String getPrivateEncoded() {
-        return  Base64.encodeBase64String(privateKey.getEncoded());
+        return Base64.encodeBase64String(privateKey.getEncoded());
     }
-    
+
     /**
      * Trims the trailing ".pub" off of an Identity file's name
+     *
      * @param s
-     * @return 
+     * @return
      */
     public static String trimFileName(String s) {
         return s.substring(0, s.lastIndexOf(".pub"));

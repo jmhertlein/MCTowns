@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 joshua
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import net.jmhertlein.mctowns.remote.RemoteAction;
  * @author joshua
  */
 public class PermissionGroup {
+
     private final String name, parentGroupName;
     private final PermissionGroupType type;
     private final Set<RemoteAction> authorizedActions;
@@ -57,8 +58,4 @@ public class PermissionGroup {
     public Set<RemoteAction> getAuthorizedActions() {
         return authorizedActions;
     }
-    
-    
-    
-    
 }

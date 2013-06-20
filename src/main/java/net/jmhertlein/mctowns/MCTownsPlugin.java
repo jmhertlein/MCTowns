@@ -1,6 +1,21 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import java.io.*;
 import java.util.HashMap;
@@ -34,11 +49,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * The main class of the MCTowns plugin.
  *
- * @author joshua
+ * @author Joshua Michael Hertlein <jmhertlein@gmail.com>
  */
 public class MCTownsPlugin extends JavaPlugin {
-    private static MCTownsPlugin singleton;
 
+    private static MCTownsPlugin singleton;
     private File authKeysDir, rsaKeysDir, savesDir, configFile, metaFile, remoteConfigFile;
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
@@ -109,8 +124,9 @@ public class MCTownsPlugin extends JavaPlugin {
 
         startMetricsCollection();
 
-        if(MCTowns.remoteAdminServerIsEnabled())
+        if (MCTowns.remoteAdminServerIsEnabled()) {
             startRemoteServer();
+        }
 
         MCTowns.logInfo("MCTowns is now fully loaded.");
 
@@ -118,35 +134,36 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void setupFiles() {
         saveDefaultConfig();
-        
+
         authKeysDir = new File(this.getDataFolder(), "auth_keys");
         rsaKeysDir = new File(this.getDataFolder(), "rsa_keys");
         savesDir = new File(this.getDataFolder(), "saves");
-        
+
         configFile = new File(this.getDataFolder(), "config.yml");
         remoteConfigFile = new File(this.getDataFolder(), "remote-config.yml");
         metaFile = new File(savesDir, ".meta.yml");
-        
+
         dataDirs = new HashSet<>();
         dataDirs.add(authKeysDir);
         dataDirs.add(rsaKeysDir);
         dataDirs.add(savesDir);
 
-        for (File f : dataDirs)
+        for (File f : dataDirs) {
             f.mkdirs();
+        }
 
         configFiles = new HashSet<>();
         configFiles.add(configFile);
         configFiles.add(metaFile);
-        
-        if(!metaFile.exists()) {
+
+        if (!metaFile.exists()) {
             try {
                 metaFile.createNewFile();
             } catch (IOException ex) {
                 MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
             }
         }
-        
+
         saveDefaultRemoteConfig();
         loadRemoteConfig();
     }
@@ -163,7 +180,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void hookInDependencies() {
         Plugin wgp = this.getServer().getPluginManager().getPlugin("WorldGuard");
-        if(wgp == null) {
+        if (wgp == null) {
             MCTowns.logSevere("[MCTowns] Error occurred in hooking in to WorldGuard. Is both WorldGuard and WorldEdit installed?");
             MCTowns.logSevere("[MCTowns] !!!!!NOTICE!!!!! MCTOWNS WILL NOW BE DISABLED.  !!!!!NOTICE!!!!!");
             this.getPluginLoader().disablePlugin(this);
@@ -228,7 +245,9 @@ public class MCTownsPlugin extends JavaPlugin {
 
         for (File f : root.listFiles()) {
             if (dataDirs.contains(f) || configFiles.contains(f)) //not really necessary since nothing but town files are in saves now, but... better safe.
+            {
                 continue;
+            }
 
             String trunc = f.getName().substring(0, f.getName().lastIndexOf('.'));
 
@@ -245,7 +264,7 @@ public class MCTownsPlugin extends JavaPlugin {
     public void setAbortSave(boolean abortSave) {
         this.abortSave = abortSave;
     }
-    
+
     public TownManager getTownManager() {
         return townManager;
     }
@@ -300,16 +319,17 @@ public class MCTownsPlugin extends JavaPlugin {
     public File getServerKeysDir() {
         return rsaKeysDir;
     }
-    
+
     public static MCTownsPlugin getPlugin() {
         return singleton;
     }
 
-    private void saveDefaultRemoteConfig(){
+    private void saveDefaultRemoteConfig() {
         FileConfiguration f = new YamlConfiguration();
-        if(remoteConfigFile.exists())
+        if (remoteConfigFile.exists()) {
             return;
-        
+        }
+
         try {
             f.load(getClass().getResourceAsStream("/" + remoteConfigFile.getName()));
             f.save(remoteConfigFile);
@@ -317,7 +337,7 @@ public class MCTownsPlugin extends JavaPlugin {
             Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loadRemoteConfig() {
         remoteConfig = new YamlConfiguration();
         try {

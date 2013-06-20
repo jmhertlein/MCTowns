@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.jmhertlein.mctowns.remote.view;
 
@@ -17,12 +29,13 @@ import org.bukkit.Server;
  * @author joshua
  */
 public class PlayerView implements Serializable {
+
     private final String playerName;
     private final boolean banned;
     private final long firstPlayed, lastPlayed;
     private final List<String> towns;
     private final List<Boolean> isMayor, isAssistant;
-    
+
     public PlayerView(Server s, OfflinePlayer p, TownManager tMan) {
         playerName = p.getName();
         banned = p.isBanned();
@@ -30,10 +43,10 @@ public class PlayerView implements Serializable {
         towns = new ArrayList<>();
         isAssistant = new ArrayList<>();
         isMayor = new ArrayList<>();
-        
+
         lastPlayed = p.isOnline() ? -1 : p.getLastPlayed();
-        
-        for(Town t : tMan.matchPlayerToTowns(playerName)) {
+
+        for (Town t : tMan.matchPlayerToTowns(playerName)) {
             towns.add(t.getTownName());
             isMayor.add(t.playerIsMayor(playerName));
             isAssistant.add(t.playerIsAssistant(playerName));
@@ -67,6 +80,4 @@ public class PlayerView implements Serializable {
     public List<Boolean> getIsAssistant() {
         return isAssistant;
     }
-    
-    
 }

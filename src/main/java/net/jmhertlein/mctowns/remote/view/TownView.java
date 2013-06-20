@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.jmhertlein.mctowns.remote.view;
 
@@ -18,11 +30,11 @@ import org.bukkit.ChatColor;
  * @author joshua
  */
 public class TownView implements Serializable {
+
     private final String townName, motd, motdColor;
     private final Location spawnLoc;
     private final boolean friendlyFire, economyJoins, buyablePlots;
     private final BigDecimal defaultPlotPrice;
-    
     private final Collection<String> territories, residents, assistants;
     private final String mayorName;
 
@@ -36,28 +48,28 @@ public class TownView implements Serializable {
         this.buyablePlots = buyablePlots;
         this.defaultPlotPrice = defaultPlotPrice;
         this.mayorName = mayorName;
-        
+
         territories = null;
         residents = null;
         assistants = null;
     }
-    
+
     public TownView(Town t) {
         townName = t.getTownName();
         motdColor = t.getMotdColor().name();
         motd = t.getTownMOTD();
-        
+
         spawnLoc = Location.convertFromBukkitLocation(t.getSpawn(Bukkit.getServer()));
-        
+
         friendlyFire = t.allowsFriendlyFire();
         buyablePlots = t.usesBuyablePlots();
         economyJoins = t.usesEconomyJoins();
-        
+
         territories = t.getTerritoriesCollection();
         residents = Arrays.asList(t.getResidentNames());
         assistants = t.getAssistantNames();
         mayorName = t.getMayor();
-        
+
         defaultPlotPrice = t.getDefaultPlotPrice();
     }
 
@@ -108,6 +120,4 @@ public class TownView implements Serializable {
     public String getMayorName() {
         return mayorName;
     }
-    
-    
 }

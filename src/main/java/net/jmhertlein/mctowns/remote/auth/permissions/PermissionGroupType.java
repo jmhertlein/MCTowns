@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 joshua
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package net.jmhertlein.mctowns.remote.auth.permissions;
  * @author joshua
  */
 public enum PermissionGroupType {
+
     /**
      * A resident is unable to modify anything
      */

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -23,11 +39,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void addPlotToTerritory(String plotName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -37,7 +53,7 @@ public class TerritoryHandler extends CommandHandler {
 
         Town t = localSender.getActiveTown();
 
-        if(t == null) {
+        if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
@@ -63,7 +79,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        if (! selectionIsWithinParent(region, localSender.getActiveTerritory())) {
+        if (!selectionIsWithinParent(region, localSender.getActiveTerritory())) {
             localSender.sendMessage(ERR + "Selection is not in territory!");
             return;
         }
@@ -82,11 +98,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void removePlotFromTerritory(String plotName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -99,7 +115,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        if (! townManager.removePlot(plotName)) {
+        if (!townManager.removePlot(plotName)) {
             localSender.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
             return;
         }
@@ -108,11 +124,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void addPlayerToTerritory(String playerName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -121,26 +137,26 @@ public class TerritoryHandler extends CommandHandler {
         Territory territ = localSender.getActiveTerritory();
         Player player = server.getPlayer(playerName);
         Town t = localSender.getActiveTown();
-        
-        if(t == null) {
+
+        if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         if (territ == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
-        if(player == null) {
+        if (player == null) {
             localSender.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
-            
-            if(!t.playerIsResident(playerName)) {
+
+            if (!t.playerIsResident(playerName)) {
                 localSender.sendMessage(ERR + "That player is not a member of the town.");
                 return;
             }
         } else {
-            if(!t.playerIsResident(player)) {
+            if (!t.playerIsResident(player)) {
                 localSender.sendMessage(ERR + "That player is not a member of the town.");
                 return;
             }
@@ -154,11 +170,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void removePlayerFromTerritory(String player) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -186,11 +202,12 @@ public class TerritoryHandler extends CommandHandler {
 
 
             Plot p;
-            for(MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if(reg instanceof Plot) {
+            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
+                if (reg instanceof Plot) {
                     p = (Plot) reg;
-                    if(p.getParentTerritoryName().equals(territ.getName()))
+                    if (p.getParentTerritoryName().equals(territ.getName())) {
                         p.removePlayer(player);
+                    }
                 }
             }
 
@@ -206,11 +223,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void setActiveTerritory(String territName) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -231,7 +248,7 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        if(! nuActive.getParentTown().equals(t.getTownName())) {
+        if (!nuActive.getParentTown().equals(t.getTownName())) {
             localSender.sendMessage(ERR + "The territory \"" + territName + "\" does not exist in your town.");
             return;
         }
@@ -241,11 +258,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     private void listPlots(int page) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         page--; //shift to 0-indexing
 
         if (page < 0) {
@@ -271,11 +288,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void listPlots(String s_page) {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         int page;
         try {
             page = Integer.parseInt(s_page);
@@ -288,11 +305,11 @@ public class TerritoryHandler extends CommandHandler {
     }
 
     public void listPlots() {
-        if(localSender.isConsole()) {
+        if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
+
         listPlots(1);
     }
 }

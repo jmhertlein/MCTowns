@@ -1,17 +1,34 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.util;
 
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import java.util.LinkedList;
 import java.util.List;
-import net.jmhertlein.mctowns.MCTownsPlugin;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 /**
- * A ProtectedFenceRegion is a WorldGuard region that can be constructed from a fenced polygon
- * of blocks in-game. There are some restrictions that are detailed in the docs for "EasyRegion", 
- * mostly that they need to be closed polygons where each fence block touches exactly two other fences.
+ * A ProtectedFenceRegion is a WorldGuard region that can be constructed from a
+ * fenced polygon of blocks in-game. There are some restrictions that are
+ * detailed in the docs for "EasyRegion", mostly that they need to be closed
+ * polygons where each fence block touches exactly two other fences.
+ *
  * @author joshua
  */
 public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
@@ -24,13 +41,20 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
     }
 
     /**
-     * Creates a new ProtectedFenceRegion with the given ID (must be formatted manually to MCTowns spec)
-     * This is fairly "fire and forget", and handles most exceptional circumstances.
+     * Creates a new ProtectedFenceRegion with the given ID (must be formatted
+     * manually to MCTowns spec) This is fairly "fire and forget", and handles
+     * most exceptional circumstances.
+     *
      * @param id The name of the region to useas a GUID
      * @param l any fence in the polygon
      * @return the constructed PFR
-     * @throws net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException if the fenced-in region is not completed
-     * @throws net.jmhertlein.mctowns.util.ProtectedFenceRegion.InfiniteFenceLoopException if the fenced-in region is not properly formed (usually, where there exists a fence that touches more than exactly two fences)
+     * @throws
+     * net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException
+     * if the fenced-in region is not completed
+     * @throws
+     * net.jmhertlein.mctowns.util.ProtectedFenceRegion.InfiniteFenceLoopException
+     * if the fenced-in region is not properly formed (usually, where there
+     * exists a fence that touches more than exactly two fences)
      */
     public static final ProtectedFenceRegion assembleSelectionFromFenceOrigin(String id, Location l) throws IncompleteFenceException, MalformedFenceRegionException {
         LinkedList<BlockVector2D> points = new LinkedList<>();
@@ -45,7 +69,7 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
             dirToNext = getDirToNextFence(cameFrom, cur);
 
             //if there was a corner in the fence...
-            if(getOppositeDir(cameFrom) != dirToNext) {
+            if (getOppositeDir(cameFrom) != dirToNext) {
                 //add it to the polygon
                 points.add(new BlockVector2D(cur.getBlockX(), cur.getBlockZ()));
             }
@@ -73,12 +97,12 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
             numFenceSegmentsTried++;
         } while (!cur.equals(l) && numFenceSegmentsTried < FENCE_SEGMENT_THRESHOLD);
 
-        if(numFenceSegmentsTried >= FENCE_SEGMENT_THRESHOLD) {
+        if (numFenceSegmentsTried >= FENCE_SEGMENT_THRESHOLD) {
             throw new MalformedFenceRegionException();
         }
 
 
-        return new ProtectedFenceRegion(id, points, 0, l.getWorld().getMaxHeight()-1);
+        return new ProtectedFenceRegion(id, points, 0, l.getWorld().getMaxHeight() - 1);
     }
 
     private static final int getDirToNextFence(int cameFrom, Location l) {
@@ -117,17 +141,18 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
     }
 
     /**
-     * Thrown if a fence region is malformed such that it is not possible to finish
-     * parsing it
+     * Thrown if a fence region is malformed such that it is not possible to
+     * finish parsing it
      */
     public static class MalformedFenceRegionException extends Exception {
+
         public MalformedFenceRegionException() {
             super("Either the fence was too long (>1000 fence segments) or the fence is not a valid configuration.");
         }
     }
 
     private static int getOppositeDir(int dir) {
-        switch(dir) {
+        switch (dir) {
             case NORTH:
                 return SOUTH;
             case SOUTH:

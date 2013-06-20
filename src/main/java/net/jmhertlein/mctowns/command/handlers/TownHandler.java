@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -222,7 +238,7 @@ public class TownHandler extends CommandHandler {
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
         boolean admin = cmd.hasFlag(ECommand.ADMIN);
         boolean adminAllowed = localSender.hasExternalPermissions(Perms.ADMIN.toString());
-        
+
         if (!adminAllowed && admin) {
             localSender.sendMessage(ChatColor.DARK_RED + "You're not permitted to run this command with administrative priviliges!");
             return;
@@ -353,8 +369,9 @@ public class TownHandler extends CommandHandler {
 
         if (joinManager.townHasRequestFromPlayer(t, invitee)) {
             t.addPlayer(invitee);
-            if (p != null)
+            if (p != null) {
                 p.sendMessage("You have joined " + t.getTownName() + "!");
+            }
             broadcastTownJoin(t, invitee);
         } else {
             joinManager.invitePlayerToTown(invitee, t);
@@ -403,8 +420,9 @@ public class TownHandler extends CommandHandler {
 
         if (t.addAssistant(playerName)) {
             for (MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if (reg instanceof Territory && ((Territory) reg).getParentTown().equals(t.getTownName()))
+                if (reg instanceof Territory && ((Territory) reg).getParentTown().equals(t.getTownName())) {
                     ((Territory) reg).addPlayer(playerName);
+                }
             }
 
             localSender.sendMessage(playerName + " has been promoted to an assistant of " + t.getTownName() + ".");
@@ -458,8 +476,9 @@ public class TownHandler extends CommandHandler {
             for (MCTownsRegion reg : townManager.getRegionsCollection()) {
                 if (reg instanceof Territory) {
                     rmFrom = (Territory) reg;
-                    if (rmFrom.getParentTown().equals(t.getTownName()))
+                    if (rmFrom.getParentTown().equals(t.getTownName())) {
                         rmFrom.removePlayer(p.getName());
+                    }
                 }
             }
         } else {
@@ -829,13 +848,13 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         Location spawn = t.getTownSpawn(server);
-        if(spawn == null) {
+        if (spawn == null) {
             localSender.sendMessage(ERR + "Town spawn not set.");
             return;
         }
-        
+
         localSender.getPlayer().teleport(spawn);
         localSender.sendMessage(ChatColor.DARK_GRAY + "Teleported to " + t.getTownName() + "! Welcome!");
     }

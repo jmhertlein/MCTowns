@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.structure;
 
 import com.sk89q.worldedit.Vector;
@@ -6,7 +22,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.remote.view.PlotView;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,16 +35,15 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class Plot extends MCTownsRegion {
 
     private static final long serialVersionUID = "PLOT".hashCode(); // DO NOT CHANGE
-
     private volatile String parTerrName;
     private volatile String parTownName;
-
     private boolean forSale;
     private volatile BigDecimal price;
     private volatile Location signLoc;
 
     /**
      * Creates a new plot with the specified properties.
+     *
      * @param name
      * @param worldName
      * @param parentTerritoryName
@@ -41,7 +55,7 @@ public class Plot extends MCTownsRegion {
         price = MCTowns.getTownManager().getTown(parentTownName).getDefaultPlotPrice();
         parTerrName = parentTerritoryName;
         parTownName = parentTownName;
-        
+
         //note to self- don't put calculateSignLoc() here because it needs the region to already
         //be added to the region manager
     }
@@ -49,7 +63,8 @@ public class Plot extends MCTownsRegion {
     /**
      * Empty constructor for de-serialization. Recommended: Don't use this.
      */
-    private Plot() {}
+    private Plot() {
+    }
 
     /**
      *
@@ -216,23 +231,27 @@ public class Plot extends MCTownsRegion {
         p.parTownName = f.getString("parentTownName");
         p.forSale = f.getBoolean("forSale");
 
-        if(f.getString("signLoc").equals("nil"))
+        if (f.getString("signLoc").equals("nil")) {
             p.signLoc = null;
-        else
+        } else {
             p.signLoc = Location.fromList(f.getStringList("signLoc"));
+        }
 
-        if(f.getString("price").equals("nil"))
+        if (f.getString("price").equals("nil")) {
             p.price = null;
-        else
+        } else {
             p.price = new BigDecimal(f.getString("price"));
+        }
 
         return p;
     }
-    
+
     /**
-     * Updates the plot so that it reflects changes made to the PlotView
-     * NOTE: This will not modify player membership (owners or guests) or any non-mutable metadata (name, world, parent town, parent territ)
-     * @param view 
+     * Updates the plot so that it reflects changes made to the PlotView NOTE:
+     * This will not modify player membership (owners or guests) or any
+     * non-mutable metadata (name, world, parent town, parent territ)
+     *
+     * @param view
      */
     public void updatePlot(PlotView view) {
         this.forSale = view.isForSale();

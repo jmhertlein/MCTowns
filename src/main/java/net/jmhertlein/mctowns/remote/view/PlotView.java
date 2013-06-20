@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 joshua
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.Plot;
 import org.bukkit.Bukkit;
 
@@ -32,12 +31,12 @@ import org.bukkit.Bukkit;
  * @author joshua
  */
 public class PlotView implements Serializable {
+
     private final String parTownName, parTerrName,
             worldName, plotName;
     private final boolean forSale;
     private final BigDecimal price;
     private final Location signLoc;
-    
     private final List<String> playerNames, guestNames;
 
     public PlotView(String plotName, String worldName, boolean forSale, BigDecimal price, Location signLoc) {
@@ -51,7 +50,7 @@ public class PlotView implements Serializable {
         playerNames = null;
         guestNames = null;
     }
-    
+
     public PlotView(Plot p) {
         worldName = p.getWorldName();
         plotName = p.getName();
@@ -60,7 +59,7 @@ public class PlotView implements Serializable {
         forSale = p.isForSale();
         price = p.getPrice();
         signLoc = p.getSignLoc();
-        
+
         ProtectedRegion r = MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getWorld(worldName)).getRegion(plotName);
         playerNames = new LinkedList<>(r.getOwners().getPlayers());
         guestNames = new LinkedList<>(r.getMembers().getPlayers());
@@ -101,6 +100,4 @@ public class PlotView implements Serializable {
     public List<String> getGuestNames() {
         return guestNames;
     }
-    
-    
 }

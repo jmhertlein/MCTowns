@@ -1,6 +1,21 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.structure;
 
-import com.google.common.collect.Sets;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -9,7 +24,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.remote.view.TownView;
@@ -24,6 +38,7 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class Town {
+
     private static final long serialVersionUID = "TOWN".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 0;
     //the town name
@@ -78,10 +93,10 @@ public class Town {
         defaultPlotPrice = BigDecimal.TEN;
         friendlyFire = false;
         motdColor = ChatColor.GOLD;
-        
+
         residents.add(mayor.getName());
     }
-    
+
     public Town(String townName, String mayorName, Location townSpawnLoc) {
         this.townName = townName;
         mayor = mayorName;
@@ -99,11 +114,12 @@ public class Town {
         defaultPlotPrice = BigDecimal.TEN;
         friendlyFire = false;
         motdColor = ChatColor.GOLD;
-        
+
         residents.add(mayor);
     }
 
-    private Town() {}
+    private Town() {
+    }
 
     /**
      *
@@ -152,8 +168,6 @@ public class Town {
     public ChatColor getMotdColor() {
         return motdColor;
     }
-    
-    
 
     /**
      * Returns the town's name
@@ -271,7 +285,7 @@ public class Town {
         return removeAssistant(player);
 
     }
-    
+
     public boolean removeAssistant(String player) {
         if (!assistants.contains(player)) {
             return false;
@@ -284,15 +298,15 @@ public class Town {
 
     /**
      * Returns the territories this town has.
-     * 
-     * Modifying membership of returned set does not modify which territs
-     * are in this Town
-     * 
-     * Sets returned by this method will not update themselves if subsequent Town method
-     * calls add Territories to it
-     * 
-     * Returned Set is a LinkedHashSet and as such performs well for
-     * iteration and set membership checks
+     *
+     * Modifying membership of returned set does not modify which territs are in
+     * this Town
+     *
+     * Sets returned by this method will not update themselves if subsequent
+     * Town method calls add Territories to it
+     *
+     * Returned Set is a LinkedHashSet and as such performs well for iteration
+     * and set membership checks
      *
      * @return the town's territories
      */
@@ -322,22 +336,22 @@ public class Town {
 
     /**
      * Returns the list of all assistants in the town
-     * 
-     * Modifying membership of returned set does not modify which players
-     * are assistants in this Town
-     * 
-     * Sets returned by this method will not update themselves if subsequent Town method
-     * calls add assistants to it
-     * 
-     * Returned Set is a LinkedHashSet and as such performs well for
-     * iteration and set membership checks
+     *
+     * Modifying membership of returned set does not modify which players are
+     * assistants in this Town
+     *
+     * Sets returned by this method will not update themselves if subsequent
+     * Town method calls add assistants to it
+     *
+     * Returned Set is a LinkedHashSet and as such performs well for iteration
+     * and set membership checks
      *
      * @return
      */
     public String[] getResidentNames() {
         return residents.toArray(new String[residents.size()]);
     }
-    
+
     public Set<String> getAssistantNames() {
         return new LinkedHashSet<>(assistants);
     }
@@ -377,8 +391,8 @@ public class Town {
     public boolean playerIsResident(Player p) {
         return residents.contains(p.getName());
     }
-    
-     /**
+
+    /**
      * Returns whether or not the player is a resident of the town
      *
      * @param p the name of the player to be checked
@@ -444,8 +458,8 @@ public class Town {
 
         ProtectedRegion tempReg;
         for (MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
-            if(mctReg instanceof Territory) {
-                tempReg = regMan.getRegion( ((Territory)mctReg).getName());
+            if (mctReg instanceof Territory) {
+                tempReg = regMan.getRegion(((Territory) mctReg).getName());
                 if (tempReg != null) {
                     if (tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ()))) {
                         return true;
@@ -538,7 +552,7 @@ public class Town {
         List<String> list = new LinkedList<>();
         list.addAll(assistants);
         f.set("assistants", list);
-        
+
         List<String> resList = new LinkedList<>();
         resList.addAll(residents);
         f.set("residents", resList);
@@ -547,7 +561,7 @@ public class Town {
         f.set("defaultPlotPrice", defaultPlotPrice.toString());
         f.set("economyJoins", economyJoins);
         f.set("buyablePlots", buyablePlots);
-        
+
         bank.writeYAML(f);
     }
 
@@ -563,7 +577,7 @@ public class Town {
 
         t.assistants = new HashSet<>();
         t.assistants.addAll(f.getStringList("assistants"));
-        
+
         t.residents = new HashSet<>();
         t.residents.addAll(f.getStringList("residents"));
 
@@ -575,19 +589,19 @@ public class Town {
         t.bank = BlockBank.readYAML(f);
         return t;
     }
-    
+
     public static void recursivelyRemovePlayerFromTown(OfflinePlayer p, Town t) {
         TownManager tMan = MCTowns.getTownManager();
-        
-        for(String teName : t.getTerritoriesCollection()) {
+
+        for (String teName : t.getTerritoriesCollection()) {
             Territory te = tMan.getTerritory(teName);
-            for(String plName : te.getPlotsCollection()) {
+            for (String plName : te.getPlotsCollection()) {
                 Plot pl = tMan.getPlot(plName);
                 pl.removePlayer(p);
             }
             te.removePlayer(p);
         }
-        
+
         t.removePlayer(p);
     }
 
@@ -607,11 +621,14 @@ public class Town {
 
         return ret;
     }
-    
+
     /**
      * Updates the Town so that it reflects any changes made to the TownView
-     * NOTE: This method does NOT change town memberships, territories, assistants, or the town bank. Use their corresponding Town methods to change them.
-     * @param view 
+     * NOTE: This method does NOT change town memberships, territories,
+     * assistants, or the town bank. Use their corresponding Town methods to
+     * change them.
+     *
+     * @param view
      */
     public void updateTown(TownView view) {
         this.buyablePlots = view.isBuyablePlots();

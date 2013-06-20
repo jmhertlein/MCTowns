@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.listeners;
 
 import java.util.HashMap;
@@ -14,7 +30,6 @@ import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.ProtectedFenceRegion;
 import net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,8 +47,8 @@ import org.bukkit.util.Vector;
  * @author Joshua
  */
 public class MCTPlayerListener implements Listener {
-    private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
 
+    private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
     private MCTownsPlugin plugin;
     private TownManager townManager;
     private TownJoinManager joinManager;
@@ -52,35 +67,38 @@ public class MCTPlayerListener implements Listener {
     }
 
     /**
-     * Informs the player of any towns they're invited to
-     * tells them the MOTD for each town they're in, 
-     * and if they're the mayor, tells them about pending invites and requests
+     * Informs the player of any towns they're invited to tells them the MOTD
+     * for each town they're in, and if they're the mayor, tells them about
+     * pending invites and requests
+     *
      * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         List<Town> towns = townManager.matchPlayerToTowns(p);
-        
-        List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
-        if(!townsInvitedTo.isEmpty())
-            p.sendMessage(INFO + "You are currently invited to join the following towns:");
 
-        for(Town t : townsInvitedTo) {
+        List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
+        if (!townsInvitedTo.isEmpty()) {
+            p.sendMessage(INFO + "You are currently invited to join the following towns:");
+        }
+
+        for (Town t : townsInvitedTo) {
             p.sendMessage(INFO + t.getTownName());
         }
-        
-        for(Town t : towns) {
+
+        for (Town t : towns) {
             p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
-            if(t.playerIsMayor(p)) {
-                if(! joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
+            if (t.playerIsMayor(p)) {
+                if (!joinManager.getPlayersRequestingMembershipToTown(t).isEmpty()) {
                     p.sendMessage(INFO + t.getTownName() + " has players requesting to join.");
+                }
             }
         }
-        
-        
-        
-        
+
+
+
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -130,28 +148,30 @@ public class MCTPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.SignChangeEvent e) {
-        if(e.getBlock().getType() != Material.SIGN_POST)
+        if (e.getBlock().getType() != Material.SIGN_POST) {
             return;
+        }
 
         Sign sign = (Sign) e.getBlock().getState();
 
         System.out.println("First line: " + e.getLine(0));
 
-        if(! e.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
+        if (!e.getLine(0).equals(FENCEREGION_SIGN_PREFIX)) {
             return;
-        
+        }
+
         Player p = e.getPlayer();
 
         ActiveSet pActive = plugin.getActiveSets().get(p.getName());
 
-        if(pActive == null) {
+        if (pActive == null) {
             p.sendMessage(ChatColor.RED + "Your active town is not set.");
             return;
         }
 
         Town t = pActive.getActiveTown();
 
-        if(t == null) {
+        if (t == null) {
             p.sendMessage(ChatColor.RED + "Your active town is not set.");
             return;
         }
@@ -163,12 +183,12 @@ public class MCTPlayerListener implements Listener {
             isMayor = false;
         }
 
-        if(!isMayor) {
+        if (!isMayor) {
             p.sendMessage(ChatColor.RED + "Insufficient permission.");
             return;
         }
 
-        if(pActive.getActiveTerritory() == null) {
+        if (pActive.getActiveTerritory() == null) {
             p.sendMessage(ChatColor.RED + "You need to set your active territory if you want to add a plot.");
             return;
         }
@@ -177,10 +197,11 @@ public class MCTPlayerListener implements Listener {
         try {
             nuName = e.getLine(1);
 
-            if(nuName.isEmpty())
+            if (nuName.isEmpty()) {
                 throw new IndexOutOfBoundsException();
+            }
 
-        } catch(IndexOutOfBoundsException ioobe) {
+        } catch (IndexOutOfBoundsException ioobe) {
             p.sendMessage(ChatColor.RED + "Error: The second line must contain a name for the new plot.");
             return;
         }
@@ -193,12 +214,12 @@ public class MCTPlayerListener implements Listener {
         Vector deltaVector = signLoc.getDirection().multiply(-1);
 
         int count = 0;
-        while(signLoc.getBlock().getType() != Material.FENCE && count < 100) {
+        while (signLoc.getBlock().getType() != Material.FENCE && count < 100) {
             signLoc = signLoc.add(deltaVector);
-            count ++;
+            count++;
         }
 
-        if(count >= 100) {
+        if (count >= 100) {
             p.sendMessage(ChatColor.RED + "Error: couldn't find a fence within 100 blocks, aborting.");
             return;
         }
@@ -209,12 +230,12 @@ public class MCTPlayerListener implements Listener {
         } catch (IncompleteFenceException ex) {
             p.sendMessage(ChatColor.RED + "Error: Fence was not complete. Fence must be a complete polygon.");
             return;
-        } catch(ProtectedFenceRegion.MalformedFenceRegionException ifle) {
+        } catch (ProtectedFenceRegion.MalformedFenceRegionException ifle) {
             p.sendMessage(ChatColor.RED + "Error: " + ifle.getLocalizedMessage());
             return;
         }
 
-        if(! CommandHandler.selectionIsWithinParent(fencedReg, pActive.getActiveTerritory())) {
+        if (!CommandHandler.selectionIsWithinParent(fencedReg, pActive.getActiveTerritory())) {
             p.sendMessage(ChatColor.RED + "Error: The selected region is not within your active territory.");
             return;
         }

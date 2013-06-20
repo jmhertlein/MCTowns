@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
@@ -80,8 +96,9 @@ public class MCTHandler extends CommandHandler {
         townManager.removeTown(townName);
 
         try {
-            for(World w : Bukkit.getWorlds())
+            for (World w : Bukkit.getWorlds()) {
                 MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
+            }
         } catch (ProtectionDatabaseException ex) {
             MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
             MCTowns.logSevere(ex.getMessage());

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 Joshua Michael Hertlein <jmhertlein@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.jmhertlein.mctowns.townjoin;
 
 import java.util.ArrayList;
@@ -32,14 +48,15 @@ public class TownJoinManager {
     public void invitePlayerToTown(final String playerName, final Town invitedTo) {
         Set<Town> towns = joinInvitations.get(playerName);
 
-        if (towns == null)
+        if (towns == null) {
             joinInvitations.put(playerName, new HashSet<Town>() {
                 {
                     this.add(invitedTo);
                 }
             });
-        else
+        } else {
             towns.add(invitedTo);
+        }
 
     }
 
@@ -52,14 +69,15 @@ public class TownJoinManager {
     public void addPlayerRequestForTown(final Town requestJoinTo, final String playerName) {
         Set<String> players = joinRequests.get(requestJoinTo);
 
-        if (players == null)
+        if (players == null) {
             joinRequests.put(requestJoinTo, new HashSet<String>() {
                 {
                     this.add(playerName);
                 }
             });
-        else
+        } else {
             players.add(playerName);
+        }
     }
 
     public boolean townHasRequestFromPlayer(Town t, String playerName) {
@@ -102,8 +120,9 @@ public class TownJoinManager {
     public List<Town> getTownsPlayerIsInvitedTo(String playerName) {
         ArrayList<Town> ret = new ArrayList<>();
         for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
-            if (e.getKey().equals(playerName))
+            if (e.getKey().equals(playerName)) {
                 ret.addAll(e.getValue());
+            }
         }
 
         return ret;
@@ -113,11 +132,12 @@ public class TownJoinManager {
      * Gets all current requests for the town.
      *
      * @param t
-     * @return A set of requests. Changes made to the set will be reflected in later calls to this method
+     * @return A set of requests. Changes made to the set will be reflected in
+     * later calls to this method
      */
     public Set<String> getPlayersRequestingMembershipToTown(Town t) {
         Set<String> r = joinRequests.get(t);
-        if(r == null) {
+        if (r == null) {
             r = new HashSet<>();
             joinRequests.put(t, r);
         }
