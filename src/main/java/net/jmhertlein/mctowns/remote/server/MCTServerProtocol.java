@@ -65,6 +65,7 @@ import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -432,8 +433,11 @@ public class MCTServerProtocol {
         result = Bukkit.getScheduler().callSyncMethod(p, c);
         try {
             oos.writeObject(result.get());
-            if(result.get())
+            if(result.get()) {
                 logInfo(String.format("%s deleted a town (%s).", clientName, townName));
+                MCTowns.logInfo(clientName + " has deleted the town " + townName + " from the remote admin client.");
+                Bukkit.getServer().broadcastMessage("The town " + townName + " has been disbanded.");
+            }
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
         }
@@ -458,8 +462,10 @@ public class MCTServerProtocol {
         Boolean result = MCTowns.getTownManager().addTown(townName, mayorName, spawn) == null ? false : true;
 
         oos.writeObject(result);
-        if(result)
+        if(result) {
             logInfo(String.format("%s created a town (%s).", clientName, townName));
+            Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "The town " + townName + " has been founded!");
+        }
     }
 
     private void modifyPlotMembership(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
