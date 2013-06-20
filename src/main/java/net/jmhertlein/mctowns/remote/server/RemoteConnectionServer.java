@@ -74,8 +74,8 @@ public class RemoteConnectionServer extends Thread {
             try {
                 client = server.accept();
             } catch (IOException ex) {
-                System.err.println("Error accepting client connection: " + ex);
-                System.err.println("Bad connection or server socket closing.");
+                MCTowns.logWarning("Error accepting client connection: " + ex);
+                MCTowns.logWarning("Bad connection or server socket closing.");
                 continue;
             }
 
@@ -95,7 +95,6 @@ public class RemoteConnectionServer extends Thread {
             }
         } catch (InterruptedException ignore) {
         }
-        System.out.println("Closed cleanly.");
     }
 
     private void loadServerKeys() throws IOException {
@@ -107,32 +106,29 @@ public class RemoteConnectionServer extends Thread {
         boolean regenKeys = false;
 
         if (!pubKeyFile.exists()) {
-            System.err.println("Error loading pubkey. Will generate new keypair.");
+            MCTowns.logWarning("Error loading pubkey. Will generate new keypair.");
             regenKeys = true;
         }
 
         if (!privKeyFile.exists()) {
-            System.err.println("Error loading private key. Will generate new keypair.");
+            MCTowns.logWarning("Error loading private key. Will generate new keypair.");
             regenKeys = true;
         }
 
         if (regenKeys) {
             int length = p.getConfig().getInt("remoteAdminKeyLength");
-            System.out.println("Generating new key pair of length " + length + ", this may take a moment.");
+            MCTowns.logWarning("Generating new key pair of length " + length + ", this may take a moment.");
             KeyPair pair = Keys.newRSAKeyPair(length);
-            System.out.println("New key pair generated.");
+            MCTowns.logInfo("New key pair generated.");
 
             Keys.storeKey(pubKeyFile, pair.getPublic());
             Keys.storeKey(privKeyFile, pair.getPrivate());
             this.privateKey = pair.getPrivate();
             this.pubKey = pair.getPublic();
         } else {
-            System.out.println("Loading keys from disk.");
             this.pubKey = Keys.loadPubKey(pubKeyFile);
             this.privateKey = Keys.loadPrivateKey(privKeyFile);
-            System.out.println("Keys loaded from disk.");
+            MCTowns.logInfo("Keys loaded from disk.");
         }
-
-        System.out.println("Done loading server keys.");
     }
 }

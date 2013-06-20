@@ -126,11 +126,9 @@ public class MCTServerProtocol {
 
         clientName = (String) ois.readObject();
 
-        System.out.println("Loading client key from disk.");
         PublicIdentity identity = loadIdentityFromDisk();
 
         if (identity == null) {
-            System.out.println("Didnt have public key for user. Exiting.");
             oos.writeObject(false);
             return false;
         } else {
@@ -144,13 +142,12 @@ public class MCTServerProtocol {
         Cipher inCipher = Cipher.getInstance("RSA");
         inCipher.init(Cipher.DECRYPT_MODE, serverPrivateKey);
 
-        System.out.println("Sending our public key.");
         oos.writeObject(serverPubKey);
 
         Boolean clientAcceptsPublicKey = (Boolean) ois.readObject();
 
         if (!clientAcceptsPublicKey) {
-            System.out.println("Client did not accept our public key- did not match their cached copy.");
+            MCTowns.logWarning("Client did not accept our public key- did not match their cached copy.");
             return false;
         }
 
@@ -165,7 +162,7 @@ public class MCTServerProtocol {
             oos.writeObject(true);
         } else {
             oos.writeObject(false);
-            System.out.println("Rejecting client challenge response.");
+            MCTowns.logWarning("Rejecting client challenge response.");
             return false;
         }
 
@@ -175,7 +172,7 @@ public class MCTServerProtocol {
         Boolean clientAcceptsUs = (Boolean) ois.readObject();
 
         if (!clientAcceptsUs) {
-            System.out.println("Client did not accept us as server they wanted to connect to.");
+            MCTowns.logWarning("Client did not accept us as server they wanted to connect to.");
             return false;
         }
 
@@ -184,14 +181,13 @@ public class MCTServerProtocol {
         oos.writeObject(new EncryptedSecretKey(newKey, outCipher));
 
         BASE64Encoder e = new BASE64Encoder();
-        System.out.println(e.encode(newKey.getEncoded()));
 
 
         int assignedSessionID = nextSessionID;
         nextSessionID++;
 
         sessionKeys.put(assignedSessionID, new ClientSession(assignedSessionID, identity, newKey));
-        System.out.println("Client assigned session id " + assignedSessionID);
+        MCTowns.logInfo("Client assigned session id " + assignedSessionID);
 
         oos.writeObject(assignedSessionID);
 
@@ -208,7 +204,7 @@ public class MCTServerProtocol {
         //if client indicates it does not have a session ID
         if (clientSessionID < 0) {
             if (!doInitialKeyExchange()) {
-                System.err.println("User from " + client.getInetAddress() + " (Username: " + clientName + ")" + " tried to connect, but was not authorized.");
+                MCTowns.logWarning("User from " + client.getInetAddress() + " (Username: " + clientName + ")" + " tried to connect, but was not authorized.");
             }
             return;
         }
@@ -258,7 +254,6 @@ public class MCTServerProtocol {
     }
 
     private void sendAllPlayersList(ObjectOutputStream oos, ObjectInputStream ois) throws IOException {
-        System.out.println("Creating list of all players ever played.");
         List<String> playerList = new LinkedList<>();
 
         for (OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
@@ -266,7 +261,6 @@ public class MCTServerProtocol {
         }
 
         oos.writeObject(playerList);
-        System.out.println("Sent list.");
     }
 
     private void sendPlayerView(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
