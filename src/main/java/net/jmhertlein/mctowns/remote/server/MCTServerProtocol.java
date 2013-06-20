@@ -436,7 +436,7 @@ public class MCTServerProtocol {
             if(result.get()) {
                 logInfo(String.format("%s deleted a town (%s).", clientName, townName));
                 MCTowns.logInfo(clientName + " has deleted the town " + townName + " from the remote admin client.");
-                Bukkit.getServer().broadcastMessage("The town " + townName + " has been disbanded.");
+                Bukkit.getServer().broadcastMessage(ChatColor.DARK_RED + "The town " + townName + " has been disbanded.");
             }
         } catch (InterruptedException | ExecutionException ex) {
             oos.writeObject(false);
