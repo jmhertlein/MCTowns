@@ -109,17 +109,19 @@ public class MCTServerProtocol {
 
     private boolean doInitialKeyExchange() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-
+        ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+        
+        oos.writeObject(MCTownsPlugin.getPlugin().getDescription().getVersion());
+        
         action = (RemoteAction) ois.readObject();
 
         clientName = (String) ois.readObject();
 
         System.out.println("Loading client key from disk.");
-        //PublicKey clientKey = Keys.loadPubKey(new File(authKeysDir, clientName + ".pub"));
         PublicIdentity identity = loadIdentityFromDisk();
 
 
-        ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+        
 
         if (identity == null) {
             System.out.println("Didnt have public key for user. Exiting.");
