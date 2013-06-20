@@ -364,7 +364,7 @@ public class TownHandler extends CommandHandler {
         if (p == null) {
             localSender.sendMessage(INFO + "\"" + invitee + "\" is not online. The invitation will be sent, but please double-check their name.");
         } else {
-            invitee = p.getName(); //let's use that sexy name-completion
+            invitee = p.getName();
         }
 
         if (joinManager.townHasRequestFromPlayer(t, invitee)) {

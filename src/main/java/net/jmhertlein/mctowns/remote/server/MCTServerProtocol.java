@@ -71,6 +71,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -565,7 +566,7 @@ public class MCTServerProtocol {
 
     private void modifyTownMembership(ObjectOutputStream oos, ObjectInputStream ois) throws ClassNotFoundException, IOException {
         Integer opMode = (Integer) ois.readObject();
-        String playerName = (String) ois.readObject();
+        final String playerName = (String) ois.readObject();
         String townName = (String) ois.readObject();
 
         if (Bukkit.getServer().getOfflinePlayer(playerName) == null) {
@@ -573,7 +574,7 @@ public class MCTServerProtocol {
             return;
         }
 
-        Town town = MCTowns.getTownManager().getTown(townName);
+        final Town town = MCTowns.getTownManager().getTown(townName);
 
         if (town == null) {
             oos.writeObject(false);
@@ -589,9 +590,17 @@ public class MCTServerProtocol {
         Boolean result = null;
 
         if (opMode.intValue() == RemoteAction.MODE_ADD_PLAYER) {
-            result = town.addPlayer(playerName);
-            if(result)
-                logInfo(String.format("%s added %s to the town %s", clientName, playerName, townName));
+            MCTownsPlugin.getPlugin().getJoinManager().invitePlayerToTown(playerName, town);
+            Bukkit.getScheduler().callSyncMethod(p, new Callable() {
+                @Override
+                public Object call() throws Exception {
+                    Player p = Bukkit.getPlayerExact(playerName);
+                    p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + town.getTownName() + "!");
+                p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + town.getTownName());
+                    return null;
+                }
+            });
+            logInfo(String.format("%s invited %s to the town %s", clientName, playerName, townName));
         } else if (opMode.intValue() == RemoteAction.MODE_DELETE_PLAYER) {
             town.removePlayer(playerName);
             logInfo(String.format("%s removed %s from the town %s", clientName, playerName, townName));
