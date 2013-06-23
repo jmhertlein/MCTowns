@@ -251,14 +251,16 @@ public class MCTownsPlugin extends JavaPlugin {
                 regions = fileConfig.getStringList("regions");
 
         for (File f : root.listFiles()) {
-            if (dataDirs.contains(f) || configFiles.contains(f)) //not really necessary since nothing but town files are in saves now, but... better safe.
+            //not really necessary since nothing but town files are in saves now, but... better safe.
+            if (dataDirs.contains(f) || configFiles.contains(f)) 
             {
                 continue;
             }
 
-            String trunc = f.getName().substring(0, f.getName().lastIndexOf('.'));
+            //snips off the ".yml" from the end of the files, so they'll match their region or town names again
+            String regionName = f.getName().substring(0, f.getName().lastIndexOf('.'));
 
-            if (!(towns.contains(trunc) || regions.contains(trunc))) {
+            if (!(towns.contains(regionName) || regions.contains(regionName))) {
                 f.delete();
             }
         }

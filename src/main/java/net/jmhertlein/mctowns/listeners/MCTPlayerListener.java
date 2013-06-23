@@ -81,11 +81,13 @@ public class MCTPlayerListener implements Listener {
         List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
         if (!townsInvitedTo.isEmpty()) {
             p.sendMessage(INFO + "You are currently invited to join the following towns:");
+
+            for (Town t : townsInvitedTo) {
+                p.sendMessage(INFO + t.getTownName());
+            }
         }
 
-        for (Town t : townsInvitedTo) {
-            p.sendMessage(INFO + t.getTownName());
-        }
+
 
         for (Town t : towns) {
             p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
@@ -153,8 +155,6 @@ public class MCTPlayerListener implements Listener {
         }
 
         Sign sign = (Sign) e.getBlock().getState();
-
-        System.out.println("First line: " + e.getLine(0));
 
         if (!e.getLine(0).equals(FENCEREGION_SIGN_PREFIX)) {
             return;
