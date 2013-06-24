@@ -137,6 +137,8 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private void setupFiles() {
         saveDefaultConfig();
+        
+        saveVersionNumber();
 
         authKeysDir = new File(this.getDataFolder(), "auth_keys");
         rsaKeysDir = new File(this.getDataFolder(), "rsa_keys");
@@ -359,5 +361,18 @@ public class MCTownsPlugin extends JavaPlugin {
 
     public FileConfiguration getRemoteConfig() {
         return remoteConfig;
+    }
+
+    private void saveVersionNumber() {
+        File f = new File(this.getDataFolder(), "version.yml");
+        if(!f.exists()) {
+            FileConfiguration c = new YamlConfiguration();
+            c.set("version", this.getDescription().getVersion());
+            try {
+                c.save(f);
+            } catch (IOException ex) {
+                MCTowns.logSevere("Error writing version to disk: " + ex.getLocalizedMessage());
+            }
+        }
     }
 }
