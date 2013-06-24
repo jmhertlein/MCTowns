@@ -904,7 +904,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        int numBlocks = t.getBank().queryBlocks(block.getId());
+        int numBlocks = t.getBank().queryBlocks(block);
 
         localSender.sendMessage(ChatColor.DARK_AQUA + "There are " + (numBlocks == -1 ? "0" : numBlocks) + " blocks of " + blockName + " in the bank.");
     }
@@ -932,6 +932,7 @@ public class TownHandler extends CommandHandler {
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
+            return;
         }
 
         if (!t.playerIsInsideTownBorders(localSender.getPlayer()) && !localSender.hasExternalPermissions(Perms.WITHDRAW_BANK_OUTSIDE_BORDERS.toString())) {
@@ -948,7 +949,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (bank.withdrawBlocks(block.getId(), quantity)) {
+        if (bank.withdrawBlocks(block, quantity)) {
             Player p = localSender.getPlayer();
             p.getInventory().addItem(new ItemStack(block.getId(), quantity));
             localSender.sendMessage("Blocks withdrawn.");
@@ -992,7 +993,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (bank.depositBlocks(block.getId(), quantity)) {
+        if (bank.depositBlocks(block, quantity)) {
             localSender.getPlayer().getInventory().removeItem(new ItemStack(block.getId(), quantity));
             localSender.sendMessage("Blocks deposited.");
         } else {
@@ -1055,11 +1056,8 @@ public class TownHandler extends CommandHandler {
         //DO the withdrawl from the town bank
         amt = t.getBank().withdrawCurrency(amt);
 
-
         MCTowns.getEconomy().depositPlayer(localSender.getPlayer().getName(), amt.doubleValue());
         localSender.sendMessage(amt + " was withdrawn from " + t.getTownName() + "'s town bank and deposited into your account.");
-
-
     }
 
     public void depositCurrencyBank(String quantity) {

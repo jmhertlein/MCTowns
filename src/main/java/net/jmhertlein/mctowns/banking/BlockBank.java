@@ -34,7 +34,7 @@ public class BlockBank {
 
     private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
     private static final int VERSION = 1;
-    private Map<Integer, Integer> bank;
+    private Map<Material, Integer> bank;
     private volatile BigDecimal townFunds;
 
     /**
@@ -48,21 +48,21 @@ public class BlockBank {
     /**
      * Deposits blocks into the block bank.
      *
-     * @param dataValue the type of block to deposit
+     * @param blockType the type of block to deposit
      * @param quantity the number of blocks to deposit
      * @return true if the blocks were deposited, false if they were not due to
      * any reason.
      */
-    public boolean depositBlocks(int dataValue, int quantity) {
+    public boolean depositBlocks(Material blockType, int quantity) {
 
         if (quantity <= 0) {
             return false;
         }
 
-        if (bank.containsKey(dataValue)) {
-            bank.put(dataValue, quantity + bank.get(dataValue));
+        if (bank.containsKey(blockType)) {
+            bank.put(blockType, quantity + bank.get(blockType));
         } else {
-            bank.put(dataValue, quantity);
+            bank.put(blockType, quantity);
         }
 
         return true;
@@ -70,25 +70,25 @@ public class BlockBank {
 
     /**
      * Attempts to subtract quantity blocks of type corresponding to dataValue
-     * from the bank. The withdrawl either completes successfully (EXACTLY
+     * from the bank. The withdrawal either completes successfully (EXACTLY
      * 'quantity' blocks were withdrawn) and true is returned, or NOTHING
      * happens and false is returned.
      *
-     * @param dataValue the type of block to withdraw
+     * @param blockType the type of block to withdraw
      * @param quantity the number of blocks to withdraw
      * @return true if the full number of blocks were withdrawn, false otherwise
      */
-    public boolean withdrawBlocks(int dataValue, int quantity) {
+    public boolean withdrawBlocks(Material blockType, int quantity) {
         if (quantity <= 0) {
             return false;
         }
 
-        if (bank.containsKey(dataValue)) {
-            if (bank.get(dataValue) - quantity < 0) {
+        if (bank.containsKey(blockType)) {
+            if (bank.get(blockType) - quantity < 0) {
                 return false;
             }
 
-            bank.put(dataValue, bank.get(dataValue) - quantity);
+            bank.put(blockType, bank.get(blockType) - quantity);
             return true;
         } else {
             return false;
@@ -98,12 +98,12 @@ public class BlockBank {
     /**
      * Checks how many blocks of a certain data value are in the bank
      *
-     * @param dataValue the data value of the block to be queried
+     * @param blockType the data value of the block to be queried
      * @return the number of blocks in the bank for the given data value
      */
-    public int queryBlocks(int dataValue) {
-        if (bank.containsKey(dataValue)) {
-            return bank.get(dataValue).intValue();
+    public int queryBlocks(Material blockType) {
+        if (bank.containsKey(blockType)) {
+            return bank.get(blockType).intValue();
         }
         return -1;
     }
@@ -145,8 +145,8 @@ public class BlockBank {
 
         List<String> l = new LinkedList<>();
 
-        for (Entry<Integer, Integer> e : bank.entrySet()) {
-            l.add(Material.getMaterial(e.getKey()).name() + "|" + e.getValue().toString());
+        for (Entry<Material, Integer> e : bank.entrySet()) {
+            l.add(e.getKey().name() + "|" + e.getValue().toString());
         }
 
         f.set("bank.contents", l);
@@ -160,7 +160,7 @@ public class BlockBank {
 
         for (String s : f.getStringList("bank.contents")) {
             temp = s.split("[|]");
-            bank.bank.put(Material.valueOf(temp[0]).getId(), Integer.parseInt(temp[1].trim()));
+            bank.bank.put(Material.valueOf(temp[0]), Integer.parseInt(temp[1].trim()));
         }
 
         bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));
