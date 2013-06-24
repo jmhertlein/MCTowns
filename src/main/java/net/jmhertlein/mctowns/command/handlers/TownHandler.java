@@ -959,46 +959,49 @@ public class TownHandler extends CommandHandler {
     }
 
     public void depositBlockBank(String blockName, String s_quantity) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
-        Town t = localSender.getActiveTown();
-
-        if (t == null) {
-            localSender.notifyActiveTownNotSet();
-            return;
-        }
-
-        int quantity;
-
-        try {
-            quantity = Integer.parseInt(s_quantity);
-        } catch (Exception e) {
-            localSender.sendMessage(ERR + "Error on parsing block quantity: not a valid integer.");
-            return;
-        }
-
-        BlockBank bank = t.getBank();
-        Material block = Material.matchMaterial(blockName);
-
-        if (block == null) {
-            localSender.sendMessage(ERR + blockName + " is not a valid block name.");
-            return;
-        }
-
-        if (!localSender.getPlayer().getInventory().contains(block.getId(), quantity)) {
-            localSender.sendMessage(ERR + "You do not have enough " + blockName + " to deposit that much.");
-            return;
-        }
-
-        if (bank.depositBlocks(block, quantity)) {
-            localSender.getPlayer().getInventory().removeItem(new ItemStack(block.getId(), quantity));
-            localSender.sendMessage("Blocks deposited.");
-        } else {
-            localSender.sendMessage(ERR + "Invalid quantity. Please input a number greater than 0.");
-        }
+        localSender.sendMessage(ChatColor.RED + "Depositing blocks in the block bank is currently disabled until some major issues with its implementation can be resolved.");
+        return;
+//        
+//        if (localSender.isConsole()) {
+//            localSender.notifyConsoleNotSupported();
+//            return;
+//        }
+//
+//        Town t = localSender.getActiveTown();
+//
+//        if (t == null) {
+//            localSender.notifyActiveTownNotSet();
+//            return;
+//        }
+//
+//        int quantity;
+//
+//        try {
+//            quantity = Integer.parseInt(s_quantity);
+//        } catch (Exception e) {
+//            localSender.sendMessage(ERR + "Error on parsing block quantity: not a valid integer.");
+//            return;
+//        }
+//
+//        BlockBank bank = t.getBank();
+//        Material block = Material.matchMaterial(blockName);
+//
+//        if (block == null) {
+//            localSender.sendMessage(ERR + blockName + " is not a valid block name.");
+//            return;
+//        }
+//
+//        if (!localSender.getPlayer().getInventory().contains(block.getId(), quantity)) {
+//            localSender.sendMessage(ERR + "You do not have enough " + blockName + " to deposit that much.");
+//            return;
+//        }
+//        
+//        if (bank.depositBlocks(block, quantity)) {
+//            localSender.getPlayer().getInventory().removeItem(new ItemStack(block.getId(), quantity));
+//            localSender.sendMessage("Blocks deposited.");
+//        } else {
+//            localSender.sendMessage(ERR + "Invalid quantity. Please input a number greater than 0.");
+//        }
 
     }
 
