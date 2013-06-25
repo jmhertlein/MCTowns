@@ -27,7 +27,6 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
-import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethod;

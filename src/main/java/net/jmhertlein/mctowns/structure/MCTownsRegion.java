@@ -133,6 +133,10 @@ public abstract class MCTownsRegion {
 
         return false;
     }
+    
+    public boolean addGuest(OfflinePlayer p) {
+        return addGuest(p.getName());
+    }
 
     public ProtectedRegion getWGRegion() {
         return MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegionExact(name);

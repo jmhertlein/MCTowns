@@ -29,6 +29,7 @@ import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Town;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -136,28 +137,23 @@ public class MCTHandler extends CommandHandler {
     }
 
     public void queryPlayerInfo(String playerName) {
-        Player p = server.getPlayer(playerName);
+        OfflinePlayer p = server.getOfflinePlayer(playerName);
 
-        if (p == null && townManager.matchPlayerToTowns(playerName).isEmpty()) {
-            localSender.sendMessage(ERR + "That player is either not online or doesn't exist.");
+        if (p == null) {
+            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }
 
-        String playerExactName = (p == null ? playerName : p.getName());
+        localSender.sendMessage(INFO + "Player: " + p.getName());
 
-        List<Town> towns = townManager.matchPlayerToTowns(playerExactName);
-
-        for (Town t : towns) {
-            if (t == null) {
-                localSender.sendMessage("Player: " + playerExactName);
-                localSender.sendMessage("Town: None");
-                localSender.sendMessage("Is Mayor: n/a");
-                localSender.sendMessage("Is Assistant: n/a");
-            } else {
-                localSender.sendMessage("Player: " + playerExactName);
+        List<Town> towns = townManager.matchPlayerToTowns(p);
+        if (towns.isEmpty()) {
+            localSender.sendMessage(INFO + p.getName() + " is not a member of any towns.");
+        } else {
+            for (Town t : towns) {
                 localSender.sendMessage("Town: " + t.getTownName());
-                localSender.sendMessage("Is Mayor: " + t.getMayor().equals(playerExactName));
-                localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(playerExactName));
+                localSender.sendMessage("Is Mayor: " + t.playerIsMayor(p));
+                localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(p));
             }
         }
     }
@@ -222,8 +218,6 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-
-
         if (joinManager.playerIsInvitedToTown(pName, addTo)) {
             addTo.addPlayer(localSender.getPlayer());
             localSender.sendMessage("You have joined " + addTo.getTownName() + "!");
@@ -234,7 +228,6 @@ public class MCTHandler extends CommandHandler {
             joinManager.addPlayerRequestForTown(addTo, pName);
             localSender.sendMessage("You have submitted a request to join " + townName + ".");
             addTo.broadcastMessageToTown(server, localSender.getPlayer().getName() + " has submitted a request to join the town.");
-
         }
     }
 

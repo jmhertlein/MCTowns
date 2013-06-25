@@ -39,6 +39,7 @@ import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -339,7 +340,7 @@ public class TownManager {
      * @return the town of which the player is a member, or null if player has
      * no town
      */
-    public List<Town> matchPlayerToTowns(Player p) {
+    public List<Town> matchPlayerToTowns(OfflinePlayer p) {
         return matchPlayerToTowns(p.getName());
 
     }

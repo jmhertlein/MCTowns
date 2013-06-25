@@ -21,13 +21,12 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
-import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 /**
  * @author Everdras
@@ -134,32 +133,27 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        Territory territ = localSender.getActiveTerritory();
-        Player player = server.getPlayer(playerName);
         Town t = localSender.getActiveTown();
-
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
+        Territory territ = localSender.getActiveTerritory();
         if (territ == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
+        
+        OfflinePlayer player = server.getOfflinePlayer(playerName);
+        if(player == null) {
+            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
+            return;
+        }
 
-        if (player == null) {
-            localSender.sendMessage(ChatColor.YELLOW + playerName + " is not online. Make sure you typed their name correctly!");
-
-            if (!t.playerIsResident(playerName)) {
-                localSender.sendMessage(ERR + "That player is not a member of the town.");
-                return;
-            }
-        } else {
-            if (!t.playerIsResident(player)) {
-                localSender.sendMessage(ERR + "That player is not a member of the town.");
-                return;
-            }
+        if (!t.playerIsResident(player)) {
+            localSender.sendMessage(ERR + "That player is not a member of the town.");
+            return;
         }
 
         if (territ.addPlayer(playerName)) {
@@ -169,7 +163,7 @@ public class TerritoryHandler extends CommandHandler {
         }
     }
 
-    public void removePlayerFromTerritory(String player) {
+    public void removePlayerFromTerritory(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
@@ -188,37 +182,23 @@ public class TerritoryHandler extends CommandHandler {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
-
+        
+        OfflinePlayer player = server.getOfflinePlayer(playerName);
         if (player == null) {
-            localSender.sendMessage(ERR + "That player is not online.");
+            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }
+        
+        if (!territ.removePlayer(playerName))
+            localSender.sendMessage(ERR + "That player is not in this territory.");
+        else
+            localSender.sendMessage(SUCC + "Player removed from territory.");
 
         if (recursive) {
-            if (!territ.removePlayer(player)) {
-                localSender.sendMessage(ERR + "That player is not in this territory.");
-                return;
-            }
-
-
-            Plot p;
-            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if (reg instanceof Plot) {
-                    p = (Plot) reg;
-                    if (p.getParentTerritoryName().equals(territ.getName())) {
-                        p.removePlayer(player);
-                    }
-                }
-            }
-
-            localSender.sendMessage("Player removed from territory.");
-
-        } else {
-            if (!territ.removePlayer(player)) {
-                localSender.sendMessage(ERR + "That player is not in this territory.");
-                return;
-            }
-            localSender.sendMessage("Player removed from territory.");
+            localSender.sendMessage(INFO + "Recursive mode was requested. Removing from child plots...");
+            for(String plotName : territ.getPlotsCollection())
+                if(townManager.getPlot(plotName).removePlayer(player))
+                    localSender.sendMessage(INFO + "Player removed from " + plotName);
         }
     }
 

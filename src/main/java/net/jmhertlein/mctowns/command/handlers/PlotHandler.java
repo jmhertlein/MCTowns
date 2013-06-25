@@ -28,6 +28,7 @@ import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -66,25 +67,25 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        Plot p = localSender.getActivePlot();
+        Plot plot = localSender.getActivePlot();
         player = player.toLowerCase();
 
-        if (p == null) {
+        if (plot == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
 
-        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(plot.getWorldName()));
 
-        ProtectedRegion wg_plot = regMan.getRegion(p.getName());
+        ProtectedRegion wgPlot = regMan.getRegion(plot.getName());
 
         //if they are neither mayor nor owner
-        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
+        if (!(localSender.hasMayoralPermissions() || wgPlot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        if (p.removePlayer(player)) {
+        if (plot.removePlayer(player)) {
             localSender.sendMessage("Player removed from plot.");
         } else {
             localSender.sendMessage(ERR + player + " is not a member of this region.");
@@ -101,38 +102,31 @@ public class PlotHandler extends CommandHandler {
             localSender.notifyInsufPermissions();
             return;
         }
-
-        Plot p = localSender.getActivePlot();
-        Player player = server.getPlayer(playerName);
+        
         Town t = localSender.getActiveTown();
-
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
-        if (player == null) {
-            if (!t.playerIsResident(playerName)) {
-                localSender.sendMessage(ERR + "That player is not a member of the town.");
-                return;
-            }
-        } else {
-            if (!t.playerIsResident(player)) {
-                localSender.sendMessage(ERR + "That player is not a member of the town.");
-                return;
-            }
-        }
-
-        if (p == null) {
+        
+        Plot plot = localSender.getActivePlot();
+        if (plot == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
 
+        OfflinePlayer player = server.getOfflinePlayer(playerName);
         if (player == null) {
-            localSender.sendMessage(ERR + playerName + " is not online. Make sure you typed their name correctly!");
+            localSender.sendMessage(ERR + playerName + " has never played on this server.");
+            return;
+        }
+        
+        if (!t.playerIsResident(player)) {
+            localSender.sendMessage(ERR + "That player is not a member of the town.");
+            return;
         }
 
-        if (p.addPlayer(playerName)) {
+        if (plot.addPlayer(player)) {
             localSender.sendMessage("Player added to plot.");
         } else {
             localSender.sendMessage(ERR + "That player is already in that plot.");
@@ -140,36 +134,38 @@ public class PlotHandler extends CommandHandler {
 
     }
 
-    public void addPlayerToPlotAsGuest(String playername) {
+    public void addPlayerToPlotAsGuest(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
 
-        Plot p = localSender.getActivePlot();
-
-        if (p == null) {
+        Plot plot = localSender.getActivePlot();
+        if (plot == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
 
-        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName()));
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(plot.getWorldName()));
 
-        ProtectedRegion wg_plot = regMan.getRegion(p.getName());
+        ProtectedRegion wgPlot = regMan.getRegion(plot.getName());
 
         //if they are neither mayor nor owner
-        if (!(localSender.hasMayoralPermissions() || wg_plot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
+        if (!(localSender.hasMayoralPermissions() || wgPlot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        if (server.getPlayer(playername) == null) {
-            localSender.sendMessage(ChatColor.GOLD + "The player " + playername + " is not online! Make sure their name is spelled correctly!");
+        OfflinePlayer player = server.getOfflinePlayer(playerName);
+        if (player == null) {
+            localSender.sendMessage(ChatColor.GOLD + playerName + " has never played on this server.");
+            return;
         }
 
-        wg_plot.getMembers().addPlayer(playername);
-
-        localSender.sendMessage(ChatColor.GREEN + "Successfully added " + playername + " to the plot as a guest.");
+        if(plot.addGuest(player))
+            localSender.sendMessage(ChatColor.GREEN + "Successfully added " + player.getName() + " to the plot as a guest.");
+        else 
+            localSender.sendMessage(ERR + player.getName() + " is already a guest in the plot.");
     }
 
     public void setPlotBuyability(String s_forSale) {
