@@ -107,7 +107,7 @@ public abstract class MCTownsRegion {
      * @param p
      * @return
      */
-    public boolean addPlayer(Player p) {
+    public boolean addPlayer(OfflinePlayer p) {
         return addPlayer(p.getName());
     }
 

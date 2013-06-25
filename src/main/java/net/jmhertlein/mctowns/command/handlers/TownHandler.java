@@ -354,31 +354,29 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        Player p = server.getPlayer(invitee);
+        OfflinePlayer p = server.getPlayer(invitee);
+        if(p == null) {
+            localSender.sendMessage(ERR + invitee + " has never played on this server before.");
+            return;
+        }
 
         if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(invitee)) {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
 
-        if (p == null) {
-            localSender.sendMessage(INFO + "\"" + invitee + "\" is not online. The invitation will be sent, but please double-check their name.");
-        } else {
-            invitee = p.getName();
-        }
-
         if (joinManager.townHasRequestFromPlayer(t, invitee)) {
             t.addPlayer(invitee);
-            if (p != null) {
-                p.sendMessage("You have joined " + t.getTownName() + "!");
+            if (p.isOnline()) {
+                p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
             }
             broadcastTownJoin(t, invitee);
         } else {
             joinManager.invitePlayerToTown(invitee, t);
-            localSender.sendMessage(SUCC + (p == null ? invitee : p.getName()) + " has been invited to join " + t.getTownName() + ".");
-            if (p != null) {
-                p.sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
-                p.sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
+            localSender.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
+            if (p.isOnline()) {
+                p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
+                p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
             }
         }
     }
@@ -390,52 +388,46 @@ public class TownHandler extends CommandHandler {
         }
 
         Town t = localSender.getActiveTown();
-
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
-
 
         if (!(localSender.hasExternalPermissions(Perms.ADMIN.toString()) || t.playerIsMayor(localSender.getPlayer()))) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        if (server.getPlayer(playerName) == null) {
-            localSender.sendMessage(ERR + playerName + " is not online! Make sure you typed their name correctly.");
+        OfflinePlayer p = server.getOfflinePlayer(playerName);
+        if (p == null) {
+            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
+            return;
         }
 
-        if (t.playerIsMayor(playerName)) {
+        if (t.playerIsMayor(p)) {
             localSender.sendMessage(ERR + "That player is already the mayor of the town.");
             return;
         }
 
 
-        if (!t.playerIsResident(playerName)) {
-            localSender.sendMessage(ERR + playerName + " is not a resident of " + t.getTownName() + ".");
+        if (!t.playerIsResident(p)) {
+            localSender.sendMessage(ERR + p.getName() + " is not a resident of " + t.getTownName() + ".");
             return;
         }
 
-        if (t.addAssistant(playerName)) {
-            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if (reg instanceof Territory && ((Territory) reg).getParentTown().equals(t.getTownName())) {
-                    ((Territory) reg).addPlayer(playerName);
-                }
+        if (t.addAssistant(p)) {
+            for (String territName : t.getTerritoriesCollection()) {
+                townManager.getTerritory(territName).addPlayer(p);
             }
 
             localSender.sendMessage(playerName + " has been promoted to an assistant of " + t.getTownName() + ".");
 
-            if (server.getPlayer(playerName) != null) {
-                server.getPlayer(playerName).sendMessage("You are now an Assistant Mayor of " + t.getTownName());
+            if (p.isOnline()) {
+                p.getPlayer().sendMessage("You are now an Assistant Mayor of " + t.getTownName());
             }
         } else {
             localSender.sendMessage(ERR + playerName + " is already an assistant in this town.");
         }
-
-
-
     }
 
     public void demoteFromAssistant(String playerName) {
@@ -445,14 +437,12 @@ public class TownHandler extends CommandHandler {
         }
 
         Town t = localSender.getActiveTown();
-        Player p = server.getPlayer(playerName);
+        OfflinePlayer p = server.getOfflinePlayer(playerName);
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
-
 
         if (!(localSender.hasExternalPermissions(Perms.ADMIN.toString()) || t.playerIsMayor(localSender.getPlayer()))) {
             localSender.notifyInsufPermissions();
@@ -460,9 +450,9 @@ public class TownHandler extends CommandHandler {
         }
 
         if (p == null) {
-            localSender.sendMessage(INFO + playerName + " doesn't exist or is not online, so their name could not be verified for correctness. Proceeding, but make sure you typed the player's name correctly just in case.");
+            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
+            return;
         }
-
 
         if (!t.playerIsResident(p)) {
             localSender.sendMessage(ERR + playerName + " is not a resident of " + t.getTownName() + ".");
@@ -471,16 +461,11 @@ public class TownHandler extends CommandHandler {
 
         if (t.removeAssistant(p)) {
             localSender.sendMessage(p.getName() + " has been demoted.");
-            p.sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
-            Territory rmFrom;
-            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if (reg instanceof Territory) {
-                    rmFrom = (Territory) reg;
-                    if (rmFrom.getParentTown().equals(t.getTownName())) {
-                        rmFrom.removePlayer(p.getName());
-                    }
-                }
-            }
+            if(p.isOnline())
+                p.getPlayer().sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
+            
+            for (String territName : t.getTerritoriesCollection()) 
+                townManager.getTerritory(territName).removePlayer(p);
         } else {
             localSender.sendMessage(ERR + p.getName() + " is not an assistant in this town.");
         }

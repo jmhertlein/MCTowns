@@ -155,6 +155,15 @@ public class Town {
     public void setMayor(String mayor) {
         this.mayor = mayor;
     }
+    
+    /**
+     * Sets the town's mayor to the given name
+     *
+     * @param mayor the new mayor
+     */
+    public void setMayor(OfflinePlayer mayor) {
+        setMayor(mayor.getName());
+    }
 
     /**
      * Returns the town MOTD, with color formatting
@@ -254,7 +263,7 @@ public class Town {
      * @return false if player was not added because player was already added,
      * true otherwise
      */
-    public boolean addAssistant(Player player) {
+    public boolean addAssistant(OfflinePlayer player) {
         return addAssistant(player.getName());
     }
 
@@ -281,8 +290,8 @@ public class Town {
      * @return false if the player was not removed because the player is not an
      * assistant, true otherwise
      */
-    public boolean removeAssistant(Player player) {
-        return removeAssistant(player);
+    public boolean removeAssistant(OfflinePlayer player) {
+        return removeAssistant(player.getName());
 
     }
 
@@ -320,7 +329,7 @@ public class Town {
      * @param p the player to be checked
      * @return whether the player is mayor or not
      */
-    public boolean playerIsMayor(Player p) {
+    public boolean playerIsMayor(OfflinePlayer p) {
         return p.getName().equals(mayor);
     }
 
@@ -378,7 +387,7 @@ public class Town {
      * @param p the player to be checked
      * @return if the player is an assistant or not
      */
-    public boolean playerIsAssistant(Player p) {
+    public boolean playerIsAssistant(OfflinePlayer p) {
         return assistants.contains(p.getName());
     }
 
@@ -388,7 +397,7 @@ public class Town {
      * @param p the player to be checked
      * @return if the player is a resident or not
      */
-    public boolean playerIsResident(Player p) {
+    public boolean playerIsResident(OfflinePlayer p) {
         return residents.contains(p.getName());
     }
 
@@ -435,11 +444,10 @@ public class Town {
      * @param message
      */
     public void broadcastMessageToTown(Server server, String message) {
-        Player temp;
         message = ChatColor.GOLD + message;
 
         for (String playerName : residents) {
-            temp = server.getPlayerExact(playerName);
+            Player temp = server.getPlayerExact(playerName);
             if (temp != null) {
                 temp.sendMessage(message);
             }
