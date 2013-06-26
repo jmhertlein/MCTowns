@@ -49,6 +49,7 @@ public class PublicIdentity implements Serializable {
     public PublicIdentity(String username, PublicKey pubKey) {
         this.username = username;
         this.pubKey = pubKey;
+        this.permissionGroup = "default";
     }
 
     private void loadFromFileConfiguration(FileConfiguration f) {
@@ -97,7 +98,7 @@ public class PublicIdentity implements Serializable {
 
     public void exportToConfiguration(FileConfiguration f) {
         f.set("username", username);
-        f.set("pubKey", Keys.getBASE64ForKey(pubKey));
         f.set("group", permissionGroup);
+        f.set("pubKey", Keys.getBASE64ForKey(pubKey));
     }
 }
