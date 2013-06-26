@@ -218,7 +218,7 @@ public class MCTownsPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(qsToolListener, this);
     }
 
-    private void persistTownManager() {
+    public void persistTownManager() {
         try {
             townManager.writeYAML(savesDir.getAbsolutePath());
         } catch (IOException ex) {

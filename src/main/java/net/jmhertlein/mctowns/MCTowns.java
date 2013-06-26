@@ -202,4 +202,8 @@ public class MCTowns {
     public static Logger getRemoteAdminDaemonLogger() {
         return MCTownsPlugin.remoteDaemonLogger;
     }
+    
+    public static void persistTownManager() {
+        MCTownsPlugin.getPlugin().persistTownManager();
+    }
 }
