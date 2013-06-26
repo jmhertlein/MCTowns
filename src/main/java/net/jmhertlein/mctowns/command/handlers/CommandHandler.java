@@ -263,7 +263,6 @@ public abstract class CommandHandler {
                 throw new NullPointerException();
             }
         } catch (NullPointerException npe) {
-
             localSender.sendMessage("Error getting your WorldEdit selection. Did you forget to make a selection?");
             return null;
         } catch (CommandException ce) {

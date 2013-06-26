@@ -130,6 +130,8 @@ public class MCTownsPlugin extends JavaPlugin {
         if (MCTowns.remoteAdminServerIsEnabled()) {
             startRemoteServer();
         }
+        
+        startPeriodicSaveTask();
 
         MCTowns.logInfo("MCTowns is now fully loaded.");
 
@@ -374,5 +376,18 @@ public class MCTownsPlugin extends JavaPlugin {
                 MCTowns.logSevere("Error writing version to disk: " + ex.getLocalizedMessage());
             }
         }
+    }
+
+    private void startPeriodicSaveTask() {
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                MCTowns.persistTownManager();
+            }
+        };
+        
+        //5 * 60 * 60 * 20 = 5 minutes worth of ticks
+        //i.e. save every 5 mins
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, run, 5 * 60 * 60 * 20, 5 * 60 * 60 * 20);
     }
 }

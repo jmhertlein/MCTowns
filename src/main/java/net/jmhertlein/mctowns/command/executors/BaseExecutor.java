@@ -55,9 +55,8 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
             MCTowns.logInfo("[Command]: Player: " + cs.getName() + " Command: " + new ECommand(string, strings));
         }
 
-        boolean result = runCommand(cs, cmnd, string, strings);
-        MCTowns.persistTownManager();
-        return result;
+        return runCommand(cs, cmnd, string, strings);
+        
     }
 
     public abstract boolean runCommand(CommandSender cs, Command cmnd, String string, String[] strings);
