@@ -83,7 +83,6 @@ import sun.misc.BASE64Encoder;
  */
 public class MCTServerProtocol {
 
-    private static final Logger log = MCTowns.getRemoteAdminDaemonLogger();
     private static final String PROTOCOL_VERSION = "1";
     private static final int NUM_CHECK_BYTES = 50;
     private File authKeysDir;
@@ -235,7 +234,7 @@ public class MCTServerProtocol {
         action = (RemoteAction) ois.readObject();
         applicableGroup = permissions.getGroups().get(clientSession.getIdentity().getPermissionGroup());
 
-        p.getLogger().log(Level.INFO, "[RemoteAdmin]: {0} running action {1}", new Object[]{clientName, action.name()});
+        //p.getLogger().log(Level.INFO, "[RemoteAdmin]: {0} running action {1}", new Object[]{clientName, action.name()});
 
         if (permissions.userHasPermission(clientSession.getIdentity(), action)) {
             oos.writeObject(true);
@@ -860,14 +859,14 @@ public class MCTServerProtocol {
     }
 
     private void logWarning(String s) {
-        log.log(Level.WARNING, s);
+        MCTowns.getRemoteAdminDaemonLogger().log(Level.WARNING, s);
     }
 
     private void logInfo(String s) {
-        log.log(Level.INFO, s);
+        MCTowns.getRemoteAdminDaemonLogger().log(Level.INFO, s);
     }
 
     private void logSevere(String s) {
-        log.log(Level.SEVERE, s);
+        MCTowns.getRemoteAdminDaemonLogger().log(Level.SEVERE, s);
     }
 }

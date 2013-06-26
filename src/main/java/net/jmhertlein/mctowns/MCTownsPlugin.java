@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.executors.MCTExecutor;
 import net.jmhertlein.mctowns.command.executors.PlotExecutor;
@@ -316,7 +317,10 @@ public class MCTownsPlugin extends JavaPlugin {
     private void startRemoteServer() {
         RemoteConnectionServer s;
         try {
-            remoteDaemonLogger.addHandler(new FileHandler(remoteAdminDaemonLogFile.getAbsolutePath(), true));
+            FileHandler fh = new FileHandler(remoteAdminDaemonLogFile.getAbsolutePath(), true);
+            fh.setFormatter(new SimpleFormatter());
+            remoteDaemonLogger.addHandler(fh);
+            
             s = new RemoteConnectionServer(this, new File(this.getDataFolder(), "auth_keys"));
         } catch (IOException ex) {
             Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);
@@ -382,12 +386,14 @@ public class MCTownsPlugin extends JavaPlugin {
         Runnable run = new Runnable() {
             @Override
             public void run() {
+                MCTowns.logInfo("Saving...");
                 MCTowns.persistTownManager();
+                MCTowns.logInfo("Saved.");
             }
         };
         
-        //5 * 60 * 60 * 20 = 5 minutes worth of ticks
+        //5 * 60 * 20 = 5 minutes worth of ticks
         //i.e. save every 5 mins
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, run, 5 * 60 * 60 * 20, 5 * 60 * 60 * 20);
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, run, 5 * 60 * 20, 5 * 60 * 20);
     }
 }
