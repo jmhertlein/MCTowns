@@ -35,7 +35,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -44,7 +43,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
@@ -306,7 +304,7 @@ public class MCTServerProtocol {
         FileConfiguration f = new YamlConfiguration();
         i.exportToConfiguration(f);
 
-        f.save(i.getUsername() + ".pub");
+        f.save(new File(authKeysDir, i.getUsername() + ".pub"));
 
         logInfo(String.format("%s added an identity for user %s to auth_keys", clientName, i.getUsername()));
         oos.writeObject(true);
