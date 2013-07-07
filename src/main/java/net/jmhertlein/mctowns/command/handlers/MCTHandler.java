@@ -341,12 +341,17 @@ public class MCTHandler extends CommandHandler {
             localSender.sendMessage(ERR + "Insufficient funds.");
             return;
         }
-
+        
+        ProtectedRegion plotReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
+        if(plotReg == null) {
+            localSender.sendMessage(ERR + "The WorldGuard region for the plot you're trying to buy seems to have been deleted. Please notify your mayor.");
+            return;
+        }
+        
         plotToBuy.getActiveTown().getBank().depositCurrency(p.getPrice());
 
         p.setPrice(BigDecimal.ZERO);
         p.setForSale(false);
-        ProtectedRegion plotReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
         p.demolishSign();
 
         plotReg.getOwners().addPlayer(localSender.getPlayer().getName());
