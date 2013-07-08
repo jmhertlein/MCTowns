@@ -37,6 +37,7 @@ import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.remote.server.RemoteConnectionServer;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
+import net.jmhertlein.mctowns.upgrade.ResourceUpgradePaths;
 import net.jmhertlein.mctowns.util.metrics.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.World;
@@ -178,6 +179,8 @@ public class MCTownsPlugin extends JavaPlugin {
 
         saveDefaultRemoteConfig();
         loadRemoteConfig();
+        
+        ResourceUpgradePaths.upgradeResources(this.getDataFolder(), this);
     }
 
     private void setupTownManager() {
@@ -396,4 +399,14 @@ public class MCTownsPlugin extends JavaPlugin {
         //i.e. save every 5 mins
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, run, 5 * 60 * 20, 5 * 60 * 20);
     }
+
+    public File getSavesDir() {
+        return savesDir;
+    }
+
+    public Set<File> getConfigFiles() {
+        return configFiles;
+    }
+    
+    
 }

@@ -26,3 +26,10 @@ remoteAdminKeyLength: 2048
 #You can try setting your key length to 192 or 256, but if you get errors
 #when clients connect, put it back to 128.
 remoteAdminSessionKeyLength: 128
+#
+#
+#The currently installed version of MCTowns. Do not change this.
+installedVersion: 2.2.0
+#Seriously don't change it
+#
+#

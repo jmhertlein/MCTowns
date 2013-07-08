@@ -441,23 +441,34 @@ public class TownManager {
      * @throws InvalidConfigurationException
      */
     public static TownManager readYAML(String rootDirPath) throws FileNotFoundException, IOException, InvalidConfigurationException {
-        File rootDir = new File(rootDirPath);
+        return readYAML(new File(rootDirPath));
+    }
+    
+        /**
+     *
+     * @param rootDirPath
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws InvalidConfigurationException
+     */
+    public static TownManager readYAML(File rootDir) throws FileNotFoundException, IOException, InvalidConfigurationException {
         FileConfiguration metaF, f;
 
         TownManager ret = new TownManager();
 
         metaF = new YamlConfiguration();
-        metaF.load(rootDirPath + File.separator + ".meta.yml");
+        metaF.load(new File(rootDir, ".meta.yml"));
 
         for (String s : metaF.getStringList("towns")) {
             f = new YamlConfiguration();
-            f.load(rootDirPath + File.separator + s + ".yml");
+            f.load(new File(rootDir, s + ".yml"));
             ret.towns.put(s, Town.readYAML(f));
         }
 
         for (String s : metaF.getStringList("regions")) {
             f = new YamlConfiguration();
-            f.load(rootDirPath + File.separator + s + ".yml");
+            f.load(new File(rootDir, s + ".yml"));
 
             if (TownLevel.parseTownLevel(f.getString("type")) == TownLevel.PLOT) {
                 ret.regions.put(s, Plot.readYAML(f));
@@ -467,9 +478,9 @@ public class TownManager {
         }
 
         return ret;
-
-
     }
+    
+    
 
     /**
      *
