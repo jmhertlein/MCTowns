@@ -17,12 +17,16 @@
 package net.jmhertlein.mctowns.banking;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -90,15 +94,25 @@ public class BlockBank {
     }
 
     public void writeYAML(FileConfiguration f) {
-        //f.set("bank.townFunds", townFunds.toString());
-
-
-        //f.set("bank.contents", l);
+        f.set("bank.townFunds", townFunds.toString());
+        
+        List<ItemStack> existantContents = new LinkedList<>();
+        for(ItemStack i : bankInventory.getContents())
+            if(i != null)
+                existantContents.add(i);
+        
+        f.set("bank.contents", existantContents);
     }
 
     public static BlockBank readYAML(FileConfiguration f) {
         BlockBank bank = new BlockBank();
 
+        bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));
+        
+        for(ItemStack i : (List<ItemStack>) f.getList("bank.contents")) {
+            if(i != null)
+                bank.bankInventory.addItem(i);
+        }
 
         return bank;
     }
@@ -106,6 +120,4 @@ public class BlockBank {
     public static Map<String, DepositInventoryEntry> getOpenDepositInventories() {
         return openDepositInventories;
     }
-    
-    
 }

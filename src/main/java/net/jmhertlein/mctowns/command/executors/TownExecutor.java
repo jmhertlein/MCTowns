@@ -61,11 +61,15 @@ public class TownExecutor extends BaseExecutor {
                             handler.addTerritorytoTown(command.get(3));
                             softFailure = false;
                             break;
+                            
+                        case "a":
                         case "assistant":
                             helpMessage = "/town add assistant <assistant name";
                             handler.promoteToAssistant(command.get(3));
                             softFailure = false;
                             break;
+                            
+                        case "p":
                         case "player":
                             helpMessage = "/town add player <player name>";
                             handler.invitePlayerToTown(command.get(3));
@@ -83,31 +87,36 @@ public class TownExecutor extends BaseExecutor {
                             handler.removeTerritoryFromTown(command.get(3));
                             softFailure = false;
                             break;
-
+                            
+                        case "a":
                         case "assistant":
                             helpMessage = "/town remove assistant <assistant name>";
                             handler.demoteFromAssistant(command.get(3));
                             softFailure = false;
                             break;
 
+                        case "p":
                         case "player":
                             helpMessage = "/town remove player <player name>";
                             handler.removePlayerFromTown(command.get(3));
                             softFailure = false;
                             break;
 
+                        case "i":
                         case "invite":
                             helpMessage = "/town remove invite <name of the player the invite is for>";
                             handler.cancelInvitation(command.get(3));
                             softFailure = false;
                             break;
 
+                        case "r":
                         case "request":
                             helpMessage = "/town remove request <name of the player the request is from";
                             handler.rejectRequest(command.get(3));
                             softFailure = false;
                             break;
 
+                        case "s":
                         case "self":
                             handler.removeSelfFromTown();
                             softFailure = false;
@@ -161,53 +170,60 @@ public class TownExecutor extends BaseExecutor {
                     }
                     softFailure = false;
                     break;
-
+                case "b":
                 case "bank":
                     helpMessage = "/town bank (deposit | check)";
                     switch (command.get(2).toLowerCase()) {
+                        case "d":
                         case "deposit":
-                            helpMessage = "/town bank deposit (currency)";
+                            helpMessage = "/town bank deposit (currency | blocks)";
                             switch (command.get(3)) {
+                                case "c":
                                 case "currency":
                                     helpMessage = "/town bank deposit currency <quantity>";
                                     handler.depositCurrencyBank(command.get(4));
                                     softFailure = false;
                                     break;
                                     
-                                default:
+                                case "b":
+                                case "blocks":
                                     helpMessage = "/town bank deposit";
                                     handler.openBankDepositBox();
                                     softFailure = false;
 
                             }
                             break;
-
+                        case "w":
                         case "withdraw":
-                            helpMessage = "/town bank withdraw (currency | <block name>)";
+                            helpMessage = "/town bank withdraw (currency | blocks)";
                             switch (command.get(3)) {
+                                case "c":
                                 case "currency":
                                     helpMessage = "/town bank withdraw currency <quantity>";
                                     handler.withdrawCurrencyBank(command.get(4));
                                     softFailure = false;
                                     break;
 
-                                default:
-                                    helpMessage = "/town bank withdraw <block name> <quantity>";
+                                case "b":
+                                case "blocks":
+                                    helpMessage = "/town bank withdraw blocks";
                                     handler.openBlockBank();
                                     softFailure = false;
 
                             }
                             break;
-
+                        case "c":
                         case "check":
                             helpMessage = "/town bank check (currency | blocks)";
+                            
                             switch (command.get(3)) {
+                                case "c":
                                 case "currency":
                                     helpMessage = "/town bank check currency";
                                     handler.checkCurrencyBank();
                                     softFailure = false;
                                     break;
-
+                                case "b":
                                 case "blocks":
                                     helpMessage = "/town bank check";
                                     handler.openBlockBank();
