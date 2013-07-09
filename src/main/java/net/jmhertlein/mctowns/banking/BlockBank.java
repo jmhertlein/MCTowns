@@ -17,97 +17,40 @@
 package net.jmhertlein.mctowns.banking;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 /**
  *
  * @author joshua
  */
 public class BlockBank {
-
     private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
-    private static final int VERSION = 1;
-    private Map<Material, Integer> bank;
+    
+    private static Map<String, DepositInventoryEntry> openDepositInventories = new HashMap<>();;
+    
+    private Inventory bankInventory;
     private volatile BigDecimal townFunds;
+    
+    
 
     /**
      * Constructs a new empty block bank.
      */
     public BlockBank() {
-        bank = new ConcurrentHashMap<>();
+        bankInventory = Bukkit.getServer().createInventory(null, 9 * 6, "Town Bank");
+        bankInventory.setMaxStackSize(500);
         townFunds = BigDecimal.ZERO;
     }
 
-    /**
-     * Deposits blocks into the block bank.
-     *
-     * @param blockType the type of block to deposit
-     * @param quantity the number of blocks to deposit
-     * @return true if the blocks were deposited, false if they were not due to
-     * any reason.
-     */
-    public boolean depositBlocks(Material blockType, int quantity) {
-
-        if (quantity <= 0) {
-            return false;
-        }
-
-        if (bank.containsKey(blockType)) {
-            bank.put(blockType, quantity + bank.get(blockType));
-        } else {
-            bank.put(blockType, quantity);
-        }
-
-        return true;
+    public Inventory getBankInventory() {
+        return bankInventory;
     }
-
-    /**
-     * Attempts to subtract quantity blocks of type corresponding to dataValue
-     * from the bank. The withdrawal either completes successfully (EXACTLY
-     * 'quantity' blocks were withdrawn) and true is returned, or NOTHING
-     * happens and false is returned.
-     *
-     * @param blockType the type of block to withdraw
-     * @param quantity the number of blocks to withdraw
-     * @return true if the full number of blocks were withdrawn, false otherwise
-     */
-    public boolean withdrawBlocks(Material blockType, int quantity) {
-        if (quantity <= 0) {
-            return false;
-        }
-
-        if (bank.containsKey(blockType)) {
-            if (bank.get(blockType) - quantity < 0) {
-                return false;
-            }
-
-            bank.put(blockType, bank.get(blockType) - quantity);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Checks how many blocks of a certain data value are in the bank
-     *
-     * @param blockType the data value of the block to be queried
-     * @return the number of blocks in the bank for the given data value
-     */
-    public int queryBlocks(Material blockType) {
-        if (bank.containsKey(blockType)) {
-            return bank.get(blockType).intValue();
-        }
-        return -1;
-    }
-
+    
     public boolean depositCurrency(BigDecimal amt) {
         if (amt.compareTo(BigDecimal.ZERO) < 0) {
             return false;
@@ -139,32 +82,30 @@ public class BlockBank {
     public boolean hasCurrencyAmount(BigDecimal amt) {
         return townFunds.compareTo(amt) >= 0;
     }
+    
+    public Inventory getNewDepositBox(Player p) {
+        Inventory i = Bukkit.createInventory(p, 9*4, "Town Bank Deposit Box");
+        openDepositInventories.put(p.getName(), new DepositInventoryEntry(p, this));
+        return i;
+    }
 
     public void writeYAML(FileConfiguration f) {
-        f.set("bank.townFunds", townFunds.toString());
+        //f.set("bank.townFunds", townFunds.toString());
 
-        List<String> l = new LinkedList<>();
 
-        for (Entry<Material, Integer> e : bank.entrySet()) {
-            l.add(e.getKey().name() + "|" + e.getValue().toString());
-        }
-
-        f.set("bank.contents", l);
+        //f.set("bank.contents", l);
     }
 
     public static BlockBank readYAML(FileConfiguration f) {
         BlockBank bank = new BlockBank();
 
-        bank.bank = new TreeMap<>();
-        String[] temp;
-
-        for (String s : f.getStringList("bank.contents")) {
-            temp = s.split("[|]");
-            bank.bank.put(Material.valueOf(temp[0]), Integer.parseInt(temp[1].trim()));
-        }
-
-        bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));
 
         return bank;
     }
+
+    public static Map<String, DepositInventoryEntry> getOpenDepositInventories() {
+        return openDepositInventories;
+    }
+    
+    
 }

@@ -32,6 +32,7 @@ import net.jmhertlein.mctowns.command.executors.PlotExecutor;
 import net.jmhertlein.mctowns.command.executors.TerritoryExecutor;
 import net.jmhertlein.mctowns.command.executors.TownExecutor;
 import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.listeners.DepositBoxCloseListener;
 import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
 import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
 import net.jmhertlein.mctowns.permission.Perms;
@@ -222,6 +223,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(qsToolListener, this);
+        getServer().getPluginManager().registerEvents(new DepositBoxCloseListener(), this);
     }
 
     public void persistTownManager() {

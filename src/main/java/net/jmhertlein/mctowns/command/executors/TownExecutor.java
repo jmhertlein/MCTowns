@@ -163,25 +163,20 @@ public class TownExecutor extends BaseExecutor {
                     break;
 
                 case "bank":
-                    helpMessage = "/town bank (deposit | withdraw | check)";
+                    helpMessage = "/town bank (deposit | check)";
                     switch (command.get(2).toLowerCase()) {
                         case "deposit":
-                            helpMessage = "/town bank deposit (currency | <block name>)";
+                            helpMessage = "/town bank deposit (currency)";
                             switch (command.get(3)) {
                                 case "currency":
                                     helpMessage = "/town bank deposit currency <quantity>";
                                     handler.depositCurrencyBank(command.get(4));
                                     softFailure = false;
                                     break;
-
-                                case "hand":
-                                    helpMessage = "/town bank deposit hand <quantity>";
-                                    handler.depositHeldItem(command.get(4));
-                                    softFailure = false;
-                                    break;
+                                    
                                 default:
-                                    helpMessage = "/town bank deposit <block name> <quantity>";
-                                    handler.depositBlockBank(command.get(3), command.get(4));
+                                    helpMessage = "/town bank deposit";
+                                    handler.openBankDepositBox();
                                     softFailure = false;
 
                             }
@@ -198,14 +193,14 @@ public class TownExecutor extends BaseExecutor {
 
                                 default:
                                     helpMessage = "/town bank withdraw <block name> <quantity>";
-                                    handler.withdrawBlockBank(command.get(3), command.get(4));
+                                    handler.openBlockBank();
                                     softFailure = false;
 
                             }
                             break;
 
                         case "check":
-                            helpMessage = "/town bank check (currency | <block name>)";
+                            helpMessage = "/town bank check (currency | blocks)";
                             switch (command.get(3)) {
                                 case "currency":
                                     helpMessage = "/town bank check currency";
@@ -213,9 +208,9 @@ public class TownExecutor extends BaseExecutor {
                                     softFailure = false;
                                     break;
 
-                                default:
-                                    helpMessage = "/town bank deposit <block name>";
-                                    handler.checkBlockBank(command.get(3));
+                                case "blocks":
+                                    helpMessage = "/town bank check";
+                                    handler.openBlockBank();
                                     softFailure = false;
                             }
                             break;

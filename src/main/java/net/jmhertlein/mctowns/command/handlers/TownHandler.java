@@ -33,12 +33,14 @@ import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -868,145 +870,39 @@ public class TownHandler extends CommandHandler {
 
     }
 
-    public void checkBlockBank(String blockName) {
+    public void openBlockBank() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-
-        Town t = localSender.getActiveTown();
-
-        if (t == null) {
-            localSender.notifyActiveTownNotSet();
-            return;
-        }
-
-        Material block = Material.matchMaterial(blockName);
-
-        if (block == null) {
-            localSender.sendMessage(ERR + "That block doesn't exist.");
-            return;
-        }
-
-        int numBlocks = t.getBank().queryBlocks(block);
-
-        localSender.sendMessage(ChatColor.DARK_AQUA + "There are " + (numBlocks == -1 ? "0" : numBlocks) + " blocks of " + blockName + " in the bank.");
-    }
-
-    public void withdrawBlockBank(String blockName, String s_quantity) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
-        if (!localSender.hasMayoralPermissions()) {
+        
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
-        int quantity;
-
-        try {
-            quantity = Integer.parseInt(s_quantity);
-        } catch (Exception e) {
-            localSender.sendMessage(ERR + "Error on parsing block quantity: not a valid integer.");
-            return;
-        }
 
         Town t = localSender.getActiveTown();
-
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
-        if (!t.playerIsInsideTownBorders(localSender.getPlayer()) && !localSender.hasExternalPermissions(Perms.WITHDRAW_BANK_OUTSIDE_BORDERS.toString())) {
-            localSender.sendMessage(ERR + "You must be within the borders of your town to withdraw from the bank.");
-            return;
-        }
-
-
-        BlockBank bank = t.getBank();
-        Material block = Material.matchMaterial(blockName);
-
-        if (block == null) {
-            localSender.sendMessage(ERR + blockName + " is not a valid block name.");
-            return;
-        }
-
-        if (bank.withdrawBlocks(block, quantity)) {
-            Player p = localSender.getPlayer();
-            p.getInventory().addItem(new ItemStack(block.getId(), quantity));
-            localSender.sendMessage("Blocks withdrawn.");
-        } else {
-            localSender.sendMessage(ERR + "Number out of valid range. Enter a number between 1 and the number of blocks in your bank.");
-        }
+        localSender.getPlayer().openInventory(t.getBank().getBankInventory());
     }
 
-    public void depositBlockBank(String blockName, String s_quantity) {
-        localSender.sendMessage(ChatColor.RED + "Depositing blocks in the block bank is currently disabled until some major issues with its implementation can be resolved.");
-        return;
-//        
-//        if (localSender.isConsole()) {
-//            localSender.notifyConsoleNotSupported();
-//            return;
-//        }
-//
-//        Town t = localSender.getActiveTown();
-//
-//        if (t == null) {
-//            localSender.notifyActiveTownNotSet();
-//            return;
-//        }
-//
-//        int quantity;
-//
-//        try {
-//            quantity = Integer.parseInt(s_quantity);
-//        } catch (Exception e) {
-//            localSender.sendMessage(ERR + "Error on parsing block quantity: not a valid integer.");
-//            return;
-//        }
-//
-//        BlockBank bank = t.getBank();
-//        Material block = Material.matchMaterial(blockName);
-//
-//        if (block == null) {
-//            localSender.sendMessage(ERR + blockName + " is not a valid block name.");
-//            return;
-//        }
-//
-//        if (!localSender.getPlayer().getInventory().contains(block.getId(), quantity)) {
-//            localSender.sendMessage(ERR + "You do not have enough " + blockName + " to deposit that much.");
-//            return;
-//        }
-//        
-//        if (bank.depositBlocks(block, quantity)) {
-//            localSender.getPlayer().getInventory().removeItem(new ItemStack(block.getId(), quantity));
-//            localSender.sendMessage("Blocks deposited.");
-//        } else {
-//            localSender.sendMessage(ERR + "Invalid quantity. Please input a number greater than 0.");
-//        }
-
-    }
-
-    public void depositHeldItem(String quantity) {
+    public void openBankDepositBox() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
 
-        String blockName;
-
-        if (localSender.getPlayer().getItemInHand() == null) {
-            localSender.sendMessage(ERR + "There is no item in your hand!");
+        Town t = localSender.getActiveTown();
+        if (t == null) {
+            localSender.notifyActiveTownNotSet();
             return;
         }
-
-        blockName = localSender.getPlayer().getItemInHand().getType().toString();
-
-
-
-        this.depositBlockBank(blockName, quantity);
+        
+        localSender.getPlayer().openInventory(t.getBank().getNewDepositBox(localSender.getPlayer()));
     }
 
     public void withdrawCurrencyBank(String quantity) {
