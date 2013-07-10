@@ -20,6 +20,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
+import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
@@ -265,8 +266,10 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        p.buildSign();
-        localSender.sendMessage("Sign built!");
+        if(p.buildSign())
+            localSender.sendMessage(SUCC + "Sign built!");
+        else
+            localSender.sendMessage(ERR + "The sign wasn't built because its target location wasn't an air block. Please clear the spot and try again.");
     }
 
     public void demolishSign() {

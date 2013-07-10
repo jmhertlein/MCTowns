@@ -146,13 +146,15 @@ public class Plot extends MCTownsRegion {
     }
 
     /**
-     *
+     * @return whether or not the sign was built
      */
-    public void buildSign() {
-
+    public boolean buildSign() {
         if (signLoc == null) {
             MCTowns.logSevere("The sign's location was null.");
         }
+        
+        if(Location.convertToBukkitLocation(Bukkit.getServer(), signLoc).getBlock().getType() != Material.AIR)
+            return false;
 
         org.bukkit.Location loc = Location.convertToBukkitLocation(Bukkit.getServer(), signLoc);
 
@@ -168,6 +170,8 @@ public class Plot extends MCTownsRegion {
         sign.setLine(3, "Price: " + price);
 
         sign.update();
+        
+        return true;
     }
 
     /**
