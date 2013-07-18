@@ -131,7 +131,8 @@ public class MCTownsPlugin extends JavaPlugin {
         startMetricsCollection();
 
         if (MCTowns.remoteAdminServerIsEnabled()) {
-            startRemoteServer();
+            //startRemoteServer();
+            MCTowns.logInfo("Notice: You have enabled the remote admin server, but this release does not support it yet. This functionality is still under development.");
         }
         
         startPeriodicSaveTask();
