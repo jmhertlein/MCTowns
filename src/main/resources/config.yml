@@ -1,0 +1,35 @@
+economyEnabled: false
+mayorsCanBuyTerritories: false
+pricePerXZBlock: 0
+minNumPlayersToBuyTerritory: 3
+allowTownFriendlyFireManagement: false;
+#default is wooden hoe (290)
+quickSelectTool: 290 
+#log verbose information of each MCTowns command issued
+logCommands: false
+playersCanJoinMultipleTowns: true
+#hostname and port of remote bug report handling server
+bugReportHostname: services.jmhertlein.net
+bugReportPort: 9001
+remoteAdminServerEnabled: false
+#Port remote admin server will listen for clients on
+remoteAdminPort: 3333
+#length of encryption keys used for remote admin server
+#longer = more secure but slower
+#shorter = less secure but faster
+#min is 512 (will throw errors if less)
+#Recommended max is 2048 (will take too long to decode messages if set higher)
+#default is 2048
+remoteAdminKeyLength: 2048
+#valid values: 128, 192 or 256
+#IMPORTANT: Your JRE may not support key sizes larger than 128.
+#You can try setting your key length to 192 or 256, but if you get errors
+#when clients connect, put it back to 128.
+remoteAdminSessionKeyLength: 128
+#
+#
+#The currently installed version of MCTowns. Do not change this.
+installedVersion: 2.2.0
+#Seriously don't change it
+#
+#
