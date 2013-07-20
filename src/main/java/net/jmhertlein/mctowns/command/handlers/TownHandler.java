@@ -24,7 +24,6 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
-import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
@@ -33,15 +32,11 @@ import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * @author Everdras
@@ -355,7 +350,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        OfflinePlayer p = server.getPlayer(invitee);
+        OfflinePlayer p = server.getOfflinePlayer(invitee);
         if(p == null) {
             localSender.sendMessage(ERR + invitee + " has never played on this server before.");
             return;
