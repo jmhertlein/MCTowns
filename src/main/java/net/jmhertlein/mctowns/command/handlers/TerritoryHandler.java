@@ -107,7 +107,7 @@ public class TerritoryHandler extends CommandHandler {
         }
 
         if (!townManager.removePlot(plotName)) {
-            localSender.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the district (townname_district_districtshortname).");
+            localSender.sendMessage(ERR + "That plot doesn't exist. Make sure you're using the full name of the plot (townname_plot_plotshortname).");
             return;
         }
 
