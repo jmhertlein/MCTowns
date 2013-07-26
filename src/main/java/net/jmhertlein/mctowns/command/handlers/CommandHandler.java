@@ -248,16 +248,18 @@ public abstract class CommandHandler {
 
     }
 
-    //====================================PRIVATE===========================
-    @Deprecated
-    protected WorldGuardPlugin getWGPFromSenderWrapper(MCTLocalSender csw) {
-        return (WorldGuardPlugin) csw.getSender().getServer().getPluginManager().getPlugin("WorldGuard");
-    }
-
+    /**
+     * Wraps the localSender's current selection in a ProtectedRegion and returns it
+     * Supports cuboid and polygon regions
+     * 
+     * Will throw a runtime exception if selection is not a cuboid or poly (I need to make it handle this better)
+     * @param desiredName the desired name of the region
+     * @return 
+     */
     protected ProtectedRegion getSelectedRegion(String desiredName) {
         Selection selection;
         try {
-            selection = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection((Player) localSender.getSender());
+            selection = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection(localSender.getPlayer());
             if (selection == null) {
                 throw new NullPointerException();
             }
@@ -285,7 +287,9 @@ public abstract class CommandHandler {
 
             region = new ProtectedCuboidRegion(desiredName, minVect, maxVect);
         } else {
-            throw new RuntimeException("Error: The selection was neither a poly nor a cube.");
+            //throw new RuntimeException("Error: The selection was neither a poly nor a cube."); 
+            localSender.sendMessage("Only cuboid and polygonal regions are supported right now.");
+            return null;
         }
 
         return region;

@@ -47,29 +47,22 @@ public class TerritoryHandler extends CommandHandler {
             localSender.notifyInsufPermissions();
             return;
         }
-
-        boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
-
+        
         Town t = localSender.getActiveTown();
-
         if (t == null) {
             localSender.notifyActiveTownNotSet();
+            return;
+        }
+        
+        Territory parTerr = localSender.getActiveTerritory();
+        if (parTerr == null) {
+            localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
 
         World w = localSender.getPlayer().getWorld();
-        String worldName = w.getName();
-
-        Territory parTerr = localSender.getActiveTerritory();
-
-        if (parTerr == null) {
-            localSender.notifyActiveTerritoryNotSet();
-            return;
-        }
-
-
 
         ProtectedRegion region = getSelectedRegion(plotName);
 
@@ -83,15 +76,14 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-
         townManager.addPlot(plotName, w, region, t, parTerr);
 
         localSender.sendMessage(SUCC + "Plot added.");
 
+        boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
         if (autoActive) {
             localSender.setActivePlot(townManager.getPlot(plotName));
             localSender.sendMessage(INFO + "Active plot set to newly created plot.");
-
         }
 
     }
