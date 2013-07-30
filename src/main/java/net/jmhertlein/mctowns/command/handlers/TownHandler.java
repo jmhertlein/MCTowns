@@ -351,7 +351,7 @@ public class TownHandler extends CommandHandler {
         }
 
         OfflinePlayer p = server.getOfflinePlayer(invitee);
-        if(p == null) {
+        if(!p.hasPlayedBefore()) {
             localSender.sendMessage(ERR + invitee + " has never played on this server before.");
             return;
         }
@@ -395,7 +395,7 @@ public class TownHandler extends CommandHandler {
         }
 
         OfflinePlayer p = server.getOfflinePlayer(playerName);
-        if (p == null) {
+        if (p.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }
@@ -445,7 +445,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (p == null) {
+        if (p.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }

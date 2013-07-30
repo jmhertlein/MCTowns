@@ -138,7 +138,7 @@ public class TerritoryHandler extends CommandHandler {
         }
         
         OfflinePlayer player = server.getOfflinePlayer(playerName);
-        if(player == null) {
+        if(player.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }
@@ -176,7 +176,7 @@ public class TerritoryHandler extends CommandHandler {
         }
         
         OfflinePlayer player = server.getOfflinePlayer(playerName);
-        if (player == null) {
+        if (player.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }
