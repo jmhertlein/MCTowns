@@ -38,6 +38,7 @@ import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
  * @author joshua
  */
 public class RemoteConnectionServer extends Thread {
+    private static final String PROTOCOL_VERSION = "1";
 
     private File authKeysDir;
     private ExecutorService threadPool;
