@@ -80,7 +80,7 @@ public class RemoteConnectionServer extends Thread {
                 continue;
             }
 
-            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessions, permissions));
+            //threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessions, permissions));
         }
     }
 

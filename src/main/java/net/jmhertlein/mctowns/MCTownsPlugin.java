@@ -16,7 +16,6 @@
  */
 package net.jmhertlein.mctowns;
 
-import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +58,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private static MCTownsPlugin singleton;
     public static final Logger remoteDaemonLogger = Logger.getLogger("MCTRAD");
-    private File authKeysDir, rsaKeysDir, savesDir, configFile, 
+    private File authKeysDir, rsaKeysDir, savesDir, configFile,
             metaFile, remoteConfigFile, remoteAdminDaemonLogFile;
     private static final boolean DEBUGGING = false;
     private static TownManager townManager;
@@ -75,9 +74,12 @@ public class MCTownsPlugin extends JavaPlugin {
      */
     @Override
     public void onDisable() {
+        if(this.getServer().getPluginManager().getPlugin("WorldGuard") == null)
+            return;
+        
         try {
             saveWorldGuardWorlds();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (Exception ex) {
             MCTowns.logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
         }
 
@@ -111,17 +113,17 @@ public class MCTownsPlugin extends JavaPlugin {
     public void onEnable() {
         singleton = this;
         setupFiles();
-
+        
+        if(!hookInDependencies())
+            return;
+        
         joinManager = new TownJoinManager();
-
         activeSets = new HashMap<>();
-
         if (MCTowns.economyIsEnabled()) {
             potentialPlotBuyers = new HashMap<>();
         }
-
+        
         Perms.registerPermNodes(getServer().getPluginManager());
-        hookInDependencies();
         setupTownManager();
         regEventListeners();
         setCommandExecutors();
@@ -134,7 +136,7 @@ public class MCTownsPlugin extends JavaPlugin {
             //startRemoteServer();
             MCTowns.logInfo("Notice: You have enabled the remote admin server, but this release does not support it yet. This functionality is still under development.");
         }
-        
+
         startPeriodicSaveTask();
 
         MCTowns.logInfo("MCTowns is now fully loaded.");
@@ -151,7 +153,7 @@ public class MCTownsPlugin extends JavaPlugin {
         configFile = new File(this.getDataFolder(), "config.yml");
         remoteConfigFile = new File(this.getDataFolder(), "remote-config.yml");
         metaFile = new File(savesDir, ".meta.yml");
-        
+
         remoteAdminDaemonLogFile = new File(this.getDataFolder(), "remote-daemon.log");
 
         dataDirs = new HashSet<>();
@@ -168,20 +170,22 @@ public class MCTownsPlugin extends JavaPlugin {
         configFiles.add(metaFile);
         configFiles.add(remoteConfigFile);
         configFiles.add(remoteAdminDaemonLogFile);
-        
-        try{
-            if (!metaFile.exists()) 
+
+        try {
+            if (!metaFile.exists()) {
                 metaFile.createNewFile();
-            if(!remoteAdminDaemonLogFile.exists())
+            }
+            if (!remoteAdminDaemonLogFile.exists()) {
                 remoteAdminDaemonLogFile.createNewFile();
-        } catch(IOException ex) {
+            }
+        } catch (IOException ex) {
             MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
         }
-        
+
 
         saveDefaultRemoteConfig();
         loadRemoteConfig();
-        
+
         ResourceUpgradePaths.upgradeResources(this.getDataFolder(), this);
     }
 
@@ -195,12 +199,22 @@ public class MCTownsPlugin extends JavaPlugin {
         }
     }
 
-    private void hookInDependencies() {
+    private boolean hookInDependencies() {
         Plugin wgp = this.getServer().getPluginManager().getPlugin("WorldGuard");
         if (wgp == null) {
-            MCTowns.logSevere("[MCTowns] Error occurred in hooking in to WorldGuard. Is both WorldGuard and WorldEdit installed?");
-            MCTowns.logSevere("[MCTowns] !!!!!NOTICE!!!!! MCTOWNS WILL NOW BE DISABLED.  !!!!!NOTICE!!!!!");
+            MCTowns.logSevere("========================================================");
+            MCTowns.logSevere(" _   _  ____ _______ _____ _____ ______");
+            MCTowns.logSevere("| \\ | |/ __ \\__   __|_   _/ ____|  ____|");
+            MCTowns.logSevere("|  \\| | |  | | | |    | || |    | |__   ");
+            MCTowns.logSevere("| . ` | |  | | | |    | || |    |  __|  ");
+            MCTowns.logSevere("| |\\  | |__| | | |   _| || |____| |____ ");
+            MCTowns.logSevere("|_| \\_|\\____/  |_|  |_____\\_____|______|");
+            MCTowns.logSevere("");
+            MCTowns.logSevere("You're missing the WorldGuard plugin. This is a required dependency. See this wiki page: https://github.com/jmhertlein/MCTowns/wiki/Download-Methods#dependencies");
+            MCTowns.logSevere("");
+            MCTowns.logSevere("=========================================================");
             this.getPluginLoader().disablePlugin(this);
+            return false;
         }
 
         if (MCTowns.economyIsEnabled()) {
@@ -211,8 +225,11 @@ public class MCTownsPlugin extends JavaPlugin {
                 }
             } catch (Exception e) {
                 MCTowns.logSevere("MCTowns: Unable to hook-in to Vault.");
+                return false;
             }
         }
+        
+        return true;
     }
 
     private void regEventListeners() {
@@ -263,8 +280,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         for (File f : root.listFiles()) {
             //not really necessary since nothing but town files are in saves now, but... better safe.
-            if (dataDirs.contains(f) || configFiles.contains(f)) 
-            {
+            if (dataDirs.contains(f) || configFiles.contains(f)) {
                 continue;
             }
 
@@ -310,7 +326,7 @@ public class MCTownsPlugin extends JavaPlugin {
         }
     }
 
-    private void saveWorldGuardWorlds() throws ProtectionDatabaseException {
+    private void saveWorldGuardWorlds() throws Exception {
         for (World w : this.getServer().getWorlds()) {
             MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
         }
@@ -326,7 +342,7 @@ public class MCTownsPlugin extends JavaPlugin {
             FileHandler fh = new FileHandler(remoteAdminDaemonLogFile.getAbsolutePath(), true);
             fh.setFormatter(new SimpleFormatter());
             remoteDaemonLogger.addHandler(fh);
-            
+
             s = new RemoteConnectionServer(this, new File(this.getDataFolder(), "auth_keys"));
         } catch (IOException ex) {
             Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);
@@ -384,7 +400,7 @@ public class MCTownsPlugin extends JavaPlugin {
                 MCTowns.logInfo("Saved.");
             }
         };
-        
+
         //5 * 60 * 20 = 5 minutes worth of ticks
         //i.e. save every 5 mins
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, run, 5 * 60 * 20, 5 * 60 * 20);
@@ -401,6 +417,4 @@ public class MCTownsPlugin extends JavaPlugin {
     public Set<File> getDataDirs() {
         return dataDirs;
     }
-    
-    
 }
