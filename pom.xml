@@ -43,14 +43,14 @@
       <groupId>milkbowl</groupId>
       <artifactId>vault</artifactId>
       <scope>provided</scope>
-      <version>1.2.25</version>
+      <version>1.2.26</version>
     </dependency>
   </dependencies>
 
   <repositories>
     <repository>
-      <id>vault-repo</id>
-      <url>http://192.168.1.65/~joshua/maven/</url>
+      <id>xpe-repo-repo</id>
+      <url>http://box0.xp-e.net:8008/~everdras/maven/</url>
     </repository>
     <repository>
       <id>bukkit-repo</id>
