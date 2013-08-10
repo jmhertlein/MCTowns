@@ -180,7 +180,7 @@ public class TownManager {
 
         p.calculateSignLoc(); //note: don't move calculateSignLoc from here.
         //it needs the region to exist in the region manager
-        return false;
+        return true;
     }
 
     private boolean addMCTRegion(String fullPlotName, MCTownsRegion mctReg, World w, ProtectedRegion reg) {

@@ -75,10 +75,11 @@ public class TerritoryHandler extends CommandHandler {
             localSender.sendMessage(ERR + "Selection is not in territory!");
             return;
         }
-
-        townManager.addPlot(plotName, w, region, t, parTerr);
-
-        localSender.sendMessage(SUCC + "Plot added.");
+        if(townManager.addPlot(plotName, w, region, t, parTerr))
+            localSender.sendMessage(SUCC + "Plot added.");
+        else {
+            localSender.sendMessage(ERR + "A region by that name already exists, please pick a different name.");
+        }
 
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
         if (autoActive) {
