@@ -139,7 +139,7 @@ public class MCTHandler extends CommandHandler {
     public void queryPlayerInfo(String playerName) {
         OfflinePlayer p = server.getOfflinePlayer(playerName);
 
-        if (p.hasPlayedBefore()) {
+        if (!p.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }

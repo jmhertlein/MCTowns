@@ -117,7 +117,7 @@ public class PlotHandler extends CommandHandler {
         }
 
         OfflinePlayer player = server.getOfflinePlayer(playerName);
-        if (player.hasPlayedBefore()) {
+        if (!player.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server.");
             return;
         }
@@ -158,7 +158,7 @@ public class PlotHandler extends CommandHandler {
         }
 
         OfflinePlayer player = server.getOfflinePlayer(playerName);
-        if (player.hasPlayedBefore()) {
+        if (!player.hasPlayedBefore()) {
             localSender.sendMessage(ChatColor.GOLD + playerName + " has never played on this server.");
             return;
         }
