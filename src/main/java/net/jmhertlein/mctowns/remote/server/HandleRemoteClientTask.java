@@ -41,7 +41,6 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.remote.auth.CachedPublicIdentityManager;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
-import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 import net.jmhertlein.mctowns.remote.packet.ClientPacket;
 
 /**
@@ -49,41 +48,31 @@ import net.jmhertlein.mctowns.remote.packet.ClientPacket;
  * @author joshua
  */
 public class HandleRemoteClientTask implements Runnable {
-
-    private static final int NUM_CHECK_BYTES = 500;
-    private MCTownsPlugin p;
-    private PrivateKey serverPrivateKey;
-    private PublicKey serverPubKey, clientPubKey;
-    private CachedPublicIdentityManager identityManager;
-    private Socket client;
-    private PermissionContext permissions;
-    private ChanneledConnectionManager connection;
-    private RemoteConnectionServer server;
+    private final MCTownsPlugin p;
+    private final PrivateKey serverPrivateKey;
+    private final PublicKey serverPubKey;
+    private final CachedPublicIdentityManager identityManager;
+    private final Socket client;
+    private final RemoteConnectionServer server;
 
     /**
      *
      * @param p
-     * @param privateKey private RSA key for the server
-     * @param pubKey public RSA key for the server
      * @param identityManager
      * @param client the client socket this task will interface with
-     * @param permissions
      * @param server
      */
     public HandleRemoteClientTask(MCTownsPlugin p,
-            PrivateKey privateKey,
-            PublicKey pubKey,
             CachedPublicIdentityManager identityManager,
             Socket client,
-            PermissionContext permissions,
             RemoteConnectionServer server) {
         this.p = p;
-        this.serverPrivateKey = privateKey;
-        this.serverPubKey = pubKey;
+        
+        this.server = server;
+        this.serverPrivateKey = server.getPrivateKey();
+        this.serverPubKey = server.getPubKey();
         this.identityManager = identityManager;
         this.client = client;
-        this.permissions = permissions;
-        this.server = server;
     }
 
     @Override

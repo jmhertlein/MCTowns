@@ -43,15 +43,15 @@ import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 public class RemoteConnectionServer extends Thread {
     private static final String PROTOCOL_VERSION = "1";
 
-    private CachedPublicIdentityManager identityManager;
-    private ExecutorService threadPool;
+    private final CachedPublicIdentityManager identityManager;
+    private final ExecutorService threadPool;
     private boolean done;
-    private ServerSocket server;
+    private final ServerSocket server;
     private PrivateKey privateKey;
     private PublicKey pubKey;
-    private Map<Integer, ClientSession> sessions;
-    private PermissionContext permissions;
-    private MCTownsPlugin p;
+    private final Map<Integer, ClientSession> sessions;
+    private final PermissionContext permissions;
+    private final MCTownsPlugin p;
     
     private int nextSessionID;
 
@@ -87,7 +87,7 @@ public class RemoteConnectionServer extends Thread {
                 continue;
             }
 
-            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, identityManager, client, permissions, this));
+            threadPool.submit(new HandleRemoteClientTask(p, identityManager, client, this));
         }
     }
 
@@ -157,4 +157,17 @@ public class RemoteConnectionServer extends Thread {
     public ClientSession getSession(int sessionID) {
         return sessions.get(sessionID);
     }
+    
+    public void kickClient(int sessionID) {
+        //TODO: Need to 
+    }
+
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    public PublicKey getPubKey() {
+        return pubKey;
+    }
+    
 }
