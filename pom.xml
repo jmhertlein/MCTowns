@@ -49,7 +49,7 @@
 
   <repositories>
     <repository>
-      <id>xpe-repo-repo</id>
+      <id>xpe-repo</id>
       <url>http://box0.xp-e.net:8008/~everdras/maven/</url>
     </repository>
     <repository>

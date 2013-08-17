@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.remote.auth.CachedPublicIdentityManager;
 import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 
 /**
@@ -40,7 +41,7 @@ import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 public class RemoteConnectionServer extends Thread {
     private static final String PROTOCOL_VERSION = "1";
 
-    private File authKeysDir;
+    private CachedPublicIdentityManager identityManager;
     private ExecutorService threadPool;
     private boolean done;
     private ServerSocket server;
@@ -52,11 +53,12 @@ public class RemoteConnectionServer extends Thread {
 
     /**
      *
+     * @param p
      * @param authorizedKeysDirectory
      * @throws IOException if there's an error listening on the port
      */
     public RemoteConnectionServer(MCTownsPlugin p, File authorizedKeysDirectory) throws IOException {
-        authKeysDir = authorizedKeysDirectory;
+        identityManager = new CachedPublicIdentityManager(authorizedKeysDirectory);
         threadPool = Executors.newCachedThreadPool();
         done = false;
         server = new ServerSocket(p.getConfig().getInt("remoteAdminPort"));
@@ -80,7 +82,7 @@ public class RemoteConnectionServer extends Thread {
                 continue;
             }
 
-            //threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, authKeysDir, client, sessions, permissions));
+            threadPool.submit(new HandleRemoteClientTask(p, privateKey, pubKey, identityManager, client, permissions, this));
         }
     }
 

@@ -101,4 +101,8 @@ public class PublicIdentity implements Serializable {
         f.set("group", permissionGroup);
         f.set("pubKey", Keys.getBASE64ForKey(pubKey));
     }
+    
+    public String getFilename() {
+        return username + ".pub";
+    }
 }
