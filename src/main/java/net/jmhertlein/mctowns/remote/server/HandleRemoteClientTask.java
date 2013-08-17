@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -53,7 +54,6 @@ public class HandleRemoteClientTask implements Runnable {
     private MCTownsPlugin p;
     private PrivateKey serverPrivateKey;
     private PublicKey serverPubKey, clientPubKey;
-    private SecretKey sessionKey;
     private CachedPublicIdentityManager identityManager;
     private Socket client;
     private PermissionContext permissions;
@@ -88,14 +88,37 @@ public class HandleRemoteClientTask implements Runnable {
 
     @Override
     public void run() {
-        try {
-            doInitialKeyExchange(new ObjectOutputStream(client.getOutputStream()), new ObjectInputStream(client.getInputStream()));
-        } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
-            System.err.println("Error authenticating client.");
-            Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        int sessionID = readSessionID();
+        System.out.println("Client with id " + sessionID + " is connecting.");
         
-        System.out.println("Done");
+        if (sessionID < 0) {
+            try {
+                doInitialKeyExchange(new ObjectOutputStream(client.getOutputStream()), new ObjectInputStream(client.getInputStream()));
+            } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+                System.err.println("Error authenticating client.");
+                Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("Done");
+        } else {
+            ClientSession session = server.getSession(sessionID);
+            
+            System.out.println("Opening encrypted streams...");
+            ChanneledConnectionManager conMan = openChanneledSecureConnection(session.getSessionKey(), client);
+            System.out.println("Opened.");
+
+            conMan.addPacketReceiveListener(new PacketReceiveListener() {
+                @Override
+                public boolean onPacketReceive(Object data, int channel) {
+                    if (channel == 0) {
+                        ((ClientPacket) data).onServerReceive(server, p);
+                        return false;
+                    }
+
+                    return true;
+                }
+            });
+            System.out.println("Added listener for client. Exiting.");
+        }
     }
 
     private boolean doInitialKeyExchange(ObjectOutputStream os, ObjectInputStream is) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
@@ -105,26 +128,25 @@ public class HandleRemoteClientTask implements Runnable {
         os.flush();
         System.out.println("Reading response to version...");
         //check to see if they're aborting connecting due to protocol version mismatch
-        if(!is.readBoolean()) {
+        if (!is.readBoolean()) {
             return false;
         }
-        
+
         //receive the client's pubkey
         System.out.println("Reading client key");
         PublicKey receivedClientKey = (PublicKey) is.readObject();
         System.out.println("Read client key.");
-        
+
         //see if the client's pubkey is in our cache and is matched to a name
         System.out.println("Checking if key is in cache...");
         PublicIdentity clientIdentity = identityManager.getPublicIdentityByPublicKey(receivedClientKey);
         System.out.println("Key cache checking done.");
-        
+
         //if we have the identity, tell them we're proceeding
-        if(clientIdentity != null) {
+        if (clientIdentity != null) {
             System.out.println("Had key, okay.");
             os.writeBoolean(true);
-        }
-        //else, tell them we're stopping because they're not authorized
+        } //else, tell them we're stopping because they're not authorized
         else {
             System.out.println("No key, no-go.");
             os.writeBoolean(false);
@@ -147,7 +169,7 @@ public class HandleRemoteClientTask implements Runnable {
         //if they do, we're good
         //else, abort connecting
         System.out.println("Checking if client accepts our key");
-        if(!is.readBoolean()) {
+        if (!is.readBoolean()) {
             System.out.println("They didn't like it, quitting.");
             return false;
         } else {
@@ -155,47 +177,29 @@ public class HandleRemoteClientTask implements Runnable {
         }
 
         //we're skipping the stupid 'authentication challenges' things because there's no point
-
         //prepare the session key
         SecretKey newKey = Keys.newAESKey(MCTowns.getRemoteAdminSessionKeyLength());
-        
+
         //write it for them
         System.out.println("Writing session key");
         os.writeObject(new EncryptedSecretKey(newKey, outCipher));
         System.out.println("Session key written");
-        
+
         //no need to give them a session ID this time
         //also no need to cache their session key more globally
-        //sessionKeys.put(assignedSessionID, new ClientSession(assignedSessionID, identity, newKey));
-        
+        int newSessionID = server.addNewSession(clientIdentity, newKey);
+
+        os.writeInt(newSessionID);
         os.flush();
+        client.close();
 
         //write details of their login to log
         MCTowns.logInfo(String.format("%s logged in via the Remote Admin Client (%s)", clientIdentity.getUsername(), client.getInetAddress().toString()));
-        
-        System.out.println("Opening encrypted streams...");
-        ChanneledConnectionManager conMan = openChanneledSecureConnection();
-        System.out.println("Opened encrypted streams.");
-        if(conMan == null)
-            return false;
-        
-        conMan.addPacketReceiveListener(new PacketReceiveListener() {
-            @Override
-            public boolean onPacketReceive(Object data, int channel) {
-                if(channel == 0) {
-                    ((ClientPacket) data).onServerReceive(server, p);
-                    return false;
-                }
-                
-                return true;
-            }
-        });
-        
         System.out.println("All done.");
         return true;
     }
-    
-    private ChanneledConnectionManager openChanneledSecureConnection() {
+
+    private static ChanneledConnectionManager openChanneledSecureConnection(SecretKey sessionKey, Socket client) {
         try {
             ObjectOutputStream toos = Keys.getEncryptedObjectOutputStream(sessionKey, client.getOutputStream());
             toos.flush();
@@ -205,5 +209,15 @@ public class HandleRemoteClientTask implements Runnable {
             Logger.getLogger(HandleRemoteClientTask.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+
+    private int readSessionID() {
+        byte[] clientSessionIDBytes = new byte[4];
+        try {
+            client.getInputStream().read(clientSessionIDBytes);
+        } catch (IOException ex) {
+            return -2;
+        }
+        return ByteBuffer.wrap(clientSessionIDBytes).getInt();
     }
 }

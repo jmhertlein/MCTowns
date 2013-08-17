@@ -28,10 +28,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import javax.crypto.SecretKey;
 import net.jmhertlein.core.crypto.Keys;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.remote.auth.CachedPublicIdentityManager;
+import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
 import net.jmhertlein.mctowns.remote.auth.permissions.PermissionContext;
 
 /**
@@ -50,6 +52,8 @@ public class RemoteConnectionServer extends Thread {
     private Map<Integer, ClientSession> sessions;
     private PermissionContext permissions;
     private MCTownsPlugin p;
+    
+    private int nextSessionID;
 
     /**
      *
@@ -66,6 +70,7 @@ public class RemoteConnectionServer extends Thread {
         sessions = new ConcurrentHashMap<>();
 
         permissions = new PermissionContext(MCTowns.getRemoteConfig());
+        nextSessionID = 0;
 
         loadServerKeys();
     }
@@ -133,5 +138,23 @@ public class RemoteConnectionServer extends Thread {
             this.privateKey = Keys.loadPrivateKey(privKeyFile);
             MCTowns.logInfo("Keys loaded from disk.");
         }
+    }
+
+    public Map<Integer, ClientSession> getSessions() {
+        return sessions;
+    }
+
+    public PermissionContext getPermissions() {
+        return permissions;
+    }
+    
+    public synchronized int addNewSession(PublicIdentity identity, SecretKey sessionKey) {
+        sessions.put(nextSessionID, new ClientSession(nextSessionID, identity, sessionKey));
+        nextSessionID++;
+        return nextSessionID - 1;
+    }
+    
+    public ClientSession getSession(int sessionID) {
+        return sessions.get(sessionID);
     }
 }

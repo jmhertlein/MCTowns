@@ -73,7 +73,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import sun.misc.BASE64Encoder;
 
 /**
  *
@@ -183,8 +182,6 @@ public class MCTServerProtocol {
         SecretKey newKey = Keys.newAESKey(p.getConfig().getInt("remoteAdminSessionKeyLength"));
 
         oos.writeObject(new EncryptedSecretKey(newKey, outCipher));
-
-        BASE64Encoder e = new BASE64Encoder();
 
 
         int assignedSessionID = nextSessionID;
