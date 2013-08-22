@@ -17,6 +17,8 @@
 package net.jmhertlein.mctowns.remote.packet;
 
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.remote.RemoteAction;
+import net.jmhertlein.mctowns.remote.server.ClientSession;
 import net.jmhertlein.mctowns.remote.server.RemoteConnectionServer;
 
 /**
@@ -24,5 +26,17 @@ import net.jmhertlein.mctowns.remote.server.RemoteConnectionServer;
  * @author Joshua Michael Hertlein <jmhertlein@gmail.com>
  */
 public interface ClientPacket {
-    public void onServerReceive(RemoteConnectionServer server, MCTownsPlugin plugin);
+    /**
+     * Run server-side when the packet is received
+     * @param client the ClientSession of the client who sent the packet
+     * @param server the remote connection server object
+     * @param plugin the MCTowns plugin object
+     */
+    public void onServerReceive(ClientSession client, RemoteConnectionServer server, MCTownsPlugin plugin);
+    
+    /**
+     * 
+     * @return the RemoteAction associated with the packet being sent
+     */
+    public RemoteAction getAction();
 }

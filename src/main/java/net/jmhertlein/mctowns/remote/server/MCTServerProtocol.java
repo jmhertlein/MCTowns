@@ -781,7 +781,7 @@ public class MCTServerProtocol {
 
     private void executeAction(ObjectOutputStream oos, ObjectInputStream ois) throws IOException, ClassNotFoundException {
         switch (action) {
-            case GET_META_VIEW:
+            case GET_OVER_VIEW:
                 sendMetaView(oos, ois);
                 break;
             case GET_PLAYER_LIST:

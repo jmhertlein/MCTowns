@@ -19,6 +19,7 @@ package net.jmhertlein.mctowns.remote.server;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
+import net.jmhertlein.core.io.ChanneledConnectionManager;
 import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
 
 /**
@@ -30,6 +31,7 @@ public class ClientSession {
     private final byte[] sessionID;
     private final PublicIdentity identity;
     private final SecretKey sessionKey;
+    private transient ChanneledConnectionManager connection;
 
     public ClientSession(int sessionID, PublicIdentity i, SecretKey sessionKey) {
         this.identity = i;
@@ -47,5 +49,13 @@ public class ClientSession {
 
     public byte[] getSessionID() {
         return Arrays.copyOf(sessionID, sessionID.length);
+    }
+
+    public ChanneledConnectionManager getConnection() {
+        return connection;
+    }
+
+    public void setConnection(ChanneledConnectionManager connection) {
+        this.connection = connection;
     }
 }

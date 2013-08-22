@@ -38,6 +38,7 @@ import net.jmhertlein.core.io.ChanneledConnectionManager;
 import net.jmhertlein.core.io.PacketReceiveListener;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.remote.RemoteAction;
 import net.jmhertlein.mctowns.remote.auth.CachedPublicIdentityManager;
 import net.jmhertlein.mctowns.remote.auth.EncryptedSecretKey;
 import net.jmhertlein.mctowns.remote.auth.PublicIdentity;
@@ -89,17 +90,24 @@ public class HandleRemoteClientTask implements Runnable {
             }
             System.out.println("Done");
         } else {
-            ClientSession session = server.getSession(sessionID);
+            final ClientSession session = server.getSession(sessionID);
             
             System.out.println("Opening encrypted streams...");
             ChanneledConnectionManager conMan = openChanneledSecureConnection(session.getSessionKey(), client);
             System.out.println("Opened.");
+            
+            session.setConnection(conMan);
 
             conMan.addPacketReceiveListener(new PacketReceiveListener() {
                 @Override
                 public boolean onPacketReceive(Object data, int channel) {
                     if (channel == 0) {
-                        ((ClientPacket) data).onServerReceive(server, p);
+                        ClientPacket packet = ((ClientPacket) data);
+                        if(!server.getPermissions().userHasPermission(session.getIdentity(), packet.getAction())) {
+                            //TODO: Handle permission check failure
+                        }
+                            
+                        packet.onServerReceive(session, server, p);
                         return false;
                     }
 

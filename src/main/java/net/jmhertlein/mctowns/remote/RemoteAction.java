@@ -53,7 +53,7 @@ public enum RemoteAction implements Serializable {
     ADD_IDENTITY,
     DELETE_IDENTITY,
     //other views
-    GET_META_VIEW,
+    GET_OVER_VIEW,
     GET_PLAYER_LIST,
     GET_VIEW_FOR_PLAYER,
     GET_PLOTS_LIST,
@@ -80,4 +80,8 @@ public enum RemoteAction implements Serializable {
      * MODIFY_[TERRITORY|PLOT]_MEMBERSHIP
      */
     public static final int OWNER = 3;
+    
+    public int getChannel() {
+        return this.ordinal()+1;
+    }
 }
