@@ -17,8 +17,10 @@
 package net.jmhertlein.mctowns;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -69,6 +71,22 @@ public class MCTowns {
 
     public static int getBugReportPort() {
         return MCTownsPlugin.getPlugin().getConfig().getInt("bugReportPort");
+    }
+
+    public static boolean remoteAdminServerIsEnabled() {
+        return MCTownsPlugin.getPlugin().getConfig().getBoolean("remoteAdminServerEnabled");
+    }
+
+    public static int getRemoteAdminKeyLength() {
+        return MCTownsPlugin.getPlugin().getConfig().getInt("remoteAdminKeyLength");
+    }
+
+    public static int getRemoteAdminSessionKeyLength() {
+        return MCTownsPlugin.getPlugin().getConfig().getInt("remoteAdminSessionKeyLength");
+    }
+
+    public static int getRemoteAdminPort() {
+        return MCTownsPlugin.getPlugin().getConfig().getInt("remoteAdminPort");
     }
 
     public static String getConfigSummary() {
@@ -151,6 +169,38 @@ public class MCTowns {
 
     public static void setBugReportPort(int port) {
         MCTownsPlugin.getPlugin().getConfig().set("bugReportPort", port);
+    }
+
+    public static void setRemoteAdminServerIsEnabled(boolean value) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminServerEnabled", value);
+    }
+
+    public static void setRemoteAdminKeyLength(int ln) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminKeyLength", ln);
+    }
+
+    public static void setRemoteAdminSessionKeyLength(int ln) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminSessionKeyLength", ln);
+    }
+
+    public static void setRemoteAdminPort(int port) {
+        MCTownsPlugin.getPlugin().getConfig().set("remoteAdminPort", port);
+    }
+
+    public static File getServerKeysDir() {
+        return MCTownsPlugin.getPlugin().getServerKeysDir();
+    }
+
+    public static File getAuthKeysDir() {
+        return MCTownsPlugin.getPlugin().getAuthKeysDir();
+    }
+
+    public static FileConfiguration getRemoteConfig() {
+        return MCTownsPlugin.getPlugin().getRemoteConfig();
+    }
+    
+    public static Logger getRemoteAdminDaemonLogger() {
+        return MCTownsPlugin.remoteDaemonLogger;
     }
     
     public static void persistTownManager() {
