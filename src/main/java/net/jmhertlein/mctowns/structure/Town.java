@@ -26,7 +26,6 @@ import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
-import net.jmhertlein.mctowns.remote.view.TownView;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -628,24 +627,5 @@ public class Town {
         ret.addAll(s);
 
         return ret;
-    }
-
-    /**
-     * Updates the Town so that it reflects any changes made to the TownView
-     * NOTE: This method does NOT change town memberships, territories,
-     * assistants, or the town bank. Use their corresponding Town methods to
-     * change them.
-     *
-     * @param view
-     */
-    public void updateTown(TownView view) {
-        this.buyablePlots = view.isBuyablePlots();
-        this.defaultPlotPrice = view.getDefaultPlotPrice();
-        this.economyJoins = view.isEconomyJoins();
-        this.friendlyFire = view.isFriendlyFire();
-        this.mayor = view.getMayorName();
-        this.motdColor = view.getMotdColor();
-        this.townMOTD = view.getMotd();
-        this.townSpawn = view.getSpawnLoc();
     }
 }

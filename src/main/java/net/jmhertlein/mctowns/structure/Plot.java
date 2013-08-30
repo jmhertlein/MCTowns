@@ -22,7 +22,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
-import net.jmhertlein.mctowns.remote.view.PlotView;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -248,18 +247,5 @@ public class Plot extends MCTownsRegion {
         }
 
         return p;
-    }
-
-    /**
-     * Updates the plot so that it reflects changes made to the PlotView NOTE:
-     * This will not modify player membership (owners or guests) or any
-     * non-mutable metadata (name, world, parent town, parent territ)
-     *
-     * @param view
-     */
-    public void updatePlot(PlotView view) {
-        this.forSale = view.isForSale();
-        this.price = view.getPrice();
-        this.signLoc = view.getSignLoc();
     }
 }
