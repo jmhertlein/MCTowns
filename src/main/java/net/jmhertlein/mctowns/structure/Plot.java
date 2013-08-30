@@ -145,9 +145,10 @@ public class Plot extends MCTownsRegion {
     }
 
     /**
+     * @param referencePlayerLocation the location whose yaw will be used to set the sign's yaw such that if the location is that of a player, the sign will point towards him
      * @return whether or not the sign was built
      */
-    public boolean buildSign() {
+    public boolean buildSign(org.bukkit.Location referencePlayerLocation) {
         if (signLoc == null) {
             MCTowns.logSevere("The sign's location was null.");
         }
@@ -157,10 +158,9 @@ public class Plot extends MCTownsRegion {
 
         org.bukkit.Location loc = Location.convertToBukkitLocation(Bukkit.getServer(), signLoc);
 
+        loc.setYaw((referencePlayerLocation.getYaw() + 128) % 256);
         loc.getBlock().setType(Material.SIGN_POST);
-
-
-
+        
         Sign sign = (Sign) loc.getBlock().getState();
 
         sign.setLine(0, "[mct]");

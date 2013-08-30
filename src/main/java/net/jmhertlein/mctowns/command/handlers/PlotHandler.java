@@ -239,7 +239,7 @@ public class PlotHandler extends CommandHandler {
         }
 
         p.setPrice(price);
-        p.buildSign();
+        p.buildSign(localSender.getPlayer().getLocation());
         localSender.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
     }
 
@@ -266,7 +266,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if(p.buildSign())
+        if(p.buildSign(localSender.getPlayer().getLocation()))
             localSender.sendMessage(SUCC + "Sign built!");
         else
             localSender.sendMessage(ERR + "The sign wasn't built because its target location wasn't an air block. Please clear the spot and try again.");
@@ -337,7 +337,7 @@ public class PlotHandler extends CommandHandler {
         p.setSignLoc(mctLoc);
 
         if (!cmd.hasFlag("--no-rebuild")) {
-            p.buildSign();
+            p.buildSign(localSender.getPlayer().getLocation());
         }
 
         localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
