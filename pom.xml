@@ -85,6 +85,12 @@
             </goals>
             <configuration>
               <minimizeJar>true</minimizeJar>
+              <relocations>
+                <relocation>
+                  <pattern>net.jmhertlein.core</pattern>
+                  <shadedPattern>net.jmhertlein.mctowns.shaded.core</shadedPattern>
+                </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>
