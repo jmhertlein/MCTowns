@@ -42,6 +42,8 @@ public abstract class ResourceUpgradePaths {
         switch(installedVersion) {
             case "2.1.0":
                 upgradeFrom210To220(rootDir, p);
+            case "2.2.0":
+                upgradeFrom220To230(rootDir, p);
             default:
                 p.getLogger().info("Resources are up to date.");
                 break;
@@ -83,5 +85,13 @@ public abstract class ResourceUpgradePaths {
         p.saveConfig();
         
         p.getLogger().warning("Completed resource migration from v2.1.0 to v2.2.0");
+    }
+
+    private static void upgradeFrom220To230(File rootDir, MCTownsPlugin p) {
+        p.getLogger().warning("Beginning resource migration from v2.2.0 to v2.3.0");
+        p.getLogger().info(("Updating \"installedVersion\" field in config.yml from 2.2.0 to 2.3.0"));
+        p.getConfig().set("installedVersion", "2.3.0");
+        p.saveConfig();
+        p.getLogger().warning("Completed resource migration from v2.2.0 to v2.3.0");
     }
 }
