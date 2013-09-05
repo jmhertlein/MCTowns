@@ -1,6 +1,6 @@
 name: MCTowns
 main: net.jmhertlein.mctowns.MCTownsPlugin
-version: 2.3.0
+version: 2.3.0-LTS
 softdepend: [WorldGuard, Vault]
 commands:
     mct:
