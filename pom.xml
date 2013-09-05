@@ -45,12 +45,6 @@
       <scope>provided</scope>
       <version>1.2.26</version>
     </dependency>
-    <dependency>
-      <groupId>net.jmhertlein</groupId>
-      <artifactId>ebcf</artifactId>
-      <scope>compile</scope>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
   </dependencies>
 
   <repositories>
