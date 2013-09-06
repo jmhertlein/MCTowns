@@ -35,7 +35,6 @@ import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.upgrade.ResourceUpgradePaths;
-import net.jmhertlein.mctowns.util.metrics.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -45,6 +44,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
 /**
  * The main class of the MCTowns plugin.

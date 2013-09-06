@@ -45,6 +45,12 @@
       <scope>provided</scope>
       <version>1.2.26</version>
     </dependency>
+    <dependency>
+      <groupId>org.mcstats.bukkit</groupId>
+      <artifactId>metrics</artifactId>
+      <version>R6</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <repositories>
@@ -59,6 +65,10 @@
     <repository>
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
+    </repository>
+    <repository>
+      <id>Plugin Metrics</id>
+      <url>http://repo.mcstats.org/content/repositories/public</url>
     </repository>
   </repositories>
   
@@ -93,6 +103,10 @@
                 <relocation>
                   <pattern>net.jmhertlein.ebcf</pattern>
                   <shadedPattern>net.jmhertlein.mctowns.shaded.ebcf</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.mcstats</pattern>
+                  <shadedPattern>net.jmhertlein.mctowns.shaded.mcstats</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
