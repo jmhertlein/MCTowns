@@ -99,10 +99,9 @@
                 <relocation>
                   <pattern>net.jmhertlein.core</pattern>
                   <shadedPattern>net.jmhertlein.mctowns.shaded.core</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>net.jmhertlein.ebcf</pattern>
-                  <shadedPattern>net.jmhertlein.mctowns.shaded.ebcf</shadedPattern>
+                  <excludes>
+                    <exclude>net.jmhertlein.core.reporting.*</exclude>
+                  </excludes>
                 </relocation>
                 <relocation>
                   <pattern>org.mcstats</pattern>

@@ -317,9 +317,9 @@ public class MCTownsPlugin extends JavaPlugin {
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                MCTowns.logInfo("Saving...");
+                //MCTowns.logInfo("Saving...");
                 MCTowns.persistTownManager();
-                MCTowns.logInfo("Saved.");
+                //MCTowns.logInfo("Saved.");
             }
         };
 

@@ -64,7 +64,7 @@ public class MCTowns {
     }
 
     public static String getBugReportHostname() {
-        return MCTownsPlugin.getPlugin().getConfig().getString("bugReportHostName");
+        return MCTownsPlugin.getPlugin().getConfig().getString("bugReportHostname");
     }
 
     public static int getBugReportPort() {
