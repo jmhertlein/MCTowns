@@ -91,6 +91,8 @@ public abstract class ResourceUpgradePaths {
         p.getLogger().warning("Beginning resource migration from v2.2.0 to v2.3.0");
         p.getLogger().info(("Updating \"installedVersion\" field in config.yml from 2.2.0 to 2.3.0"));
         p.getConfig().set("installedVersion", "2.3.0");
+        p.getLogger().info("Setting bugReportHostname to services.jmhertlein.net");
+        p.getConfig().set("bugReportHostname", "services.jmhertlein.net");
         p.saveConfig();
         p.getLogger().warning("Completed resource migration from v2.2.0 to v2.3.0");
     }
