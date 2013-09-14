@@ -64,11 +64,11 @@ public class MCTowns {
     }
 
     public static String getBugReportHostname() {
-        return MCTownsPlugin.getPlugin().getConfig().getString("bugReportHostname");
+        return MCTownsPlugin.getPlugin().getConfig().getString("bugReportHostname", "services.jmhertlein.net");
     }
 
     public static int getBugReportPort() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("bugReportPort");
+        return MCTownsPlugin.getPlugin().getConfig().getInt("bugReportPort", 9001);
     }
 
     public static String getConfigSummary() {
