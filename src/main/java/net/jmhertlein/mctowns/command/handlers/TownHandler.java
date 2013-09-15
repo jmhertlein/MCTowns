@@ -59,7 +59,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!localSender.hasExternalPermissions(Perms.ADMIN.toString()) && !t.playerIsMayor(localSender.getPlayer())) {
+        if (!localSender.hasExternalPermissions(Perms.ADMIN.toString()) && !t.playerIsResident(localSender.getPlayer())) {
             localSender.notifyInsufPermissions();
             return;
         }
