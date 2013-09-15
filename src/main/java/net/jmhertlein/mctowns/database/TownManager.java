@@ -144,6 +144,13 @@ public class TownManager {
         if (!addMCTRegion(fullTerritoryName, t, worldTerritoryIsIn, reg)) {
             return false;
         }
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(worldTerritoryIsIn);
+        try {
+            regMan.save();
+        } catch (ProtectionDatabaseException ex) {
+            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            ex.printStackTrace();
+        }
 
         parentTown.addTerritory(t);
         return true;
@@ -177,6 +184,13 @@ public class TownManager {
         } catch (CircularInheritanceException ex) {
             Logger.getLogger(TownManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        try {
+            regMan.save();
+        } catch (ProtectionDatabaseException ex) {
+            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
+            ex.printStackTrace();
+        }
 
         p.calculateSignLoc(); //note: don't move calculateSignLoc from here.
         //it needs the region to exist in the region manager
@@ -196,14 +210,6 @@ public class TownManager {
 
         regMan.addRegion(reg);
         regions.put(mctReg.getName(), mctReg);
-
-        try {
-            regMan.save();
-        } catch (ProtectionDatabaseException ex) {
-            MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
-            ex.printStackTrace();
-        }
-
         return true;
     }
 
