@@ -58,7 +58,7 @@ public class MCTExecutor extends BaseExecutor {
 
             switch (command.get(1)) {
                 case "break":
-                    if (MCTownsPlugin.isDebugging()) {
+                    if (MCTowns.getDebugModeEnabled()) {
                         MCTowns.logWarning(cs.getName() + " intentionally broke the server.");
                         throw new RuntimeException("Intentionally broke.");
                     }

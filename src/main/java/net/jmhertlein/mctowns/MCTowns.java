@@ -164,4 +164,8 @@ public class MCTowns {
     public static void setDefaultTown(String townName) {
         MCTownsPlugin.getPlugin().getConfig().set("defaultTown", townName);
     }
+    
+    public static boolean getDebugModeEnabled() {
+        return MCTownsPlugin.getPlugin().getConfig().getBoolean("debugModeEnabled", false);
+    }
 }

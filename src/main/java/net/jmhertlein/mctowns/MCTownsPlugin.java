@@ -56,7 +56,6 @@ public class MCTownsPlugin extends JavaPlugin {
     private static MCTownsPlugin singleton;
     private File savesDir, configFile,
             metaFile;
-    private static final boolean DEBUGGING = false;
     private static TownManager townManager;
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
@@ -303,10 +302,6 @@ public class MCTownsPlugin extends JavaPlugin {
         for (World w : this.getServer().getWorlds()) {
             MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
         }
-    }
-
-    public static boolean isDebugging() {
-        return DEBUGGING;
     }
 
     public static MCTownsPlugin getPlugin() {
