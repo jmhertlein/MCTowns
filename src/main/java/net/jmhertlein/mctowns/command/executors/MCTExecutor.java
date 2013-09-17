@@ -77,7 +77,6 @@ public class MCTExecutor extends BaseExecutor {
                             handler.queryTownInfo(command.get(3));
                             softFailure = false;
                             break;
-
                     }
 
                     break;
@@ -167,7 +166,6 @@ public class MCTExecutor extends BaseExecutor {
             cs.sendMessage(ChatColor.RED + "Invalid command. Acceptable similar formats are: ");
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);
         }
-
 
         return !hardFailure;
     }
