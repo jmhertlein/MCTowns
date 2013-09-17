@@ -156,4 +156,12 @@ public class MCTowns {
     public static void persistTownManager() {
         MCTownsPlugin.getPlugin().persistTownManager();
     }
+    
+    public static String getDefaultTown() {
+        return MCTownsPlugin.getPlugin().getConfig().getString("defaultTown");
+    }
+    
+    public static void setDefaultTown(String townName) {
+        MCTownsPlugin.getPlugin().getConfig().set("defaultTown", townName);
+    }
 }

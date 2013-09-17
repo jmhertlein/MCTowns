@@ -49,15 +49,14 @@ import org.bukkit.util.Vector;
 public class MCTPlayerListener implements Listener {
 
     private static final String FENCEREGION_SIGN_PREFIX = "mkreg";
-    private MCTownsPlugin plugin;
-    private TownManager townManager;
-    private TownJoinManager joinManager;
-    private HashMap<Player, ActiveSet> potentialPlotBuyers;
+    private final MCTownsPlugin plugin;
+    private final TownManager townManager;
+    private final TownJoinManager joinManager;
+    private final HashMap<Player, ActiveSet> potentialPlotBuyers;
 
     /**
      *
-     * @param townManager
-     * @param joinManager
+     * @param plugin
      */
     public MCTPlayerListener(MCTownsPlugin plugin) {
         this.townManager = plugin.getTownManager();
@@ -97,10 +96,6 @@ public class MCTPlayerListener implements Listener {
                 }
             }
         }
-
-
-
-
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -246,8 +241,16 @@ public class MCTPlayerListener implements Listener {
 
         pActive.setActivePlot(townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName)));
         p.sendMessage(ChatColor.LIGHT_PURPLE + "Active plot set to newly created plot.");
-
-
-
+    }
+    
+    @EventHandler
+    public void onPlayerJoinAddToDefaultTown(PlayerJoinEvent e) {
+        if(!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
+            Town t = townManager.getTown(MCTowns.getDefaultTown());
+            if(t == null)
+                return;
+            t.addPlayer(e.getPlayer());
+            e.getPlayer().sendMessage(ChatColor.GREEN + "You've been automatically added to the town " + t.getTownName() + "!");
+        }
     }
 }

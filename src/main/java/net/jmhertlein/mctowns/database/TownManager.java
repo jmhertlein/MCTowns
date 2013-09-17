@@ -354,8 +354,7 @@ public class TownManager {
      * Matches a live player to his town
      *
      * @param p the player to match to a town
-     * @return the town of which the player is a member, or null if player has
-     * no town
+     * @return a list of all towns the player is in, empty list if player is in no towns
      */
     public List<Town> matchPlayerToTowns(OfflinePlayer p) {
         return matchPlayerToTowns(p.getName());
