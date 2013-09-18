@@ -21,10 +21,9 @@ package net.jmhertlein.mctowns.townjoin;
  * @author Joshua
  */
 public enum TownJoinMethod {
-
     INVITATION,
     ECONOMY;
-
+    
     public static TownJoinMethod parseMethod(String s) throws TownJoinMethodFormatException {
         if (s.equalsIgnoreCase(INVITATION.toString())) {
             return INVITATION;

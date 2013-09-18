@@ -103,13 +103,13 @@ public class PlotHandler extends CommandHandler {
             localSender.notifyInsufPermissions();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         Plot plot = localSender.getActivePlot();
         if (plot == null) {
             localSender.notifyActivePlotNotSet();
@@ -121,7 +121,7 @@ public class PlotHandler extends CommandHandler {
             localSender.sendMessage(ERR + playerName + " has never played on this server.");
             return;
         }
-        
+
         if (!t.playerIsResident(player)) {
             localSender.sendMessage(ERR + "That player is not a member of the town.");
             return;
@@ -163,10 +163,11 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if(plot.addGuest(player))
+        if (plot.addGuest(player)) {
             localSender.sendMessage(ChatColor.GREEN + "Successfully added " + player.getName() + " to the plot as a guest.");
-        else 
+        } else {
             localSender.sendMessage(ERR + player.getName() + " is already a guest in the plot.");
+        }
     }
 
     public void setPlotBuyability(String s_forSale) {
@@ -266,10 +267,11 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if(p.buildSign(localSender.getPlayer().getLocation()))
+        if (p.buildSign(localSender.getPlayer().getLocation())) {
             localSender.sendMessage(SUCC + "Sign built!");
-        else
+        } else {
             localSender.sendMessage(ERR + "The sign wasn't built because its target location wasn't an air block. Please clear the spot and try again.");
+        }
     }
 
     public void demolishSign() {
@@ -342,7 +344,6 @@ public class PlotHandler extends CommandHandler {
 
         localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
 
-
     }
 
     public void surrenderPlot() {
@@ -370,11 +371,8 @@ public class PlotHandler extends CommandHandler {
             reg.getMembers().removePlayer(name);
         }
 
-
-
         p.setForSale(false);
         p.setPrice(BigDecimal.ZERO);
-
 
     }
 

@@ -35,8 +35,8 @@ import org.bukkit.entity.Player;
  */
 public class MCTLocalSender extends LocalSender {
 
-    private TownManager manager;
-    private ActiveSet activeSet;
+    private final TownManager manager;
+    private final ActiveSet activeSet;
 
     /**
      * Wraps a CommandSender, tying him to his ActiveSet and the townManager

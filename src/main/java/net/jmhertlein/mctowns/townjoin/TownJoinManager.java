@@ -35,11 +35,11 @@ public class TownJoinManager {
      * Key- Player name Value- Set of towns the player is currently invited to
      * join
      */
-    private Map<String, Set<Town>> joinInvitations;
+    private final Map<String, Set<Town>> joinInvitations;
     /**
      * Key- Town Value- Set of players who have requested membership to the town
      */
-    private Map<Town, Set<String>> joinRequests;
+    private final Map<Town, Set<String>> joinRequests;
 
     public TownJoinManager() {
         joinInvitations = new ConcurrentHashMap<>();

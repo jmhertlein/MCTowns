@@ -31,7 +31,7 @@ import org.bukkit.command.CommandSender;
  */
 public class PlotExecutor extends BaseExecutor {
 
-    private PlotHandler handler;
+    private final PlotHandler handler;
 
     public PlotExecutor(MCTownsPlugin parent) {
         super(parent);
@@ -150,11 +150,7 @@ public class PlotExecutor extends BaseExecutor {
                 default:
                     hardFailure = true;
                     softFailure = false;
-
             }
-
-
-
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
                 hardFailure = true;
@@ -162,16 +158,12 @@ public class PlotExecutor extends BaseExecutor {
                 softFailure = true;
                 hardFailure = false;
             }
-
         }
-
-
 
         if (!hardFailure && softFailure && helpMessage != null) {
             cs.sendMessage(ChatColor.RED + "Invalid command. Acceptable similar formats are: ");
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);
         }
-
 
         return !hardFailure;
     }

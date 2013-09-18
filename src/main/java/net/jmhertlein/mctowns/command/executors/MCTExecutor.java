@@ -31,7 +31,7 @@ import org.bukkit.command.CommandSender;
  */
 public class MCTExecutor extends BaseExecutor {
 
-    private MCTHandler handler;
+    private final MCTHandler handler;
 
     public MCTExecutor(MCTownsPlugin parent) {
         super(parent);

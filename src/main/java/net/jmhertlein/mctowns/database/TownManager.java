@@ -51,11 +51,8 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class TownManager {
-
-    private static final long serialVersionUID = "TOWNMANAGER".hashCode(); // DO NOT CHANGE
-    private static final int VERSION = 0;
-    private HashMap<String, Town> towns;
-    private HashMap<String, MCTownsRegion> regions;
+    private final HashMap<String, Town> towns;
+    private final HashMap<String, MCTownsRegion> regions;
 
     /**
      * Constructs a new, empty town manager.
@@ -184,7 +181,7 @@ public class TownManager {
         } catch (CircularInheritanceException ex) {
             Logger.getLogger(TownManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         try {
             regMan.save();
         } catch (ProtectionDatabaseException ex) {
@@ -292,13 +289,14 @@ public class TownManager {
         getTown(territ.getParentTown()).removeTerritory(territoryName);
 
         regions.remove(territ.getName());
-        
+
         World w = Bukkit.getWorld(territ.getWorldName());
 
         //Just in case they deleted the world...
-        if(w == null)
+        if (w == null) {
             return true;
-        
+        }
+
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(w);
 
         regMan.removeRegion(territ.getName());
@@ -332,10 +330,11 @@ public class TownManager {
         getTerritory(((Plot) plot).getParentTerritoryName()).removePlot(plotName);
 
         World w = Bukkit.getWorld(plot.getWorldName());
-        
-        if(w == null)
+
+        if (w == null) {
             return true;
-        
+        }
+
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(w);
 
         regMan.removeRegion(plotName);
@@ -354,7 +353,8 @@ public class TownManager {
      * Matches a live player to his town
      *
      * @param p the player to match to a town
-     * @return a list of all towns the player is in, empty list if player is in no towns
+     * @return a list of all towns the player is in, empty list if player is in
+     * no towns
      */
     public List<Town> matchPlayerToTowns(OfflinePlayer p) {
         return matchPlayerToTowns(p.getName());
@@ -459,8 +459,8 @@ public class TownManager {
     public static TownManager readYAML(String rootDirPath) throws FileNotFoundException, IOException, InvalidConfigurationException {
         return readYAML(new File(rootDirPath));
     }
-    
-        /**
+
+    /**
      *
      * @param rootDirPath
      * @return
@@ -495,8 +495,6 @@ public class TownManager {
 
         return ret;
     }
-    
-    
 
     /**
      *

@@ -183,14 +183,11 @@ public class MCTHandler extends CommandHandler {
         }
         localSender.sendMessage(ChatColor.AQUA + "Existing towns (page " + page + "):");
 
-
-
         Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
 
         for (int i = page * RESULTS_PER_PAGE; i < towns.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             localSender.sendMessage(ChatColor.YELLOW + towns[i].getTownName());
         }
-
 
     }
 
@@ -238,7 +235,6 @@ public class MCTHandler extends CommandHandler {
         }
 
         String pName = localSender.getPlayer().getName();
-
 
         Town t = townManager.getTown(townName);
 
@@ -341,13 +337,13 @@ public class MCTHandler extends CommandHandler {
             localSender.sendMessage(ERR + "Insufficient funds.");
             return;
         }
-        
+
         ProtectedRegion plotReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
-        if(plotReg == null) {
+        if (plotReg == null) {
             localSender.sendMessage(ERR + "The WorldGuard region for the plot you're trying to buy seems to have been deleted. Please notify your mayor.");
             return;
         }
-        
+
         plotToBuy.getActiveTown().getBank().depositCurrency(p.getPrice());
 
         p.setPrice(BigDecimal.ZERO);
@@ -359,12 +355,10 @@ public class MCTHandler extends CommandHandler {
         localSender.sendMessage(ChatColor.GREEN + "You are now the proud owner of this plot.");
         doRegManSave(MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())));
 
-
         if (!townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             plotToBuy.getActiveTown().addPlayer(localSender.getPlayer());
             localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getTownName());
         }
-
 
     }
 

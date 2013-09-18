@@ -47,13 +47,13 @@ public class TerritoryHandler extends CommandHandler {
             localSender.notifyInsufPermissions();
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         Territory parTerr = localSender.getActiveTerritory();
         if (parTerr == null) {
             localSender.notifyActiveTerritoryNotSet();
@@ -75,9 +75,9 @@ public class TerritoryHandler extends CommandHandler {
             localSender.sendMessage(ERR + "Selection is not in territory!");
             return;
         }
-        if(townManager.addPlot(plotName, w, region, t, parTerr))
+        if (townManager.addPlot(plotName, w, region, t, parTerr)) {
             localSender.sendMessage(SUCC + "Plot added.");
-        else {
+        } else {
             localSender.sendMessage(ERR + "A region by that name already exists, please pick a different name.");
         }
 
@@ -137,9 +137,9 @@ public class TerritoryHandler extends CommandHandler {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
-        
+
         OfflinePlayer player = server.getOfflinePlayer(playerName);
-        if(!player.hasPlayedBefore()) {
+        if (!player.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }
@@ -175,23 +175,26 @@ public class TerritoryHandler extends CommandHandler {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
-        
+
         OfflinePlayer player = server.getOfflinePlayer(playerName);
         if (!player.hasPlayedBefore()) {
             localSender.sendMessage(ERR + playerName + " has never played on this server before.");
             return;
         }
-        
-        if (!territ.removePlayer(playerName))
+
+        if (!territ.removePlayer(playerName)) {
             localSender.sendMessage(ERR + "That player is not in this territory.");
-        else
+        } else {
             localSender.sendMessage(SUCC + "Player removed from territory.");
+        }
 
         if (recursive) {
             localSender.sendMessage(INFO + "Recursive mode was requested. Removing from child plots...");
-            for(String plotName : territ.getPlotsCollection())
-                if(townManager.getPlot(plotName).removePlayer(player))
+            for (String plotName : territ.getPlotsCollection()) {
+                if (townManager.getPlot(plotName).removePlayer(player)) {
                     localSender.sendMessage(INFO + "Player removed from " + plotName);
+                }
+            }
         }
     }
 
@@ -207,8 +210,6 @@ public class TerritoryHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
-
 
         Territory nuActive = townManager.getTerritory(territName);
 
@@ -250,8 +251,6 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
         localSender.sendMessage(ChatColor.AQUA + "Existing plots (page " + page + "):");
-
-
 
         String[] plots = t.getPlotsCollection().toArray(new String[t.getPlotsCollection().size()]);
 

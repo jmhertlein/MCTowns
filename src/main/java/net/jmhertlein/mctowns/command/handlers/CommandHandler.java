@@ -132,8 +132,6 @@ public abstract class CommandHandler {
             return;
         }
 
-
-
         Flag<?> foundFlag = null;
 
         for (Flag<?> flag : DefaultFlag.getFlags()) {
@@ -147,7 +145,6 @@ public abstract class CommandHandler {
             localSender.sendMessage(ERR + "Couldn't find a matching flag.");
             return;
         }
-
 
         //If there are no arguments, clear the flag instead of setting it
         if (args.length == 0) {
@@ -174,8 +171,6 @@ public abstract class CommandHandler {
             localSender.sendMessage(ERR + "Error parsing flag arguments: " + ex.getMessage());
             return;
         }
-
-
 
         doRegManSave(regMan);
 
@@ -248,12 +243,14 @@ public abstract class CommandHandler {
     }
 
     /**
-     * Wraps the localSender's current selection in a ProtectedRegion and returns it
-     * Supports cuboid and polygon regions
-     * 
-     * Will throw a runtime exception if selection is not a cuboid or poly (I need to make it handle this better)
+     * Wraps the localSender's current selection in a ProtectedRegion and
+     * returns it Supports cuboid and polygon regions
+     *
+     * Will throw a runtime exception if selection is not a cuboid or poly (I
+     * need to make it handle this better)
+     *
      * @param desiredName the desired name of the region
-     * @return 
+     * @return
      */
     protected ProtectedRegion getSelectedRegion(String desiredName) {
         Selection selection;
@@ -338,8 +335,9 @@ public abstract class CommandHandler {
     public static void broadcastTownJoin(Town t, String player) {
         for (String pl : t.getResidentNames()) {
             Player p = Bukkit.getPlayer(pl);
-            if(p == null || pl.equals(player))
+            if (p == null || pl.equals(player)) {
                 continue;
+            }
             p.sendMessage(player + " just joined " + t.getTownName() + "!");
         }
     }
@@ -423,11 +421,9 @@ public abstract class CommandHandler {
         ProtectedRegion oldWGReg, nuWGRegion;
         oldWGReg = regMan.getRegion(reg.getName());
 
-
         nuWGRegion = new ProtectedCuboidRegion(oldWGReg.getId(),
                 nuRegionBounds.getNativeMaximumPoint().toBlockVector(),
                 nuRegionBounds.getNativeMinimumPoint().toBlockVector());
-
 
         //To make sure that we can't accidentally "orphan" plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.

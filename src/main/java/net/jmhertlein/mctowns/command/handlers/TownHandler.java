@@ -148,7 +148,6 @@ public class TownHandler extends CommandHandler {
 
         localSender.sendMessage(SUCC + "Town join method updated.");
 
-
     }
 
     public void setTownPlotBuyability(String s_buyability) {
@@ -189,7 +188,6 @@ public class TownHandler extends CommandHandler {
         } else {
             localSender.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots are no longer for sale.");
         }
-
 
     }
 
@@ -351,7 +349,7 @@ public class TownHandler extends CommandHandler {
         }
 
         OfflinePlayer p = server.getOfflinePlayer(invitee);
-        if(!p.hasPlayedBefore()) {
+        if (!p.hasPlayedBefore()) {
             localSender.sendMessage(ERR + invitee + " has never played on this server before.");
             return;
         }
@@ -405,7 +403,6 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-
         if (!t.playerIsResident(p)) {
             localSender.sendMessage(ERR + p.getName() + " is not a resident of " + t.getTownName() + ".");
             return;
@@ -457,11 +454,13 @@ public class TownHandler extends CommandHandler {
 
         if (t.removeAssistant(p)) {
             localSender.sendMessage(p.getName() + " has been demoted.");
-            if(p.isOnline())
+            if (p.isOnline()) {
                 p.getPlayer().sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
-            
-            for (String territName : t.getTerritoriesCollection()) 
+            }
+
+            for (String territName : t.getTerritoriesCollection()) {
                 townManager.getTerritory(territName).removePlayer(p);
+            }
         } else {
             localSender.sendMessage(ERR + p.getName() + " is not an assistant in this town.");
         }
@@ -480,7 +479,6 @@ public class TownHandler extends CommandHandler {
         }
 
         Player p = server.getPlayerExact(playerName);
-
 
         if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getName()))) {
             localSender.notifyInsufPermissions();
@@ -544,7 +542,6 @@ public class TownHandler extends CommandHandler {
 //            senderWrapper.sendMessage(ERR + "Player does not exist or is not online.");
 //            return;
 //        }
-
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
@@ -611,7 +608,6 @@ public class TownHandler extends CommandHandler {
 
         localSender.sendMessage(ChatColor.DARK_BLUE + "There are pending invites for:");
 
-
         for (String s : getOutputFriendlyTownJoinListMessages(invitedPlayers)) {
             localSender.sendMessage(ChatColor.YELLOW + s);
         }
@@ -651,7 +647,6 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-
         localSender.getActiveTown().removePlayer(playerName);
 
         Town.recursivelyRemovePlayerFromTown(removeMe, removeFrom);
@@ -683,7 +678,6 @@ public class TownHandler extends CommandHandler {
 
         t.removePlayer(localSender.getPlayer());
 
-
         localSender.sendMessage(ChatColor.DARK_RED + "You have left " + localSender.getActiveTown().getTownName() + ".");
     }
 
@@ -707,15 +701,11 @@ public class TownHandler extends CommandHandler {
 
         boolean friendlyFire;
 
-
         friendlyFire = sFriendlyFire.equalsIgnoreCase("on");
-
 
         t.setFriendlyFire(friendlyFire);
 
         localSender.sendMessage(ChatColor.GREEN + "Friendly fire in " + t.getTownName() + " is now " + (friendlyFire ? "on" : "off") + ".");
-
-
 
     }
 
@@ -753,7 +743,6 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
 
         localSender.sendMessage(t.getTownMOTD());
     }
@@ -862,7 +851,6 @@ public class TownHandler extends CommandHandler {
 
         localSender.sendMessage(INFO + "Teleported to " + t.getTownName() + "! Welcome!");
 
-
     }
 
     public void openBlockBank() {
@@ -870,8 +858,8 @@ public class TownHandler extends CommandHandler {
             localSender.notifyConsoleNotSupported();
             return;
         }
-        
-        if(!localSender.hasMayoralPermissions()) {
+
+        if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -896,7 +884,7 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         localSender.getPlayer().openInventory(t.getBank().getNewDepositBox(localSender.getPlayer()));
     }
 
@@ -1034,8 +1022,6 @@ public class TownHandler extends CommandHandler {
             return;
         }
         localSender.sendMessage(ChatColor.AQUA + "Existing territories (page " + page + "):");
-
-
 
         String[] territs = t.getTerritoriesCollection().toArray(new String[t.getTerritoriesCollection().size()]);
 

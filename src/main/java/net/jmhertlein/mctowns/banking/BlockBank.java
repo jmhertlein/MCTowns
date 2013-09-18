@@ -17,7 +17,6 @@
 package net.jmhertlein.mctowns.banking;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,9 +34,9 @@ import org.bukkit.inventory.ItemStack;
 public class BlockBank {
     private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
     
-    private static Map<String, DepositInventoryEntry> openDepositInventories = new HashMap<>();;
+    private static final Map<String, DepositInventoryEntry> openDepositInventories = new HashMap<>();;
     
-    private Inventory bankInventory;
+    private final Inventory bankInventory;
     private volatile BigDecimal townFunds;
     
     

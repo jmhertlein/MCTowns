@@ -94,6 +94,10 @@ public class ActiveSet {
         this.activeTown = activeTown;
     }
 
+    /**
+     * 
+     * @return Town: <town name> Territ: <territ name> Plot: <plot name>
+     */
     @Override
     public String toString() {
         return "Town: " + activeTown + " Territ: " + activeTerritory + " Plot: " + activePlot;

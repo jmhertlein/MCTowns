@@ -30,9 +30,6 @@ import org.bukkit.configuration.file.FileConfiguration;
  * @author joshua
  */
 public class Territory extends MCTownsRegion {
-
-    private static final long serialVersionUID = "TERRITORY".hashCode(); // DO NOT CHANGE
-    private static final int VERSION = 0;
     private String parTownName;
     private Set<String> plotNames;
 

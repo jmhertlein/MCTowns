@@ -56,7 +56,6 @@ public abstract class BaseExecutor extends BugReportingCommandExecutor {
         }
 
         return runCommand(cs, cmnd, string, strings);
-        
     }
 
     public abstract boolean runCommand(CommandSender cs, Command cmnd, String string, String[] strings);

@@ -49,8 +49,6 @@ public class TerritoryExecutor extends BaseExecutor {
         boolean hardFailure = false, softFailure = true;
 
         String helpMessage = null;
-
-
         try {
             switch (command.get(1)) {
                 case "add":
@@ -126,10 +124,7 @@ public class TerritoryExecutor extends BaseExecutor {
                 default:
                     hardFailure = true;
                     softFailure = false;
-
             }
-
-
 
         } catch (ArgumentCountException ex) {
             if (ex.getErrorIndex() == 1) {
@@ -138,14 +133,12 @@ public class TerritoryExecutor extends BaseExecutor {
                 softFailure = true;
                 hardFailure = false;
             }
-
         }
 
         if (!hardFailure && softFailure && helpMessage != null) {
             cs.sendMessage(ChatColor.RED + "Invalid command. Acceptable similar formats are: ");
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);
         }
-
 
         return !hardFailure;
     }

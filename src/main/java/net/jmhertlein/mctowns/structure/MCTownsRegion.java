@@ -24,7 +24,6 @@ import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -72,7 +71,6 @@ public abstract class MCTownsRegion {
 
     /**
      *
-     * @param wgp
      * @param p
      * @return
      */
@@ -103,7 +101,6 @@ public abstract class MCTownsRegion {
 
     /**
      *
-     * @param wgp
      * @param p
      * @return
      */

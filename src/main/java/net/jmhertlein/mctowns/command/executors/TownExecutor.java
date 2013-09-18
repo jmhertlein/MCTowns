@@ -49,7 +49,6 @@ public class TownExecutor extends BaseExecutor {
 
         String helpMessage = null;
 
-
         try {
             switch (command.get(1).toLowerCase()) {
                 case "add":
@@ -61,14 +60,14 @@ public class TownExecutor extends BaseExecutor {
                             handler.addTerritorytoTown(command.get(3));
                             softFailure = false;
                             break;
-                            
+
                         case "a":
                         case "assistant":
                             helpMessage = "/town add assistant <assistant name";
                             handler.promoteToAssistant(command.get(3));
                             softFailure = false;
                             break;
-                            
+
                         case "p":
                         case "player":
                             helpMessage = "/town add player <player name>";
@@ -87,7 +86,7 @@ public class TownExecutor extends BaseExecutor {
                             handler.removeTerritoryFromTown(command.get(3));
                             softFailure = false;
                             break;
-                            
+
                         case "a":
                         case "assistant":
                             helpMessage = "/town remove assistant <assistant name>";
@@ -121,7 +120,6 @@ public class TownExecutor extends BaseExecutor {
                             handler.removeSelfFromTown();
                             softFailure = false;
                             break;
-
                     }
                     break;
 
@@ -131,20 +129,20 @@ public class TownExecutor extends BaseExecutor {
                     switch (command.get(2).toLowerCase()) {
                         case "players":
                             if (command.hasArgAtIndex(3)) {
-                                handler.listResidents(command.get(3));
-                            } else {
-                                handler.listResidents();
-                            }
+                            handler.listResidents(command.get(3));
+                        } else {
+                            handler.listResidents();
+                        }
                             softFailure = false;
                             break;
 
                         case "te":
                         case "territories":
                             if (command.hasArgAtIndex(3)) {
-                                handler.listTerritories(command.get(3));
-                            } else {
-                                handler.listTerritories();
-                            }
+                            handler.listTerritories(command.get(3));
+                        } else {
+                            handler.listTerritories();
+                        }
                             softFailure = false;
                             break;
 
@@ -157,7 +155,6 @@ public class TownExecutor extends BaseExecutor {
                             handler.listInvitesForTown();
                             softFailure = false;
                             break;
-
                     }
                     break;
 
@@ -184,13 +181,12 @@ public class TownExecutor extends BaseExecutor {
                                     handler.depositCurrencyBank(command.get(4));
                                     softFailure = false;
                                     break;
-                                    
+
                                 case "b":
                                 case "blocks":
                                     helpMessage = "/town bank deposit";
                                     handler.openBankDepositBox();
                                     softFailure = false;
-
                             }
                             break;
                         case "w":
@@ -209,13 +205,12 @@ public class TownExecutor extends BaseExecutor {
                                     helpMessage = "/town bank withdraw blocks";
                                     handler.openBlockBank();
                                     softFailure = false;
-
                             }
                             break;
                         case "c":
                         case "check":
                             helpMessage = "/town bank check (currency | blocks)";
-                            
+
                             switch (command.get(3)) {
                                 case "c":
                                 case "currency":
@@ -235,14 +230,14 @@ public class TownExecutor extends BaseExecutor {
 
                 case "spawn":
                     if (command.hasArgAtIndex(2)) {
-                        if (command.getArgAtIndex(2).equals("set")) {
-                            handler.setTownSpawn();
-                        } else {
-                            handler.warpToOtherSpawn(command.get(2));
-                        }
+                    if (command.getArgAtIndex(2).equals("set")) {
+                        handler.setTownSpawn();
                     } else {
-                        handler.warpToSpawn();
+                        handler.warpToOtherSpawn(command.get(2));
                     }
+                } else {
+                    handler.warpToSpawn();
+                }
                     softFailure = false;
                     break;
 
@@ -265,10 +260,10 @@ public class TownExecutor extends BaseExecutor {
 
                 case "motd":
                     if (command.hasArgAtIndex(2)) {
-                        handler.setMOTD(command.concatAfter(2));
-                    } else {
-                        handler.printMOTD();
-                    }
+                    handler.setMOTD(command.concatAfter(2));
+                } else {
+                    handler.printMOTD();
+                }
                     softFailure = false;
                     break;
 
@@ -291,7 +286,6 @@ public class TownExecutor extends BaseExecutor {
 
                 default:
                     hardFailure = true;
-
             }
 
         } catch (ArgumentCountException ex) {
@@ -301,14 +295,12 @@ public class TownExecutor extends BaseExecutor {
                 softFailure = true;
                 hardFailure = false;
             }
-
         }
 
         if (!hardFailure && softFailure && helpMessage != null) {
             cs.sendMessage(ChatColor.RED + "Invalid command. Acceptable similar formats are: ");
             cs.sendMessage(ChatColor.DARK_AQUA + helpMessage);
         }
-
 
         return !hardFailure;
     }

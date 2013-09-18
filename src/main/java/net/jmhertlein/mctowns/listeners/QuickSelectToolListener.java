@@ -43,9 +43,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class QuickSelectToolListener implements Listener {
 
     public static Material SELECT_TOOL;
-    private WorldGuardPlugin wgp;
-    private MCTownsPlugin mctp;
-    private TownManager townMan;
+    private final WorldGuardPlugin wgp;
+    private final MCTownsPlugin mctp;
+    private final TownManager townMan;
 
     public QuickSelectToolListener(WorldGuardPlugin wgp, MCTownsPlugin mctp) {
         this.wgp = wgp;
