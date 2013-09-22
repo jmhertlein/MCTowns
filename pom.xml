@@ -45,12 +45,6 @@
       <scope>provided</scope>
       <version>1.2.26</version>
     </dependency>
-    <dependency>
-      <groupId>org.mcstats.bukkit</groupId>
-      <artifactId>metrics</artifactId>
-      <version>R6</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
 
   <repositories>
