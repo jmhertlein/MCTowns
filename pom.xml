@@ -18,13 +18,13 @@
     <dependency>
       <groupId>com.sk89q</groupId>
       <artifactId>worldguard</artifactId>
-      <version>5.7.6-SNAPSHOT</version>
+      <version>5.8.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.sk89q</groupId>
       <artifactId>worldedit</artifactId>
-      <version>5.5.7-SNAPSHOT</version>
+      <version>5.5.8-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -93,9 +93,6 @@
                 <relocation>
                   <pattern>net.jmhertlein.core</pattern>
                   <shadedPattern>net.jmhertlein.mctowns.shaded.core</shadedPattern>
-                  <excludes>
-                    <exclude>net.jmhertlein.core.reporting.*</exclude>
-                  </excludes>
                 </relocation>
                 <relocation>
                   <pattern>org.mcstats</pattern>
