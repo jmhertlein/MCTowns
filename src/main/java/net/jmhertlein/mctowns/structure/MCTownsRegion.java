@@ -23,6 +23,7 @@ import java.util.Objects;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -78,9 +79,17 @@ public abstract class MCTownsRegion {
         DefaultDomain members, owners;
         boolean removed = false;
         WorldGuardPlugin wgp = MCTowns.getWorldGuardPlugin();
-
-        members = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getMembers();
-        owners = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name).getOwners();
+        
+        World w = wgp.getServer().getWorld(worldName);
+        if(w == null)
+            return false;
+        
+        ProtectedRegion reg = wgp.getRegionManager(w).getRegion(name);
+        if(reg == null)
+            return false;
+        
+        members = reg.getMembers();
+        owners = reg.getOwners();
 
         if (members.getPlayers().contains(p)) {
             members.removePlayer(p);
@@ -109,8 +118,15 @@ public abstract class MCTownsRegion {
     }
 
     public boolean addPlayer(String playerName) {
-        DefaultDomain dd = MCTowns.getWorldGuardPlugin().getRegionManager(
-                MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName)).getRegion(name).getOwners();
+        World w = MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName);
+        if(w == null)
+            return false;
+        
+        ProtectedRegion reg = MCTowns.getWorldGuardPlugin().getRegionManager(w).getRegion(name);
+        if(reg == null)
+            return false;
+        
+        DefaultDomain dd = reg.getOwners();
 
         if (!dd.getPlayers().contains(playerName)) {
             dd.addPlayer(playerName);
@@ -120,8 +136,15 @@ public abstract class MCTownsRegion {
     }
 
     public boolean addGuest(String playerName) {
-        DefaultDomain members = MCTowns.getWorldGuardPlugin().getRegionManager(
-                MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName)).getRegion(name).getMembers();
+        World w = MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName);
+        if(w == null)
+            return false;
+        
+        ProtectedRegion reg = MCTowns.getWorldGuardPlugin().getRegionManager(w).getRegion(name);
+        if(reg == null)
+            return false;
+        
+        DefaultDomain members = reg.getMembers();
 
         if (!members.getPlayers().contains(playerName)) {
             members.addPlayer(playerName);

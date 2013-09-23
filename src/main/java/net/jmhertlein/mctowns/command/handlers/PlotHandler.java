@@ -89,7 +89,7 @@ public class PlotHandler extends CommandHandler {
         if (plot.removePlayer(player)) {
             localSender.sendMessage("Player removed from plot.");
         } else {
-            localSender.sendMessage(ERR + player + " is not a member of this region.");
+            localSender.sendMessage(ERR + "Unable to remove player from plot (either player is not in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
         }
     }
 
@@ -130,7 +130,7 @@ public class PlotHandler extends CommandHandler {
         if (plot.addPlayer(player)) {
             localSender.sendMessage("Player added to plot.");
         } else {
-            localSender.sendMessage(ERR + "That player is already in that plot.");
+            localSender.sendMessage(ERR + "Unable to add player to plot (either player is already in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
         }
 
     }
@@ -166,7 +166,7 @@ public class PlotHandler extends CommandHandler {
         if (plot.addGuest(player)) {
             localSender.sendMessage(ChatColor.GREEN + "Successfully added " + player.getName() + " to the plot as a guest.");
         } else {
-            localSender.sendMessage(ERR + player.getName() + " is already a guest in the plot.");
+            localSender.sendMessage(ERR + "Unable to add player to plot as guest (either player is already guest in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
         }
     }
 

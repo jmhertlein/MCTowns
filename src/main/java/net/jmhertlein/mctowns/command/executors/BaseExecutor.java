@@ -18,11 +18,11 @@ package net.jmhertlein.mctowns.command.executors;
 
 import java.util.HashMap;
 import net.jmhertlein.core.command.ECommand;
+import net.jmhertlein.core.reporting.bugs.BugReportingCommandExecutor;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
-import net.jmhertlein.core.reporting.BugReportingCommandExecutor;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
