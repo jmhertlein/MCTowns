@@ -152,7 +152,7 @@ public class TerritoryHandler extends CommandHandler {
         if (territ.addPlayer(playerName)) {
             localSender.sendMessage("Player added to territory.");
         } else {
-            localSender.sendMessage(ERR + "That player is already in that territory.");
+            localSender.sendMessage(ERR + "Unable to add player to territory. Either they are already in it, or the underlying World or WorldGuard Region has been deleted.");
         }
     }
 
@@ -183,7 +183,7 @@ public class TerritoryHandler extends CommandHandler {
         }
 
         if (!territ.removePlayer(playerName)) {
-            localSender.sendMessage(ERR + "That player is not in this territory.");
+            localSender.sendMessage(ERR + "Unable to remove player from territory. Either they were not in it in the first place, or the underlying World or WorldGuard Region has been deleted.");
         } else {
             localSender.sendMessage(SUCC + "Player removed from territory.");
         }
