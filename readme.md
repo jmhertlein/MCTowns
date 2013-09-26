@@ -1,5 +1,4 @@
 # MCTowns
-==========
 
 MCTowns is a town management plugin for Minecraft Survivial Multiplayer servers running an implementation of the Bukkit API.
 
