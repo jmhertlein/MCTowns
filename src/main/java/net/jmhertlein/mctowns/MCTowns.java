@@ -72,8 +72,7 @@ public class MCTowns {
     }
 
     public static String getConfigSummary() {
-        //TODO: implement this
-        return "";
+        return MCTownsPlugin.getPlugin().getConfig().saveToString();
     }
 
     public static void logInfo(String msg) {
