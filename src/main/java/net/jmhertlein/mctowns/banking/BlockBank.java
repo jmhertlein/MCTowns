@@ -103,6 +103,7 @@ public class BlockBank {
         f.set("bank.contents", existantContents);
     }
 
+    @SuppressWarnings("unchecked")
     public static BlockBank readYAML(FileConfiguration f) {
         BlockBank bank = new BlockBank();
 
