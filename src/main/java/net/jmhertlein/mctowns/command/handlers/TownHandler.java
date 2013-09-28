@@ -259,6 +259,11 @@ public class TownHandler extends CommandHandler {
         territName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, territName);
 
         World w = localSender.getPlayer().getWorld();
+        
+        if(w == null) {
+          localSender.sendMessage(ERR + "You are in an invalid World. (Player::getWorld() returned null)");
+          return;
+        }
 
         ProtectedRegion region = this.getSelectedRegion(territName);
 
