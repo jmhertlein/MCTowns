@@ -247,8 +247,11 @@ public class MCTPlayerListener implements Listener {
     public void onPlayerJoinAddToDefaultTown(PlayerJoinEvent e) {
         if(!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
             Town t = townManager.getTown(MCTowns.getDefaultTown());
-            if(t == null)
+            if(t == null) {
+                if(!MCTowns.getDefaultTown().isEmpty())
+                    MCTowns.logWarning("Error: Default town specified in config.yml does not exist.");
                 return;
+            }
             t.addPlayer(e.getPlayer());
             e.getPlayer().sendMessage(ChatColor.GREEN + "You've been automatically added to the town " + t.getTownName() + "!");
         }
