@@ -24,6 +24,7 @@ import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -153,21 +154,24 @@ public class Plot extends MCTownsRegion {
             MCTowns.logSevere("The sign's location was null.");
         }
         
-        if(Location.convertToBukkitLocation(Bukkit.getServer(), signLoc).getBlock().getType() != Material.AIR)
+        org.bukkit.Location loc = Location.convertToBukkitLocation(Bukkit.getServer(), signLoc);
+        
+        if(loc.getBlock().getType() != Material.AIR)
             return false;
 
-        org.bukkit.Location loc = Location.convertToBukkitLocation(Bukkit.getServer(), signLoc);
-
-        loc.setYaw((referencePlayerLocation.getYaw() + 128) % 256);
+        
         loc.getBlock().setType(Material.SIGN_POST);
         
         Sign sign = (Sign) loc.getBlock().getState();
+        
+        org.bukkit.material.Sign signData = (org.bukkit.material.Sign) sign.getData();
+        signData.setFacingDirection(Location.getBlockFaceFromYaw(Location.getYawInOppositeDirection(loc.getYaw())));
+        sign.setData(signData);
 
         sign.setLine(0, "[mct]");
         sign.setLine(1, "For sale!");
         sign.setLine(2, name);
         sign.setLine(3, "Price: " + price);
-
         sign.update();
         
         return true;

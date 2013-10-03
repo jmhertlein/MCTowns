@@ -342,7 +342,7 @@ public class PlotHandler extends CommandHandler {
             p.buildSign(localSender.getPlayer().getLocation());
         }
 
-        localSender.sendMessage(ChatColor.GREEN + " successfully set the location for the sign.");
+        localSender.sendMessage(ChatColor.GREEN + "Successfully set the location for the sign.");
 
     }
 
