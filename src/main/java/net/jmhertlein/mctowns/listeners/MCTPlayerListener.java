@@ -248,7 +248,7 @@ public class MCTPlayerListener implements Listener {
         if(!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
             Town t = townManager.getTown(MCTowns.getDefaultTown());
             if(t == null) {
-                if(!MCTowns.getDefaultTown().isEmpty())
+                if(MCTowns.getDefaultTown() != null && !MCTowns.getDefaultTown().isEmpty())
                     MCTowns.logWarning("Error: Default town specified in config.yml does not exist.");
                 return;
             }
