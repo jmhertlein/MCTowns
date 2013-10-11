@@ -420,6 +420,11 @@ public abstract class CommandHandler {
 
         ProtectedRegion oldWGReg, nuWGRegion;
         oldWGReg = regMan.getRegion(reg.getName());
+        
+        if(oldWGReg == null) {
+            localSender.sendMessage(ERR + String.format("Could not find WorldGuard region \"%s\", it was probably deleted manually. You should delete this %s.", reg.getName(), regType.toString().toLowerCase()));
+            return;
+        }
 
         nuWGRegion = new ProtectedCuboidRegion(oldWGReg.getId(),
                 nuRegionBounds.getNativeMaximumPoint().toBlockVector(),
