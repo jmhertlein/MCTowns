@@ -294,6 +294,13 @@ public abstract class CommandHandler {
     public static boolean selectionIsWithinParent(ProtectedRegion reg, MCTownsRegion parent) {
         ProtectedRegion parentReg = MCTowns.getWorldGuardPlugin().getRegionManager(
                 MCTowns.getWorldGuardPlugin().getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
+        
+        if(parentReg == null) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "!!!WARNING!!! MCTowns detected it is in an invalid state: A WorldGuard region was manually deleted. See message on next line.");
+            MCTowns.logSevere("While checking if a region is within its parent region, detected that WorldGuard region for \"" + parent.getName() + "\" does not exist. "
+                    + "You should delete this region with MCTowns and re-create it.");
+            return false;
+        }
 
         return selectionIsWithinParent(reg, parentReg);
     }
