@@ -1,8 +1,5 @@
-defaultTown:
-economyEnabled: false
-mayorsCanBuyTerritories: false
-pricePerXZBlock: 0
-minNumPlayersToBuyTerritory: 3
+defaultTown: ""
+
 allowTownFriendlyFireManagement: false;
 #default is wooden hoe (290)
 quickSelectTool: 290 
@@ -10,8 +7,28 @@ quickSelectTool: 290
 logCommands: false
 playersCanJoinMultipleTowns: true
 #hostname and port of remote bug report handling server
-bugReportHostname: services.jmhertlein.net
-bugReportPort: 9001
+bugReporting:
+  hostname: services.jmhertlein.net
+  port: 9001
+
+economy: 
+  economyEnabled: false
+  mayorsCanBuyTerritories: false
+  pricePerXZBlock: 0
+  minNumPlayersToBuyTerritory: 3
+  taxes:
+    taxesEnabled: true
+    maxTaxAmount: 100
+    #the minimum delay between tax collections, in ticks
+    #default is 1 day (20 ticks/s * 60 s/min * 60 min/hr * 24 hrs/day * 1 day) = 1 728 000 ticks
+    minTaxDelayInTicks: 1728000
+    
+advanced:
+  #sets how time should be measured. Default is "minecraft", alternative is "system"
+  #----------WARNING---------- if value is set to 'system', the value of 'minTaxDelayInTicks' is IGNORED in favor of 'minTaxDelayInMinutes'
+  taxClockSource: minecraft
+  #default is 1 day
+  minTaxDelayInMinutes: 1440
 #
 #
 #The currently installed version of MCTowns. Do not change this.
