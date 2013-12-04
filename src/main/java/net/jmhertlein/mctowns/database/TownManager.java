@@ -66,6 +66,7 @@ public class TownManager {
      * Checks to see if a live player is in a town
      *
      * @param p the live player to be checked
+     *
      * @return true if the player is already in any town, false otherwise
      */
     public boolean playerIsAlreadyInATown(Player p) {
@@ -94,16 +95,16 @@ public class TownManager {
      * town as far as the TownManager is concerned).
      *
      * @param townName the desired name of the new town
-     * @param mayor the live player to be made the mayor of the new town
+     * @param mayor    the live player to be made the mayor of the new town
+     *
      * @return true if town was added, false if town was not because it was
-     * already existing
+     *         already existing
      */
     public Town addTown(String townName, Player mayor) {
         Town t = new Town(townName, mayor);
 
-        if (towns.containsKey(t.getTownName())) {
+        if (towns.containsKey(t.getTownName()))
             return null;
-        }
 
         towns.put(t.getTownName(), t);
         return t;
@@ -113,9 +114,8 @@ public class TownManager {
     public Town addTown(String townName, String mayorName, Location spawn) {
         Town t = new Town(townName, mayorName, spawn);
 
-        if (towns.containsKey(t.getTownName())) {
+        if (towns.containsKey(t.getTownName()))
             return null;
-        }
 
         towns.put(t.getTownName(), t);
         return t;
@@ -125,23 +125,24 @@ public class TownManager {
      * Creates a new territory, adds it to the manager, and registers its region
      * in WorldGuard.
      *
-     * @param fullTerritoryName the desired, formatted name of the region
+     * @param fullTerritoryName  the desired, formatted name of the region
      * @param worldTerritoryIsIn
-     * @param reg the desired region for the territory to occupy, names MUST
-     * match
-     * @param parentTown the parent town of the Territory
+     * @param reg                the desired region for the territory to occupy, names MUST
+     *                           match
+     * @param parentTown         the parent town of the Territory
+     *
      * @throws InvalidWorldGuardRegionNameException if the name of the
-     * ProtectedRegion does not match the desired name
-     * @return true if the addition was successful, false if the name is already
-     * used
+     *                                              ProtectedRegion contains invalid characters
+     * @throws RegionAlreadyExistsException         if the region already exists
      */
-    public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) {
-        Territory t = new Territory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
+    public void addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) throws InvalidWorldGuardRegionNameException, RegionAlreadyExistsException {
+        Territory t = new Territory(fullTerritoryName,
+                worldTerritoryIsIn.getName(),
+                parentTown.getTownName());
 
-        if (!addMCTRegion(fullTerritoryName, t, worldTerritoryIsIn, reg)) {
-            return false;
-        }
-        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(worldTerritoryIsIn);
+        addMCTRegion(t, worldTerritoryIsIn, reg);
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(
+                worldTerritoryIsIn);
         try {
             regMan.save();
         } catch (ProtectionDatabaseException ex) {
@@ -150,36 +151,37 @@ public class TownManager {
         }
 
         parentTown.addTerritory(t);
-        return true;
     }
 
     /**
      * Creates a new territory, adds it to the manager, and registers its region
      * in WorldGuard.
      *
-     * @param fullPlotName the desired, formatted name of the region
+     * @param fullPlotName    the desired, formatted name of the region
      * @param worldPlotIsIn
-     * @param reg the desired region for the plot to occupy
-     * @param parentTown the parent town of this region
+     * @param reg             the desired region for the plot to occupy
+     * @param parentTown      the parent town of this region
      * @param parentTerritory the parent territory of this region
+     *
      * @throws InvalidWorldGuardRegionNameException if the name of the
-     * ProtectedRegion does not match the desired name
-     * @return true if the addition was successful, false if the name is already
-     * used
+     *                                              ProtectedRegion does not match the desired name
+     * @throws RegionAlreadyExistsException         if a region with that name
+     *                                              already exists
      */
-    public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) {
-        Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
+    public void addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) throws InvalidWorldGuardRegionNameException, RegionAlreadyExistsException {
+        Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(),
+                parentTerritory.getName(), parentTown.getTownName());
 
-        if (!addMCTRegion(fullPlotName, p, worldPlotIsIn, reg)) {
-            return false;
-        }
+        addMCTRegion(p, worldPlotIsIn, reg);
 
         parentTerritory.addPlot(p);
-        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(worldPlotIsIn);
+        RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(
+                worldPlotIsIn);
         try {
             reg.setParent(regMan.getRegion(parentTerritory.getName()));
         } catch (CircularInheritanceException ex) {
-            Logger.getLogger(TownManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TownManager.class.getName()).log(Level.SEVERE, null,
+                    ex);
         }
 
         try {
@@ -191,29 +193,27 @@ public class TownManager {
 
         p.calculateSignLoc(); //note: don't move calculateSignLoc from here.
         //it needs the region to exist in the region manager
-        return true;
     }
 
-    private boolean addMCTRegion(String fullPlotName, MCTownsRegion mctReg, World w, ProtectedRegion reg) {
+    private void addMCTRegion(MCTownsRegion mctReg, World w, ProtectedRegion reg) throws InvalidWorldGuardRegionNameException, RegionAlreadyExistsException {
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(w);
-        if (!reg.getId().equals(mctReg.getName())) {
-            throw new InvalidWorldGuardRegionNameException(fullPlotName, reg.getId());
-        }
+        if (!ProtectedRegion.isValidId(mctReg.getName()))
+            throw new InvalidWorldGuardRegionNameException(mctReg.getName());
 
-        if (regMan.hasRegion(mctReg.getName())) //checking regMan should always return the same value as checking regions, since the regions in regions are a subset of those in regMan... so no need to check regions
-        {
-            return false;
-        }
+        //checking regMan should always return the same value as checking regions, 
+        //since the regions in regions are a subset of those in regMan... so no need to check regions
+        if (regMan.hasRegion(mctReg.getName()))
+            throw new RegionAlreadyExistsException(mctReg.getName());
 
         regMan.addRegion(reg);
         regions.put(mctReg.getName(), mctReg);
-        return true;
     }
 
     /**
      * Gets a town by its name
      *
      * @param townName the name of the town
+     *
      * @return the town, or null is no town by that name exists
      */
     public Town getTown(String townName) {
@@ -224,6 +224,7 @@ public class TownManager {
      * Returns the Territory IFF the territory exists and is a Territory
      *
      * @param territName name of the Territory to get
+     *
      * @return the Territory if it exists, or null otherwise
      */
     public Territory getTerritory(String territName) {
@@ -236,6 +237,7 @@ public class TownManager {
      * Returns the Plot IFF the territory exists and is a Territory
      *
      * @param plotName name of the Plot to get
+     *
      * @return the Plot if it exists, or null otherwise
      */
     public Plot getPlot(String plotName) {
@@ -248,14 +250,14 @@ public class TownManager {
      * Removes the Town and all its child territories if it has any
      *
      * @param townName
+     *
      * @return true if it succeeds, false if town doesn't exist
      */
     public boolean removeTown(String townName) {
         Town t = towns.get(townName);
 
-        if (t == null) {
+        if (t == null)
             return false;
-        }
 
         for (String s : t.getTerritoriesCollection()) {
             removeTerritory(s);
@@ -270,15 +272,15 @@ public class TownManager {
      * Removes the territory, its worldguard region, and all of its child plots
      *
      * @param territoryName
+     *
      * @return true if successful, false if the Territiry doesn't exist or isn't
-     * a territory
+     *         a territory
      */
     public boolean removeTerritory(String territoryName) {
         MCTownsRegion mctReg = regions.get(territoryName);
 
-        if (mctReg == null || !(mctReg instanceof Territory)) {
+        if (mctReg == null || !(mctReg instanceof Territory))
             return false;
-        }
 
         Territory territ = (Territory) mctReg;
 
@@ -293,9 +295,8 @@ public class TownManager {
         World w = Bukkit.getWorld(territ.getWorldName());
 
         //Just in case they deleted the world...
-        if (w == null) {
+        if (w == null)
             return true;
-        }
 
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(w);
 
@@ -315,15 +316,15 @@ public class TownManager {
      * Removes the plot and its worldguard region
      *
      * @param plotName
+     *
      * @return true if removal was successful, false if the plot doesn't exist
-     * or isn't a plot
+     *         or isn't a plot
      */
     public boolean removePlot(String plotName) {
         MCTownsRegion plot = regions.get(plotName);
 
-        if (plot == null || !(plot instanceof Plot)) {
+        if (plot == null || !(plot instanceof Plot))
             return false;
-        }
 
         regions.remove(plotName);
 
@@ -331,9 +332,8 @@ public class TownManager {
 
         World w = Bukkit.getWorld(plot.getWorldName());
 
-        if (w == null) {
+        if (w == null)
             return true;
-        }
 
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(w);
 
@@ -353,8 +353,9 @@ public class TownManager {
      * Matches a live player to his town
      *
      * @param p the player to match to a town
+     *
      * @return a list of all towns the player is in, empty list if player is in
-     * no towns
+     *         no towns
      */
     public List<Town> matchPlayerToTowns(OfflinePlayer p) {
         return matchPlayerToTowns(p.getName());
@@ -365,14 +366,14 @@ public class TownManager {
      * Matches a possibly non-live player to a town
      *
      * @param playerName the name of the player to match for
+     *
      * @return a list of all towns the player is in
      */
     public List<Town> matchPlayerToTowns(String playerName) {
         ArrayList<Town> ret = new ArrayList<>();
         for (Town town : towns.values()) {
-            if (town.playerIsResident(playerName)) {
+            if (town.playerIsResident(playerName))
                 ret.add(town);
-            }
         }
         return ret;
     }
@@ -380,8 +381,9 @@ public class TownManager {
     /**
      *
      * @param bukkitLoc
+     *
      * @return an ActiveSet pointing to the plot to be bought, or null if the
-     * sign isn't associated with a town.
+     *         sign isn't associated with a town.
      */
     public ActiveSet getPlotFromSignLocation(org.bukkit.Location bukkitLoc) {
         Location mctLoc = Location.convertFromBukkitLocation(bukkitLoc);
@@ -408,6 +410,7 @@ public class TownManager {
     /**
      *
      * @param invitee
+     *
      * @return true if the player is already in a town, else false
      */
     public boolean playerIsAlreadyInATown(String invitee) {
@@ -417,6 +420,7 @@ public class TownManager {
     /**
      *
      * @param rootDirPath
+     *
      * @throws IOException
      */
     public void writeYAML(String rootDirPath) throws IOException {
@@ -438,19 +442,22 @@ public class TownManager {
         for (Town t : towns.values()) {
             f = new YamlConfiguration();
             t.writeYAML(f);
-            f.save(new File(rootDirPath + File.separator + t.getTownName() + ".yml"));
+            f.save(new File(
+                    rootDirPath + File.separator + t.getTownName() + ".yml"));
         }
 
         for (MCTownsRegion reg : regions.values()) {
             f = new YamlConfiguration();
             reg.writeYAML(f);
-            f.save(new File(rootDirPath + File.separator + reg.getName() + ".yml"));
+            f.save(new File(
+                    rootDirPath + File.separator + reg.getName() + ".yml"));
         }
     }
 
     /**
      *
      * @param rootDirPath
+     *
      * @return
      * @throws FileNotFoundException
      * @throws IOException
@@ -463,6 +470,7 @@ public class TownManager {
     /**
      *
      * @param rootDirPath
+     *
      * @return
      * @throws FileNotFoundException
      * @throws IOException
@@ -486,11 +494,10 @@ public class TownManager {
             f = new YamlConfiguration();
             f.load(new File(rootDir, s + ".yml"));
 
-            if (TownLevel.parseTownLevel(f.getString("type")) == TownLevel.PLOT) {
+            if (TownLevel.parseTownLevel(f.getString("type")) == TownLevel.PLOT)
                 ret.regions.put(s, Plot.readYAML(f));
-            } else {
+            else
                 ret.regions.put(s, Territory.readYAML(f));
-            }
         }
 
         return ret;
@@ -499,15 +506,21 @@ public class TownManager {
     /**
      *
      */
-    public class InvalidWorldGuardRegionNameException extends RuntimeException {
+    public static class InvalidWorldGuardRegionNameException extends Exception {
 
         /**
          *
          * @param invalidName
-         * @param shouldMatchButDoesnt
          */
-        public InvalidWorldGuardRegionNameException(String invalidName, String shouldMatchButDoesnt) {
-            super("Problem: Attempted to create a new MCTownsRegion, but the MCTownsRegion name and WorldGuard region name did not match. (" + invalidName + " should match " + shouldMatchButDoesnt + ").");
+        public InvalidWorldGuardRegionNameException(String invalidName) {
+            super(String.format("The region name \"%s\" has invalid characters.",
+                    invalidName));
+        }
+    }
+
+    public static class RegionAlreadyExistsException extends Exception {
+        public RegionAlreadyExistsException(String regName) {
+            super(String.format("A region named \"%s\" already exists.", regName));
         }
     }
 }

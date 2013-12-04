@@ -146,23 +146,22 @@ public class Plot extends MCTownsRegion {
 
     /**
      * @param referencePlayerLocation the location whose yaw will be used to set the sign's yaw such that if the location is that of a player, the sign will point towards him
+     *
      * @return whether or not the sign was built
      */
     public boolean buildSign(org.bukkit.Location referencePlayerLocation) {
-        if (signLoc == null) {
+        if (signLoc == null)
             MCTowns.logSevere("The sign's location was null.");
-        }
-        
+
         org.bukkit.Location loc = Location.convertToBukkitLocation(Bukkit.getServer(), signLoc);
-        
-        if(loc.getBlock().getType() != Material.AIR)
+
+        if (loc.getBlock().getType() != Material.AIR)
             return false;
 
-        
         loc.getBlock().setType(Material.SIGN_POST);
-        
+
         Sign sign = (Sign) loc.getBlock().getState();
-        
+
         org.bukkit.material.Sign signData = (org.bukkit.material.Sign) sign.getData();
         signData.setFacingDirection(Location.getBlockFaceFromYaw(Location.getYawInOppositeDirection(loc.getYaw())));
         sign.setData(signData);
@@ -172,7 +171,7 @@ public class Plot extends MCTownsRegion {
         sign.setLine(2, name);
         sign.setLine(3, "Price: " + price);
         sign.update();
-        
+
         return true;
     }
 
@@ -191,7 +190,6 @@ public class Plot extends MCTownsRegion {
         ProtectedRegion reg = wgp.getRegionManager(wgp.getServer().getWorld(worldName)).getRegion(name);
         Vector middle = reg.getMaximumPoint().add(reg.getMinimumPoint());
         middle = middle.divide(2);
-
 
         org.bukkit.Location loc = new org.bukkit.Location(wgp.getServer().getWorld(worldName), middle.getBlockX(), middle.getBlockY(), middle.getBlockZ());
 
@@ -226,6 +224,7 @@ public class Plot extends MCTownsRegion {
     /**
      *
      * @param f
+     *
      * @return
      */
     public static Plot readYAML(FileConfiguration f) {
@@ -237,17 +236,15 @@ public class Plot extends MCTownsRegion {
         p.parTownName = f.getString("parentTownName");
         p.forSale = f.getBoolean("forSale");
 
-        if (f.getString("signLoc").equals("nil")) {
+        if (f.getString("signLoc").equals("nil"))
             p.signLoc = null;
-        } else {
+        else
             p.signLoc = Location.fromList(f.getStringList("signLoc"));
-        }
 
-        if (f.getString("price").equals("nil")) {
+        if (f.getString("price").equals("nil"))
             p.price = null;
-        } else {
+        else
             p.price = new BigDecimal(f.getString("price"));
-        }
 
         return p;
     }

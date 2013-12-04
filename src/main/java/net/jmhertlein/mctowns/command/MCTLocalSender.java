@@ -41,8 +41,8 @@ public class MCTLocalSender extends LocalSender {
     /**
      * Wraps a CommandSender, tying him to his ActiveSet and the townManager
      *
-     * @param tMan the town manager
-     * @param sender the sender to be wrapped
+     * @param tMan       the town manager
+     * @param sender     the sender to be wrapped
      * @param activeSets the database of active sets as a hashmap
      */
     public MCTLocalSender(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
@@ -61,9 +61,6 @@ public class MCTLocalSender extends LocalSender {
             }
 
             this.activeSet = activeSets.get(player.getName());
-
-
-
 
         } else {
             player = null;
@@ -147,7 +144,7 @@ public class MCTLocalSender extends LocalSender {
      * Returns whether or not the player can delete the active town.
      *
      * @return true if admin, or mayor of active town and has permission node to
-     * remove towns
+     *         remove towns
      */
     public boolean canDeleteTown() {
         return hasExternalPermissions(Perms.ADMIN.toString()) || (hasMayoralPermissions() && hasExternalPermissions(Perms.REMOVE_TOWN.toString()));

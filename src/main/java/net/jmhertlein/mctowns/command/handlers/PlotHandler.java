@@ -86,11 +86,10 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (plot.removePlayer(player)) {
+        if (plot.removePlayer(player))
             localSender.sendMessage("Player removed from plot.");
-        } else {
+        else
             localSender.sendMessage(ERR + "Unable to remove player from plot (either player is not in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
-        }
     }
 
     public void addPlayerToPlot(String playerName) {
@@ -127,11 +126,10 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (plot.addPlayer(player)) {
+        if (plot.addPlayer(player))
             localSender.sendMessage("Player added to plot.");
-        } else {
+        else
             localSender.sendMessage(ERR + "Unable to add player to plot (either player is already in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
-        }
 
     }
 
@@ -163,11 +161,10 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (plot.addGuest(player)) {
+        if (plot.addGuest(player))
             localSender.sendMessage(ChatColor.GREEN + "Successfully added " + player.getName() + " to the plot as a guest.");
-        } else {
+        else
             localSender.sendMessage(ERR + "Unable to add player to plot as guest (either player is already guest in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
-        }
     }
 
     public void setPlotBuyability(String s_forSale) {
@@ -267,11 +264,10 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (p.buildSign(localSender.getPlayer().getLocation())) {
+        if (p.buildSign(localSender.getPlayer().getLocation()))
             localSender.sendMessage(SUCC + "Sign built!");
-        } else {
+        else
             localSender.sendMessage(ERR + "The sign wasn't built because its target location wasn't an air block. Please clear the spot and try again.");
-        }
     }
 
     public void demolishSign() {
@@ -332,15 +328,13 @@ public class PlotHandler extends CommandHandler {
 
         //use the block ABOVE the one the player is staring at.
         mctLoc.setY(mctLoc.getY() + 1);
-        if (!cmd.hasFlag("--no-rebuild")) {
+        if (!cmd.hasFlag("--no-rebuild"))
             p.demolishSign();
-        }
 
         p.setSignLoc(mctLoc);
 
-        if (!cmd.hasFlag("--no-rebuild")) {
+        if (!cmd.hasFlag("--no-rebuild"))
             p.buildSign(localSender.getPlayer().getLocation());
-        }
 
         localSender.sendMessage(ChatColor.GREEN + "Successfully set the location for the sign.");
 
@@ -404,9 +398,8 @@ public class PlotHandler extends CommandHandler {
 
             nuActive = townManager.getPlot(plotName);
 
-            if (nuActive == null) {
+            if (nuActive == null)
                 nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
-            }
         } else {
             plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
 
@@ -432,9 +425,8 @@ public class PlotHandler extends CommandHandler {
         }
 
         localSender.setActivePlot(nuActive);
-        if (nuActiveTerrit != null) {
+        if (nuActiveTerrit != null)
             localSender.setActiveTerritory(nuActiveTerrit);
-        }
         localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
 }

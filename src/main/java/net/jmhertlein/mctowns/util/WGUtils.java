@@ -31,6 +31,7 @@ public class WGUtils {
      * region.
      *
      * @param reg the region
+     *
      * @return number of XZ-unique blocks
      */
     public static long getNumXZBlocksInRegion(ProtectedRegion reg) {

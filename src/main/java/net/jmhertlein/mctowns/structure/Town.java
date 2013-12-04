@@ -69,7 +69,7 @@ public class Town {
      * set to a default motd.
      *
      * @param townName the desired name of the town
-     * @param mayor the player to be made the mayor of the town
+     * @param mayor    the player to be made the mayor of the town
      *
      */
     public Town(String townName, Player mayor) {
@@ -151,7 +151,7 @@ public class Town {
     public void setMayor(String mayor) {
         this.mayor = mayor;
     }
-    
+
     /**
      * Sets the town's mayor to the given name
      *
@@ -187,17 +187,17 @@ public class Town {
      * Adds a player as a resident of the town
      *
      * @param p the player to be added
+     *
      * @return false if player was not added because player is already added,
-     * true otherwise
+     *         true otherwise
      */
     public boolean addPlayer(Player p) {
         return addPlayer(p.getName());
     }
 
     public boolean addPlayer(String playerName) {
-        if (residents.contains(playerName)) {
+        if (residents.contains(playerName))
             return false;
-        }
 
         residents.add(playerName);
         return true;
@@ -230,13 +230,13 @@ public class Town {
      * be handled separately.
      *
      * @param territ the territory to be added
+     *
      * @return false if territ was not added because it is already added, true
-     * otherwise
+     *         otherwise
      */
     public boolean addTerritory(Territory territ) {
-        if (territories.contains(territ.getName())) {
+        if (territories.contains(territ.getName()))
             return false;
-        }
 
         territories.add(territ.getName());
         return true;
@@ -246,6 +246,7 @@ public class Town {
      * Removes the territory from the town.
      *
      * @param territName the name of the territory to remove
+     *
      * @return the removed territory
      */
     public boolean removeTerritory(String territName) {
@@ -256,8 +257,9 @@ public class Town {
      * Adds a player as an assistant to the town
      *
      * @param player the player to be added
+     *
      * @return false if player was not added because player was already added,
-     * true otherwise
+     *         true otherwise
      */
     public boolean addAssistant(OfflinePlayer player) {
         return addAssistant(player.getName());
@@ -267,13 +269,13 @@ public class Town {
      * Promotes the resident to an assistant.
      *
      * @param playerName
+     *
      * @return true if player was added as assistant, false if they're already
-     * an assistant or they're not a resident of the town.
+     *         an assistant or they're not a resident of the town.
      */
     public boolean addAssistant(String playerName) {
-        if (assistants.contains(playerName) || !residents.contains(playerName)) {
+        if (assistants.contains(playerName) || !residents.contains(playerName))
             return false;
-        }
 
         assistants.add(playerName);
         return true;
@@ -283,8 +285,9 @@ public class Town {
      * Removes the assistant from his position as an assistant
      *
      * @param player the player to be demoted
+     *
      * @return false if the player was not removed because the player is not an
-     * assistant, true otherwise
+     *         assistant, true otherwise
      */
     public boolean removeAssistant(OfflinePlayer player) {
         return removeAssistant(player.getName());
@@ -292,9 +295,8 @@ public class Town {
     }
 
     public boolean removeAssistant(String player) {
-        if (!assistants.contains(player)) {
+        if (!assistants.contains(player))
             return false;
-        }
 
         assistants.remove(player);
         return true;
@@ -323,6 +325,7 @@ public class Town {
      * Returns whether the player is the mayor or not
      *
      * @param p the player to be checked
+     *
      * @return whether the player is mayor or not
      */
     public boolean playerIsMayor(OfflinePlayer p) {
@@ -333,6 +336,7 @@ public class Town {
      * Returns whether the player is the mayor of the town.
      *
      * @param playerName
+     *
      * @return
      */
     public boolean playerIsMayor(String playerName) {
@@ -381,6 +385,7 @@ public class Town {
      * Returns whether or not the player is an assistant in the town
      *
      * @param p the player to be checked
+     *
      * @return if the player is an assistant or not
      */
     public boolean playerIsAssistant(OfflinePlayer p) {
@@ -391,6 +396,7 @@ public class Town {
      * Returns whether or not the player is a resident of the town
      *
      * @param p the player to be checked
+     *
      * @return if the player is a resident or not
      */
     public boolean playerIsResident(OfflinePlayer p) {
@@ -401,6 +407,7 @@ public class Town {
      * Returns whether or not the player is a resident of the town
      *
      * @param p the name of the player to be checked
+     *
      * @return if the player is a resident or not
      */
     public boolean playerIsResident(String pName) {
@@ -410,6 +417,7 @@ public class Town {
     /**
      *
      * @param s
+     *
      * @return
      */
     public org.bukkit.Location getTownSpawn(Server s) {
@@ -419,6 +427,7 @@ public class Town {
     /**
      *
      * @param playerExactName
+     *
      * @return
      */
     public boolean playerIsAssistant(String playerExactName) {
@@ -444,9 +453,8 @@ public class Town {
 
         for (String playerName : residents) {
             Player temp = server.getPlayerExact(playerName);
-            if (temp != null) {
+            if (temp != null)
                 temp.sendMessage(message);
-            }
         }
     }
 
@@ -454,6 +462,7 @@ public class Town {
      *
      * @param wgp
      * @param p
+     *
      * @return
      */
     public boolean playerIsInsideTownBorders(Player p) {
@@ -464,11 +473,9 @@ public class Town {
         for (MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
             if (mctReg instanceof Territory) {
                 tempReg = regMan.getRegion(((Territory) mctReg).getName());
-                if (tempReg != null) {
-                    if (tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ()))) {
+                if (tempReg != null)
+                    if (tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())))
                         return true;
-                    }
-                }
             }
         }
 
@@ -486,6 +493,7 @@ public class Town {
     /**
      *
      * @param s
+     *
      * @return
      */
     public org.bukkit.Location getSpawn(Server s) {

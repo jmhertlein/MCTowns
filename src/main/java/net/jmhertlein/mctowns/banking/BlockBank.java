@@ -33,13 +33,12 @@ import org.bukkit.inventory.ItemStack;
  */
 public class BlockBank {
     private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
-    
-    private static final Map<String, DepositInventoryEntry> openDepositInventories = new HashMap<>();;
+
+    private static final Map<String, DepositInventoryEntry> openDepositInventories = new HashMap<>();
+    ;
     
     private final Inventory bankInventory;
     private volatile BigDecimal townFunds;
-    
-    
 
     /**
      * Constructs a new empty block bank.
@@ -53,11 +52,10 @@ public class BlockBank {
     public Inventory getBankInventory() {
         return bankInventory;
     }
-    
+
     public boolean depositCurrency(BigDecimal amt) {
-        if (amt.compareTo(BigDecimal.ZERO) < 0) {
+        if (amt.compareTo(BigDecimal.ZERO) < 0)
             return false;
-        }
 
         townFunds = townFunds.add(amt);
         return true;
@@ -69,9 +67,8 @@ public class BlockBank {
 
         result = townFunds.subtract(amt);
 
-        if (result.compareTo(BigDecimal.ZERO) < 0) {
+        if (result.compareTo(BigDecimal.ZERO) < 0)
             amt = amt.add(result);
-        }
 
         townFunds = townFunds.subtract(amt);
 
@@ -85,21 +82,21 @@ public class BlockBank {
     public boolean hasCurrencyAmount(BigDecimal amt) {
         return townFunds.compareTo(amt) >= 0;
     }
-    
+
     public Inventory getNewDepositBox(Player p) {
-        Inventory i = Bukkit.createInventory(p, 9*4, "Town Bank Deposit Box");
+        Inventory i = Bukkit.createInventory(p, 9 * 4, "Town Bank Deposit Box");
         openDepositInventories.put(p.getName(), new DepositInventoryEntry(p, this));
         return i;
     }
 
     public void writeYAML(FileConfiguration f) {
         f.set("bank.townFunds", townFunds.toString());
-        
+
         List<ItemStack> existantContents = new LinkedList<>();
-        for(ItemStack i : bankInventory.getContents())
-            if(i != null)
+        for (ItemStack i : bankInventory.getContents())
+            if (i != null)
                 existantContents.add(i);
-        
+
         f.set("bank.contents", existantContents);
     }
 
@@ -108,9 +105,9 @@ public class BlockBank {
         BlockBank bank = new BlockBank();
 
         bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));
-        
-        for(ItemStack i : (List<ItemStack>) f.getList("bank.contents")) {
-            if(i != null)
+
+        for (ItemStack i : (List<ItemStack>) f.getList("bank.contents")) {
+            if (i != null)
                 bank.bankInventory.addItem(i);
         }
 

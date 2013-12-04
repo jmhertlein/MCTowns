@@ -95,16 +95,14 @@ public class MCTowns {
     }
 
     public static WorldGuardPlugin getWorldGuardPlugin() {
-        if (wgp != null) {
+        if (wgp != null)
             return wgp;
-        }
 
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
-        if (p instanceof WorldGuardPlugin) {
+        if (p instanceof WorldGuardPlugin)
             wgp = (WorldGuardPlugin) p;
-        } else {
+        else
             wgp = null;
-        }
 
         return wgp;
     }
@@ -152,19 +150,19 @@ public class MCTowns {
     public static void setBugReportPort(int port) {
         MCTownsPlugin.getPlugin().getConfig().set("bugReporting.port", port);
     }
-    
+
     public static void persistTownManager() {
         MCTownsPlugin.getPlugin().persistTownManager();
     }
-    
+
     public static String getDefaultTown() {
         return MCTownsPlugin.getPlugin().getConfig().getString("defaultTown");
     }
-    
+
     public static void setDefaultTown(String townName) {
         MCTownsPlugin.getPlugin().getConfig().set("defaultTown", townName);
     }
-    
+
     public static boolean getDebugModeEnabled() {
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("debugModeEnabled", false);
     }

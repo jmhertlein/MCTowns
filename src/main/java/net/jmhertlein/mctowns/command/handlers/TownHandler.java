@@ -20,10 +20,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
@@ -140,11 +143,10 @@ public class TownHandler extends CommandHandler {
         }
 
         //TODO: Refactor Town so that it holds a TownJoinMethod instead of a boolean that determines economy joins or invites.
-        if (method == TownJoinMethod.ECONOMY) {
+        if (method == TownJoinMethod.ECONOMY)
             t.setEconomyJoins(true);
-        } else if (method == TownJoinMethod.INVITATION) {
+        else if (method == TownJoinMethod.INVITATION)
             t.setEconomyJoins(false);
-        }
 
         localSender.sendMessage(SUCC + "Town join method updated.");
 
@@ -183,11 +185,10 @@ public class TownHandler extends CommandHandler {
         }
 
         t.setBuyablePlots(buyability);
-        if (buyability) {
+        if (buyability)
             localSender.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots can now be sold and new plots are buyable by default.");
-        } else {
+        else
             localSender.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots are no longer for sale.");
-        }
 
     }
 
@@ -259,10 +260,10 @@ public class TownHandler extends CommandHandler {
         territName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, territName);
 
         World w = localSender.getPlayer().getWorld();
-        
-        if(w == null) {
-          localSender.sendMessage(ERR + "You are in an invalid World. (Player::getWorld() returned null)");
-          return;
+
+        if (w == null) {
+            localSender.sendMessage(ERR + "You are in an invalid World. (Player::getWorld() returned null)");
+            return;
         }
 
         ProtectedRegion region = this.getSelectedRegion(territName);
@@ -290,8 +291,10 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + price.toString());
         }
 
-        if (!townManager.addTerritory(territName, w, region, t)) {
-            localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
+        try {
+            townManager.addTerritory(territName, w, region, t);
+        } catch (TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
+            localSender.sendMessage(ERR + ex.getLocalizedMessage());
             return;
         }
 
@@ -324,11 +327,10 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!townManager.removeTerritory(territName)) {
+        if (!townManager.removeTerritory(territName))
             localSender.sendMessage(ERR + "Error: Territory \"" + territName + "\" does not exist and was not removed (because it doesn't exist!)");
-        } else {
+        else
             localSender.sendMessage(SUCC + "Territory removed.");
-        }
     }
 
     public void invitePlayerToTown(String invitee) {
@@ -366,9 +368,8 @@ public class TownHandler extends CommandHandler {
 
         if (joinManager.townHasRequestFromPlayer(t, invitee)) {
             t.addPlayer(invitee);
-            if (p.isOnline()) {
+            if (p.isOnline())
                 p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
-            }
             broadcastTownJoin(t, invitee);
         } else {
             joinManager.invitePlayerToTown(invitee, t);
@@ -420,12 +421,10 @@ public class TownHandler extends CommandHandler {
 
             localSender.sendMessage(playerName + " has been promoted to an assistant of " + t.getTownName() + ".");
 
-            if (p.isOnline()) {
+            if (p.isOnline())
                 p.getPlayer().sendMessage("You are now an Assistant Mayor of " + t.getTownName());
-            }
-        } else {
+        } else
             localSender.sendMessage(ERR + playerName + " is already an assistant in this town.");
-        }
     }
 
     public void demoteFromAssistant(String playerName) {
@@ -459,16 +458,14 @@ public class TownHandler extends CommandHandler {
 
         if (t.removeAssistant(p)) {
             localSender.sendMessage(p.getName() + " has been demoted.");
-            if (p.isOnline()) {
+            if (p.isOnline())
                 p.getPlayer().sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
-            }
 
             for (String territName : t.getTerritoriesCollection()) {
                 townManager.getTerritory(territName).removePlayer(p);
             }
-        } else {
+        } else
             localSender.sendMessage(ERR + p.getName() + " is not an assistant in this town.");
-        }
     }
 
     public void setMayor(String playerName) {
@@ -522,11 +519,10 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.clearInvitationForPlayerFromTown(playerName, t)) {
+        if (joinManager.clearInvitationForPlayerFromTown(playerName, t))
             localSender.sendMessage(ChatColor.GOLD + "The invitation for " + playerName + " has been withdrawn.");
-        } else {
+        else
             localSender.sendMessage(ERR + playerName + " does not have any pending invitations from " + t.getTownName() + ".");
-        }
     }
 
     public void rejectRequest(String playerName) {
@@ -552,14 +548,13 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!joinManager.clearRequestForTownFromPlayer(t, (p == null ? playerName : p.getName()))) {
+        if (!joinManager.clearRequestForTownFromPlayer(t, (p == null ? playerName : p.getName())))
             localSender.sendMessage(ERR + "No matching request found.");
-        } else {
+        else {
             localSender.sendMessage(ChatColor.GOLD + (p == null ? playerName : p.getName()) + "'s request has been rejected.");
 
-            if (p != null) {
+            if (p != null)
                 p.sendMessage(ChatColor.DARK_RED + "Your request to join " + t.getTownName() + " has been rejected.");
-            }
         }
 
     }
@@ -658,9 +653,8 @@ public class TownHandler extends CommandHandler {
 
         localSender.sendMessage("\"" + playerName + "\" was removed from the town.");
         Player onlinePlayer = removeMe.getPlayer();
-        if (onlinePlayer != null) {
+        if (onlinePlayer != null)
             onlinePlayer.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + localSender.getPlayer().getName());
-        }
     }
 
     public void removeSelfFromTown() {

@@ -18,6 +18,8 @@ package net.jmhertlein.mctowns.listeners;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -86,36 +88,28 @@ public class MCTPlayerListener implements Listener {
             }
         }
 
-
-
         for (Town t : towns) {
             p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
-            if (t.playerIsMayor(p)) {
-                if (!joinManager.getPlayersRequestingMembershipToTown(t).isEmpty()) {
+            if (t.playerIsMayor(p))
+                if (!joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
                     p.sendMessage(INFO + t.getTownName() + " has players requesting to join.");
-                }
-            }
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerClickPurchaseSign(PlayerInteractEvent event) {
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTowns.economyIsEnabled())
             //if economy isn't enabled, do nothing
             return;
-        }
 
-        if (event.getClickedBlock() == null || event.getClickedBlock().getType() != Material.SIGN_POST) {
+        if (event.getClickedBlock() == null || event.getClickedBlock().getType() != Material.SIGN_POST)
             //If there is no block, or the block is not a sign, do nothing
             return;
-        }
 
         //if the first line of the sign isn't "[mct]" then do nothing
-        if (!((Sign) event.getClickedBlock().getState()).getLine(0).equalsIgnoreCase("[mct]")) {
+        if (!((Sign) event.getClickedBlock().getState()).getLine(0).equalsIgnoreCase("[mct]"))
             return;
-        }
-
 
         ActiveSet plotToBuy = townManager.getPlotFromSignLocation(event.getClickedBlock().getLocation());
 
@@ -125,12 +119,10 @@ public class MCTPlayerListener implements Listener {
             return;
         }
 
-
         if (!plotToBuy.getActivePlot().isForSale()) {
             event.getPlayer().sendMessage(ChatColor.DARK_AQUA + "That plot is not for sale.");
             return;
         }
-
 
         if (!MCTowns.getEconomy().has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice().floatValue())) {
             event.getPlayer().sendMessage(ChatColor.RED + "Insufficient funds (costs " + plotToBuy.getActivePlot().getPrice() + ").");
@@ -145,15 +137,13 @@ public class MCTPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.SignChangeEvent e) {
-        if (e.getBlock().getType() != Material.SIGN_POST) {
+        if (e.getBlock().getType() != Material.SIGN_POST)
             return;
-        }
 
         Sign sign = (Sign) e.getBlock().getState();
 
-        if (!e.getLine(0).equals(FENCEREGION_SIGN_PREFIX)) {
+        if (!e.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
             return;
-        }
 
         Player p = e.getPlayer();
 
@@ -192,9 +182,8 @@ public class MCTPlayerListener implements Listener {
         try {
             nuName = e.getLine(1);
 
-            if (nuName.isEmpty()) {
+            if (nuName.isEmpty())
                 throw new IndexOutOfBoundsException();
-            }
 
         } catch (IndexOutOfBoundsException ioobe) {
             p.sendMessage(ChatColor.RED + "Error: The second line must contain a name for the new plot.");
@@ -202,7 +191,6 @@ public class MCTPlayerListener implements Listener {
         }
 
         //Plot plot = new Plot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld().getName());
-
         //now, prepare the WG region
         Location signLoc = sign.getLocation();
 
@@ -234,21 +222,25 @@ public class MCTPlayerListener implements Listener {
             p.sendMessage(ChatColor.RED + "Error: The selected region is not within your active territory.");
             return;
         }
-
-        townManager.addPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
+        try {
+            townManager.addPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
+        } catch (TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
+            p.sendMessage(ChatColor.RED + ex.getLocalizedMessage());
+            return;
+        }
 
         p.sendMessage(ChatColor.GREEN + "Plot created.");
 
         pActive.setActivePlot(townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName)));
         p.sendMessage(ChatColor.LIGHT_PURPLE + "Active plot set to newly created plot.");
     }
-    
+
     @EventHandler
     public void onPlayerJoinAddToDefaultTown(PlayerJoinEvent e) {
-        if(!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
+        if (!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
             Town t = townManager.getTown(MCTowns.getDefaultTown());
-            if(t == null) {
-                if(MCTowns.getDefaultTown() != null && !MCTowns.getDefaultTown().isEmpty())
+            if (t == null) {
+                if (MCTowns.getDefaultTown() != null && !MCTowns.getDefaultTown().isEmpty())
                     MCTowns.logWarning("Error: Default town specified in config.yml does not exist.");
                 return;
             }
