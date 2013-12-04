@@ -68,20 +68,19 @@ public class MCTownsPlugin extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        if(this.getServer().getPluginManager().getPlugin("WorldGuard") == null)
+        if (this.getServer().getPluginManager().getPlugin("WorldGuard") == null)
             return;
-        
+
         try {
             saveWorldGuardWorlds();
         } catch (Exception ex) {
             MCTowns.logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
         }
 
-        if (!abortSave) {
+        if (!abortSave)
             persistTownManager();
-        } else {
+        else
             MCTowns.logInfo("The save was aborted manually, so nothing was saved.");
-        }
 
         MCTowns.logInfo("[MCTowns]: MCTowns has been successfully disabled.");
         try {
@@ -107,16 +106,15 @@ public class MCTownsPlugin extends JavaPlugin {
     public void onEnable() {
         singleton = this;
         setupFiles();
-        
-        if(!hookInDependencies())
+
+        if (!hookInDependencies())
             return;
-        
+
         joinManager = new TownJoinManager();
         activeSets = new HashMap<>();
-        if (MCTowns.economyIsEnabled()) {
+        if (MCTowns.economyIsEnabled())
             potentialPlotBuyers = new HashMap<>();
-        }
-        
+
         Perms.registerPermNodes(getServer().getPluginManager());
         setupTownManager();
         regEventListeners();
@@ -149,9 +147,8 @@ public class MCTownsPlugin extends JavaPlugin {
         configFiles.add(metaFile);
 
         try {
-            if (!metaFile.exists()) {
+            if (!metaFile.exists())
                 metaFile.createNewFile();
-            }
         } catch (IOException ex) {
             MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
         }
@@ -187,18 +184,16 @@ public class MCTownsPlugin extends JavaPlugin {
             return false;
         }
 
-        if (MCTowns.economyIsEnabled()) {
+        if (MCTowns.economyIsEnabled())
             try {
                 boolean success = setupEconomy();
-                if (!success) {
+                if (!success)
                     MCTowns.logSevere("MCTowns: Unable to hook-in to Vault (1)!");
-                }
             } catch (Exception e) {
                 MCTowns.logSevere("MCTowns: Unable to hook-in to Vault.");
                 return false;
             }
-        }
-        
+
         return true;
     }
 
@@ -226,9 +221,8 @@ public class MCTownsPlugin extends JavaPlugin {
     private boolean setupEconomy() {
         Economy economy = null;
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null) {
+        if (economyProvider != null)
             economy = economyProvider.getProvider();
-        }
 
         return (economy != null);
     }
@@ -250,16 +244,14 @@ public class MCTownsPlugin extends JavaPlugin {
 
         for (File f : root.listFiles()) {
             //not really necessary since nothing but town files are in saves now, but... better safe.
-            if (dataDirs.contains(f) || configFiles.contains(f)) {
+            if (dataDirs.contains(f) || configFiles.contains(f))
                 continue;
-            }
 
             //snips off the ".yml" from the end of the files, so they'll match their region or town names again
             String regionName = f.getName().substring(0, f.getName().lastIndexOf('.'));
 
-            if (!(towns.contains(regionName) || regions.contains(regionName))) {
+            if (!(towns.contains(regionName) || regions.contains(regionName)))
                 f.delete();
-            }
         }
     }
 

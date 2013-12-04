@@ -36,7 +36,7 @@ public class Territory extends MCTownsRegion {
     /**
      * Constructs a new territory
      *
-     * @param name the desired name of the territory
+     * @param name      the desired name of the territory
      * @param worldName the name of the world in which the territory exists
      */
     public Territory(String name, String worldName, String parentTownName) {
@@ -53,13 +53,13 @@ public class Territory extends MCTownsRegion {
      * needs to be done elsewhere.
      *
      * @param dist the plot to be added
+     *
      * @return false if the plot was not added because it is already added, true
-     * otherwise
+     *         otherwise
      */
     public boolean addPlot(Plot plot) {
-        if (plotNames.contains(plot.getName())) {
+        if (plotNames.contains(plot.getName()))
             return false;
-        }
 
         plotNames.add(plot.getName());
         return true;
@@ -85,6 +85,7 @@ public class Territory extends MCTownsRegion {
      * Removes the plot from the territory
      *
      * @param plotName the name of the plot to be removed
+     *
      * @return if a plot was removed or not
      */
     public boolean removePlot(String plotName) {

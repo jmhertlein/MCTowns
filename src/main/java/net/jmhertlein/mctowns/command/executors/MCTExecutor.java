@@ -51,10 +51,8 @@ public class MCTExecutor extends BaseExecutor {
         String helpMessage = null;
 
         try {
-            if (!command.get(0).equals("mct")) {
+            if (!command.get(0).equals("mct"))
                 MCTowns.logSevere("Assertion failed: MCTExecutor.java, the command's first argument was not \"mct\"");
-            }
-
 
             switch (command.get(1)) {
                 case "break":
@@ -99,11 +97,10 @@ public class MCTExecutor extends BaseExecutor {
                     helpMessage = "/mct list (towns | invite)";
                     switch (command.get(2)) {
                         case "towns":
-                            if (command.hasArgAtIndex(3)) {
+                            if (command.hasArgAtIndex(3))
                                 handler.listTowns(command.get(3));
-                            } else {
+                            else
                                 handler.listTowns();
-                            }
                             softFailure = false;
                             break;
                         case "invite":
@@ -150,12 +147,10 @@ public class MCTExecutor extends BaseExecutor {
                     softFailure = false;
             }
 
-
-
         } catch (ArgumentCountException ex) {
-            if (ex.getErrorIndex() == 1) {
+            if (ex.getErrorIndex() == 1)
                 hardFailure = true;
-            } else {
+            else {
                 softFailure = true;
                 hardFailure = false;
             }

@@ -55,9 +55,8 @@ public class QuickSelectToolListener implements Listener {
 
     @EventHandler
     public void onToolUse(PlayerInteractEvent e) {
-        if ((e.getPlayer().getItemInHand().getType().compareTo(SELECT_TOOL)) != 0) {
+        if ((e.getPlayer().getItemInHand().getType().compareTo(SELECT_TOOL)) != 0)
             return;
-        }
 
         Player player = e.getPlayer();
 
@@ -69,7 +68,7 @@ public class QuickSelectToolListener implements Listener {
             List<Town> towns = townMan.matchPlayerToTowns(player);
             actives.setActiveTown(towns.isEmpty() ? null : towns.get(0));
         }
-        
+
         e.setCancelled(true);
         if (actives.getActiveTown() == null) {
             e.getPlayer().sendMessage(ChatColor.RED + "You need to set your active town first.");
@@ -78,9 +77,8 @@ public class QuickSelectToolListener implements Listener {
 
         Block b = e.getClickedBlock();
 
-        if (b == null) {
+        if (b == null)
             return;
-        }
 
         Location spotClicked = b.getLocation();
 
@@ -96,24 +94,21 @@ public class QuickSelectToolListener implements Listener {
         Territory territ = null;
         for (ProtectedRegion pr : regs) {
             territ = townMan.getTerritory(pr.getId());
-            if (territ != null && territ.getParentTown().equals(town.getTownName())) {
+            if (territ != null && territ.getParentTown().equals(town.getTownName()))
                 break;
-            } else {
+            else
                 territ = null;
-            }
         }
 
         Plot plot = null;
-        if (territ != null) {
+        if (territ != null)
             for (ProtectedRegion pr : regs) {
                 plot = townMan.getPlot(pr.getId());
-                if (plot != null && plot.getParentTerritoryName().equals(territ.getName())) {
+                if (plot != null && plot.getParentTerritoryName().equals(territ.getName()))
                     break;
-                } else {
+                else
                     plot = null;
-                }
             }
-        }
 
         actives.setActiveTown(town);
         actives.setActiveTerritory(territ);

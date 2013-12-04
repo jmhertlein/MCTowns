@@ -95,7 +95,7 @@ public class ActiveSet {
     }
 
     /**
-     * 
+     *
      * @return Town: <town name> Territ: <territ name> Plot: <plot name>
      */
     @Override

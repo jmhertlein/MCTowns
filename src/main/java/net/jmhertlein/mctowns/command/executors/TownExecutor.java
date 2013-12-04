@@ -128,21 +128,19 @@ public class TownExecutor extends BaseExecutor {
                     helpMessage = "/town list (territories | players | requests | invites)";
                     switch (command.get(2).toLowerCase()) {
                         case "players":
-                            if (command.hasArgAtIndex(3)) {
-                            handler.listResidents(command.get(3));
-                        } else {
-                            handler.listResidents();
-                        }
+                            if (command.hasArgAtIndex(3))
+                                handler.listResidents(command.get(3));
+                            else
+                                handler.listResidents();
                             softFailure = false;
                             break;
 
                         case "te":
                         case "territories":
-                            if (command.hasArgAtIndex(3)) {
-                            handler.listTerritories(command.get(3));
-                        } else {
-                            handler.listTerritories();
-                        }
+                            if (command.hasArgAtIndex(3))
+                                handler.listTerritories(command.get(3));
+                            else
+                                handler.listTerritories();
                             softFailure = false;
                             break;
 
@@ -160,11 +158,10 @@ public class TownExecutor extends BaseExecutor {
 
                 case "active":
                     helpMessage = "/town active (reset | <town name>)";
-                    if (command.get(2).equalsIgnoreCase("reset")) {
+                    if (command.get(2).equalsIgnoreCase("reset"))
                         handler.resetActiveTown();
-                    } else {
+                    else
                         handler.setActiveTown(command.get(2));
-                    }
                     softFailure = false;
                     break;
                 case "b":
@@ -229,15 +226,13 @@ public class TownExecutor extends BaseExecutor {
                     break;
 
                 case "spawn":
-                    if (command.hasArgAtIndex(2)) {
-                    if (command.getArgAtIndex(2).equals("set")) {
-                        handler.setTownSpawn();
-                    } else {
-                        handler.warpToOtherSpawn(command.get(2));
-                    }
-                } else {
-                    handler.warpToSpawn();
-                }
+                    if (command.hasArgAtIndex(2))
+                        if (command.getArgAtIndex(2).equals("set"))
+                            handler.setTownSpawn();
+                        else
+                            handler.warpToOtherSpawn(command.get(2));
+                    else
+                        handler.warpToSpawn();
                     softFailure = false;
                     break;
 
@@ -259,11 +254,10 @@ public class TownExecutor extends BaseExecutor {
                     break;
 
                 case "motd":
-                    if (command.hasArgAtIndex(2)) {
-                    handler.setMOTD(command.concatAfter(2));
-                } else {
-                    handler.printMOTD();
-                }
+                    if (command.hasArgAtIndex(2))
+                        handler.setMOTD(command.concatAfter(2));
+                    else
+                        handler.printMOTD();
                     softFailure = false;
                     break;
 
@@ -289,9 +283,9 @@ public class TownExecutor extends BaseExecutor {
             }
 
         } catch (ArgumentCountException ex) {
-            if (ex.getErrorIndex() == 1) {
+            if (ex.getErrorIndex() == 1)
                 hardFailure = true;
-            } else {
+            else {
                 softFailure = true;
                 hardFailure = false;
             }

@@ -49,15 +49,14 @@ public class TownJoinManager {
     public void invitePlayerToTown(final String playerName, final Town invitedTo) {
         Set<Town> towns = joinInvitations.get(playerName);
 
-        if (towns == null) {
+        if (towns == null)
             joinInvitations.put(playerName, new HashSet<Town>() {
                 {
                     this.add(invitedTo);
                 }
             });
-        } else {
+        else
             towns.add(invitedTo);
-        }
 
     }
 
@@ -70,15 +69,14 @@ public class TownJoinManager {
     public void addPlayerRequestForTown(final Town requestJoinTo, final String playerName) {
         Set<String> players = joinRequests.get(requestJoinTo);
 
-        if (players == null) {
+        if (players == null)
             joinRequests.put(requestJoinTo, new HashSet<String>() {
                 {
                     this.add(playerName);
                 }
             });
-        } else {
+        else
             players.add(playerName);
-        }
     }
 
     public boolean townHasRequestFromPlayer(Town t, String playerName) {
@@ -93,8 +91,9 @@ public class TownJoinManager {
      *
      * @param t
      * @param playerName
+     *
      * @return true if player was removed, false if player had not ever actually
-     * requested membership
+     *         requested membership
      */
     public boolean clearRequestForTownFromPlayer(Town t, String playerName) {
         Set<String> playerNames = joinRequests.get(t);
@@ -110,8 +109,9 @@ public class TownJoinManager {
      *
      * @param playerName
      * @param t
+     *
      * @return true if the invite was actually cleared, false if the player was
-     * not ever actually invited
+     *         not ever actually invited
      */
     public boolean clearInvitationForPlayerFromTown(String playerName, Town t) {
         Set<Town> towns = joinInvitations.get(playerName);
@@ -121,9 +121,8 @@ public class TownJoinManager {
     public List<Town> getTownsPlayerIsInvitedTo(String playerName) {
         ArrayList<Town> ret = new ArrayList<>();
         for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
-            if (e.getKey().equals(playerName)) {
+            if (e.getKey().equals(playerName))
                 ret.addAll(e.getValue());
-            }
         }
 
         return ret;
@@ -133,8 +132,9 @@ public class TownJoinManager {
      * Gets all current requests for the town.
      *
      * @param t
+     *
      * @return A set of requests. Changes made to the set will be reflected in
-     * later calls to this method
+     *         later calls to this method
      */
     public Set<String> getPlayersRequestingMembershipToTown(Town t) {
         Set<String> r = joinRequests.get(t);
@@ -148,9 +148,8 @@ public class TownJoinManager {
     public Set<String> getIssuedInvitesForTown(Town t) {
         HashSet<String> playersInvited = new HashSet<>();
         for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
-            if (e.getValue().contains(t)) {
+            if (e.getValue().contains(t))
                 playersInvited.add(e.getKey());
-            }
         }
 
         return playersInvited;

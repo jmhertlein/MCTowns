@@ -50,7 +50,6 @@ public class PlotExecutor extends BaseExecutor {
 
         String helpMessage = null;
 
-
         try {
             switch (command.get(1).toLowerCase()) {
                 case "add":
@@ -152,9 +151,9 @@ public class PlotExecutor extends BaseExecutor {
                     softFailure = false;
             }
         } catch (ArgumentCountException ex) {
-            if (ex.getErrorIndex() == 1) {
+            if (ex.getErrorIndex() == 1)
                 hardFailure = true;
-            } else {
+            else {
                 softFailure = true;
                 hardFailure = false;
             }
