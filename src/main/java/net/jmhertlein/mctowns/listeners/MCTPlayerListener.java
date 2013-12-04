@@ -18,6 +18,8 @@ package net.jmhertlein.mctowns.listeners;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -234,8 +236,12 @@ public class MCTPlayerListener implements Listener {
             p.sendMessage(ChatColor.RED + "Error: The selected region is not within your active territory.");
             return;
         }
-
-        townManager.addPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
+        try {
+            townManager.addPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
+        } catch (TownManager.InvalidWorldGuardRegionNameException ex) {
+            p.sendMessage(ChatColor.RED + ex.getLocalizedMessage());
+            return;
+        }
 
         p.sendMessage(ChatColor.GREEN + "Plot created.");
 
