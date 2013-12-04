@@ -131,14 +131,14 @@ public class TownManager {
      * match
      * @param parentTown the parent town of the Territory
      * @throws InvalidWorldGuardRegionNameException if the name of the
-     * ProtectedRegion does not match the desired name
+     * ProtectedRegion contains invalid characters
      * @return true if the addition was successful, false if the name is already
      * used
      */
-    public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) {
+    public boolean addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) throws InvalidWorldGuardRegionNameException {
         Territory t = new Territory(fullTerritoryName, worldTerritoryIsIn.getName(), parentTown.getTownName());
 
-        if (!addMCTRegion(fullTerritoryName, t, worldTerritoryIsIn, reg)) {
+        if (!addMCTRegion(t, worldTerritoryIsIn, reg)) {
             return false;
         }
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(worldTerritoryIsIn);
@@ -167,10 +167,10 @@ public class TownManager {
      * @return true if the addition was successful, false if the name is already
      * used
      */
-    public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) {
+    public boolean addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) throws InvalidWorldGuardRegionNameException {
         Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(), parentTerritory.getName(), parentTown.getTownName());
 
-        if (!addMCTRegion(fullPlotName, p, worldPlotIsIn, reg)) {
+        if (!addMCTRegion(p, worldPlotIsIn, reg)) {
             return false;
         }
 
@@ -194,13 +194,15 @@ public class TownManager {
         return true;
     }
 
-    private boolean addMCTRegion(String fullPlotName, MCTownsRegion mctReg, World w, ProtectedRegion reg) {
+    private boolean addMCTRegion(MCTownsRegion mctReg, World w, ProtectedRegion reg) throws InvalidWorldGuardRegionNameException {
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(w);
-        if (!reg.getId().equals(mctReg.getName())) {
-            throw new InvalidWorldGuardRegionNameException(fullPlotName, reg.getId());
+        if (!ProtectedRegion.isValidId(mctReg.getName())) {
+            throw new InvalidWorldGuardRegionNameException(mctReg.getName());
         }
 
-        if (regMan.hasRegion(mctReg.getName())) //checking regMan should always return the same value as checking regions, since the regions in regions are a subset of those in regMan... so no need to check regions
+        //checking regMan should always return the same value as checking regions, 
+        //since the regions in regions are a subset of those in regMan... so no need to check regions
+        if (regMan.hasRegion(mctReg.getName())) 
         {
             return false;
         }
@@ -499,15 +501,14 @@ public class TownManager {
     /**
      *
      */
-    public class InvalidWorldGuardRegionNameException extends RuntimeException {
+    public static class InvalidWorldGuardRegionNameException extends Exception {
 
         /**
          *
          * @param invalidName
-         * @param shouldMatchButDoesnt
          */
-        public InvalidWorldGuardRegionNameException(String invalidName, String shouldMatchButDoesnt) {
-            super("Problem: Attempted to create a new MCTownsRegion, but the MCTownsRegion name and WorldGuard region name did not match. (" + invalidName + " should match " + shouldMatchButDoesnt + ").");
+        public InvalidWorldGuardRegionNameException(String invalidName) {
+            super(String.format("The region name \"%s\" has invalid characters.", invalidName));
         }
     }
 }

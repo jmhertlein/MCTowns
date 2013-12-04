@@ -20,10 +20,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
+import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
@@ -289,8 +292,16 @@ public class TownHandler extends CommandHandler {
 
             localSender.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + price.toString());
         }
-
-        if (!townManager.addTerritory(territName, w, region, t)) {
+        
+        boolean success;
+        try {
+            success = townManager.addTerritory(territName, w, region, t);
+        } catch (TownManager.InvalidWorldGuardRegionNameException ex) {
+            localSender.sendMessage(ERR + ex.getLocalizedMessage());
+            return;
+        }
+        
+        if (!success) {
             localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
