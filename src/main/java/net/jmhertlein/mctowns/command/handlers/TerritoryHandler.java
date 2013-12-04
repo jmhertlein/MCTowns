@@ -86,24 +86,19 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        boolean success;
         try {
-            success = townManager.addPlot(plotName, w, region, t, parTerr);
-        } catch (TownManager.InvalidWorldGuardRegionNameException ex) {
+            townManager.addPlot(plotName, w, region, t, parTerr);
+        } catch (TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
             localSender.sendMessage(ERR + ex.getLocalizedMessage());
             return;
         }
-        if (success) {
-            localSender.sendMessage(SUCC + "Plot added.");
-            boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
-            if (autoActive) {
-                localSender.setActivePlot(townManager.getPlot(plotName));
-                localSender.sendMessage(INFO + "Active plot set to newly created plot.");
-            }
-        } else
-            localSender.sendMessage(
-                    ERR + "A region by that name already exists, please pick a different name.");
 
+        localSender.sendMessage(SUCC + "Plot added.");
+        boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
+        if (autoActive) {
+            localSender.setActivePlot(townManager.getPlot(plotName));
+            localSender.sendMessage(INFO + "Active plot set to newly created plot.");
+        }
     }
 
     public void removePlotFromTerritory(String plotName) {
@@ -238,7 +233,7 @@ public class TerritoryHandler extends CommandHandler {
         if (nuActive == null)
             nuActive = townManager.getTerritory(
                     MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY,
-                                                   territName));
+                            territName));
 
         if (nuActive == null) {
             localSender.sendMessage(

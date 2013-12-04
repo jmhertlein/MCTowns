@@ -293,16 +293,10 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + price.toString());
         }
         
-        boolean success;
         try {
-            success = townManager.addTerritory(territName, w, region, t);
-        } catch (TownManager.InvalidWorldGuardRegionNameException ex) {
+            townManager.addTerritory(territName, w, region, t);
+        } catch (TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
             localSender.sendMessage(ERR + ex.getLocalizedMessage());
-            return;
-        }
-        
-        if (!success) {
-            localSender.sendMessage(ERR + "That name is already in use. Please pick a different one.");
             return;
         }
 
