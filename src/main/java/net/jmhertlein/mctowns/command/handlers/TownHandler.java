@@ -365,6 +365,16 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
+        
+        if(t.playerIsResident(p)) {
+            localSender.sendMessage(ERR + p.getName() + " is already a member of " + t.getTownName());
+            return;
+        }
+        
+        if(joinManager.getIssuedInvitesForTown(t).contains(p.getName())) {
+            localSender.sendMessage(ERR + p.getName() + " is already invited to join " + t.getTownName());
+            return;
+        }
 
         if (joinManager.townHasRequestFromPlayer(t, invitee)) {
             t.addPlayer(invitee);
