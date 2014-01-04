@@ -56,7 +56,7 @@
   <repositories>
     <repository>
       <id>jmh-repo</id>
-      <url>http://maven.jmhertlein.net:4555/~joshua/maven/</url>
+      <url>http://maven.jmhertlein.net/~joshua/maven/</url>
     </repository>
     <repository>
       <id>bukkit-repo</id>
