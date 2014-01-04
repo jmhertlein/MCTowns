@@ -85,6 +85,12 @@ public class PlotExecutor extends BaseExecutor {
 
                     }
                     break;
+                    
+                    case "info":
+                    helpMessage = "/plot info";
+                    handler.printPlotInfo();
+                    softFailure = false;
+                    break;
                 case "list":
                 case "ls":
                     helpMessage = "/plot list players";
