@@ -637,7 +637,7 @@ public class TownHandler extends CommandHandler {
         OfflinePlayer removeMe = server.getOfflinePlayer(playerName);
         Town removeFrom = localSender.getActiveTown();
 
-        if (removeMe == null) {
+        if (!removeMe.hasPlayedBefore()) {
             localSender.sendMessage(ERR + "No player named '" + playerName + "' has ever played on this server.");
             return;
         }
@@ -652,8 +652,8 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (removeFrom.playerIsAssistant(playerName) && !removeFrom.playerIsMayor(localSender.getPlayer())) {
-            localSender.sendMessage(ERR + "Only the mayor can remove assistants from the town.");
+        if (removeFrom.playerIsAssistant(playerName) && !localSender.hasExternalPermissions(Perms.ADMIN.toString()) && !removeFrom.playerIsMayor(localSender.getPlayer())) {
+            localSender.sendMessage(ERR + "Only the mayor or admins can remove assistants from the town.");
             return;
         }
 
