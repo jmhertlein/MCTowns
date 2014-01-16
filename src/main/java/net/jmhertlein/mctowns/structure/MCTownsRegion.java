@@ -77,6 +77,7 @@ public abstract class MCTownsRegion {
      * @return
      */
     public boolean removePlayer(String p) {
+        p = p.toLowerCase();
         DefaultDomain members, owners;
         boolean removed = false;
         WorldGuardPlugin wgp = MCTowns.getWorldGuardPlugin();
