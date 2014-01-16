@@ -112,12 +112,11 @@ public class Plot extends MCTownsRegion {
     public String getTerseName() {
         String absName = name;
 
-        while (absName.contains("_")) {
+        for(int i = 0; i < 2; i++) {
             absName = absName.substring(absName.indexOf('_') + 1);
         }
 
         return absName;
-
     }
 
     /**
