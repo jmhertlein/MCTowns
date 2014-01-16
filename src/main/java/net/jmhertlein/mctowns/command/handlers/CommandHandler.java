@@ -346,6 +346,11 @@ public abstract class CommandHandler {
 
     protected ArrayList<String> getOutputFriendlyTownJoinListMessages(Set<String> playerNames) {
         ArrayList<String> msgs = new ArrayList<>();
+        
+        if(playerNames.size() <= 3) {
+          msgs.addAll(playerNames);
+          return msgs;
+        }
 
         int numNamesOnCurrentLine = 0;
         String curLine = "";
