@@ -91,11 +91,11 @@ public abstract class CommandHandler {
      * specified arguments. If no arguments are supplied, the flag is instead
      * cleared.
      *
-     * @param flagName   name of the WorldGuard flag to set or clear
-     * @param args       the args to set the flag with, or empty if it's meant to be
-     *                   cleared
+     * @param flagName name of the WorldGuard flag to set or clear
+     * @param args the args to set the flag with, or empty if it's meant to be
+     * cleared
      * @param regionType Which region in the ActiveSet hierarchy to apply the
-     *                   flag to.
+     * flag to.
      */
     public void flagRegion(String flagName, String[] args, TownLevel regionType) {
         if (!localSender.hasExternalPermissions("mct.flag") && !localSender.hasExternalPermissions("mct.admin")) {
@@ -154,9 +154,9 @@ public abstract class CommandHandler {
         }
 
         String s_stateOfFlag = "";
-        if (args.length == 1)
+        if (args.length == 1) {
             s_stateOfFlag = args[0];
-        else {
+        } else {
             for (String s : args) {
                 s_stateOfFlag += s;
                 s_stateOfFlag += " ";
@@ -235,8 +235,9 @@ public abstract class CommandHandler {
                 counter = 0;
             }
         }
-        if (counter != 0)
+        if (counter != 0) {
             localSender.sendMessage(temp);
+        }
 
     }
 
@@ -255,8 +256,9 @@ public abstract class CommandHandler {
         Selection selection;
         try {
             selection = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection(localSender.getPlayer());
-            if (selection == null)
+            if (selection == null) {
                 throw new NullPointerException();
+            }
         } catch (NullPointerException npe) {
             localSender.sendMessage("Error getting your WorldEdit selection. Did you forget to make a selection?");
             return null;
@@ -304,18 +306,20 @@ public abstract class CommandHandler {
     }
 
     public static boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
-        if (reg instanceof ProtectedCuboidRegion)
+        if (reg instanceof ProtectedCuboidRegion) {
             return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
-        else if (reg instanceof ProtectedPolygonalRegion) {
+        } else if (reg instanceof ProtectedPolygonalRegion) {
             ProtectedPolygonalRegion ppr = (ProtectedPolygonalRegion) reg;
 
             for (BlockVector2D pt : ppr.getPoints()) {
-                if (!parentReg.contains(pt))
+                if (!parentReg.contains(pt)) {
                     return false;
+                }
             }
 
-            if (!(parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint())))
+            if (!(parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint()))) {
                 return false;
+            }
 
             return true;
         }
@@ -338,7 +342,7 @@ public abstract class CommandHandler {
     public static void broadcastTownJoin(Town t, String player) {
         for (String pl : t.getResidentNames()) {
             Player p = Bukkit.getPlayer(pl);
-            if (p == null || pl.equals(player))
+            if (p == null || pl.equals(player)) 
                 continue;
             p.sendMessage(player + " just joined " + t.getTownName() + "!");
         }
@@ -346,17 +350,17 @@ public abstract class CommandHandler {
 
     protected ArrayList<String> getOutputFriendlyTownJoinListMessages(Set<String> playerNames) {
         ArrayList<String> msgs = new ArrayList<>();
-        
-        if(playerNames.size() <= 3) {
-          msgs.addAll(playerNames);
-          return msgs;
+
+        if (playerNames.size() <= 3) {
+            msgs.addAll(playerNames);
+            return msgs;
         }
 
         int numNamesOnCurrentLine = 0;
         String curLine = "";
         for (String s : playerNames) {
             if (numNamesOnCurrentLine == 3) {
-                curLine.substring(0, curLine.length() - 3);
+                curLine = curLine.substring(0, curLine.length() - 3);
                 msgs.add(curLine);
                 numNamesOnCurrentLine = 0;
                 curLine = "";
@@ -364,6 +368,11 @@ public abstract class CommandHandler {
 
             curLine += s + ", ";
             numNamesOnCurrentLine++;
+        }
+
+        if (numNamesOnCurrentLine > 0) {
+            curLine = curLine.substring(0, curLine.length() - 3);
+            msgs.add(curLine);
         }
 
         return msgs;
