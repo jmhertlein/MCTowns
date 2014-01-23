@@ -300,6 +300,8 @@ public class TownHandler extends CommandHandler {
 
         //IF ALL THE THINGS ARE FINALLY DONE...
         region.getOwners().addPlayer(t.getMayor());
+        for(String assistantName : t.getAssistantNames())
+            region.getOwners().addPlayer(assistantName);
 
         localSender.sendMessage(SUCC + "Territory added.");
 
