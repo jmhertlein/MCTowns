@@ -365,7 +365,7 @@ public class MCTHandler extends CommandHandler {
         localSender.sendMessage(ChatColor.GREEN + "You are now the proud owner of this plot.");
         doRegManSave(MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())));
 
-        if (!townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
+        if(!townManager.matchPlayerToTowns(localSender.getPlayer()).contains(plotToBuy.getActiveTown())) {
             plotToBuy.getActiveTown().addPlayer(localSender.getPlayer());
             localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getTownName());
         }
