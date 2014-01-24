@@ -166,43 +166,43 @@ public class MCTowns {
     public static boolean getDebugModeEnabled() {
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("debugModeEnabled", false);
     }
-    
+
     public static boolean getTaxesEnabled() {
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("economy.taxes.taxesEnabled", false);
     }
-    
+
     public static void setTaxesEnabled(boolean value) {
         MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.taxesEnabled", value);
     }
-    
+
     public static double getMaxTaxAmount() {
         return MCTownsPlugin.getPlugin().getConfig().getDouble("economy.taxes.maxTaxAmount", 100);
     }
-    
+
     public static void setMaxTaxAmount(double value) {
         MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.maxTaxAmount", value);
     }
-    
+
     public static int getMinTaxDelayInTicks() {
         return MCTownsPlugin.getPlugin().getConfig().getInt("economy.taxes.minTaxDelayInTicks", 1728000);
     }
-    
+
     public static void setMinTaxDelayInTicks(int value) {
         MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.minTaxDelayInTicks", value);
     }
-    
+
     public static ClockSource getTaxClockSource() {
         return ClockSource.valueOf(MCTownsPlugin.getPlugin().getConfig().getString("advanced.taxClockSource", "minecraft").toUpperCase());
     }
-    
+
     public static void setTaxClockSource(ClockSource value) {
         MCTownsPlugin.getPlugin().getConfig().set("advanced.taxClockSource", value.name().toLowerCase());
     }
-    
+
     public static int getMaxTaxDelayInMinutes() {
         return MCTownsPlugin.getPlugin().getConfig().getInt("advanced.minTaxDelayInMinutes", 1440);
     }
-    
+
     public static void setMaxTaxDelayInMinutes(int value) {
         MCTownsPlugin.getPlugin().getConfig().set("advanced.minTaxDelayInMinutes", value);
     }

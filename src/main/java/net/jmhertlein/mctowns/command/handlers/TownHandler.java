@@ -300,7 +300,7 @@ public class TownHandler extends CommandHandler {
 
         //IF ALL THE THINGS ARE FINALLY DONE...
         region.getOwners().addPlayer(t.getMayor());
-        for(String assistantName : t.getAssistantNames())
+        for (String assistantName : t.getAssistantNames())
             region.getOwners().addPlayer(assistantName);
 
         localSender.sendMessage(SUCC + "Territory added.");
@@ -367,13 +367,13 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
-        
-        if(t.playerIsResident(p)) {
+
+        if (t.playerIsResident(p)) {
             localSender.sendMessage(ERR + p.getName() + " is already a member of " + t.getTownName());
             return;
         }
-        
-        if(joinManager.getIssuedInvitesForTown(t).contains(p.getName())) {
+
+        if (joinManager.getIssuedInvitesForTown(t).contains(p.getName())) {
             localSender.sendMessage(ERR + p.getName() + " is already invited to join " + t.getTownName());
             return;
         }

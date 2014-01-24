@@ -440,16 +440,16 @@ public abstract class CommandHandler {
 
         if (oldWGReg instanceof ProtectedPolygonalRegion) {
             ProtectedPolygonalRegion oldPoly = (ProtectedPolygonalRegion) oldWGReg;
-            
-            if(!(nuRegionBounds instanceof Polygonal2DSelection)) {
+
+            if (!(nuRegionBounds instanceof Polygonal2DSelection)) {
                 localSender.sendMessage(ERR + "Error: selection type does not match region type. Must be a polygonal selection.");
                 return;
             }
             Polygonal2DSelection polySel = (Polygonal2DSelection) nuRegionBounds;
-            
+
             nuWGRegion = new ProtectedPolygonalRegion(oldWGReg.getId(), polySel.getNativePoints(), polySel.getMaximumPoint().getBlockY(), polySel.getNativeMinimumPoint().getBlockY());
         } else if (oldWGReg instanceof ProtectedCuboidRegion) {
-            if(!(nuRegionBounds instanceof CuboidSelection)) {
+            if (!(nuRegionBounds instanceof CuboidSelection)) {
                 localSender.sendMessage(ERR + "Error: selection type does not match region type. Must be a cuboid selection.");
                 return;
             }

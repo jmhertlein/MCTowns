@@ -77,9 +77,8 @@ public class MCTHandler extends CommandHandler {
             localSender.sendMessage(INFO + "Active town set to newly created town.");
 
             localSender.sendMessage(INFO_ALT + "The town's spawn has been set to your current location. Change it with /town spawn set.");
-        } else {
+        } else
             localSender.sendMessage(ERR + "That town already exists!");
-        }
     }
 
     public void removeTown(String townName) {
@@ -147,15 +146,14 @@ public class MCTHandler extends CommandHandler {
         localSender.sendMessage(INFO + "Player: " + p.getName());
 
         List<Town> towns = townManager.matchPlayerToTowns(p);
-        if (towns.isEmpty()) {
+        if (towns.isEmpty())
             localSender.sendMessage(INFO + p.getName() + " is not a member of any towns.");
-        } else {
+        else
             for (Town t : towns) {
                 localSender.sendMessage("Town: " + t.getTownName());
                 localSender.sendMessage("Is Mayor: " + t.playerIsMayor(p));
                 localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(p));
             }
-        }
     }
 
     public void listTowns() {
@@ -214,13 +212,13 @@ public class MCTHandler extends CommandHandler {
             localSender.sendMessage(addTo.getTownName() + " doesn't use the invitation system.");
             return;
         }
-        
-        if(addTo.playerIsResident(localSender.getPlayer())) {
+
+        if (addTo.playerIsResident(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You are already a member of " + addTo.getTownName());
             return;
         }
-        
-        if(joinManager.getPlayersRequestingMembershipToTown(addTo).contains(localSender.getPlayer().getName())) {
+
+        if (joinManager.getPlayersRequestingMembershipToTown(addTo).contains(localSender.getPlayer().getName())) {
             localSender.sendMessage(ERR + "You've already requested to join " + addTo.getTownName());
             return;
         }
@@ -248,9 +246,9 @@ public class MCTHandler extends CommandHandler {
 
         Town t = townManager.getTown(townName);
 
-        if (t == null) {
+        if (t == null)
             localSender.sendMessage(ERR + "You're not invited to any towns right now.");
-        } else {
+        else {
             joinManager.clearInvitationForPlayerFromTown(pName, t);
             localSender.sendMessage(ChatColor.GOLD + "You have rejected the invitation to join " + t.getTownName());
             t.broadcastMessageToTown(server, ERR + pName + " has declined the invitation to join the town.");
@@ -276,11 +274,10 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.clearRequestForTownFromPlayer(t, localSender.getPlayer().getName())) {
+        if (joinManager.clearRequestForTownFromPlayer(t, localSender.getPlayer().getName()))
             localSender.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
-        } else {
+        else
             localSender.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
-        }
 
     }
 
@@ -317,19 +314,17 @@ public class MCTHandler extends CommandHandler {
         }
 
         if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) //if players can't join multiple towns AND the town they're buying from isn't their current town
-        {
+
             if (!MCTowns.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }
-        }
 
-        if (!plotToBuy.getActiveTown().playerIsResident(localSender.getPlayer())) {
+        if (!plotToBuy.getActiveTown().playerIsResident(localSender.getPlayer()))
             if (!plotToBuy.getActiveTown().usesEconomyJoins()) {
                 localSender.sendMessage(ERR + "You aren't a member of this town.");
                 return;
             }
-        }
 
         if (!plotToBuy.getActiveTown().usesBuyablePlots()) {
             localSender.sendMessage(ERR + "This town's plots aren't buyable.");
@@ -365,7 +360,7 @@ public class MCTHandler extends CommandHandler {
         localSender.sendMessage(ChatColor.GREEN + "You are now the proud owner of this plot.");
         doRegManSave(MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())));
 
-        if(!townManager.matchPlayerToTowns(localSender.getPlayer()).contains(plotToBuy.getActiveTown())) {
+        if (!townManager.matchPlayerToTowns(localSender.getPlayer()).contains(plotToBuy.getActiveTown())) {
             plotToBuy.getActiveTown().addPlayer(localSender.getPlayer());
             localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getTownName());
         }
