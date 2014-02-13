@@ -34,7 +34,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritan
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Set;
-import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
@@ -483,7 +482,7 @@ public abstract class CommandHandler {
         }
         
         //if they're not an admin, charge them for the territory
-        if(regType == TownLevel.TERRITORY && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
+        if(regType == TownLevel.TERRITORY && !(cmd.hasFlag(ECommand.ADMIN) && localSender.hasExternalPermissions(Perms.ADMIN.toString()))) {
             if(!MCTowns.economyIsEnabled()) {
                 localSender.sendMessage(ERR + "You're not an admin, and mayors can only redefine territories by buying more blocks, yet the economy is not enabled.");
                 return;
