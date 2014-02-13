@@ -31,6 +31,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
@@ -45,12 +46,16 @@ import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
+import net.jmhertlein.mctowns.util.WGUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static net.jmhertlein.core.chat.ChatUtil.ERR;
+import static net.jmhertlein.core.chat.ChatUtil.INFO;
 
 /**
  * CommandHandler wraps a CommandSender and various other pertinent objects
@@ -404,7 +409,9 @@ public abstract class CommandHandler {
                 reg = null;
         }
 
-        if (regType == TownLevel.TERRITORY && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
+        //only let admins expand territories, unless mayors can buy territories, in which case mayors can too
+        if (regType == TownLevel.TERRITORY && !(localSender.hasExternalPermissions(Perms.ADMIN.toString()) 
+                                                || (MCTowns.mayorsCanBuyTerritories() && localSender.hasMayoralPermissions()))) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -413,7 +420,9 @@ public abstract class CommandHandler {
             localSender.sendMessage(ERR + "Your active " + regType.toString() + " is not set.");
             return;
         }
-
+        
+        Town t = localSender.getActiveTown();
+        
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(reg.getWorldName()));
 
         Selection nuRegionBounds;
@@ -471,6 +480,29 @@ public abstract class CommandHandler {
         if (regType != TownLevel.TERRITORY && !selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
             localSender.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
+        }
+        
+        //if they're not an admin, charge them for the territory
+        if(regType == TownLevel.TERRITORY && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
+            if(!MCTowns.economyIsEnabled()) {
+                localSender.sendMessage(ERR + "You're not an admin, and mayors can only redefine territories by buying more blocks, yet the economy is not enabled.");
+                return;
+            }
+            
+            BigDecimal price = MCTowns.getTerritoryPricePerColumn().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(oldWGReg)));
+            
+            if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
+                //If they can't afford it...
+                localSender.sendMessage(ERR + "There is not enough money in your " + INFO + "town's bank account" + ERR + " to buy a region that large.");
+                localSender.sendMessage(ERR + "Total Price: " + price);
+                localSender.sendMessage(INFO + "Add money to your town's bank with: /town bank deposit currency <amount>");
+                return;
+            }
+
+            //otherwise...
+            t.getBank().withdrawCurrency(price);
+
+            localSender.sendMessage(ChatColor.GREEN + "Purchase success! Total price was: " + price.toString());
         }
 
         //if everything is all clear...
