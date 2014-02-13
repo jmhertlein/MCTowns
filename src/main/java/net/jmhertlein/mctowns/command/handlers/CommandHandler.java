@@ -489,7 +489,7 @@ public abstract class CommandHandler {
                 return;
             }
             
-            BigDecimal price = MCTowns.getTerritoryPricePerColumn().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(oldWGReg)));
+            BigDecimal price = MCTowns.getTerritoryPricePerColumn().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(nuWGRegion) - WGUtils.getNumXZBlocksInRegion(oldWGReg)));
             
             if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
                 //If they can't afford it...
