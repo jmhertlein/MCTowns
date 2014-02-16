@@ -31,11 +31,16 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
+import net.jmhertlein.core.geom.Polygons;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.MCTLocalSender;
@@ -308,23 +313,18 @@ public abstract class CommandHandler {
     }
 
     public static boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
-        if (reg instanceof ProtectedCuboidRegion)
-            return parentReg.contains(reg.getMaximumPoint()) && parentReg.contains(reg.getMinimumPoint());
-        else if (reg instanceof ProtectedPolygonalRegion) {
-            ProtectedPolygonalRegion ppr = (ProtectedPolygonalRegion) reg;
-
-            for (BlockVector2D pt : ppr.getPoints()) {
-                if (!parentReg.contains(pt))
-                    return false;
-            }
-
-            if (!(parentReg.contains(ppr.getMaximumPoint()) && parentReg.contains(ppr.getMinimumPoint())))
+        List<Point2D.Float> regPoints = new LinkedList<>(), parentRegPoints = new LinkedList<>();
+        
+        for(BlockVector2D v : reg.getPoints()) {
+            if(!(parentReg.contains(v)))
                 return false;
-
-            return true;
+            regPoints.add(new Point2D.Float(v.getBlockX(), v.getBlockZ()));
         }
-
-        return false;
+        
+        for(BlockVector2D v : parentReg.getPoints())
+            parentRegPoints.add(new Point2D.Float(v.getBlockX(), v.getBlockZ()));
+        
+        return !Polygons.polygonEdgesIntersect(regPoints, parentRegPoints);
     }
 
     protected void doRegManSave(RegionManager regMan) {
