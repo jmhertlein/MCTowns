@@ -309,19 +309,19 @@ public abstract class CommandHandler {
             return false;
         }
 
-        return selectionIsWithinParent(reg, parentReg);
+        return regionIsWithinRegion(reg, parentReg);
     }
 
-    public static boolean selectionIsWithinParent(ProtectedRegion reg, ProtectedRegion parentReg) {
+    public static boolean regionIsWithinRegion(ProtectedRegion interior, ProtectedRegion exterior) {
         List<Point2D.Float> regPoints = new LinkedList<>(), parentRegPoints = new LinkedList<>();
         
-        for(BlockVector2D v : reg.getPoints()) {
-            if(!(parentReg.contains(v)))
+        for(BlockVector2D v : interior.getPoints()) {
+            if(!(exterior.contains(v)))
                 return false;
             regPoints.add(new Point2D.Float(v.getBlockX(), v.getBlockZ()));
         }
         
-        for(BlockVector2D v : parentReg.getPoints())
+        for(BlockVector2D v : exterior.getPoints())
             parentRegPoints.add(new Point2D.Float(v.getBlockX(), v.getBlockZ()));
         
         return !Polygons.polygonEdgesIntersect(regPoints, parentRegPoints);
@@ -476,7 +476,7 @@ public abstract class CommandHandler {
             return;
         }
 
-        if (regType != TownLevel.TERRITORY && !selectionIsWithinParent(nuWGRegion, oldWGReg.getParent())) {
+        if (regType != TownLevel.TERRITORY && !regionIsWithinRegion(nuWGRegion, oldWGReg.getParent())) {
             localSender.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
         }
