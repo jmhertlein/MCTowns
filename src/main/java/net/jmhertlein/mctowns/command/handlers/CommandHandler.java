@@ -471,7 +471,7 @@ public abstract class CommandHandler {
 
         //To make sure that we can't accidentally "orphan" plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.
-        if (!selectionIsWithinParent(oldWGReg, nuWGRegion)) {
+        if (!regionIsWithinRegion(oldWGReg, nuWGRegion)) {
             localSender.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
             return;
         }
