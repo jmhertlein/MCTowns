@@ -17,8 +17,11 @@
 
 package net.jmhertlein.mctowns.command.handler.test;
 
+import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.LinkedList;
 import java.util.List;
 import net.jmhertlein.mctowns.command.handlers.CommandHandler;
@@ -107,5 +110,22 @@ public class CommandHandlerTest {
         
         assertFalse(CommandHandler.regionIsWithinRegion(interiorReg, exteriorReg));
         assertFalse(CommandHandler.regionIsWithinRegion(exteriorReg, interiorReg));
+    }
+    
+    @Test
+    public void testCuboidIsWithinPolygon() {
+        ProtectedRegion interior, exterior;
+        
+        interior = new ProtectedCuboidRegion("interior", new BlockVector(-1, 0, -1), new BlockVector(1, 256, 1));
+        
+        List<BlockVector2D> exteriorRegPoints = new LinkedList<>();
+        exteriorRegPoints.add(new BlockVector2D(-5, 5));
+        exteriorRegPoints.add(new BlockVector2D(5, 5));
+        exteriorRegPoints.add(new BlockVector2D(5, -5));
+        exteriorRegPoints.add(new BlockVector2D(-5, -5));
+        exterior = new ProtectedPolygonalRegion("exterior", exteriorRegPoints, 0, 256);
+        
+        assertTrue(CommandHandler.regionIsWithinRegion(interior, exterior));
+        assertFalse(CommandHandler.regionIsWithinRegion(exterior, interior));
     }
 }
