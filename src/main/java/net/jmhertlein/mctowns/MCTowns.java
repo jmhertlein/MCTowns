@@ -77,7 +77,10 @@ public class MCTowns {
     }
 
     public static void logInfo(String msg) {
-        MCTownsPlugin.getPlugin().getLogger().log(Level.INFO, msg);
+        if(MCTownsPlugin.getPlugin() == null)
+            System.out.println(msg);
+        else
+            MCTownsPlugin.getPlugin().getLogger().log(Level.INFO, msg);
     }
 
     public static void logWarning(String msg) {
@@ -86,6 +89,11 @@ public class MCTowns {
 
     public static void logSevere(String msg) {
         MCTownsPlugin.getPlugin().getLogger().log(Level.SEVERE, msg);
+    }
+    
+    public static void logDebug(String msg) {
+        if(MCTowns.getDebugModeEnabled())
+            logInfo("[DEBUG]: " + msg);
     }
 
     public static Economy getEconomy() {
@@ -164,6 +172,8 @@ public class MCTowns {
     }
 
     public static boolean getDebugModeEnabled() {
+        if(MCTownsPlugin.getPlugin() == null)
+            return true;
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("debugModeEnabled", false);
     }
 
