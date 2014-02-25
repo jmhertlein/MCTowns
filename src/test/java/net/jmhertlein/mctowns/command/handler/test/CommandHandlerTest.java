@@ -128,4 +128,15 @@ public class CommandHandlerTest {
         assertTrue(CommandHandler.regionIsWithinRegion(interior, exterior));
         assertFalse(CommandHandler.regionIsWithinRegion(exterior, interior));
     }
+
+    @Test
+    public void testCuboidIsWithinCuboid() {
+        ProtectedRegion interior, exterior;
+        
+        interior = new ProtectedCuboidRegion("interior", new BlockVector(-1, 0, -1), new BlockVector(1, 256, 1));
+        exterior = new ProtectedCuboidRegion("exterior", new BlockVector(-3, 0, -3), new BlockVector(3, 256, 3));
+
+        assertTrue(CommandHandler.regionIsWithinRegion(interior, exterior));
+        assertFalse(CommandHandler.regionIsWithinRegion(exterior, interior));
+    }
 }
