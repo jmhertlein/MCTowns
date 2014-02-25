@@ -17,7 +17,10 @@
 package net.jmhertlein.mctowns.util;
 
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.awt.geom.Line2D;
+import java.util.List;
 
 /**
  *
@@ -46,5 +49,45 @@ public class WGUtils {
         zLength++;
 
         return xLength * zLength;
+    }
+    
+    /**
+     * Compares all edges of two regions to see if any of them intersect
+     * 
+     * @author sk89q
+     * @license GNU GPLv3
+     * 
+     * Copied from WorldGuard's source
+     *
+     * @param a
+     * @param b
+     * @return whether any edges of a region intersect
+     */
+    public static boolean intersectsEdges(ProtectedRegion a, ProtectedRegion b) {
+        List<BlockVector2D> pts1 = a.getPoints();
+        List<BlockVector2D> pts2 = b.getPoints();
+        BlockVector2D lastPt1 = pts1.get(pts1.size() - 1);
+        BlockVector2D lastPt2 = pts2.get(pts2.size() - 1);
+        for (BlockVector2D aPts1 : pts1) {
+            for (BlockVector2D aPts2 : pts2) {
+
+                Line2D line1 = new Line2D.Double(
+                        lastPt1.getBlockX(),
+                        lastPt1.getBlockZ(),
+                        aPts1.getBlockX(),
+                        aPts1.getBlockZ());
+
+                if (line1.intersectsLine(
+                        lastPt2.getBlockX(),
+                        lastPt2.getBlockZ(),
+                        aPts2.getBlockX(),
+                        aPts2.getBlockZ())) {
+                    return true;
+                }
+                lastPt2 = aPts2;
+            }
+            lastPt1 = aPts1;
+        }
+        return false;
     }
 }

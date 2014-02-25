@@ -22,6 +22,7 @@ import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldguard.protection.UnsupportedIntersectionException;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
@@ -31,8 +32,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,7 +39,6 @@ import java.util.List;
 import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
-import net.jmhertlein.core.geom.Polygons;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.MCTLocalSender;
@@ -313,18 +311,15 @@ public abstract class CommandHandler {
     }
 
     public static boolean regionIsWithinRegion(ProtectedRegion interior, ProtectedRegion exterior) {
-        List<Point2D.Float> regPoints = new LinkedList<>(), parentRegPoints = new LinkedList<>();
-        
-        for(BlockVector2D v : interior.getPoints()) {
+        for(BlockVector2D v : interior.getPoints()) 
             if(!(exterior.contains(v)))
                 return false;
-            regPoints.add(new Point2D.Float(v.getBlockX(), v.getBlockZ()));
-        }
         
-        for(BlockVector2D v : exterior.getPoints())
-            parentRegPoints.add(new Point2D.Float(v.getBlockX(), v.getBlockZ()));
-        
-        return !Polygons.polygonEdgesIntersect(regPoints, parentRegPoints);
+        List<ProtectedRegion> l = new LinkedList<>();
+        l.add(interior);
+        boolean ret = WGUtils.intersectsEdges(interior, exterior);
+        MCTowns.logDebug("Regions are intersecting: " + ret);
+        return !ret;
     }
 
     protected void doRegManSave(RegionManager regMan) {
