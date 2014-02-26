@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @author joshua
  */
-public class CommandHandlerTest {
+public class RegionIsWithinRegionTest {
     @Test
     public void testPentagonIsWithinPentagon() {
         List<BlockVector2D> interiorRegPoints, exteriorRegPoints;
