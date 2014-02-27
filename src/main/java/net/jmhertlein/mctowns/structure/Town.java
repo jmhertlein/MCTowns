@@ -373,6 +373,25 @@ public class Town {
         return friendlyFire;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.townName);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Town other = (Town) obj;
+        if (!Objects.equals(this.townName, other.townName))
+            return false;
+        return true;
+    }
+
     /**
      *
      * @param friendlyFire

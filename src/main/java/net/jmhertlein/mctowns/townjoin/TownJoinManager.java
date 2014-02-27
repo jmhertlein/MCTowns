@@ -60,13 +60,13 @@ public class TownJoinManager {
 
     }
 
-    public boolean playerIsInvitedToTown(String playerName, Town isInvitedTo) {
+    public boolean invitationExists(String playerName, Town isInvitedTo) {
         Set<Town> towns = joinInvitations.get(playerName);
 
         return towns == null ? false : towns.contains(isInvitedTo);
     }
 
-    public void addPlayerRequestForTown(final Town requestJoinTo, final String playerName) {
+    public void addJoinRequest(final Town requestJoinTo, final String playerName) {
         Set<String> players = joinRequests.get(requestJoinTo);
 
         if (players == null)
@@ -79,7 +79,7 @@ public class TownJoinManager {
             players.add(playerName);
     }
 
-    public boolean townHasRequestFromPlayer(Town t, String playerName) {
+    public boolean requestExists(Town t, String playerName) {
         Set<String> players = joinRequests.get(t);
 
         return players == null ? false : players.contains(playerName);
@@ -95,14 +95,14 @@ public class TownJoinManager {
      * @return true if player was removed, false if player had not ever actually
      *         requested membership
      */
-    public boolean clearRequestForTownFromPlayer(Town t, String playerName) {
+    public boolean clearRequest(Town t, String playerName) {
         Set<String> playerNames = joinRequests.get(t);
 
         return playerNames == null ? false : playerNames.remove(playerName);
     }
 
     public void clearInvitationsForPlayer(String playerName) {
-        joinInvitations.put(playerName, null);
+        joinInvitations.remove(playerName);
     }
 
     /**

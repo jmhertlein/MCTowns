@@ -378,7 +378,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.townHasRequestFromPlayer(t, invitee)) {
+        if (joinManager.requestExists(t, invitee)) {
             t.addPlayer(invitee);
             if (p.isOnline())
                 p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
@@ -560,7 +560,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!joinManager.clearRequestForTownFromPlayer(t, (p == null ? playerName : p.getName())))
+        if (!joinManager.clearRequest(t, (p == null ? playerName : p.getName())))
             localSender.sendMessage(ERR + "No matching request found.");
         else {
             localSender.sendMessage(ChatColor.GOLD + (p == null ? playerName : p.getName()) + "'s request has been rejected.");
