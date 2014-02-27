@@ -383,6 +383,7 @@ public class TownHandler extends CommandHandler {
             if (p.isOnline())
                 p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
             broadcastTownJoin(t, invitee);
+            joinManager.clearRequest(t, invitee);
         } else {
             joinManager.invitePlayerToTown(invitee, t);
             localSender.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
