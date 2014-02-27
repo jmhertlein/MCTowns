@@ -649,6 +649,11 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
+        
+        if(!removeFrom.playerIsResident(removeMe)) {
+            localSender.sendMessage(ERR + removeMe.getName() + " is not a resident of " + removeFrom.getTownName() + ".");
+            return;
+        }
 
         if (removeFrom.playerIsMayor(playerName)) {
             localSender.sendMessage(ERR + "A mayor cannot be removed from his own town.");
