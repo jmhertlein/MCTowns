@@ -57,16 +57,15 @@ public class TownJoinManager {
             });
         else
             towns.add(invitedTo);
-
     }
 
-    public boolean invitationExists(String playerName, Town isInvitedTo) {
+    public boolean invitationExists(final String playerName, final Town isInvitedTo) {
         Set<Town> towns = joinInvitations.get(playerName);
 
         return towns == null ? false : towns.contains(isInvitedTo);
     }
 
-    public void addJoinRequest(final Town requestJoinTo, final String playerName) {
+    public void addJoinRequest(final String playerName, final Town requestJoinTo) {
         Set<String> players = joinRequests.get(requestJoinTo);
 
         if (players == null)
@@ -79,7 +78,7 @@ public class TownJoinManager {
             players.add(playerName);
     }
 
-    public boolean requestExists(Town t, String playerName) {
+    public boolean requestExists(final String playerName, final Town t) {
         Set<String> players = joinRequests.get(t);
 
         return players == null ? false : players.contains(playerName);
@@ -95,13 +94,13 @@ public class TownJoinManager {
      * @return true if player was removed, false if player had not ever actually
      *         requested membership
      */
-    public boolean clearRequest(Town t, String playerName) {
+    public boolean clearRequest(final String playerName, final Town t) {
         Set<String> playerNames = joinRequests.get(t);
 
         return playerNames == null ? false : playerNames.remove(playerName);
     }
 
-    public void clearInvitationsForPlayer(String playerName) {
+    public void clearInvitationsForPlayer(final String playerName) {
         joinInvitations.remove(playerName);
     }
 
@@ -113,12 +112,12 @@ public class TownJoinManager {
      * @return true if the invite was actually cleared, false if the player was
      *         not ever actually invited
      */
-    public boolean clearInvitationForPlayerFromTown(String playerName, Town t) {
+    public boolean clearInvitationForPlayerFromTown(final String playerName, Town t) {
         Set<Town> towns = joinInvitations.get(playerName);
         return towns == null ? false : towns.remove(t);
     }
 
-    public List<Town> getTownsPlayerIsInvitedTo(String playerName) {
+    public List<Town> getTownsPlayerIsInvitedTo(final String playerName) {
         ArrayList<Town> ret = new ArrayList<>();
         for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
             if (e.getKey().equals(playerName))
@@ -136,7 +135,7 @@ public class TownJoinManager {
      * @return A set of requests. Changes made to the set will be reflected in
      *         later calls to this method
      */
-    public Set<String> getPlayersRequestingMembershipToTown(Town t) {
+    public Set<String> getPlayersRequestingMembershipToTown(final Town t) {
         Set<String> r = joinRequests.get(t);
         if (r == null) {
             r = new HashSet<>();
@@ -145,7 +144,7 @@ public class TownJoinManager {
         return r;
     }
 
-    public Set<String> getIssuedInvitesForTown(Town t) {
+    public Set<String> getIssuedInvitesForTown(final Town t) {
         HashSet<String> playersInvited = new HashSet<>();
         for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
             if (e.getValue().contains(t))

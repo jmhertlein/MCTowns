@@ -20,8 +20,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
@@ -378,12 +376,12 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.requestExists(t, invitee)) {
+        if (joinManager.requestExists(invitee, t)) {
             t.addPlayer(invitee);
             if (p.isOnline())
                 p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
             broadcastTownJoin(t, invitee);
-            joinManager.clearRequest(t, invitee);
+            joinManager.clearRequest(invitee, t);
         } else {
             joinManager.invitePlayerToTown(invitee, t);
             localSender.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
@@ -561,7 +559,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!joinManager.clearRequest(t, (p == null ? playerName : p.getName())))
+        if (!joinManager.clearRequest((p == null ? playerName : p.getName()), t))
             localSender.sendMessage(ERR + "No matching request found.");
         else {
             localSender.sendMessage(ChatColor.GOLD + (p == null ? playerName : p.getName()) + "'s request has been rejected.");
@@ -649,7 +647,7 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         if(!removeFrom.playerIsResident(removeMe)) {
             localSender.sendMessage(ERR + removeMe.getName() + " is not a resident of " + removeFrom.getTownName() + ".");
             return;

@@ -36,69 +36,86 @@ import static org.junit.Assert.*;
 public class TownJoinManagerTest {
     private Town t;
     private TownJoinManager manager;
-    
+
     @Before
     public void setupTest() {
         manager = new TownJoinManager();
         t = getMockTown("testTown1");
     }
-    
+
     @After
     public void tearDownTest() {
         manager = null;
         t = null;
     }
-    
+
     @Test
     public void testInvitation() {
         manager.invitePlayerToTown("Notch", t);
         assertTrue(manager.invitationExists("Notch", t));
     }
-    
+
     @Test
     public void testRequest() {
-        manager.addJoinRequest(t, "Notch");
-        assertTrue(manager.requestExists(t, "Notch"));
+        manager.addJoinRequest("Notch", t);
+        assertTrue(manager.requestExists("Notch", t));
     }
-    
+
     @Test
     public void testRequestRemoval() {
         testRequest();
-        
-        manager.clearRequest(t, "Notch");
-        assertFalse(manager.requestExists(t, "Notch"));
+
+        manager.clearRequest("Notch", t);
+        assertFalse(manager.requestExists("Notch", t));
     }
-    
+
     @Test
     public void testInvitationRemoval() {
         testInvitation();
-        
+
         manager.clearInvitationForPlayerFromTown("Notch", t);
         assertFalse(manager.invitationExists("Notch", t));
     }
-    
+
     @Test
     public void testBulkInvitationRemoval() {
         Town t2, t3;
         t2 = getMockTown("Town2");
         t3 = getMockTown("Town3");
-        
+
         manager.invitePlayerToTown("Notch", t);
         manager.invitePlayerToTown("Notch", t2);
         manager.invitePlayerToTown("Notch", t3);
-        
+
         assertTrue(manager.invitationExists("Notch", t));
         assertTrue(manager.invitationExists("Notch", t2));
         assertTrue(manager.invitationExists("Notch", t3));
-        
+
         manager.clearInvitationsForPlayer("Notch");
-        
+
         assertFalse(manager.invitationExists("Notch", t));
         assertFalse(manager.invitationExists("Notch", t2));
         assertFalse(manager.invitationExists("Notch", t3));
     }
-    
-    
+
+    @Test
+    public void testBulkRequestAdditionAndRemoval() {
+        String[] names = new String[] {"Notch", "jeb", "RMS", "Linus"};
+
+        for(String s : names)
+            manager.addJoinRequest(s, t);
+        for(String s : names)
+            assertTrue(manager.requestExists(s, t));
+
+        for(String s : names) {
+            manager.clearRequest(s, t);
+            assertFalse(manager.requestExists(s, t));
+        }
+
+        for(String s : names)
+            assertFalse(manager.requestExists(s, t));
+    }
+
     private static Town getMockTown(String name) {
         try {
             Town ret;

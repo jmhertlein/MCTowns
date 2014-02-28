@@ -230,7 +230,7 @@ public class MCTHandler extends CommandHandler {
 
             joinManager.clearInvitationForPlayerFromTown(pName, addTo);
         } else {
-            joinManager.addJoinRequest(addTo, pName);
+            joinManager.addJoinRequest(pName, addTo);
             localSender.sendMessage("You have submitted a request to join " + townName + ".");
             addTo.broadcastMessageToTown(server, localSender.getPlayer().getName() + " has submitted a request to join the town.");
         }
@@ -274,7 +274,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.clearRequest(t, localSender.getPlayer().getName()))
+        if (joinManager.clearRequest(localSender.getPlayer().getName(), t))
             localSender.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
         else
             localSender.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
