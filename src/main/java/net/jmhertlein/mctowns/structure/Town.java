@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
+import net.jmhertlein.mctowns.banking.TaxStrategy;
 import net.jmhertlein.mctowns.database.TownManager;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -62,6 +63,10 @@ public class Town {
     private boolean economyJoins;
     private volatile BigDecimal defaultPlotPrice;
     private boolean friendlyFire;
+
+    private boolean collectsTaxes;
+    private TaxStrategy taxStrategy;
+    private boolean taxCollectionSynchronized;
 
     /**
      * Creates a new town, setting the name to townName, the mayor to the player
@@ -635,6 +640,31 @@ public class Town {
 
         t.removePlayer(p);
     }
+
+        public boolean collectsTaxes() {
+        return collectsTaxes;
+    }
+
+    public void setCollectsTaxes(boolean collectsTaxes) {
+        this.collectsTaxes = collectsTaxes;
+    }
+
+    public TaxStrategy getTaxStrategy() {
+        return taxStrategy;
+    }
+
+    public void setTaxStrategy(TaxStrategy taxStrategy) {
+        this.taxStrategy = taxStrategy;
+    }
+
+    public boolean isTaxCollectionSynchronized() {
+        return taxCollectionSynchronized;
+    }
+
+    public void setTaxCollectionSynchronized(boolean taxCollectionSynchronized) {
+        this.taxCollectionSynchronized = taxCollectionSynchronized;
+    }
+    
 
     private List<String> getTerritoryNames() {
         LinkedList<String> ret = new LinkedList<>();
