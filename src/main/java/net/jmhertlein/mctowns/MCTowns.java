@@ -20,7 +20,6 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.math.BigDecimal;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.database.TownManager;
-import net.jmhertlein.mctowns.util.ClockSource;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -37,19 +36,19 @@ public class MCTowns {
     private static WorldGuardPlugin wgp;
 
     public static boolean economyIsEnabled() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("economy.economyEnabled");
+        return MCTownsPlugin.getPlugin().getConfig().getBoolean("economyEnabled");
     }
 
     public static boolean mayorsCanBuyTerritories() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("economy.mayorsCanBuyTerritories");
+        return MCTownsPlugin.getPlugin().getConfig().getBoolean("mayorsCanBuyTerritories");
     }
 
     public static BigDecimal getTerritoryPricePerColumn() {
-        return new BigDecimal(MCTownsPlugin.getPlugin().getConfig().getString("economy.pricePerXZBlock"));
+        return new BigDecimal(MCTownsPlugin.getPlugin().getConfig().getString("pricePerXZBlock"));
     }
 
     public static int getMinNumPlayersToBuyTerritory() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("economy.minNumPlayersToBuyTerritory");
+        return MCTownsPlugin.getPlugin().getConfig().getInt("minNumPlayersToBuyTerritory");
     }
 
     public static Material getQuickSelectTool() {
@@ -65,11 +64,11 @@ public class MCTowns {
     }
 
     public static String getBugReportHostname() {
-        return MCTownsPlugin.getPlugin().getConfig().getString("bugReporting.hostname", "services.jmhertlein.net");
+        return MCTownsPlugin.getPlugin().getConfig().getString("bugReportHostname", "services.jmhertlein.net");
     }
 
     public static int getBugReportPort() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("bugReporting.port", 9001);
+        return MCTownsPlugin.getPlugin().getConfig().getInt("bugReportPort", 9001);
     }
 
     public static String getConfigSummary() {
@@ -124,19 +123,19 @@ public class MCTowns {
     }
 
     public static void setEconomyIsEnabled(boolean value) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.economyEnabled", value);
+        MCTownsPlugin.getPlugin().getConfig().set("economyEnabled", value);
     }
 
     public static void setMayorsCanBuyTerritories(boolean value) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.mayorsCanBuyTerritories", value);
+        MCTownsPlugin.getPlugin().getConfig().set("mayorsCanBuyTerritories", value);
     }
 
     public static void setTerritoryPricePerColumn(BigDecimal val) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.pricePerXZBlock", val.toPlainString());
+        MCTownsPlugin.getPlugin().getConfig().set("pricePerXZBlock", val.toPlainString());
     }
 
     public static void setMinNumPlayersToBuyTerritory(int n) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.minNumPlayersToBuyTerritory", n);
+        MCTownsPlugin.getPlugin().getConfig().set("minNumPlayersToBuyTerritory", n);
     }
 
     public static void setQuickSelectTool(Material m) {
@@ -152,11 +151,11 @@ public class MCTowns {
     }
 
     public static void setBugReportHostname(String s) {
-        MCTownsPlugin.getPlugin().getConfig().set("bugReporting.hostName", s);
+        MCTownsPlugin.getPlugin().getConfig().set("bugReportHostName", s);
     }
 
     public static void setBugReportPort(int port) {
-        MCTownsPlugin.getPlugin().getConfig().set("bugReporting.port", port);
+        MCTownsPlugin.getPlugin().getConfig().set("bugReportPort", port);
     }
 
     public static void persistTownManager() {
@@ -175,45 +174,5 @@ public class MCTowns {
         if(MCTownsPlugin.getPlugin() == null)
             return true;
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("debugModeEnabled", false);
-    }
-
-    public static boolean getTaxesEnabled() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("economy.taxes.taxesEnabled", false);
-    }
-
-    public static void setTaxesEnabled(boolean value) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.taxesEnabled", value);
-    }
-
-    public static double getMaxTaxAmount() {
-        return MCTownsPlugin.getPlugin().getConfig().getDouble("economy.taxes.maxTaxAmount", 100);
-    }
-
-    public static void setMaxTaxAmount(double value) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.maxTaxAmount", value);
-    }
-
-    public static int getMinTaxDelayInTicks() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("economy.taxes.minTaxDelayInTicks", 1728000);
-    }
-
-    public static void setMinTaxDelayInTicks(int value) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.minTaxDelayInTicks", value);
-    }
-
-    public static ClockSource getTaxClockSource() {
-        return ClockSource.valueOf(MCTownsPlugin.getPlugin().getConfig().getString("advanced.taxClockSource", "minecraft").toUpperCase());
-    }
-
-    public static void setTaxClockSource(ClockSource value) {
-        MCTownsPlugin.getPlugin().getConfig().set("advanced.taxClockSource", value.name().toLowerCase());
-    }
-
-    public static int getMaxTaxDelayInMinutes() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("advanced.minTaxDelayInMinutes", 1440);
-    }
-
-    public static void setMaxTaxDelayInMinutes(int value) {
-        MCTownsPlugin.getPlugin().getConfig().set("advanced.minTaxDelayInMinutes", value);
     }
 }
