@@ -90,7 +90,7 @@ public class MCTowns {
     public static void logSevere(String msg) {
         MCTownsPlugin.getPlugin().getLogger().log(Level.SEVERE, msg);
     }
-    
+
     public static void logDebug(String msg) {
         if(MCTowns.getDebugModeEnabled())
             logInfo("[DEBUG]: " + msg);
@@ -185,35 +185,31 @@ public class MCTowns {
         MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.taxesEnabled", value);
     }
 
-    public static double getMaxTaxAmount() {
-        return MCTownsPlugin.getPlugin().getConfig().getDouble("economy.taxes.maxTaxAmount", 100);
+    public static BigDecimal getMaxTaxAmount() {
+        return new BigDecimal(MCTownsPlugin.getPlugin().getConfig().getString("economy.taxes.maxTaxAmount", "100"));
     }
 
-    public static void setMaxTaxAmount(double value) {
+    public static void setMaxTaxAmount(BigDecimal value) {
+        MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.maxTaxAmount", value.toString());
+    }
+
+    public static double getMaxTaxPercent() {
+        return MCTownsPlugin.getPlugin().getConfig().getDouble("economy.taxes.maxTaxPercent", .3d);
+    }
+
+    public static void setMaxTaxPercent(double value) {
         MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.maxTaxAmount", value);
     }
 
-    public static int getMinTaxDelayInTicks() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("economy.taxes.minTaxDelayInTicks", 1728000);
+    public static int getTaxDelayMinutes() {
+        return MCTownsPlugin.getPlugin().getConfig().getInt("economy.taxes.taxDelayMins");
     }
 
-    public static void setMinTaxDelayInTicks(int value) {
-        MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.minTaxDelayInTicks", value);
+    public static long getLastTaxTimestamp() {
+        return MCTownsPlugin.getPlugin().getConfig().getLong("economy.taxes.lastTaxCollection", System.currentTimeMillis());
     }
 
-    public static ClockSource getTaxClockSource() {
-        return ClockSource.valueOf(MCTownsPlugin.getPlugin().getConfig().getString("advanced.taxClockSource", "minecraft").toUpperCase());
-    }
-
-    public static void setTaxClockSource(ClockSource value) {
-        MCTownsPlugin.getPlugin().getConfig().set("advanced.taxClockSource", value.name().toLowerCase());
-    }
-
-    public static int getMaxTaxDelayInMinutes() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("advanced.minTaxDelayInMinutes", 1440);
-    }
-
-    public static void setMaxTaxDelayInMinutes(int value) {
-        MCTownsPlugin.getPlugin().getConfig().set("advanced.minTaxDelayInMinutes", value);
+    public static void setLastTaxTimestamp(long l) {
+        MCTownsPlugin.getPlugin().getConfig().set("economy.taxes.lastTaxCollection", l);
     }
 }

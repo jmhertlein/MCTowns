@@ -77,6 +77,8 @@ public class MCTownsPlugin extends JavaPlugin {
             MCTowns.logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
         }
 
+        saveConfig();
+
         if (!abortSave)
             persistTownManager();
         else
@@ -104,7 +106,6 @@ public class MCTownsPlugin extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        singleton = this;
         setupFiles();
 
         if (!hookInDependencies())
@@ -125,6 +126,7 @@ public class MCTownsPlugin extends JavaPlugin {
         startPeriodicSaveTask();
         startMetricsReporting();
 
+        singleton = this;
         MCTowns.logInfo("MCTowns is now fully loaded.");
     }
 

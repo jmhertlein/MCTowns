@@ -66,7 +66,24 @@ public class Town {
 
     private boolean collectsTaxes;
     private TaxStrategy taxStrategy;
-    private boolean taxCollectionSynchronized;
+    private BigDecimal flatTaxAmount;
+    private double percentTaxAmount;
+
+    public BigDecimal getFlatTaxAmount() {
+        return flatTaxAmount;
+    }
+
+    public void setFlatTaxAmount(BigDecimal flatTaxAmount) {
+        this.flatTaxAmount = flatTaxAmount;
+    }
+
+    public double getPercentTaxAmount() {
+        return percentTaxAmount;
+    }
+
+    public void setPercentTaxAmount(double percentTaxAmount) {
+        this.percentTaxAmount = percentTaxAmount;
+    }
 
     /**
      * Creates a new town, setting the name to townName, the mayor to the player
@@ -656,16 +673,7 @@ public class Town {
     public void setTaxStrategy(TaxStrategy taxStrategy) {
         this.taxStrategy = taxStrategy;
     }
-
-    public boolean isTaxCollectionSynchronized() {
-        return taxCollectionSynchronized;
-    }
-
-    public void setTaxCollectionSynchronized(boolean taxCollectionSynchronized) {
-        this.taxCollectionSynchronized = taxCollectionSynchronized;
-    }
     
-
     private List<String> getTerritoryNames() {
         LinkedList<String> ret = new LinkedList<>();
 
