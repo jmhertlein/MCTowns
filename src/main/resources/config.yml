@@ -5,7 +5,7 @@ pricePerXZBlock: 0
 minNumPlayersToBuyTerritory: 3
 allowTownFriendlyFireManagement: false;
 #default is wooden hoe (290)
-quickSelectTool: 290 
+quickSelectTool: 290
 #log verbose information of each MCTowns command issued
 logCommands: false
 playersCanJoinMultipleTowns: true
@@ -15,7 +15,7 @@ bugReportPort: 9001
 #
 #
 #The currently installed version of MCTowns. Do not change this.
-installedVersion: 2.3.0
+installedVersion: 2.3.1
 #Seriously don't change it
 #
 #
