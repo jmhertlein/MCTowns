@@ -43,6 +43,8 @@ public abstract class ResourceUpgradePaths {
                 upgradeFrom210To220(rootDir, p);
             case "2.2.0":
                 upgradeFrom220To230(rootDir, p);
+            case "2.3.0":
+                upgradeInstalledVersion(rootDir, p, installedVersion, "2.3.1");
             default:
                 p.getLogger().info("Resources are up to date.");
                 break;
@@ -94,5 +96,13 @@ public abstract class ResourceUpgradePaths {
         p.getConfig().set("bugReportHostname", "services.jmhertlein.net");
         p.saveConfig();
         p.getLogger().warning("Completed resource migration from v2.2.0 to v2.3.0");
+    }
+
+    private static void upgradeInstalledVersion(File rootDir, MCTownsPlugin p, String installedVer, String curVer) {
+        p.getLogger().warning("Beginning resource migration from " + installedVer + " to " + curVer);
+        p.getLogger().info("Updating \"installedVersion\" field in config.yml from " + installedVer + "  to " + curVer);
+        p.getConfig().set("installedVersion", curVer);
+        p.saveConfig();
+        p.getLogger().warning("Completed resource migration from " + installedVer + " to " + curVer);
     }
 }
