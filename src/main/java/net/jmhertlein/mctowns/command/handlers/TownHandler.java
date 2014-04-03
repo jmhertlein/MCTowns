@@ -33,6 +33,7 @@ import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -361,7 +362,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(invitee)) {
+        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(p.getName())) {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
@@ -376,14 +377,20 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (joinManager.requestExists(invitee, t)) {
-            t.addPlayer(invitee);
+        for(Player pl : Bukkit.getOnlinePlayers()) {
+            if(pl.getName().equalsIgnoreCase(p.getName()) && !pl.getName().equals(p.getName())) {
+                localSender.sendMessage(INFO + "NOTE: You invited " + p.getName() + ", did you mean to invite " + pl.getName() + "? (Names are CaSe SeNsItIvE!)");
+            }
+        }
+
+        if (joinManager.requestExists(p.getName(), t)) {
+            t.addPlayer(p.getName());
             if (p.isOnline())
                 p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
-            broadcastTownJoin(t, invitee);
-            joinManager.clearRequest(invitee, t);
+            broadcastTownJoin(t, p.getName());
+            joinManager.clearRequest(p.getName(), t);
         } else {
-            joinManager.invitePlayerToTown(invitee, t);
+            joinManager.invitePlayerToTown(p.getName(), t);
             localSender.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
             if (p.isOnline()) {
                 p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
