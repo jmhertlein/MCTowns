@@ -232,7 +232,7 @@ public class MCTHandler extends CommandHandler {
         } else {
             joinManager.addJoinRequest(pName, addTo);
             localSender.sendMessage("You have submitted a request to join " + townName + ".");
-            addTo.broadcastMessageToTown(server, localSender.getPlayer().getName() + " has submitted a request to join the town.");
+            addTo.broadcastMessageToTown(localSender.getPlayer().getName() + " has submitted a request to join the town.");
         }
     }
 
@@ -251,7 +251,7 @@ public class MCTHandler extends CommandHandler {
         else {
             joinManager.clearInvitationForPlayerFromTown(pName, t);
             localSender.sendMessage(ChatColor.GOLD + "You have rejected the invitation to join " + t.getTownName());
-            t.broadcastMessageToTown(server, ERR + pName + " has declined the invitation to join the town.");
+            t.broadcastMessageToTown(ERR + pName + " has declined the invitation to join the town.");
         }
 
     }

@@ -26,6 +26,8 @@ import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.util.UUIDs;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -49,11 +51,11 @@ public class Town {
     //the territories associated with it
     private Set<String> territories;
     //the players in it
-    private Set<String> residents;
+    private Set<UUID> residents;
     //its mayor (string)
-    private String mayor;
+    private UUID mayor;
     //the assistants (strings)
-    private Set<String> assistants;
+    private Set<UUID> assistants;
     //whether or not plots are buyable and thus have a price
     private boolean buyablePlots;
     //turns off the join request/invitation system. Instead, buying a plot in
@@ -74,12 +76,12 @@ public class Town {
      */
     public Town(String townName, Player mayor) {
         this.townName = townName;
-        this.mayor = mayor.getName();
+        this.mayor = mayor.getUniqueId();
         townSpawn = Location.convertFromBukkitLocation(mayor.getLocation());
 
         //use Collections method to get concurrency benefits from ConcurrentHashMap
-        residents = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-        assistants = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        residents = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
+        assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
         territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
         bank = new BlockBank();
@@ -90,17 +92,17 @@ public class Town {
         friendlyFire = false;
         motdColor = ChatColor.GOLD;
 
-        residents.add(mayor.getName());
+        residents.add(mayor.getUniqueId());
     }
 
-    public Town(String townName, String mayorName, Location townSpawnLoc) {
+    public Town(String townName, Player mayorName, Location townSpawnLoc) {
         this.townName = townName;
-        mayor = mayorName;
+        mayor = mayorName.getUniqueId();
         townSpawn = townSpawnLoc;
 
         //use Collections method to get concurrency benefits from ConcurrentHashMap
-        residents = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-        assistants = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        residents = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
+        assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
         territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
         bank = new BlockBank();
@@ -135,11 +137,11 @@ public class Town {
     }
 
     /**
-     * Gets the name of the mayor of the town.
+     * Gets the UUID of the mayor of the town.
      *
-     * @return the name of the town's mayor
+     * @return the UUID of the town's mayor
      */
-    public String getMayor() {
+    public UUID getMayor() {
         return mayor;
     }
 
@@ -148,7 +150,7 @@ public class Town {
      *
      * @param mayor the new mayor's name
      */
-    public void setMayor(String mayor) {
+    public void setMayor(UUID mayor) {
         this.mayor = mayor;
     }
 
@@ -158,7 +160,7 @@ public class Town {
      * @param mayor the new mayor
      */
     public void setMayor(OfflinePlayer mayor) {
-        setMayor(mayor.getName());
+        this.mayor = UUIDs.getUUIDForOfflinePlayer(mayor);
     }
 
     /**
@@ -192,15 +194,18 @@ public class Town {
      *         true otherwise
      */
     public boolean addPlayer(Player p) {
-        return addPlayer(p.getName());
+        return addPlayer(p.getUniqueId());
     }
 
-    public boolean addPlayer(String playerName) {
-        if (residents.contains(playerName))
+    public boolean addPlayer(UUID u) {
+        if (residents.contains(u))
             return false;
-
-        residents.add(playerName);
+        residents.add(u);
         return true;
+    }
+
+    public boolean addPlayer(OfflinePlayer playerId) {
+        return addPlayer(UUIDs.getUUIDForOfflinePlayer(playerId));
     }
 
     /**
@@ -211,18 +216,18 @@ public class Town {
      * @param p - the player to be removed
      */
     public void removePlayer(OfflinePlayer p) {
-        removePlayer(p.getName());
+        removePlayer(UUIDs.getUUIDForOfflinePlayer(p));
     }
 
     /**
      * Removes the player from the town's list of residents and assistants. Does
      * not remove them from regions.
      *
-     * @param playerName
+     * @param playerId
      */
-    public void removePlayer(String playerName) {
-        residents.remove(playerName);
-        assistants.remove(playerName);
+    public void removePlayer(UUID playerId) {
+        residents.remove(playerId);
+        assistants.remove(playerId);
     }
 
     /**
@@ -262,22 +267,22 @@ public class Town {
      *         true otherwise
      */
     public boolean addAssistant(OfflinePlayer player) {
-        return addAssistant(player.getName());
+        return addAssistant(UUIDs.getUUIDForOfflinePlayer(player));
     }
 
     /**
      * Promotes the resident to an assistant.
      *
-     * @param playerName
+     * @param playerId
      *
      * @return true if player was added as assistant, false if they're already
      *         an assistant or they're not a resident of the town.
      */
-    public boolean addAssistant(String playerName) {
-        if (assistants.contains(playerName) || !residents.contains(playerName))
+    public boolean addAssistant(UUID playerId) {
+        if (assistants.contains(playerId) || !residents.contains(playerId))
             return false;
 
-        assistants.add(playerName);
+        assistants.add(playerId);
         return true;
     }
 
@@ -290,15 +295,15 @@ public class Town {
      *         assistant, true otherwise
      */
     public boolean removeAssistant(OfflinePlayer player) {
-        return removeAssistant(player.getName());
+        return removeAssistant(UUIDs.getUUIDForOfflinePlayer(player));
 
     }
 
-    public boolean removeAssistant(String player) {
-        if (!assistants.contains(player))
+    public boolean removeAssistant(UUID playerId) {
+        if (!assistants.contains(playerId))
             return false;
 
-        assistants.remove(player);
+        assistants.remove(playerId);
         return true;
 
     }
@@ -362,7 +367,10 @@ public class Town {
     }
 
     public Set<String> getAssistantNames() {
-        return new LinkedHashSet<>(assistants);
+        Set<String> ret = new HashSet<>();
+        for(UUID u : assistants)
+            ret.add(UUIDs.getNameForUUID(u));
+        return ret;
     }
 
     /**
@@ -408,7 +416,7 @@ public class Town {
      * @return if the player is an assistant or not
      */
     public boolean playerIsAssistant(OfflinePlayer p) {
-        return assistants.contains(p.getName());
+        return assistants.contains(UUIDs.getUUIDForOfflinePlayer(p));
     }
 
     /**
@@ -419,18 +427,18 @@ public class Town {
      * @return if the player is a resident or not
      */
     public boolean playerIsResident(OfflinePlayer p) {
-        return residents.contains(p.getName());
+        return residents.contains(UUIDs.getUUIDForOfflinePlayer(p));
     }
 
     /**
      * Returns whether or not the player is a resident of the town
      *
-     * @param p the name of the player to be checked
+     * @param id the id of the player to be checked
      *
      * @return if the player is a resident or not
      */
-    public boolean playerIsResident(String pName) {
-        return residents.contains(pName);
+    public boolean playerIsResident(UUID id) {
+        return residents.contains(id);
     }
 
     /**
@@ -445,12 +453,12 @@ public class Town {
 
     /**
      *
-     * @param playerExactName
+     * @param id
      *
      * @return
      */
-    public boolean playerIsAssistant(String playerExactName) {
-        return assistants.contains(playerExactName);
+    public boolean playerIsAssistant(UUID id) {
+        return assistants.contains(id);
     }
 
     /**
@@ -464,22 +472,18 @@ public class Town {
 
     /**
      *
-     * @param server
      * @param message
      */
-    public void broadcastMessageToTown(Server server, String message) {
+    public void broadcastMessageToTown(String message) {
         message = ChatColor.GOLD + message;
 
-        for (String playerName : residents) {
-            Player temp = server.getPlayerExact(playerName);
-            if (temp != null)
-                temp.sendMessage(message);
-        }
+        for(Player p : Bukkit.getOnlinePlayers())
+            if(residents.contains(p.getUniqueId()))
+                p.sendMessage(message);
     }
 
     /**
      *
-     * @param wgp
      * @param p
      *
      * @return
@@ -491,7 +495,7 @@ public class Town {
         ProtectedRegion tempReg;
         for (MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
             if (mctReg instanceof Territory) {
-                tempReg = regMan.getRegion(((Territory) mctReg).getName());
+                tempReg = regMan.getRegion((mctReg).getName());
                 if (tempReg != null)
                     if (tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())))
                         return true;
@@ -577,15 +581,15 @@ public class Town {
         f.set("motd", townMOTD);
         f.set("motdColor", motdColor.name());
         f.set("spawnLocation", townSpawn.toList());
-        f.set("mayor", mayor);
+        f.set("mayor", mayor.toString());
         f.set("territs", getTerritoryNames());
 
         List<String> list = new LinkedList<>();
-        list.addAll(assistants);
+        list.addAll(UUIDs.idsToStrings(assistants));
         f.set("assistants", list);
 
         List<String> resList = new LinkedList<>();
-        resList.addAll(residents);
+        resList.addAll(UUIDs.idsToStrings(residents));
         f.set("residents", resList);
 
         f.set("friendlyFire", friendlyFire);
@@ -603,14 +607,12 @@ public class Town {
         t.townMOTD = f.getString("motd");
         t.motdColor = ChatColor.valueOf(f.getString("motdColor"));
         t.townSpawn = Location.fromList(f.getStringList("spawnLocation"));
-        t.mayor = f.getString("mayor");
+        t.mayor = UUID.fromString(f.getString("mayor"));
         t.territories = parseListToHashSet(f.getStringList("territs"));
 
-        t.assistants = new HashSet<>();
-        t.assistants.addAll(f.getStringList("assistants"));
+        t.assistants = UUIDs.stringsToIds(f.getStringList("assistants"));
 
-        t.residents = new HashSet<>();
-        t.residents.addAll(f.getStringList("residents"));
+        t.residents = UUIDs.stringsToIds(f.getStringList("residents"));
 
         t.friendlyFire = f.getBoolean("friendlyFire");
         t.defaultPlotPrice = new BigDecimal(f.getString("defaultPlotPrice"));

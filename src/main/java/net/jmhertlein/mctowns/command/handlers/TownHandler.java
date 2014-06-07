@@ -298,16 +298,17 @@ public class TownHandler extends CommandHandler {
         }
 
         //IF ALL THE THINGS ARE FINALLY DONE...
-        region.getOwners().addPlayer(t.getMayor());
-        for (String assistantName : t.getAssistantNames())
-            region.getOwners().addPlayer(assistantName);
-
-        localSender.sendMessage(SUCC + "Territory added.");
-
-        if (autoActive) {
-            localSender.setActiveTerritory(townManager.getTerritory(territName));
-            localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
-        }
+        throw new UnsupportedOperationException("Not supported for UUIDs yet.");
+//        region.getOwners().addPlayer(t.getMayor());
+//        for (String assistantName : t.getAssistantNames())
+//            region.getOwners().addPlayer(assistantName);
+//
+//        localSender.sendMessage(SUCC + "Territory added.");
+//
+//        if (autoActive) {
+//            localSender.setActiveTerritory(townManager.getTerritory(territName));
+//            localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
+//        }
     }
 
     public void removeTerritoryFromTown(String territName) {
@@ -362,7 +363,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(p.getName())) {
+        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(p)) {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
@@ -384,7 +385,7 @@ public class TownHandler extends CommandHandler {
         }
 
         if (joinManager.requestExists(p.getName(), t)) {
-            t.addPlayer(p.getName());
+            t.addPlayer(p);
             if (p.isOnline())
                 p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
             broadcastTownJoin(t, p.getName());
@@ -515,8 +516,8 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        localSender.getActiveTown().setMayor(p.getName());
-        t.broadcastMessageToTown(server, "The mayor of " + t.getTownName() + " is now " + p.getName() + "!");
+        localSender.getActiveTown().setMayor(p);
+        t.broadcastMessageToTown("The mayor of " + t.getTownName() + " is now " + p.getName() + "!");
     }
 
     public void cancelInvitation(String playerName) {
@@ -665,12 +666,12 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (removeFrom.playerIsAssistant(playerName) && !localSender.hasExternalPermissions(Perms.ADMIN.toString()) && !removeFrom.playerIsMayor(localSender.getPlayer())) {
+        if (removeFrom.playerIsAssistant(removeMe) && !localSender.hasExternalPermissions(Perms.ADMIN.toString()) && !removeFrom.playerIsMayor(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "Only the mayor or admins can remove assistants from the town.");
             return;
         }
 
-        localSender.getActiveTown().removePlayer(playerName);
+        localSender.getActiveTown().removePlayer(removeMe);
 
         Town.recursivelyRemovePlayerFromTown(removeMe, removeFrom);
 
