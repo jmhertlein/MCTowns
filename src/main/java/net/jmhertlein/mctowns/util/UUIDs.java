@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 /**
@@ -42,10 +43,10 @@ public class UUIDs {
     }
 
     public static UUID getUUIDForOfflinePlayer(OfflinePlayer p) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return p.getUniqueId();
     }
 
     public static String getNameForUUID(UUID u) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return Bukkit.getPlayer(u).getName();
     }
 }
