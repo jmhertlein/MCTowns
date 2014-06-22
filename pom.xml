@@ -4,7 +4,7 @@
 
   <groupId>net.jmhertlein</groupId>
   <artifactId>MCTowns</artifactId>
-  <version>2.3.1</version>
+  <version>2.3.2</version>
   <packaging>jar</packaging>
 
   <name>MCTowns</name>
