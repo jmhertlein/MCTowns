@@ -45,6 +45,8 @@ public abstract class ResourceUpgradePaths {
                 upgradeFrom220To230(rootDir, p);
             case "2.3.0":
                 upgradeInstalledVersion(rootDir, p, installedVersion, "2.3.1");
+            case "2.3.1":
+                upgradeInstalledVersion(rootDir, p, installedVersion, "2.4.0");
             default:
                 p.getLogger().info("Resources are up to date.");
                 break;

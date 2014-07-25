@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.jmhertlein.mctowns.util;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -29,16 +28,48 @@ import org.bukkit.OfflinePlayer;
  * @author joshua
  */
 public class UUIDs {
-    public static Set<UUID> stringsToIds(List<String> strings) {
+
+    /**
+     * Converts a list of Strings to UUID's, using one of two strategies: 
+     * 1. Assume String is the toString() of a UUID, attempt to convert straight
+     * back 
+     * 2. If that fails, assume String is the name of a player: look up
+     * their UUID and use that instead
+     *
+     * @param strings
+     * @return
+     */
+    public static Set<UUID> stringsToIds(Collection<String> strings) {
         Set<UUID> ret = new HashSet<>();
         for(String s : strings)
-            ret.add(UUID.fromString(s));
+            ret.add(stringToId(s));
         return ret;
     }
-    public static Set<String> idsToStrings(Set<UUID> ids) {
+
+    /**
+     * Converts a String to a UUID, using one of two strategies: 
+     * 1. Assume String is the toString() of a UUID, attempt to convert straight
+     * back 
+     * 2. If that fails, assume String is the name of a player: look up
+     * their UUID and use that instead
+     * @param s
+     * @return 
+     */
+    public static UUID stringToId(String s) {
+        UUID ret;
+        try {
+            ret = UUID.fromString(s);
+        } catch (IllegalArgumentException iae) {
+            ret = getUUIDForOfflinePlayer(Bukkit.getOfflinePlayer(s));
+        }
+        return ret;
+    }
+
+    public static Set<String> idsToStrings(Collection<UUID> ids) {
         Set<String> ret = new HashSet<>();
-        for(UUID i : ids)
+        for (UUID i : ids) {
             ret.add(i.toString());
+        }
         return ret;
     }
 

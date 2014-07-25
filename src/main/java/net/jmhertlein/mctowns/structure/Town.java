@@ -599,7 +599,7 @@ public class Town {
         t.townMOTD = f.getString("motd");
         t.motdColor = ChatColor.valueOf(f.getString("motdColor"));
         t.townSpawn = Location.fromList(f.getStringList("spawnLocation"));
-        t.mayor = UUID.fromString(f.getString("mayor"));
+        t.mayor = UUIDs.stringToId(f.getString("mayor"));
         t.territories = parseListToHashSet(f.getStringList("territs"));
 
         t.assistants = UUIDs.stringsToIds(f.getStringList("assistants"));
