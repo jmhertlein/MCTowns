@@ -334,18 +334,7 @@ public class Town {
      * @return whether the player is mayor or not
      */
     public boolean playerIsMayor(OfflinePlayer p) {
-        return p.getName().equals(mayor);
-    }
-
-    /**
-     * Returns whether the player is the mayor of the town.
-     *
-     * @param playerName
-     *
-     * @return
-     */
-    public boolean playerIsMayor(String playerName) {
-        return playerName.equals(mayor);
+        return p.getUniqueId().equals(mayor);
     }
 
     /**
@@ -362,8 +351,11 @@ public class Town {
      *
      * @return
      */
-    public String[] getResidentNames() {
-        return residents.toArray(new String[residents.size()]);
+    public Set<String> getResidentNames() {
+        Set<String> ret = new HashSet<>();
+        for(UUID u : residents)
+            ret.add(UUIDs.getNameForUUID(u));
+        return ret;
     }
 
     public Set<String> getAssistantNames() {
@@ -447,8 +439,8 @@ public class Town {
      *
      * @return
      */
-    public org.bukkit.Location getTownSpawn(Server s) {
-        return Location.convertToBukkitLocation(s, townSpawn);
+    public org.bukkit.Location getTownSpawn() {
+        return Location.convertToBukkitLocation(Bukkit.getServer(), townSpawn);
     }
 
     /**

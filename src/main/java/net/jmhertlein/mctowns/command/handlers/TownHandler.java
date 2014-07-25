@@ -661,7 +661,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (removeFrom.playerIsMayor(playerName)) {
+        if (removeFrom.playerIsMayor(removeMe)) {
             localSender.sendMessage(ERR + "A mayor cannot be removed from his own town.");
             return;
         }
@@ -808,7 +808,8 @@ public class TownHandler extends CommandHandler {
         }
         localSender.sendMessage(ChatColor.AQUA + "Players in " + t.getTownName() + "(page " + page + "):");
 
-        String[] players = t.getResidentNames();
+        Set<String> names = t.getResidentNames();
+        String[] players = names.toArray(new String[names.size()]);
 
         for (int i = page * RESULTS_PER_PAGE; i < players.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             localSender.sendMessage(ChatColor.YELLOW + players[i]);
@@ -842,7 +843,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        Location spawn = t.getTownSpawn(server);
+        Location spawn = t.getTownSpawn();
         if (spawn == null) {
             localSender.sendMessage(ERR + "Town spawn not set.");
             return;
@@ -870,7 +871,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        localSender.getPlayer().teleport(t.getTownSpawn(server));
+        localSender.getPlayer().teleport(t.getTownSpawn());
 
         localSender.sendMessage(INFO + "Teleported to " + t.getTownName() + "! Welcome!");
 
