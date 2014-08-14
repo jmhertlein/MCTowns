@@ -27,6 +27,7 @@ import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
+import net.jmhertlein.mctowns.util.UUIDs;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
@@ -295,18 +296,16 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        //IF ALL THE THINGS ARE FINALLY DONE...
-        throw new UnsupportedOperationException("Not supported for UUIDs yet.");
-//        region.getOwners().addPlayer(t.getMayor());
-//        for (String assistantName : t.getAssistantNames())
-//            region.getOwners().addPlayer(assistantName);
-//
-//        localSender.sendMessage(SUCC + "Territory added.");
-//
-//        if (autoActive) {
-//            localSender.setActiveTerritory(townManager.getTerritory(territName));
-//            localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
-//        }
+        region.getOwners().addPlayer(UUIDs.getNameForUUID(t.getMayor()));
+        for (String assistantName : t.getAssistantNames())
+            region.getOwners().addPlayer(assistantName);
+
+        localSender.sendMessage(SUCC + "Territory added.");
+
+        if (autoActive) {
+            localSender.setActiveTerritory(townManager.getTerritory(territName));
+            localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
+        }
     }
 
     public void removeTerritoryFromTown(String territName) {
