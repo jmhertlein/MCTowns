@@ -166,7 +166,7 @@ public class TownExecutor extends BaseExecutor {
                     break;
                 case "b":
                 case "bank":
-                    helpMessage = "/town bank (deposit | check)";
+                    helpMessage = "/town bank (deposit | withdraw | check)";
                     switch (command.get(2).toLowerCase()) {
                         case "d":
                         case "deposit":
