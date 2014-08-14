@@ -16,12 +16,13 @@
  */
 package net.jmhertlein.mctowns.util;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 /**
  *
@@ -78,6 +79,6 @@ public class UUIDs {
     }
 
     public static String getNameForUUID(UUID u) {
-        return Bukkit.getPlayer(u).getName();
+        return Bukkit.getOfflinePlayer(u).getName();
     }
 }

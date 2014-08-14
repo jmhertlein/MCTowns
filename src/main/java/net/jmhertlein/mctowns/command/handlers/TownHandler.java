@@ -17,10 +17,6 @@
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -31,14 +27,17 @@ import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
+import net.jmhertlein.mctowns.util.UUIDs;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+
+import static net.jmhertlein.core.chat.ChatUtil.*;
 
 /**
  * @author Everdras
@@ -297,18 +296,16 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        //IF ALL THE THINGS ARE FINALLY DONE...
-        throw new UnsupportedOperationException("Not supported for UUIDs yet.");
-//        region.getOwners().addPlayer(t.getMayor());
-//        for (String assistantName : t.getAssistantNames())
-//            region.getOwners().addPlayer(assistantName);
-//
-//        localSender.sendMessage(SUCC + "Territory added.");
-//
-//        if (autoActive) {
-//            localSender.setActiveTerritory(townManager.getTerritory(territName));
-//            localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
-//        }
+        region.getOwners().addPlayer(UUIDs.getNameForUUID(t.getMayor()));
+        for (String assistantName : t.getAssistantNames())
+            region.getOwners().addPlayer(assistantName);
+
+        localSender.sendMessage(SUCC + "Territory added.");
+
+        if (autoActive) {
+            localSender.setActiveTerritory(townManager.getTerritory(territName));
+            localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active territory set to newly created territory.");
+        }
     }
 
     public void removeTerritoryFromTown(String territName) {
@@ -328,6 +325,8 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
+
+        territName = MCTownsRegion.formatRegionName(to, TownLevel.TERRITORY, territName);
 
         if (!townManager.removeTerritory(territName))
             localSender.sendMessage(ERR + "Error: Territory \"" + territName + "\" does not exist and was not removed (because it doesn't exist!)");
@@ -501,7 +500,7 @@ public class TownHandler extends CommandHandler {
 
         Player p = server.getPlayerExact(playerName);
 
-        if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getName()))) {
+        if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getUniqueId()))) {
             localSender.notifyInsufPermissions();
             return;
         }
