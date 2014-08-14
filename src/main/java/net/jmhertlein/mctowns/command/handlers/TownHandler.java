@@ -17,10 +17,6 @@
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -33,12 +29,14 @@ import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+
+import static net.jmhertlein.core.chat.ChatUtil.*;
 
 /**
  * @author Everdras
@@ -328,6 +326,8 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
+
+        territName = MCTownsRegion.formatRegionName(to, TownLevel.TERRITORY, territName);
 
         if (!townManager.removeTerritory(territName))
             localSender.sendMessage(ERR + "Error: Territory \"" + territName + "\" does not exist and was not removed (because it doesn't exist!)");
