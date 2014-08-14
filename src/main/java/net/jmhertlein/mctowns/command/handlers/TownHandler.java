@@ -500,7 +500,7 @@ public class TownHandler extends CommandHandler {
 
         Player p = server.getPlayerExact(playerName);
 
-        if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getName()))) {
+        if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getUniqueId()))) {
             localSender.notifyInsufPermissions();
             return;
         }
