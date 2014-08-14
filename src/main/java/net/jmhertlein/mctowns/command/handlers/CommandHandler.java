@@ -22,7 +22,6 @@ import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldguard.protection.UnsupportedIntersectionException;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
@@ -32,12 +31,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -56,8 +49,13 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static net.jmhertlein.core.chat.ChatUtil.ERR;
-import static net.jmhertlein.core.chat.ChatUtil.INFO;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import static net.jmhertlein.core.chat.ChatUtil.*;
 
 /**
  * CommandHandler wraps a CommandSender and various other pertinent objects
@@ -219,7 +217,10 @@ public abstract class CommandHandler {
 
         counter = 0;
         for (String pl : wgReg.getOwners().getPlayers()) {
-            temp += pl + ", ";
+            if (counter > 0) {
+                temp += ", ";
+            }
+            temp += pl;
             counter++;
             if (counter > 4) {
                 localSender.sendMessage(temp);
@@ -234,7 +235,10 @@ public abstract class CommandHandler {
         localSender.sendMessage("Members:");
 
         for (String pl : wgReg.getMembers().getPlayers()) {
-            temp += pl + ", ";
+            if (counter > 0) {
+                temp += ", ";
+            }
+            temp += pl;
             counter++;
             if (counter > 4) {
                 localSender.sendMessage(temp);
