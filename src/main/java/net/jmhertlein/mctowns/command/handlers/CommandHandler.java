@@ -103,11 +103,6 @@ public abstract class CommandHandler {
      *                   flag to.
      */
     public void flagRegion(String flagName, String[] args, TownLevel regionType) {
-        if (!localSender.hasExternalPermissions("mct.flag") && !localSender.hasExternalPermissions("mct.admin")) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
-
         MCTownsRegion reg = null;
 
         switch (regionType) {
@@ -124,6 +119,16 @@ public abstract class CommandHandler {
 
         if (reg == null) {
             localSender.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
+            return;
+        }
+        
+        //grant permission if player is admin, OR (player has perm for flag AND player is mayor)
+        boolean hasPermission = localSender.hasExternalPermissions("mct.admin") //is admin
+                              || ( (localSender.hasExternalPermissions("mct.flag." + flagName) || localSender.hasExternalPermissions("mct.flag.all")) //either has perm for that flag, or all flags
+                                  && localSender.getActiveTown().playerIsMayor(localSender.getPlayer())); //and is mayor
+        
+        if(!hasPermission) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
