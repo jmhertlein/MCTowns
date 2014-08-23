@@ -28,6 +28,7 @@ import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -62,14 +63,13 @@ public class PlotHandler extends CommandHandler {
 
     }
 
-    public void removePlayerFromPlot(String player) {
+    public void removePlayerFromPlot(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
 
         Plot plot = localSender.getActivePlot();
-        player = player.toLowerCase();
 
         if (plot == null) {
             localSender.notifyActivePlotNotSet();
@@ -86,7 +86,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (plot.removePlayer(player))
+        if (plot.removePlayer(Bukkit.getOfflinePlayer(playerName)))
             localSender.sendMessage("Player removed from plot.");
         else
             localSender.sendMessage(ERR + "Unable to remove player from plot (either player is not in plot, world doesn't exist, or WorldGuard region doesn't exist.).");

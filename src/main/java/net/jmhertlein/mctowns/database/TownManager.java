@@ -16,8 +16,8 @@
  */
 package net.jmhertlein.mctowns.database;
 
-import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.io.File;
@@ -136,7 +136,7 @@ public class TownManager {
                 worldTerritoryIsIn);
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
@@ -177,7 +177,7 @@ public class TownManager {
 
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
@@ -295,7 +295,7 @@ public class TownManager {
 
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
@@ -332,7 +332,7 @@ public class TownManager {
 
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }

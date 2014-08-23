@@ -16,7 +16,7 @@
  */
 package net.jmhertlein.mctowns.command.handlers;
 
-import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
+import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -99,7 +99,7 @@ public class MCTHandler extends CommandHandler {
             for (World w : Bukkit.getWorlds()) {
                 MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
             }
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
             MCTowns.logSevere(ex.getMessage());
         } catch (NullPointerException npe) {
