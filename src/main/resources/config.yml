@@ -9,9 +9,6 @@ quickSelectTool: 290
 #log verbose information of each MCTowns command issued
 logCommands: false
 playersCanJoinMultipleTowns: true
-#hostname and port of remote bug report handling server
-bugReportHostname: services.jmhertlein.net
-bugReportPort: 9001
 #Maximum number of tiles in the XZ plane that a mayor can use when making a territory
 # default is a generous 50 chunks (50 * 16 = 800)
 territoryXZSizeLimit: 800

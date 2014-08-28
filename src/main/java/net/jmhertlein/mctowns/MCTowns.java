@@ -63,14 +63,6 @@ public class MCTowns {
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("playersCanJoinMultipleTowns");
     }
 
-    public static String getBugReportHostname() {
-        return MCTownsPlugin.getPlugin().getConfig().getString("bugReportHostname", "services.jmhertlein.net");
-    }
-
-    public static int getBugReportPort() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("bugReportPort", 9001);
-    }
-
     public static String getConfigSummary() {
         return MCTownsPlugin.getPlugin().getConfig().saveToString();
     }
@@ -148,14 +140,6 @@ public class MCTowns {
 
     public static void setPlayersCanJoinMultipleTowns(boolean value) {
         MCTownsPlugin.getPlugin().getConfig().set("playersCanJoinMultipleTowns", value);
-    }
-
-    public static void setBugReportHostname(String s) {
-        MCTownsPlugin.getPlugin().getConfig().set("bugReportHostName", s);
-    }
-
-    public static void setBugReportPort(int port) {
-        MCTownsPlugin.getPlugin().getConfig().set("bugReportPort", port);
     }
 
     public static void persistTownManager() {
