@@ -270,6 +270,13 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ERR + "No region selected!");
             return;
         }
+        
+        int max = MCTowns.getTerritoryXZSizeLimit(),
+            cur = WGUtils.getNumXZBlocksInRegion(region);
+        if(cur > max && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
+            localSender.sendMessageF("%sYou're not allowed to make a territory that big. (Current: %s, Limit: %s)", ERR, cur, max);
+            return;
+        }
 
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
         if (!admin && MCTowns.getTerritoryPricePerColumn().compareTo(BigDecimal.ZERO) > 0) {

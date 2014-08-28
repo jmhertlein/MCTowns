@@ -39,12 +39,12 @@ public class WGUtils {
      *
      * @return number of XZ-unique blocks
      */
-    public static long getNumXZBlocksInRegion(ProtectedRegion reg) {
+    public static int getNumXZBlocksInRegion(ProtectedRegion reg) {
         BlockVector max, min;
         max = reg.getMaximumPoint();
         min = reg.getMinimumPoint();
 
-        long xLength, zLength;
+        int xLength, zLength;
         xLength = max.getBlockX() - min.getBlockX();
         zLength = max.getBlockZ() - min.getBlockZ();
         xLength++;

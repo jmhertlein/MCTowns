@@ -124,7 +124,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         startPeriodicSaveTask();
         startMetricsReporting();
-
+        
         MCTowns.logInfo("MCTowns is now fully loaded.");
     }
 

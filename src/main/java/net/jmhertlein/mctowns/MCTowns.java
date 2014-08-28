@@ -175,4 +175,8 @@ public class MCTowns {
             return true;
         return MCTownsPlugin.getPlugin().getConfig().getBoolean("debugModeEnabled", false);
     }
+    
+    public static int getTerritoryXZSizeLimit() {
+        return MCTownsPlugin.getPlugin().getConfig().getInt("territoryXZSizeLimit", 800);
+    }
 }
