@@ -5,7 +5,7 @@ pricePerXZBlock: 0
 minNumPlayersToBuyTerritory: 3
 allowTownFriendlyFireManagement: false;
 #default is wooden hoe (290)
-quickSelectTool: 290
+quickSelectTool: WOODEN_HOE
 #log verbose information of each MCTowns command issued
 logCommands: false
 playersCanJoinMultipleTowns: true

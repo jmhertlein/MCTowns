@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import static net.jmhertlein.core.chat.ChatUtil.*;
+import net.jmhertlein.mctowns.util.MCTConfig;
 
 /**
  * @author Everdras
@@ -168,7 +169,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy is not enabled for your server.");
             return;
         }
@@ -237,7 +238,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!(MCTowns.mayorsCanBuyTerritories() || adminAllowed)) {
+        if (!(MCTConfig.MAYORS_CAN_BUY_TERRITORIES.getBoolean() || adminAllowed)) {
             localSender.sendMessage(ChatColor.BLUE + "Mayors are not allowed to add territories and you're not an admin.");
             return;
         }
@@ -249,9 +250,9 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if ((t.getSize() < MCTowns.getMinNumPlayersToBuyTerritory()) && !admin) {
+        if ((t.getSize() < MCTConfig.MIN_NUM_PLAYERS_TO_BUY_TERRITORY.getInt()) && !admin) {
             localSender.sendMessage(ERR + "You don't have enough people in your town to buy territories yet.");
-            localSender.sendMessage(ERR + "You have " + t.getSize() + " people, but you need a total of " + MCTowns.getMinNumPlayersToBuyTerritory() + "!");
+            localSender.sendMessage(ERR + "You have " + t.getSize() + " people, but you need a total of " + MCTConfig.MIN_NUM_PLAYERS_TO_BUY_TERRITORY.getInt() + "!");
             return;
         }
 
@@ -271,16 +272,17 @@ public class TownHandler extends CommandHandler {
             return;
         }
         
-        int max = MCTowns.getTerritoryXZSizeLimit(),
+        int max = MCTConfig.TERRITORY_XZ_SIZE_LIMIT.getInt(),
             cur = WGUtils.getNumXZBlocksInRegion(region);
         if(cur > max && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
             localSender.sendMessageF("%sYou're not allowed to make a territory that big. (Current: %s, Limit: %s)", ERR, cur, max);
             return;
         }
 
+        BigDecimal colPrice = new BigDecimal(MCTConfig.PRICE_PER_XZ_BLOCK.getString());
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
-        if (!admin && MCTowns.getTerritoryPricePerColumn().compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal price = MCTowns.getTerritoryPricePerColumn().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(region)));
+        if (!admin && colPrice.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal price = colPrice.multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(region)));
 
             if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
                 //If they can't afford it...
@@ -369,7 +371,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(p)) {
+        if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && townManager.playerIsAlreadyInATown(p)) {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
@@ -929,7 +931,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -962,7 +964,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -1000,7 +1002,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }

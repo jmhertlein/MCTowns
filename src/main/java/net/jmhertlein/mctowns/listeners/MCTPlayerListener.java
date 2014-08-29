@@ -30,6 +30,7 @@ import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import net.jmhertlein.mctowns.util.ProtectedFenceRegion;
 import net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException;
 import org.bukkit.ChatColor;
@@ -99,7 +100,7 @@ public class MCTPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerClickPurchaseSign(PlayerInteractEvent event) {
 
-        if (!MCTowns.economyIsEnabled())
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean())
             //if economy isn't enabled, do nothing
             return;
 
@@ -237,10 +238,11 @@ public class MCTPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoinAddToDefaultTown(PlayerJoinEvent e) {
+        String tName = MCTConfig.DEFAULT_TOWN.getString();
         if (!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
-            Town t = townManager.getTown(MCTowns.getDefaultTown());
+            Town t = townManager.getTown(tName);
             if (t == null) {
-                if (MCTowns.getDefaultTown() != null && !MCTowns.getDefaultTown().isEmpty())
+                if (tName != null && !tName.isEmpty())
                     MCTowns.logWarning("Error: Default town specified in config.yml does not exist.");
                 return;
             }

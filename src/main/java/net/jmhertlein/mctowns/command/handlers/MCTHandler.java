@@ -27,6 +27,7 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -63,7 +64,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
+        if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
             localSender.sendMessage(ERR + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
             return;
         }
@@ -195,7 +196,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
+        if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
         }
@@ -301,7 +302,7 @@ public class MCTHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -315,7 +316,7 @@ public class MCTHandler extends CommandHandler {
 
         if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) //if players can't join multiple towns AND the town they're buying from isn't their current town
 
-            if (!MCTowns.playersCanJoinMultipleTowns() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
+            if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }

@@ -17,13 +17,11 @@
 package net.jmhertlein.mctowns;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import java.math.BigDecimal;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -32,36 +30,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  * @author joshua
  */
 public class MCTowns {
-
     private static WorldGuardPlugin wgp;
-
-    public static boolean economyIsEnabled() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("economyEnabled");
-    }
-
-    public static boolean mayorsCanBuyTerritories() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("mayorsCanBuyTerritories");
-    }
-
-    public static BigDecimal getTerritoryPricePerColumn() {
-        return new BigDecimal(MCTownsPlugin.getPlugin().getConfig().getString("pricePerXZBlock"));
-    }
-
-    public static int getMinNumPlayersToBuyTerritory() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("minNumPlayersToBuyTerritory");
-    }
-
-    public static Material getQuickSelectTool() {
-        return Material.getMaterial(MCTownsPlugin.getPlugin().getConfig().getInt("quickSelectTool"));
-    }
-
-    public static boolean isLoggingCommands() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("logCommands");
-    }
-
-    public static boolean playersCanJoinMultipleTowns() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("playersCanJoinMultipleTowns");
-    }
 
     public static String getConfigSummary() {
         return MCTownsPlugin.getPlugin().getConfig().saveToString();
@@ -83,7 +52,7 @@ public class MCTowns {
     }
     
     public static void logDebug(String msg) {
-        if(MCTowns.getDebugModeEnabled())
+        if(MCTConfig.DEBUG_MODE_ENABLED.getBoolean())
             logInfo("[DEBUG]: " + msg);
     }
 
@@ -110,57 +79,7 @@ public class MCTowns {
         return MCTownsPlugin.getPlugin().getTownManager();
     }
 
-    public static FileConfiguration getConfig() {
-        return MCTownsPlugin.getPlugin().getConfig();
-    }
-
-    public static void setEconomyIsEnabled(boolean value) {
-        MCTownsPlugin.getPlugin().getConfig().set("economyEnabled", value);
-    }
-
-    public static void setMayorsCanBuyTerritories(boolean value) {
-        MCTownsPlugin.getPlugin().getConfig().set("mayorsCanBuyTerritories", value);
-    }
-
-    public static void setTerritoryPricePerColumn(BigDecimal val) {
-        MCTownsPlugin.getPlugin().getConfig().set("pricePerXZBlock", val.toPlainString());
-    }
-
-    public static void setMinNumPlayersToBuyTerritory(int n) {
-        MCTownsPlugin.getPlugin().getConfig().set("minNumPlayersToBuyTerritory", n);
-    }
-
-    public static void setQuickSelectTool(Material m) {
-        MCTownsPlugin.getPlugin().getConfig().set("quickSelectTool", m.getId());
-    }
-
-    public static void setIsLoggingCommands(boolean value) {
-        MCTownsPlugin.getPlugin().getConfig().set("logCommands", value);
-    }
-
-    public static void setPlayersCanJoinMultipleTowns(boolean value) {
-        MCTownsPlugin.getPlugin().getConfig().set("playersCanJoinMultipleTowns", value);
-    }
-
     public static void persistTownManager() {
         MCTownsPlugin.getPlugin().persistTownManager();
-    }
-
-    public static String getDefaultTown() {
-        return MCTownsPlugin.getPlugin().getConfig().getString("defaultTown");
-    }
-
-    public static void setDefaultTown(String townName) {
-        MCTownsPlugin.getPlugin().getConfig().set("defaultTown", townName);
-    }
-
-    public static boolean getDebugModeEnabled() {
-        if(MCTownsPlugin.getPlugin() == null)
-            return true;
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean("debugModeEnabled", false);
-    }
-    
-    public static int getTerritoryXZSizeLimit() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt("territoryXZSizeLimit", 800);
     }
 }

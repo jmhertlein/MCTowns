@@ -35,7 +35,9 @@ import net.jmhertlein.mctowns.listeners.QuickSelectToolListener;
 import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.upgrade.ResourceUpgradePaths;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -112,7 +114,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         joinManager = new TownJoinManager();
         activeSets = new HashMap<>();
-        if (MCTowns.economyIsEnabled())
+        if (MCTConfig.ECONOMY_ENABLED.getBoolean())
             potentialPlotBuyers = new HashMap<>();
 
         Perms.registerPermNodes(getServer().getPluginManager());
@@ -184,7 +186,7 @@ public class MCTownsPlugin extends JavaPlugin {
             return false;
         }
 
-        if (MCTowns.economyIsEnabled())
+        if (MCTConfig.ECONOMY_ENABLED.getBoolean())
             try {
                 boolean success = setupEconomy();
                 if (!success)
@@ -202,7 +204,7 @@ public class MCTownsPlugin extends JavaPlugin {
         QuickSelectToolListener qsToolListener = new QuickSelectToolListener(MCTowns.getWorldGuardPlugin(), this);
 
         //configure the tool listener as per the config
-        QuickSelectToolListener.SELECT_TOOL = MCTowns.getQuickSelectTool();
+        QuickSelectToolListener.SELECT_TOOL = Material.getMaterial(MCTConfig.QUICKSELECT_TOOL.getString());
 
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(qsToolListener, this);

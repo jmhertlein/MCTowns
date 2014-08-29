@@ -28,6 +28,7 @@ import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -252,7 +253,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -281,7 +282,7 @@ public class PlotHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }

@@ -22,7 +22,6 @@ import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
@@ -49,6 +48,7 @@ import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import net.jmhertlein.mctowns.util.WGUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -414,7 +414,7 @@ public abstract class CommandHandler {
 
         //only let admins expand territories, unless mayors can buy territories, in which case mayors can too
         if (regType == TownLevel.TERRITORY && !(localSender.hasExternalPermissions(Perms.ADMIN.toString()) 
-                                                || (MCTowns.mayorsCanBuyTerritories() && localSender.hasMayoralPermissions()))) {
+                                                || (MCTConfig.MAYORS_CAN_BUY_TERRITORIES.getBoolean() && localSender.hasMayoralPermissions()))) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -487,12 +487,12 @@ public abstract class CommandHandler {
         
         //if they're not an admin, charge them for the territory
         if(regType == TownLevel.TERRITORY && !(cmd.hasFlag(ECommand.ADMIN) && localSender.hasExternalPermissions(Perms.ADMIN.toString()))) {
-            if(!MCTowns.economyIsEnabled()) {
+            if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
                 localSender.sendMessage(ERR + "You're not an admin, and mayors can only redefine territories by buying more blocks, yet the economy is not enabled.");
                 return;
             }
             
-            BigDecimal price = MCTowns.getTerritoryPricePerColumn().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(nuWGRegion) - WGUtils.getNumXZBlocksInRegion(oldWGReg)));
+            BigDecimal price = new BigDecimal(MCTConfig.PRICE_PER_XZ_BLOCK.getString()).multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(nuWGRegion) - WGUtils.getNumXZBlocksInRegion(oldWGReg)));
             
             if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
                 //If they can't afford it...
