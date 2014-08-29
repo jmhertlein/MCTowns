@@ -43,15 +43,18 @@ public enum MCTConfig {
     }
     
     public int getInt() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt(this.getKey(), (int) dflt);
+        MCTownsPlugin p = MCTownsPlugin.getPlugin();
+        return p == null ? (int) dflt : p.getConfig().getInt(this.getKey(), (int) dflt);
     }
     
     public String getString() {
-        return MCTownsPlugin.getPlugin().getConfig().getString(this.getKey(), (String) dflt);
+        MCTownsPlugin p = MCTownsPlugin.getPlugin();
+        return p == null ? (String) dflt : p.getConfig().getString(this.getKey(), (String) dflt);
     }
     
     public boolean getBoolean() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean(this.getKey(), (boolean) dflt);
+        MCTownsPlugin p = MCTownsPlugin.getPlugin();
+        return p == null ? (boolean) dflt : p.getConfig().getBoolean(this.getKey(), (boolean) dflt);
     }
 
     public boolean isMandatory() {
