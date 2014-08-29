@@ -127,6 +127,10 @@ public class MCTownsPlugin extends JavaPlugin {
         startPeriodicSaveTask();
         startMetricsReporting();
         
+        if(!MCTConfig.validate()) {
+            MCTowns.logWarning("Warning: config may be invalid!");
+        }
+        
         MCTowns.logInfo("MCTowns is now fully loaded.");
     }
 
