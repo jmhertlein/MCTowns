@@ -14,16 +14,23 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
  * @author joshua
  */
 public enum MCTConfig {
-    DEFAULT_TOWN,
-    ECONOMY_ENABLED,
-    MAYORS_CAN_BUY_TERRITORIES,
-    PRICE_PER_XZ_BLOCK,
-    MIN_NUM_PLAYERS_TO_BUY_TERRITORY,
-    ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT,
-    QUICKSELECT_TOOL,
-    LOG_COMMANDS,
-    PLAYERS_CAN_JOIN_MULTIPLE_TOWNS,
-    TERRITORY_XZ_SIZE_LIMIT;
+    DEFAULT_TOWN(false),
+    ECONOMY_ENABLED(true),
+    MAYORS_CAN_BUY_TERRITORIES(true),
+    PRICE_PER_XZ_BLOCK(true),
+    MIN_NUM_PLAYERS_TO_BUY_TERRITORY(true),
+    ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT(true),
+    QUICKSELECT_TOOL(true),
+    LOG_COMMANDS(true),
+    PLAYERS_CAN_JOIN_MULTIPLE_TOWNS(true),
+    TERRITORY_XZ_SIZE_LIMIT(true),
+    DEBUG_MODE_ENABLED(false);
+    
+    private final boolean mandatory;
+    
+    private MCTConfig(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
     
     public void set(Object value) {
        MCTownsPlugin.getPlugin().getConfig().set(getKey(), value);
@@ -43,6 +50,10 @@ public enum MCTConfig {
     
     public boolean getBoolean() {
         return MCTownsPlugin.getPlugin().getConfig().getBoolean(this.getKey());
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
     }
     
     protected String getKey() {
@@ -69,12 +80,14 @@ public enum MCTConfig {
                 return "playersCanJoinMultipleTowns";
             case TERRITORY_XZ_SIZE_LIMIT:
                 return "territoryXZSizeLimit";
+            case DEBUG_MODE_ENABLED:
+                return "debugModeEnabled";
         }
     }
     
     public static boolean validate() {
         for(MCTConfig c : MCTConfig.values()) {
-            if(c.getObject() == null)
+            if(c.getObject() == null && c.isMandatory())
                 return false;
         }       
         return true;
