@@ -15,7 +15,7 @@ territoryXZSizeLimit: 800
 #
 #
 #The currently installed version of MCTowns. Do not change this.
-installedVersion: 2.3.2
+installedVersion: ${version}
 #Seriously don't change it
 #
 #

@@ -58,7 +58,7 @@ public enum MCTConfig {
         return mandatory;
     }
     
-    protected String getKey() {
+    public String getKey() {
         switch(this) {
             default:
                 throw new NoSuchElementException("The enum value " + this.name() + "doesn't have a mapping to anything in config.yml!!!");
