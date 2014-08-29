@@ -14,22 +14,24 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
  * @author joshua
  */
 public enum MCTConfig {
-    DEFAULT_TOWN(false),
-    ECONOMY_ENABLED(true),
-    MAYORS_CAN_BUY_TERRITORIES(true),
-    PRICE_PER_XZ_BLOCK(true),
-    MIN_NUM_PLAYERS_TO_BUY_TERRITORY(true),
-    ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT(true),
-    QUICKSELECT_TOOL(true),
-    LOG_COMMANDS(true),
-    PLAYERS_CAN_JOIN_MULTIPLE_TOWNS(true),
-    TERRITORY_XZ_SIZE_LIMIT(true),
-    DEBUG_MODE_ENABLED(false);
+    DEFAULT_TOWN(false, null),
+    ECONOMY_ENABLED(true, false),
+    MAYORS_CAN_BUY_TERRITORIES(true, false),
+    PRICE_PER_XZ_BLOCK(true, 0),
+    MIN_NUM_PLAYERS_TO_BUY_TERRITORY(true, 3),
+    ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT(true, true),
+    QUICKSELECT_TOOL(true, "WOODEN_HOE"),
+    LOG_COMMANDS(true, true),
+    PLAYERS_CAN_JOIN_MULTIPLE_TOWNS(true, false),
+    TERRITORY_XZ_SIZE_LIMIT(true, 800),
+    DEBUG_MODE_ENABLED(false, false);
     
     private final boolean mandatory;
+    private final Object dflt;
     
-    private MCTConfig(boolean mandatory) {
+    private MCTConfig(boolean mandatory, Object dflt) {
         this.mandatory = mandatory;
+        this.dflt = dflt;
     }
     
     public void set(Object value) {
@@ -37,19 +39,19 @@ public enum MCTConfig {
     }
     
     protected Object getObject() {
-        return MCTownsPlugin.getPlugin().getConfig().get(this.getKey());
+        return MCTownsPlugin.getPlugin().getConfig().get(this.getKey(), dflt);
     }
     
     public int getInt() {
-        return MCTownsPlugin.getPlugin().getConfig().getInt(this.getKey());
+        return MCTownsPlugin.getPlugin().getConfig().getInt(this.getKey(), (int) dflt);
     }
     
     public String getString() {
-        return MCTownsPlugin.getPlugin().getConfig().getString(this.getKey());
+        return MCTownsPlugin.getPlugin().getConfig().getString(this.getKey(), (String) dflt);
     }
     
     public boolean getBoolean() {
-        return MCTownsPlugin.getPlugin().getConfig().getBoolean(this.getKey());
+        return MCTownsPlugin.getPlugin().getConfig().getBoolean(this.getKey(), (boolean) dflt);
     }
 
     public boolean isMandatory() {

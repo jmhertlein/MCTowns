@@ -324,10 +324,7 @@ public abstract class CommandHandler {
             if(!(exterior.contains(v)))
                 return false;
         
-        List<ProtectedRegion> l = new LinkedList<>();
-        l.add(interior);
         boolean ret = WGUtils.intersectsEdges(interior, exterior);
-        MCTowns.logDebug("Regions are intersecting: " + ret);
         return !ret;
     }
 
