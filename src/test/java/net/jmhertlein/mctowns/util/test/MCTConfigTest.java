@@ -21,5 +21,6 @@ public class MCTConfigTest {
         MCTConfig.MAYORS_CAN_BUY_TERRITORIES.getBoolean();
         MCTConfig.LOG_COMMANDS.getBoolean();
         MCTConfig.QUICKSELECT_TOOL.getString();
+        MCTConfig.DEFAULT_TOWN.getObject();
     }
 }

@@ -39,8 +39,9 @@ public enum MCTConfig {
        MCTownsPlugin.getPlugin().getConfig().set(getKey(), value);
     }
     
-    protected Object getObject() {
-        return MCTownsPlugin.getPlugin().getConfig().get(this.getKey(), dflt);
+    public Object getObject() {
+        MCTownsPlugin p = MCTownsPlugin.getPlugin();
+        return p == null ? dflt : MCTownsPlugin.getPlugin().getConfig().get(this.getKey(), dflt);
     }
     
     public int getInt() {
