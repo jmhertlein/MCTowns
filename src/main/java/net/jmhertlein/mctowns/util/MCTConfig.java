@@ -36,6 +36,8 @@ public enum MCTConfig {
     TERRITORY_XZ_SIZE_LIMIT("territoryXZSizeLimit", 800),
     DEBUG_MODE_ENABLED("debugModeEnabled", false);
     
+    private static final MCTownsPlugin p = MCTownsPlugin.getPlugin();
+    
     private final Object dflt;
     private final String key;
     
@@ -49,22 +51,18 @@ public enum MCTConfig {
     }
     
     public Object getObject() {
-        MCTownsPlugin p = MCTownsPlugin.getPlugin();
-        return p == null ? dflt : MCTownsPlugin.getPlugin().getConfig().get(this.getKey(), dflt);
+        return p == null ? dflt : p.getConfig().get(this.getKey(), dflt);
     }
     
     public int getInt() {
-        MCTownsPlugin p = MCTownsPlugin.getPlugin();
         return p == null ? (int) dflt : p.getConfig().getInt(this.getKey(), (int) dflt);
     }
     
     public String getString() {
-        MCTownsPlugin p = MCTownsPlugin.getPlugin();
         return p == null ? (String) dflt : p.getConfig().getString(this.getKey(), (String) dflt);
     }
     
     public boolean getBoolean() {
-        MCTownsPlugin p = MCTownsPlugin.getPlugin();
         return p == null ? (boolean) dflt : p.getConfig().getBoolean(this.getKey(), (boolean) dflt);
     }
     
