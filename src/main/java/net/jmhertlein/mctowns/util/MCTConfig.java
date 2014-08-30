@@ -6,7 +6,6 @@
 
 package net.jmhertlein.mctowns.util;
 
-import java.util.NoSuchElementException;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 
 /**
@@ -14,24 +13,26 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
  * @author joshua
  */
 public enum MCTConfig {
-    DEFAULT_TOWN(false, null),
-    ECONOMY_ENABLED(true, false),
-    MAYORS_CAN_BUY_TERRITORIES(true, false),
-    PRICE_PER_XZ_BLOCK(true, 0),
-    MIN_NUM_PLAYERS_TO_BUY_TERRITORY(true, 3),
-    ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT(true, true),
-    QUICKSELECT_TOOL(true, "WOODEN_HOE"),
-    LOG_COMMANDS(true, true),
-    PLAYERS_CAN_JOIN_MULTIPLE_TOWNS(true, false),
-    TERRITORY_XZ_SIZE_LIMIT(true, 800),
-    DEBUG_MODE_ENABLED(false, false);
+    DEFAULT_TOWN("defaultTown", false, null),
+    ECONOMY_ENABLED("economyEnabled", true, false),
+    MAYORS_CAN_BUY_TERRITORIES("mayorsCanBuyTerritories", true, false),
+    PRICE_PER_XZ_BLOCK("pricePerXZBlock", true, 0),
+    MIN_NUM_PLAYERS_TO_BUY_TERRITORY("minNumPlayersToBuyTerritory", true, 3),
+    ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT("allowTownFriendlyFireManagement", true, true),
+    QUICKSELECT_TOOL("quickSelectTool", true, "WOODEN_HOE"),
+    LOG_COMMANDS("logCommands", true, true),
+    PLAYERS_CAN_JOIN_MULTIPLE_TOWNS("playersCanJoinMultipleTowns", true, false),
+    TERRITORY_XZ_SIZE_LIMIT("territoryXZSizeLimit", true, 800),
+    DEBUG_MODE_ENABLED("debugModeEnabled", false, false);
     
     private final boolean mandatory;
     private final Object dflt;
+    private final String key;
     
-    private MCTConfig(boolean mandatory, Object dflt) {
+    private MCTConfig(String key, boolean mandatory, Object dflt) {
         this.mandatory = mandatory;
         this.dflt = dflt;
+        this.key = key;
     }
     
     public void set(Object value) {
@@ -62,39 +63,13 @@ public enum MCTConfig {
     }
     
     public String getKey() {
-        switch(this) {
-            default:
-                throw new NoSuchElementException("The enum value " + this.name() + "doesn't have a mapping to anything in config.yml!!!");
-            case DEFAULT_TOWN:
-                return "defaultTown";
-            case ECONOMY_ENABLED:
-                return "economyEnabled";
-            case MAYORS_CAN_BUY_TERRITORIES:
-                return "mayorsCanBuyTerritories";
-            case PRICE_PER_XZ_BLOCK:
-                return "pricePerXZBlock";
-            case MIN_NUM_PLAYERS_TO_BUY_TERRITORY:
-                return "minNumPlayersToBuyTerritory";
-            case ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT:
-                return "allowTownFriendlyFireManagement";
-            case QUICKSELECT_TOOL:
-                return "quickSelectTool";
-            case LOG_COMMANDS:
-                return "logCommands";
-            case PLAYERS_CAN_JOIN_MULTIPLE_TOWNS:
-                return "playersCanJoinMultipleTowns";
-            case TERRITORY_XZ_SIZE_LIMIT:
-                return "territoryXZSizeLimit";
-            case DEBUG_MODE_ENABLED:
-                return "debugModeEnabled";
-        }
+        return key;
     }
     
     public static boolean validate() {
-        for(MCTConfig c : MCTConfig.values()) {
+        for(MCTConfig c : MCTConfig.values()) 
             if(c.getObject() == null && c.isMandatory())
                 return false;
-        }       
         return true;
     }
 }
