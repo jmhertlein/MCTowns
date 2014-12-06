@@ -203,9 +203,6 @@ public class MCTownsPlugin extends JavaPlugin {
         MCTPlayerListener playerListener = new MCTPlayerListener(this);
         QuickSelectToolListener qsToolListener = new QuickSelectToolListener(MCTowns.getWorldGuardPlugin(), this);
 
-        //configure the tool listener as per the config
-        QuickSelectToolListener.SELECT_TOOL = Material.getMaterial(MCTConfig.QUICKSELECT_TOOL.getString());
-
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(qsToolListener, this);
         getServer().getPluginManager().registerEvents(new DepositBoxCloseListener(), this);

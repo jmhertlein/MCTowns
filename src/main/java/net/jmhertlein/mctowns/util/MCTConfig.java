@@ -30,7 +30,7 @@ public enum MCTConfig {
     PRICE_PER_XZ_BLOCK("pricePerXZBlock", 0),
     MIN_NUM_PLAYERS_TO_BUY_TERRITORY("minNumPlayersToBuyTerritory", 3),
     ALLOW_TOWN_FRIENDLY_FIRE_MANAGEMENT("allowTownFriendlyFireManagement", true),
-    QUICKSELECT_TOOL("quickSelectTool", "WOODEN_HOE"),
+    QUICKSELECT_TOOL("quickSelectTool", "WOOD_HOE"),
     LOG_COMMANDS("logCommands", true),
     PLAYERS_CAN_JOIN_MULTIPLE_TOWNS("playersCanJoinMultipleTowns", false),
     TERRITORY_XZ_SIZE_LIMIT("territoryXZSizeLimit", 800),
@@ -59,7 +59,8 @@ public enum MCTConfig {
     }
     
     public String getString() {
-        return p == null ? dflt.toString() : p.getConfig().getString(this.getKey(), dflt.toString());
+        String defString = dflt == null ? null : dflt.toString();
+        return p == null ? defString : p.getConfig().getString(this.getKey(), defString);
     }
     
     public boolean getBoolean() {
