@@ -59,7 +59,7 @@ public enum MCTConfig {
     }
     
     public String getString() {
-        return p == null ? (String) dflt : p.getConfig().getString(this.getKey(), (String) dflt);
+        return p == null ? dflt.toString() : p.getConfig().getString(this.getKey(), dflt.toString());
     }
     
     public boolean getBoolean() {
