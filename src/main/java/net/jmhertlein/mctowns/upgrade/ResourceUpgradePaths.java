@@ -22,6 +22,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.util.MCTConfig;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 /**
@@ -43,6 +45,13 @@ public abstract class ResourceUpgradePaths {
                 upgradeFrom210To220(rootDir, p);
             case "2.2.0":
                 upgradeFrom220To230(rootDir, p);
+            case "2.3.0":
+                upgradeInstalledVersion(rootDir, p, installedVersion, "2.3.1");
+            case "2.3.1":
+                upgradeInstalledVersion(rootDir, p, installedVersion, "2.3.2");
+            case "2.3.2":
+                upgradeFrom232To240(rootDir, p);
+                upgradeInstalledVersion(rootDir, p, installedVersion, "2.4.0");
             default:
                 p.getLogger().info("Resources are up to date.");
                 break;
@@ -94,5 +103,19 @@ public abstract class ResourceUpgradePaths {
         p.getConfig().set("bugReportHostname", "services.jmhertlein.net");
         p.saveConfig();
         p.getLogger().warning("Completed resource migration from v2.2.0 to v2.3.0");
+    }
+
+    private static void upgradeInstalledVersion(File rootDir, MCTownsPlugin p, String installedVer, String curVer) {
+        p.getLogger().warning("Beginning resource migration from " + installedVer + " to " + curVer);
+        p.getLogger().info("Updating \"installedVersion\" field in config.yml from " + installedVer + "  to " + curVer);
+        p.getConfig().set("installedVersion", curVer);
+        p.saveConfig();
+        p.getLogger().warning("Completed resource migration from " + installedVer + " to " + curVer);
+    }
+
+    private static void upgradeFrom232To240(File rootDir, MCTownsPlugin p) {
+        p.getLogger().info("Converting old tool ID into String...");
+        p.getConfig().set(MCTConfig.QUICKSELECT_TOOL.getKey(), Material.getMaterial(MCTConfig.QUICKSELECT_TOOL.getInt()).toString());
+        p.getLogger().info("Converted old tool ID into String");
     }
 }

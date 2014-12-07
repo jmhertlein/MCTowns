@@ -1,53 +1,21 @@
-defaultTown: ""
-
+defaultTown:
+economyEnabled: false
+mayorsCanBuyTerritories: false
+pricePerXZBlock: 0
+minNumPlayersToBuyTerritory: 3
 allowTownFriendlyFireManagement: false;
 #default is wooden hoe (290)
-quickSelectTool: 290 
+quickSelectTool: WOOD_HOE
 #log verbose information of each MCTowns command issued
 logCommands: false
 playersCanJoinMultipleTowns: true
-#hostname and port of remote bug report handling server
-bugReporting:
-  hostname: services.jmhertlein.net
-  port: 9001
-
-economy: 
-  economyEnabled: false
-  mayorsCanBuyTerritories: false
-  pricePerXZBlock: 0
-  minNumPlayersToBuyTerritory: 3
-  
-  townFees:
-    feesEnabled: false;
-    feeAmount: 100
-    feeDelay: 1728000
-    #gracePeriod: amount of time after town creation that the town doesn't need to pay fees
-    #default is one week
-    gracePeriod: 12096000
-    
-  taxes:
-    taxesEnabled: false
-    percentagesEnabled: false
-    maxTaxAmount: 100
-    maxTaxPercent: 30%
-    
-    #the minimum delay between tax collections, in ticks
-    #default is 1 day (20 ticks/s * 60 s/min * 60 min/hr * 24 hrs/day * 1 day) = 1 728 000 ticks
-    minTaxDelay: 1728000
-    #Towns can opt in to a 'synchronized' tax collection cycle, so their taxes are collected at a server-defined time
-    sync: 
-      #forceSynchronization: towns cannot set when their taxes are collected. Instead, taxes are determined by the values under "sync"
-      force: false
-      taxDelay: 1728000
-    
-advanced:
-  #sets how time should be measured. Default is "minecraft", alternative is "system"
-  #"minecraft" -> "measure time in ticks", "system" -> "measure time in minutes"
-  clockSource: minecraft
+#Maximum number of tiles in the XZ plane that a mayor can use when making a territory
+# default is a generous 50 chunks (50 * 16 = 800)
+territoryXZSizeLimit: 800
 #
 #
 #The currently installed version of MCTowns. Do not change this.
-installedVersion: 2.3.0
+installedVersion: ${version}
 #Seriously don't change it
 #
 #

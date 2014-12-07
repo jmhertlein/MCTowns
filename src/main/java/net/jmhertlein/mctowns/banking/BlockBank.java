@@ -35,7 +35,6 @@ public class BlockBank {
     private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
 
     private static final Map<String, DepositInventoryEntry> openDepositInventories = new HashMap<>();
-    ;
     
     private final Inventory bankInventory;
     private volatile BigDecimal townFunds;

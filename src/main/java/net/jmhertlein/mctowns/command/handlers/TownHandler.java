@@ -17,12 +17,6 @@
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -33,13 +27,18 @@ import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethod;
 import net.jmhertlein.mctowns.townjoin.TownJoinMethodFormatException;
+import net.jmhertlein.mctowns.util.UUIDs;
 import net.jmhertlein.mctowns.util.WGUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+
+import static net.jmhertlein.core.chat.ChatUtil.*;
+import net.jmhertlein.mctowns.util.MCTConfig;
 
 /**
  * @author Everdras
@@ -170,7 +169,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy is not enabled for your server.");
             return;
         }
@@ -239,7 +238,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!(MCTowns.mayorsCanBuyTerritories() || adminAllowed)) {
+        if (!(MCTConfig.MAYORS_CAN_BUY_TERRITORIES.getBoolean() || adminAllowed)) {
             localSender.sendMessage(ChatColor.BLUE + "Mayors are not allowed to add territories and you're not an admin.");
             return;
         }
@@ -251,9 +250,9 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if ((t.getSize() < MCTowns.getMinNumPlayersToBuyTerritory()) && !admin) {
+        if ((t.getSize() < MCTConfig.MIN_NUM_PLAYERS_TO_BUY_TERRITORY.getInt()) && !admin) {
             localSender.sendMessage(ERR + "You don't have enough people in your town to buy territories yet.");
-            localSender.sendMessage(ERR + "You have " + t.getSize() + " people, but you need a total of " + MCTowns.getMinNumPlayersToBuyTerritory() + "!");
+            localSender.sendMessage(ERR + "You have " + t.getSize() + " people, but you need a total of " + MCTConfig.MIN_NUM_PLAYERS_TO_BUY_TERRITORY.getInt() + "!");
             return;
         }
 
@@ -272,10 +271,18 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ERR + "No region selected!");
             return;
         }
+        
+        int max = MCTConfig.TERRITORY_XZ_SIZE_LIMIT.getInt(),
+            cur = WGUtils.getNumXZBlocksInRegion(region);
+        if(cur > max && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
+            localSender.sendMessageF("%sYou're not allowed to make a territory that big. (Current: %s, Limit: %s)", ERR, cur, max);
+            return;
+        }
 
+        BigDecimal colPrice = new BigDecimal(MCTConfig.PRICE_PER_XZ_BLOCK.getString());
         //charge the player if they're not running this as an admin and buyable territories is enabled and the price is more than 0
-        if (!admin && MCTowns.getTerritoryPricePerColumn().compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal price = MCTowns.getTerritoryPricePerColumn().multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(region)));
+        if (!admin && colPrice.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal price = colPrice.multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(region)));
 
             if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
                 //If they can't afford it...
@@ -298,8 +305,9 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        //IF ALL THE THINGS ARE FINALLY DONE...
-        region.getOwners().addPlayer(t.getMayor());
+        region.getOwners().addPlayer(UUIDs.getNameForUUID(t.getMayor()));
+        for (String assistantName : t.getAssistantNames())
+            region.getOwners().addPlayer(assistantName);
 
         localSender.sendMessage(SUCC + "Territory added.");
 
@@ -326,6 +334,8 @@ public class TownHandler extends CommandHandler {
             localSender.notifyActiveTownNotSet();
             return;
         }
+
+        territName = MCTownsRegion.formatRegionName(to, TownLevel.TERRITORY, territName);
 
         if (!townManager.removeTerritory(territName))
             localSender.sendMessage(ERR + "Error: Territory \"" + territName + "\" does not exist and was not removed (because it doesn't exist!)");
@@ -361,28 +371,35 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.playersCanJoinMultipleTowns() && townManager.playerIsAlreadyInATown(invitee)) {
+        if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && townManager.playerIsAlreadyInATown(p)) {
             localSender.sendMessage(ERR + p.getName() + " is already in a town.");
             return;
         }
-        
-        if(t.playerIsResident(p)) {
+
+        if (t.playerIsResident(p)) {
             localSender.sendMessage(ERR + p.getName() + " is already a member of " + t.getTownName());
             return;
         }
-        
-        if(joinManager.getIssuedInvitesForTown(t).contains(p.getName())) {
+
+        if (joinManager.getIssuedInvitesForTown(t).contains(p.getName())) {
             localSender.sendMessage(ERR + p.getName() + " is already invited to join " + t.getTownName());
             return;
         }
 
-        if (joinManager.townHasRequestFromPlayer(t, invitee)) {
-            t.addPlayer(invitee);
+        for(Player pl : Bukkit.getOnlinePlayers()) {
+            if(pl.getName().equalsIgnoreCase(p.getName()) && !pl.getName().equals(p.getName())) {
+                localSender.sendMessage(INFO + "NOTE: You invited " + p.getName() + ", did you mean to invite " + pl.getName() + "? (Names are CaSe SeNsItIvE!)");
+            }
+        }
+
+        if (joinManager.requestExists(p.getName(), t)) {
+            t.addPlayer(p);
             if (p.isOnline())
                 p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
-            broadcastTownJoin(t, invitee);
+            broadcastTownJoin(t, p.getName());
+            joinManager.clearRequest(p.getName(), t);
         } else {
-            joinManager.invitePlayerToTown(invitee, t);
+            joinManager.invitePlayerToTown(p.getName(), t);
             localSender.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
             if (p.isOnline()) {
                 p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
@@ -492,7 +509,7 @@ public class TownHandler extends CommandHandler {
 
         Player p = server.getPlayerExact(playerName);
 
-        if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getName()))) {
+        if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getUniqueId()))) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -507,8 +524,8 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        localSender.getActiveTown().setMayor(p.getName());
-        t.broadcastMessageToTown(server, "The mayor of " + t.getTownName() + " is now " + p.getName() + "!");
+        localSender.getActiveTown().setMayor(p);
+        t.broadcastMessageToTown("The mayor of " + t.getTownName() + " is now " + p.getName() + "!");
     }
 
     public void cancelInvitation(String playerName) {
@@ -558,7 +575,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!joinManager.clearRequestForTownFromPlayer(t, (p == null ? playerName : p.getName())))
+        if (!joinManager.clearRequest((p == null ? playerName : p.getName()), t))
             localSender.sendMessage(ERR + "No matching request found.");
         else {
             localSender.sendMessage(ChatColor.GOLD + (p == null ? playerName : p.getName()) + "'s request has been rejected.");
@@ -637,7 +654,7 @@ public class TownHandler extends CommandHandler {
         OfflinePlayer removeMe = server.getOfflinePlayer(playerName);
         Town removeFrom = localSender.getActiveTown();
 
-        if (removeMe == null) {
+        if (!removeMe.hasPlayedBefore()) {
             localSender.sendMessage(ERR + "No player named '" + playerName + "' has ever played on this server.");
             return;
         }
@@ -647,17 +664,22 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (removeFrom.playerIsMayor(playerName)) {
+        if(!removeFrom.playerIsResident(removeMe)) {
+            localSender.sendMessage(ERR + removeMe.getName() + " is not a resident of " + removeFrom.getTownName() + ".");
+            return;
+        }
+
+        if (removeFrom.playerIsMayor(removeMe)) {
             localSender.sendMessage(ERR + "A mayor cannot be removed from his own town.");
             return;
         }
 
-        if (removeFrom.playerIsAssistant(playerName) && !removeFrom.playerIsMayor(localSender.getPlayer())) {
-            localSender.sendMessage(ERR + "Only the mayor can remove assistants from the town.");
+        if (removeFrom.playerIsAssistant(removeMe) && !localSender.hasExternalPermissions(Perms.ADMIN.toString()) && !removeFrom.playerIsMayor(localSender.getPlayer())) {
+            localSender.sendMessage(ERR + "Only the mayor or admins can remove assistants from the town.");
             return;
         }
 
-        localSender.getActiveTown().removePlayer(playerName);
+        localSender.getActiveTown().removePlayer(removeMe);
 
         Town.recursivelyRemovePlayerFromTown(removeMe, removeFrom);
 
@@ -794,7 +816,8 @@ public class TownHandler extends CommandHandler {
         }
         localSender.sendMessage(ChatColor.AQUA + "Players in " + t.getTownName() + "(page " + page + "):");
 
-        String[] players = t.getResidentNames();
+        Set<String> names = t.getResidentNames();
+        String[] players = names.toArray(new String[names.size()]);
 
         for (int i = page * RESULTS_PER_PAGE; i < players.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             localSender.sendMessage(ChatColor.YELLOW + players[i]);
@@ -828,7 +851,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        Location spawn = t.getTownSpawn(server);
+        Location spawn = t.getTownSpawn();
         if (spawn == null) {
             localSender.sendMessage(ERR + "Town spawn not set.");
             return;
@@ -856,7 +879,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        localSender.getPlayer().teleport(t.getTownSpawn(server));
+        localSender.getPlayer().teleport(t.getTownSpawn());
 
         localSender.sendMessage(INFO + "Teleported to " + t.getTownName() + "! Welcome!");
 
@@ -908,7 +931,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -941,7 +964,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
@@ -979,7 +1002,7 @@ public class TownHandler extends CommandHandler {
             return;
         }
 
-        if (!MCTowns.economyIsEnabled()) {
+        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }

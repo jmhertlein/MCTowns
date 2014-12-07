@@ -17,8 +17,6 @@
 package net.jmhertlein.mctowns.command.handlers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -27,6 +25,7 @@ import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -164,11 +163,12 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        if (territ.addPlayer(playerName))
+        if (territ.addPlayer(Bukkit.getOfflinePlayer(playerName))) {
             localSender.sendMessage("Player added to territory.");
-        else
+        } else {
             localSender.sendMessage(
                     ERR + "Unable to add player to territory. Either they are already in it, or the underlying World or WorldGuard Region has been deleted.");
+        }
     }
 
     public void removePlayerFromTerritory(String playerName) {
@@ -198,19 +198,21 @@ public class TerritoryHandler extends CommandHandler {
             return;
         }
 
-        if (!territ.removePlayer(playerName))
+        if (!territ.removePlayer(Bukkit.getOfflinePlayer(playerName))) {
             localSender.sendMessage(
                     ERR + "Unable to remove player from territory. Either they were not in it in the first place, or the underlying World or WorldGuard Region has been deleted.");
-        else
+        } else {
             localSender.sendMessage(SUCC + "Player removed from territory.");
+        }
 
         if (recursive) {
             localSender.sendMessage(
                     INFO + "Recursive mode was requested. Removing from child plots...");
             for (String plotName : territ.getPlotsCollection()) {
-                if (townManager.getPlot(plotName).removePlayer(player))
+                if (townManager.getPlot(plotName).removePlayer(player)) {
                     localSender.sendMessage(
                             INFO + "Player removed from " + plotName);
+                }
             }
         }
     }
@@ -230,10 +232,11 @@ public class TerritoryHandler extends CommandHandler {
 
         Territory nuActive = townManager.getTerritory(territName);
 
-        if (nuActive == null)
+        if (nuActive == null) {
             nuActive = townManager.getTerritory(
                     MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY,
                             territName));
+        }
 
         if (nuActive == null) {
             localSender.sendMessage(

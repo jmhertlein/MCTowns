@@ -112,12 +112,11 @@ public class Plot extends MCTownsRegion {
     public String getTerseName() {
         String absName = name;
 
-        while (absName.contains("_")) {
+        for (int i = 0; i < 2; i++) {
             absName = absName.substring(absName.indexOf('_') + 1);
         }
 
         return absName;
-
     }
 
     /**
@@ -163,7 +162,7 @@ public class Plot extends MCTownsRegion {
         Sign sign = (Sign) loc.getBlock().getState();
 
         org.bukkit.material.Sign signData = (org.bukkit.material.Sign) sign.getData();
-        signData.setFacingDirection(Location.getBlockFaceFromYaw(Location.getYawInOppositeDirection(loc.getYaw())));
+        signData.setFacingDirection(Location.getBlockFaceFromYaw(Location.getYawInOppositeDirection(referencePlayerLocation.getYaw())));
         sign.setData(signData);
 
         sign.setLine(0, "[mct]");

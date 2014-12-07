@@ -20,6 +20,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.Objects;
+import java.util.UUID;
 import net.jmhertlein.mctowns.MCTowns;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -72,11 +73,11 @@ public abstract class MCTownsRegion {
 
     /**
      *
-     * @param p
+     * @param playerID
      *
      * @return
      */
-    public boolean removePlayer(String p) {
+    public boolean removePlayer(UUID playerID) {
         DefaultDomain members, owners;
         boolean removed = false;
         WorldGuardPlugin wgp = MCTowns.getWorldGuardPlugin();
@@ -92,13 +93,13 @@ public abstract class MCTownsRegion {
         members = reg.getMembers();
         owners = reg.getOwners();
 
-        if (members.getPlayers().contains(p)) {
-            members.removePlayer(p);
+        if (members.contains(playerID)) {
+            members.removePlayer(playerID);
             removed = true;
         }
 
-        if (owners.getPlayers().contains(p)) {
-            owners.removePlayer(p);
+        if (owners.contains(playerID)) {
+            owners.removePlayer(playerID);
             removed = true;
         }
 
@@ -106,7 +107,7 @@ public abstract class MCTownsRegion {
     }
 
     public boolean removePlayer(OfflinePlayer p) {
-        return this.removePlayer(p.getName());
+        return this.removePlayer(p.getUniqueId());
     }
 
     /**
@@ -116,10 +117,10 @@ public abstract class MCTownsRegion {
      * @return
      */
     public boolean addPlayer(OfflinePlayer p) {
-        return addPlayer(p.getName());
+        return addPlayer(p.getUniqueId());
     }
 
-    public boolean addPlayer(String playerName) {
+    public boolean addPlayer(UUID playerID) {
         World w = MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName);
         if (w == null)
             return false;
@@ -129,15 +130,15 @@ public abstract class MCTownsRegion {
             return false;
 
         DefaultDomain dd = reg.getOwners();
-
-        if (!dd.getPlayers().contains(playerName)) {
-            dd.addPlayer(playerName);
+        
+        if (!dd.contains(playerID)) {
+            dd.addPlayer(playerID);
             return true;
         }
         return false;
     }
 
-    public boolean addGuest(String playerName) {
+    public boolean addGuest(UUID playerID) {
         World w = MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName);
         if (w == null)
             return false;
@@ -148,8 +149,8 @@ public abstract class MCTownsRegion {
 
         DefaultDomain members = reg.getMembers();
 
-        if (!members.getPlayers().contains(playerName)) {
-            members.addPlayer(playerName);
+        if (!members.contains(playerID)) {
+            members.addPlayer(playerID);
             return true;
         }
 
@@ -157,11 +158,11 @@ public abstract class MCTownsRegion {
     }
 
     public boolean addGuest(OfflinePlayer p) {
-        return addGuest(p.getName());
+        return addGuest(p.getUniqueId());
     }
 
     public ProtectedRegion getWGRegion() {
-        return MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegionExact(name);
+        return MCTowns.getWorldGuardPlugin().getRegionManager(Bukkit.getServer().getWorld(worldName)).getRegion(name);
     }
 
     @Override

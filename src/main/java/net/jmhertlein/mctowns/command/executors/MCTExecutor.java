@@ -21,6 +21,7 @@ import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.handlers.MCTHandler;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -56,7 +57,7 @@ public class MCTExecutor extends BaseExecutor {
 
             switch (command.get(1)) {
                 case "break":
-                    if (MCTowns.getDebugModeEnabled()) {
+                    if (MCTConfig.DEBUG_MODE_ENABLED.getBoolean()) {
                         MCTowns.logWarning(cs.getName() + " intentionally broke the server.");
                         throw new RuntimeException("Intentionally broke.");
                     }

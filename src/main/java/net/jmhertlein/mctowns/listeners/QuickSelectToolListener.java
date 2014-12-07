@@ -27,6 +27,7 @@ import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.util.MCTConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,7 +43,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class QuickSelectToolListener implements Listener {
 
-    public static Material SELECT_TOOL;
+    private static Material SELECT_TOOL;
     private final WorldGuardPlugin wgp;
     private final MCTownsPlugin mctp;
     private final TownManager townMan;
@@ -51,6 +52,8 @@ public class QuickSelectToolListener implements Listener {
         this.wgp = wgp;
         this.mctp = mctp;
         this.townMan = MCTowns.getTownManager();
+        
+        SELECT_TOOL = Material.getMaterial(MCTConfig.QUICKSELECT_TOOL.getString());
     }
 
     @EventHandler

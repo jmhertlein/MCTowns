@@ -16,8 +16,8 @@
  */
 package net.jmhertlein.mctowns.database;
 
-import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import java.io.File;
@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.core.location.Location;
@@ -38,6 +39,7 @@ import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Territory;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
+import net.jmhertlein.mctowns.util.UUIDs;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -60,17 +62,6 @@ public class TownManager {
     public TownManager() {
         towns = new HashMap<>();
         regions = new HashMap<>();
-    }
-
-    /**
-     * Checks to see if a live player is in a town
-     *
-     * @param p the live player to be checked
-     *
-     * @return true if the player is already in any town, false otherwise
-     */
-    public boolean playerIsAlreadyInATown(Player p) {
-        return playerIsAlreadyInATown(p.getName());
     }
 
     /**
@@ -111,7 +102,7 @@ public class TownManager {
 
     }
 
-    public Town addTown(String townName, String mayorName, Location spawn) {
+    public Town addTown(String townName, Player mayorName, Location spawn) {
         Town t = new Town(townName, mayorName, spawn);
 
         if (towns.containsKey(t.getTownName()))
@@ -145,7 +136,7 @@ public class TownManager {
                 worldTerritoryIsIn);
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
@@ -186,7 +177,7 @@ public class TownManager {
 
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
@@ -200,7 +191,7 @@ public class TownManager {
         if (!ProtectedRegion.isValidId(mctReg.getName()))
             throw new InvalidWorldGuardRegionNameException(mctReg.getName());
 
-        //checking regMan should always return the same value as checking regions, 
+        //checking regMan should always return the same value as checking regions,
         //since the regions in regions are a subset of those in regMan... so no need to check regions
         if (regMan.hasRegion(mctReg.getName()))
             throw new RegionAlreadyExistsException(mctReg.getName());
@@ -304,7 +295,7 @@ public class TownManager {
 
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
@@ -341,7 +332,7 @@ public class TownManager {
 
         try {
             regMan.save();
-        } catch (ProtectionDatabaseException ex) {
+        } catch (StorageException ex) {
             MCTowns.logSevere("Error saving regions:" + ex.getLocalizedMessage());
             ex.printStackTrace();
         }
@@ -358,21 +349,21 @@ public class TownManager {
      *         no towns
      */
     public List<Town> matchPlayerToTowns(OfflinePlayer p) {
-        return matchPlayerToTowns(p.getName());
+        return matchPlayerToTowns(UUIDs.getUUIDForOfflinePlayer(p));
 
     }
 
     /**
      * Matches a possibly non-live player to a town
      *
-     * @param playerName the name of the player to match for
+     * @param id the name of the player to match for
      *
      * @return a list of all towns the player is in
      */
-    public List<Town> matchPlayerToTowns(String playerName) {
+    public List<Town> matchPlayerToTowns(UUID id) {
         ArrayList<Town> ret = new ArrayList<>();
         for (Town town : towns.values()) {
-            if (town.playerIsResident(playerName))
+            if (town.playerIsResident(id))
                 ret.add(town);
         }
         return ret;
@@ -413,7 +404,7 @@ public class TownManager {
      *
      * @return true if the player is already in a town, else false
      */
-    public boolean playerIsAlreadyInATown(String invitee) {
+    public boolean playerIsAlreadyInATown(OfflinePlayer invitee) {
         return !matchPlayerToTowns(invitee).isEmpty();
     }
 
@@ -469,7 +460,7 @@ public class TownManager {
 
     /**
      *
-     * @param rootDirPath
+     * @param rootDir
      *
      * @return
      * @throws FileNotFoundException
