@@ -58,6 +58,11 @@ public class QuickSelectToolListener implements Listener {
 
     @EventHandler
     public void onToolUse(PlayerInteractEvent e) {
+        if(SELECT_TOOL == null) {
+            MCTowns.logWarning("Error: quickselect tool config value is invalid.");
+            return;
+        }
+        
         if ((e.getPlayer().getItemInHand().getType().compareTo(SELECT_TOOL)) != 0)
             return;
 
