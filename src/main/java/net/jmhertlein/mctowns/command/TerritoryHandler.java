@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.jmhertlein.mctowns.command.handlers;
+package net.jmhertlein.mctowns.command;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.command.ECommand;
+import net.jmhertlein.core.ebcf.CommandDefinition;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
@@ -33,7 +34,7 @@ import org.bukkit.World;
 /**
  * @author Everdras
  */
-public class TerritoryHandler extends CommandHandler {
+public class TerritoryHandler extends CommandHandler implements CommandDefinition {
 
     public TerritoryHandler(MCTownsPlugin parent) {
         super(parent);

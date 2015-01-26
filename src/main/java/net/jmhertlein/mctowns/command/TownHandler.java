@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.jmhertlein.mctowns.command.handlers;
+package net.jmhertlein.mctowns.command;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.jmhertlein.core.command.ECommand;
@@ -38,17 +38,20 @@ import java.util.List;
 import java.util.Set;
 
 import static net.jmhertlein.core.chat.ChatUtil.*;
+import net.jmhertlein.core.ebcf.CommandDefinition;
+import net.jmhertlein.core.ebcf.annotation.CommandMethod;
 import net.jmhertlein.mctowns.util.MCTConfig;
 
 /**
  * @author Everdras
  */
-public class TownHandler extends CommandHandler {
+public class TownHandler extends CommandHandler implements CommandDefinition {
 
     public TownHandler(MCTownsPlugin parent) {
         super(parent);
     }
 
+    @CommandMethod(path = "town active")
     public void setActiveTown(String townName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -71,6 +74,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "town active reset")
     public void resetActiveTown() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -88,6 +92,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active town reset to " + t.get(0).getTownName() + ".");
     }
 
+    @CommandMethod(path = "town spawn set")
     public void setTownSpawn() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -115,6 +120,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage("Town spawn location updated.");
     }
 
+    @CommandMethod(path = "")
     public void setTownJoinMethod(String s_method) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -151,6 +157,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "")
     public void setTownPlotBuyability(String s_buyability) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -191,6 +198,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "")
     public void setDefaultPlotPrice(String plotPrice) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -223,6 +231,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "town add territory", requiredArgs = 1)
     public void addTerritorytoTown(String territName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -317,6 +326,7 @@ public class TownHandler extends CommandHandler {
         }
     }
 
+    @CommandMethod(path = "town remove territory", requiredArgs = 1)
     public void removeTerritoryFromTown(String territName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -343,6 +353,7 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(SUCC + "Territory removed.");
     }
 
+    @CommandMethod(path = "town add player", requiredArgs = 1)
     public void invitePlayerToTown(String invitee) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -408,6 +419,7 @@ public class TownHandler extends CommandHandler {
         }
     }
 
+    @CommandMethod(path = "town add assistant", requiredArgs = 1)
     public void promoteToAssistant(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -454,6 +466,7 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ERR + playerName + " is already an assistant in this town.");
     }
 
+    @CommandMethod(path = "town remove assistant", requiredArgs = 1)
     public void demoteFromAssistant(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -495,6 +508,7 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ERR + p.getName() + " is not an assistant in this town.");
     }
 
+    @CommandMethod(path = "town mayor set")
     public void setMayor(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -528,6 +542,7 @@ public class TownHandler extends CommandHandler {
         t.broadcastMessageToTown("The mayor of " + t.getTownName() + " is now " + p.getName() + "!");
     }
 
+    @CommandMethod(path = "town remove invite", requiredArgs = 1)
     public void cancelInvitation(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -552,6 +567,7 @@ public class TownHandler extends CommandHandler {
             localSender.sendMessage(ERR + playerName + " does not have any pending invitations from " + t.getTownName() + ".");
     }
 
+    @CommandMethod(path = "town remove request", requiredArgs = 1)
     public void rejectRequest(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -566,10 +582,6 @@ public class TownHandler extends CommandHandler {
         Player p = server.getPlayer(playerName);
         Town t = localSender.getActiveTown();
 
-//        if (p == null) {
-//            senderWrapper.sendMessage(ERR + "Player does not exist or is not online.");
-//            return;
-//        }
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
@@ -586,6 +598,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "town list requests")
     public void listRequestsForTown() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -613,6 +626,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "town list invites")
     public void listInvitesForTown() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -640,6 +654,7 @@ public class TownHandler extends CommandHandler {
         }
     }
 
+    @CommandMethod(path = "town remove player", requiredArgs = 1)
     public void removePlayerFromTown(String playerName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -689,6 +704,8 @@ public class TownHandler extends CommandHandler {
             onlinePlayer.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + localSender.getPlayer().getName());
     }
 
+    //TODO: should this be merged into /town remove <player>
+    @CommandMethod(path = "town remove self")
     public void removeSelfFromTown() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -712,6 +729,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage(ChatColor.DARK_RED + "You have left " + localSender.getActiveTown().getTownName() + ".");
     }
 
+    @CommandMethod(path = "town pvp friendlyfire", requiredArgs = 1)
     public void setTownFriendlyFire(String sFriendlyFire) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -740,6 +758,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "town motd set")
     public void setMOTD(String motd) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -762,6 +781,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage("Town MOTD has been set.");
     }
 
+    @CommandMethod(path = "town motd")
     public void printMOTD() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -778,6 +798,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage(t.getTownMOTD());
     }
 
+    @CommandMethod(path = "town list players")
     public void listResidents(String s_page) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -795,7 +816,7 @@ public class TownHandler extends CommandHandler {
         listResidents(i);
     }
 
-    public void listResidents(int page) {
+    private void listResidents(int page) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
@@ -824,6 +845,7 @@ public class TownHandler extends CommandHandler {
         }
     }
 
+    //TODO: this should be rolled into /town list players <page>
     public void listResidents() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -833,6 +855,7 @@ public class TownHandler extends CommandHandler {
         listResidents(1);
     }
 
+    //merge this into /town spawn below
     public void warpToSpawn() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -861,6 +884,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage(ChatColor.DARK_GRAY + "Teleported to " + t.getTownName() + "! Welcome!");
     }
 
+    @CommandMethod(path = "town spawn")
     public void warpToOtherSpawn(String townName) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -885,6 +909,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "")
     public void openBlockBank() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -905,6 +930,7 @@ public class TownHandler extends CommandHandler {
         localSender.getPlayer().openInventory(t.getBank().getBankInventory());
     }
 
+    @CommandMethod(path = "")
     public void openBankDepositBox() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -920,6 +946,7 @@ public class TownHandler extends CommandHandler {
         localSender.getPlayer().openInventory(t.getBank().getNewDepositBox(localSender.getPlayer()));
     }
 
+    @CommandMethod(path = "")
     public void withdrawCurrencyBank(String quantity) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -958,6 +985,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage(amt + " was withdrawn from " + t.getTownName() + "'s town bank and deposited into your account.");
     }
 
+    @CommandMethod(path = "")
     public void depositCurrencyBank(String quantity) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -996,6 +1024,7 @@ public class TownHandler extends CommandHandler {
 
     }
 
+    @CommandMethod(path = "")
     public void checkCurrencyBank() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -1017,6 +1046,7 @@ public class TownHandler extends CommandHandler {
         localSender.sendMessage(ChatColor.BLUE + "Amount of currency in bank: " + t.getBank().getCurrencyBalance());
     }
 
+    @CommandMethod(path = "")
     public void listTerritories(String s_page) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -1062,6 +1092,7 @@ public class TownHandler extends CommandHandler {
         }
     }
 
+    @CommandMethod(path = "")
     public void listTerritories() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();

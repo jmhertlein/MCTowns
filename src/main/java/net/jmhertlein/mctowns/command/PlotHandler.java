@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.jmhertlein.mctowns.command.handlers;
+package net.jmhertlein.mctowns.command;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
+import net.jmhertlein.core.ebcf.CommandDefinition;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
@@ -39,7 +40,7 @@ import org.bukkit.entity.Player;
 /**
  * @author Everdras
  */
-public class PlotHandler extends CommandHandler {
+public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     public PlotHandler(MCTownsPlugin parent) {
         super(parent);

@@ -24,7 +24,7 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.command.handlers.CommandHandler;
+import net.jmhertlein.mctowns.command.CommandHandler;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
 import net.jmhertlein.mctowns.structure.Town;
