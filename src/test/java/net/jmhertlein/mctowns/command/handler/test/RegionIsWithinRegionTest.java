@@ -24,7 +24,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.util.LinkedList;
 import java.util.List;
-import net.jmhertlein.mctowns.command.handlers.CommandHandler;
+import net.jmhertlein.mctowns.command.CommandHandler;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

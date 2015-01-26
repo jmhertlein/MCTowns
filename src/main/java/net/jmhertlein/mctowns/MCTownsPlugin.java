@@ -24,10 +24,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.command.executors.MCTExecutor;
-import net.jmhertlein.mctowns.command.executors.PlotExecutor;
-import net.jmhertlein.mctowns.command.executors.TerritoryExecutor;
-import net.jmhertlein.mctowns.command.executors.TownExecutor;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.listeners.DepositBoxCloseListener;
 import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
@@ -37,7 +33,6 @@ import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.upgrade.ResourceUpgradePaths;
 import net.jmhertlein.mctowns.util.MCTConfig;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -227,10 +222,10 @@ public class MCTownsPlugin extends JavaPlugin {
     }
 
     private void setCommandExecutors() {
-        getCommand("mct").setExecutor(new MCTExecutor(this));
-        getCommand("town").setExecutor(new TownExecutor(this));
-        getCommand("territory").setExecutor(new TerritoryExecutor(this));
-        getCommand("plot").setExecutor(new PlotExecutor(this));
+        //getCommand("mct").setExecutor(new MCTExecutor(this));
+        //getCommand("town").setExecutor(new TownExecutor(this));
+        //getCommand("territory").setExecutor(new TerritoryExecutor(this));
+        //getCommand("plot").setExecutor(new PlotExecutor(this));
     }
 
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
