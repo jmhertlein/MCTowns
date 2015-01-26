@@ -15,7 +15,7 @@
   </properties>
   
   <scm>
-      <connection>scm:git:git://github.com:jmhertlein/MCTowns.git</connection>
+    <connection>scm:git:git://github.com:jmhertlein/MCTowns.git</connection>
   </scm>
 
   <dependencies>

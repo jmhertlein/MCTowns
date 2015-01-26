@@ -115,7 +115,9 @@ public abstract class ResourceUpgradePaths {
 
     private static void upgradeFrom232To240(File rootDir, MCTownsPlugin p) {
         p.getLogger().info("Converting old tool ID into String...");
-        p.getConfig().set(MCTConfig.QUICKSELECT_TOOL.getKey(), Material.getMaterial(MCTConfig.QUICKSELECT_TOOL.getInt()).toString());
+        int oldId = p.getConfig().getInt(MCTConfig.QUICKSELECT_TOOL.getKey());
+        Material newValue = Material.getMaterial(oldId);
+        MCTConfig.QUICKSELECT_TOOL.set(newValue.toString());
         p.getLogger().info("Converted old tool ID into String");
     }
 }
