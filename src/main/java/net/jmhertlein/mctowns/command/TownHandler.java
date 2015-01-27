@@ -17,7 +17,6 @@
 package net.jmhertlein.mctowns.command;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.database.TownManager;
