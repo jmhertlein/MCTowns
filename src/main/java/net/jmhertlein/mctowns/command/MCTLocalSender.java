@@ -34,8 +34,6 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class MCTLocalSender extends LocalSender {
-
-    private final TownManager manager;
     private final ActiveSet activeSet;
 
     /**
@@ -48,7 +46,6 @@ public class MCTLocalSender extends LocalSender {
     public MCTLocalSender(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
         super(sender);
         this.sender = sender;
-        manager = tMan;
 
         console = !(sender instanceof Player);
 
