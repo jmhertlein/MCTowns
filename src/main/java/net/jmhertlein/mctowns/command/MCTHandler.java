@@ -19,7 +19,6 @@ package net.jmhertlein.mctowns.command;
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.ebcf.CommandDefinition;
@@ -52,16 +51,10 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         s.sendMessage("Log into your GitHub account and click \"new issue\".");
     }
 
-    public void checkIfRegionIsManagedByMCTowns() {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public void createTown(String townName, String mayorName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "mct addtown", requiredArgs = 2)
+    public void createTown(CommandSender s, String[] args) {
+        setNewCommand(s);
+        String townName = args[0], mayorName = args[1];
         if (!localSender.canCreateTown()) {
             localSender.notifyInsufPermissions();
             return;
@@ -92,19 +85,21 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             localSender.sendMessage(ERR + "That town already exists!");
     }
 
-    public void removeTown(String townName) {
+    @CommandMethod(path = "mct removetown", requiredArgs = 1)
+    public void removeTown(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.canDeleteTown()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        Town t = townManager.getTown(townName);
+        Town t = townManager.getTown(args[0]);
         if (t == null) {
-            localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
+            localSender.sendMessage(ERR + "The town \"" + args[0] + "\" does not exist.");
             return;
         }
 
-        townManager.removeTown(townName);
+        townManager.removeTown(args[0]);
 
         try {
             for (World w : Bukkit.getWorlds()) {
@@ -125,15 +120,17 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         plugin.getActiveSets().clear();
 
         localSender.sendMessage("Town removed.");
-        server.broadcastMessage(ChatColor.DARK_RED + townName + " has been disbanded.");
+        server.broadcastMessage(ChatColor.DARK_RED + args[0] + " has been disbanded.");
 
     }
 
-    public void queryTownInfo(String townName) {
-        Town t = townManager.getTown(townName);
+    @CommandMethod(path = "mct info town", requiredArgs = 1)
+    public void queryTownInfo(CommandSender s, String[] args) {
+        setNewCommand(s);
+        Town t = townManager.getTown(args[0]);
 
         if (t == null) {
-            localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
+            localSender.sendMessage(ERR + "The town \"" + args[0] + "\" does not exist.");
             return;
         }
 
@@ -146,11 +143,13 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(c + "Join method: " + (t.usesEconomyJoins() ? "Plot purchase" : "invitations"));
     }
 
-    public void queryPlayerInfo(String playerName) {
-        OfflinePlayer p = server.getOfflinePlayer(playerName);
+    @CommandMethod(path = "mct info player", requiredArgs = 1)
+    public void queryPlayerInfo(CommandSender s, String[] args) {
+        setNewCommand(s);
+        OfflinePlayer p = server.getOfflinePlayer(args[0]);
 
         if (!p.hasPlayedBefore()) {
-            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
+            localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
 
@@ -167,14 +166,15 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             }
     }
 
-    public void listTowns() {
-        listTowns(1);
-    }
-
-    public void listTowns(String page) {
+    @CommandMethod(path = "mct list towns")
+    public void listTowns(CommandSender s, String[] args) {
+        setNewCommand(s);
         int intPage;
         try {
-            intPage = Integer.parseInt(page);
+            if(args.length > 0)
+                intPage = Integer.parseInt(args[0]);
+            else
+                intPage = 1;
         } catch (Exception e) {
             localSender.sendMessage(ERR + "Parsing error: <page> is not a valid integer.");
             return;
@@ -200,22 +200,19 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    public void requestAdditionToTown(String townName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "mct join", requiredArgs = 1)
+    public void requestAdditionToTown(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
         }
 
-        Town addTo = townManager.getTown(townName);
+        Town addTo = townManager.getTown(args[0]);
         String pName = localSender.getPlayer().getName();
 
         if (addTo == null) {
-            localSender.sendMessage(ERR + "\"" + townName + "\" doesn't exist.");
+            localSender.sendMessage(ERR + "\"" + args[0] + "\" doesn't exist.");
             return;
         }
 
@@ -242,20 +239,17 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             joinManager.clearInvitationForPlayerFromTown(pName, addTo);
         } else {
             joinManager.addJoinRequest(pName, addTo);
-            localSender.sendMessage("You have submitted a request to join " + townName + ".");
+            localSender.sendMessage("You have submitted a request to join " + args[0] + ".");
             addTo.broadcastMessageToTown(localSender.getPlayer().getName() + " has submitted a request to join the town.");
         }
     }
 
-    public void rejectInvitationFromTown(String townName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "mct refuse", requiredArgs = 1)
+    public void rejectInvitationFromTown(CommandSender s, String[] args) {
+        setNewCommand(s);
         String pName = localSender.getPlayer().getName();
 
-        Town t = townManager.getTown(townName);
+        Town t = townManager.getTown(args[0]);
 
         if (t == null)
             localSender.sendMessage(ERR + "You're not invited to any towns right now.");
@@ -267,18 +261,15 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    public void cancelRequest(String townName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "mct cancel", requiredArgs = 1)
+    public void cancelRequest(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        Town t = townManager.getTown(townName);
+        Town t = townManager.getTown(args[0]);
 
         if (t == null) {
             localSender.sendMessage(ERR + "That town doesn't exist.");
@@ -292,12 +283,9 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    public void checkPendingInvite() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "mct list invites")
+    public void checkPendingInvite(CommandSender s) {
+        setNewCommand(s);
         List<Town> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
 
         localSender.sendMessage(INFO + "You are currently invited to the following towns:");
@@ -306,18 +294,15 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    public void confirmPlotPurchase(HashMap<Player, ActiveSet> buyers) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "mct confirm")
+    public void confirmPlotPurchase(CommandSender s) {
+        setNewCommand(s);
         if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
-        ActiveSet plotToBuy = buyers.get(localSender.getPlayer());
+        ActiveSet plotToBuy = plugin.getPotentialPlotBuyers().get(localSender.getPlayer());
 
         if (plotToBuy == null) {
             localSender.sendMessage(ERR + "You haven't selected a plot to buy yet.");
@@ -376,18 +361,5 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getTownName());
         }
 
-    }
-
-    public void toggleAbortSave() {
-        plugin.setAbortSave(!plugin.willAbortSave());
-        localSender.sendMessage(SUCC + "MCTowns will " + (plugin.willAbortSave() ? "NOT save any" : "now save") + " data for this session.");
-
-    }
-
-    public void printDonationPlug() {
-        localSender.sendMessage(ChatColor.LIGHT_PURPLE + "MCTowns is Free & Open Source Software.");
-        localSender.sendMessage(ChatColor.AQUA + "I develop MCTowns in my free time, as a hobby. If you enjoy MCTowns, you might consider making a small donation to fund its continued development.");
-        localSender.sendMessage(ChatColor.AQUA + "Donate however much you feel comfortable donating, no matter how small the amount.");
-        localSender.sendMessage(ChatColor.GREEN + "To donate, just go to MCTowns' BukkitDev homepage ( http://dev.bukkit.org/server-mods/mctowns/ ) and click \"Donate\" in the top right-hand corner.");
     }
 }
