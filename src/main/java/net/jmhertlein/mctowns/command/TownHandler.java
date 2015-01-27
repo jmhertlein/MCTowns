@@ -704,7 +704,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             onlinePlayer.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + localSender.getPlayer().getName());
     }
 
-    //TODO: should this be merged into /town remove <player>
     @CommandMethod(path = "town remove self")
     public void removeSelfFromTown() {
         if (localSender.isConsole()) {
@@ -799,27 +798,22 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town list players")
-    public void listResidents(String s_page) {
+    private void listResidents(String[] args) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-
-        int i;
-        try {
-            i = Integer.parseInt(s_page);
-        } catch (NumberFormatException ex) {
-            localSender.sendMessage(ERR + "Error parsing token \"" + s_page + "\":" + ex.getMessage());
-            return;
-        }
-
-        listResidents(i);
-    }
-
-    private void listResidents(int page) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
+        
+        int page;
+        if(args.length > 0) {
+            try {
+                page = Integer.parseInt(args[0]);
+            } catch(NumberFormatException nfe) {
+                localSender.sendMessage(String.format("Couldn't parse \"%s\" into an integer.", args[0]));
+                return;
+            }
+        } else {
+            page = 1;
         }
 
         page--; //shift to 0-indexing
@@ -845,71 +839,40 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    //TODO: this should be rolled into /town list players <page>
-    public void listResidents() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
-        listResidents(1);
-    }
-
-    //merge this into /town spawn below
-    public void warpToSpawn() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
-        if (!localSender.hasExternalPermissions(Perms.WARP.toString())) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
-
-        Town t = localSender.getActiveTown();
-
-        if (t == null) {
-            localSender.notifyActiveTownNotSet();
-            return;
-        }
-
-        Location spawn = t.getTownSpawn();
-        if (spawn == null) {
-            localSender.sendMessage(ERR + "Town spawn not set.");
-            return;
-        }
-
-        localSender.getPlayer().teleport(spawn);
-        localSender.sendMessage(ChatColor.DARK_GRAY + "Teleported to " + t.getTownName() + "! Welcome!");
-    }
-
     @CommandMethod(path = "town spawn")
-    public void warpToOtherSpawn(String townName) {
+    public void warpToOtherSpawn(String[] args) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-
-        if (!localSender.hasExternalPermissions(Perms.WARP_FOREIGN.toString())) {
-            localSender.notifyInsufPermissions();
+        
+        Town t;
+        if(args.length > 0) {
+            t = townManager.getTown(args[0]);
+        } else {
+            t = localSender.getActiveTown();
+        }
+        
+        if (t == null) {
+            if(args.length == 0)
+                localSender.sendMessage(ERR + "You don't have an active town.");
+            else
+                localSender.sendMessage(ERR + "That town doesn't exist.");
+            
             return;
         }
 
-        Town t = townManager.getTown(townName);
-
-        if (t == null) {
-            localSender.sendMessage(ERR + "That town doesn't exist.");
+        if (!t.playerIsResident(localSender.getPlayer()) && !localSender.hasExternalPermissions(Perms.WARP_FOREIGN.toString())) {
+            localSender.notifyInsufPermissions();
             return;
         }
 
         localSender.getPlayer().teleport(t.getTownSpawn());
-
         localSender.sendMessage(INFO + "Teleported to " + t.getTownName() + "! Welcome!");
 
     }
 
-    @CommandMethod(path = "")
+    @CommandMethod(path = "town bank withdraw blocks")
     public void openBlockBank() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -930,7 +893,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.getPlayer().openInventory(t.getBank().getBankInventory());
     }
 
-    @CommandMethod(path = "")
+    @CommandMethod(path = "town bank deposit blocks")
     public void openBankDepositBox() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -946,7 +909,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.getPlayer().openInventory(t.getBank().getNewDepositBox(localSender.getPlayer()));
     }
 
-    @CommandMethod(path = "")
+    @CommandMethod(path = "town bank withdraw currency")
     public void withdrawCurrencyBank(String quantity) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -985,7 +948,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(amt + " was withdrawn from " + t.getTownName() + "'s town bank and deposited into your account.");
     }
 
-    @CommandMethod(path = "")
+    @CommandMethod(path = "town bank deposit currency")
     public void depositCurrencyBank(String quantity) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -1024,7 +987,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "")
+    @CommandMethod(path = "town bank currency check")
     public void checkCurrencyBank() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -1046,21 +1009,24 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.BLUE + "Amount of currency in bank: " + t.getBank().getCurrencyBalance());
     }
 
-    @CommandMethod(path = "")
-    public void listTerritories(String s_page) {
+    @CommandMethod(path = "town list territories")
+    public void listTerritories(String[] args) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
-
+        
         int i;
-        try {
-            i = Integer.parseInt(s_page);
-        } catch (NumberFormatException ex) {
-            localSender.sendMessage(ERR + "Error parsing token \"" + s_page + "\":" + ex.getMessage());
-            return;
+        if(args.length > 0) {
+            try {
+                i = Integer.parseInt(args[0]);
+            } catch (NumberFormatException ex) {
+                localSender.sendMessage(ERR + "Error parsing token \"" + args[0] + "\":" + ex.getMessage());
+                return;
+            }
+        } else {
+            i = 1;
         }
-
         listTerritories(i);
     }
 
@@ -1090,15 +1056,5 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         for (int i = page * RESULTS_PER_PAGE; i < territs.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             localSender.sendMessage(ChatColor.YELLOW + territs[i]);
         }
-    }
-
-    @CommandMethod(path = "")
-    public void listTerritories() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
-        listTerritories(1);
     }
 }
