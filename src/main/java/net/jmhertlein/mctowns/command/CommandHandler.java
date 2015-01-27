@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import static net.jmhertlein.core.chat.ChatUtil.*;
-import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -69,7 +68,6 @@ public abstract class CommandHandler {
     protected TownJoinManager joinManager;
     protected Server server;
     protected MCTLocalSender localSender;
-    protected ECommand cmd;
 
     /**
      * Wraps the command sender.
@@ -83,8 +81,7 @@ public abstract class CommandHandler {
         server = parent.getServer();
     }
 
-    public void setNewCommand(CommandSender sender, ECommand c) {
-        cmd = c;
+    public void setNewCommand(CommandSender sender) {
         localSender = new MCTLocalSender(townManager, sender, plugin.getActiveSets());
     }
 
@@ -480,7 +477,7 @@ public abstract class CommandHandler {
         }
         
         //if they're not an admin, charge them for the territory
-        if(regType == TownLevel.TERRITORY && !(cmd.hasFlag(ECommand.ADMIN) && localSender.hasExternalPermissions(Perms.ADMIN.toString()))) {
+        if(regType == TownLevel.TERRITORY && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
             if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
                 localSender.sendMessage(ERR + "You're not an admin, and mayors can only redefine territories by buying more blocks, yet the economy is not enabled.");
                 return;

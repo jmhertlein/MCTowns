@@ -88,10 +88,11 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if (plot.removePlayer(Bukkit.getOfflinePlayer(playerName)))
+        if (plot.removePlayer(Bukkit.getOfflinePlayer(playerName))) {
             localSender.sendMessage("Player removed from plot.");
-        else
+        } else {
             localSender.sendMessage(ERR + "Unable to remove player from plot (either player is not in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
+        }
     }
 
     public void addPlayerToPlot(String playerName) {
@@ -128,10 +129,11 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if (plot.addPlayer(player))
+        if (plot.addPlayer(player)) {
             localSender.sendMessage("Player added to plot.");
-        else
+        } else {
             localSender.sendMessage(ERR + "Unable to add player to plot (either player is already in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
+        }
 
     }
 
@@ -163,10 +165,11 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if (plot.addGuest(player))
+        if (plot.addGuest(player)) {
             localSender.sendMessage(ChatColor.GREEN + "Successfully added " + player.getName() + " to the plot as a guest.");
-        else
+        } else {
             localSender.sendMessage(ERR + "Unable to add player to plot as guest (either player is already guest in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
+        }
     }
 
     public void setPlotBuyability(String s_forSale) {
@@ -266,10 +269,11 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if (p.buildSign(localSender.getPlayer().getLocation()))
+        if (p.buildSign(localSender.getPlayer().getLocation())) {
             localSender.sendMessage(SUCC + "Sign built!");
-        else
+        } else {
             localSender.sendMessage(ERR + "The sign wasn't built because its target location wasn't an air block. Please clear the spot and try again.");
+        }
     }
 
     public void demolishSign() {
@@ -330,13 +334,11 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         //use the block ABOVE the one the player is staring at.
         mctLoc.setY(mctLoc.getY() + 1);
-        if (!cmd.hasFlag("--no-rebuild"))
-            p.demolishSign();
+        p.demolishSign();
 
         p.setSignLoc(mctLoc);
 
-        if (!cmd.hasFlag("--no-rebuild"))
-            p.buildSign(localSender.getPlayer().getLocation());
+        p.buildSign(localSender.getPlayer().getLocation());
 
         localSender.sendMessage(ChatColor.GREEN + "Successfully set the location for the sign.");
 
@@ -380,8 +382,6 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         Town t = localSender.getActiveTown();
 
-        boolean quickSelect = cmd.hasFlag("-q");
-
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
@@ -390,30 +390,17 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         Plot nuActive = null;
         Territory nuActiveTerrit = null;
 
-        if (!quickSelect) {
-            Territory te = localSender.getActiveTerritory();
+        Territory te = localSender.getActiveTerritory();
 
-            if (te == null) {
-                localSender.notifyActiveTerritoryNotSet();
-                return;
-            }
+        if (te == null) {
+            localSender.notifyActiveTerritoryNotSet();
+            return;
+        }
 
-            nuActive = townManager.getPlot(plotName);
+        nuActive = townManager.getPlot(plotName);
 
-            if (nuActive == null)
-                nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
-        } else {
-            plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
-
-            for (MCTownsRegion reg : townManager.getRegionsCollection()) {
-                if (reg instanceof Territory) {
-                    nuActiveTerrit = (Territory) reg;
-                    if (nuActiveTerrit.getPlotsCollection().contains(plotName)) {
-                        nuActive = townManager.getPlot(plotName);
-                        break;
-                    }
-                }
-            }
+        if (nuActive == null) {
+            nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
         }
 
         if (nuActive == null) {
@@ -427,8 +414,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
 
         localSender.setActivePlot(nuActive);
-        if (nuActiveTerrit != null)
+        if (nuActiveTerrit != null) {
             localSender.setActiveTerritory(nuActiveTerrit);
+        }
         localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
 }

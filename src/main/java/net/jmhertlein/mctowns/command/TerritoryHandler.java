@@ -18,8 +18,8 @@ package net.jmhertlein.mctowns.command;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static net.jmhertlein.core.chat.ChatUtil.*;
-import net.jmhertlein.core.command.ECommand;
 import net.jmhertlein.core.ebcf.CommandDefinition;
+import net.jmhertlein.core.ebcf.annotation.CommandMethod;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
@@ -30,6 +30,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 
 /**
  * @author Everdras
@@ -40,12 +41,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         super(parent);
     }
 
-    public void addPlotToTerritory(String plotName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "territory add plot", requiredArgs = 1)
+    public void addPlotToTerritory(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -63,7 +61,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName);
+        String plotName = MCTownsRegion.formatRegionName(t, TownLevel.PLOT, args[0]);
 
         World w = localSender.getPlayer().getWorld();
 
@@ -94,19 +92,15 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         }
 
         localSender.sendMessage(SUCC + "Plot added.");
-        boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
-        if (autoActive) {
-            localSender.setActivePlot(townManager.getPlot(plotName));
-            localSender.sendMessage(INFO + "Active plot set to newly created plot.");
-        }
+
+        localSender.setActivePlot(townManager.getPlot(plotName));
+        localSender.sendMessage(INFO + "Active plot set to newly created plot.");
+
     }
 
-    public void removePlotFromTerritory(String plotName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "territory remove plot", requiredArgs = 1)
+    public void removePlotFromTerritory(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -119,7 +113,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        if (!townManager.removePlot(plotName)) {
+        if (!townManager.removePlot(args[0])) {
             localSender.sendMessage(
                     ERR + "That plot doesn't exist. Make sure you're using the full name of the plot (townname_plot_plotshortname).");
             return;
@@ -128,12 +122,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         localSender.sendMessage(SUCC + "Plot removed.");
     }
 
-    public void addPlayerToTerritory(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "territory add player", requiredArgs = 1)
+    public void addPlayerToTerritory(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -151,10 +142,10 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        OfflinePlayer player = server.getOfflinePlayer(playerName);
+        OfflinePlayer player = server.getOfflinePlayer(args[0]);
         if (!player.hasPlayedBefore()) {
             localSender.sendMessage(
-                    ERR + playerName + " has never played on this server before.");
+                    ERR + args[0] + " has never played on this server before.");
             return;
         }
 
@@ -164,7 +155,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        if (territ.addPlayer(Bukkit.getOfflinePlayer(playerName))) {
+        if (territ.addPlayer(Bukkit.getOfflinePlayer(args[0]))) {
             localSender.sendMessage("Player added to territory.");
         } else {
             localSender.sendMessage(
@@ -172,18 +163,15 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         }
     }
 
-    public void removePlayerFromTerritory(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "territory remove player", requiredArgs = 1)
+    public void removePlayerFromTerritory(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        boolean recursive = cmd.hasFlag(ECommand.RECURSIVE);
+        boolean recursive = true; // TODO: come up with a way to allow recursive flag again
 
         Territory territ = localSender.getActiveTerritory();
 
@@ -192,14 +180,14 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        OfflinePlayer player = server.getOfflinePlayer(playerName);
+        OfflinePlayer player = server.getOfflinePlayer(args[0]);
         if (!player.hasPlayedBefore()) {
             localSender.sendMessage(
-                    ERR + playerName + " has never played on this server before.");
+                    ERR + args[0] + " has never played on this server before.");
             return;
         }
 
-        if (!territ.removePlayer(Bukkit.getOfflinePlayer(playerName))) {
+        if (!territ.removePlayer(Bukkit.getOfflinePlayer(args[0]))) {
             localSender.sendMessage(
                     ERR + "Unable to remove player from territory. Either they were not in it in the first place, or the underlying World or WorldGuard Region has been deleted.");
         } else {
@@ -218,12 +206,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         }
     }
 
-    public void setActiveTerritory(String territName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "territory active", requiredArgs = 1)
+    public void setActiveTerritory(CommandSender s, String[] args) {
+        setNewCommand(s);
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -231,23 +216,21 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        Territory nuActive = townManager.getTerritory(territName);
+        Territory nuActive = townManager.getTerritory(args[0]);
 
         if (nuActive == null) {
-            nuActive = townManager.getTerritory(
-                    MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY,
-                            territName));
+            nuActive = townManager.getTerritory(MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, args[0]));
         }
 
         if (nuActive == null) {
             localSender.sendMessage(
-                    ERR + "The territory \"" + territName + "\" does not exist.");
+                    ERR + "The territory \"" + args[0] + "\" does not exist.");
             return;
         }
 
         if (!nuActive.getParentTown().equals(t.getTownName())) {
             localSender.sendMessage(
-                    ERR + "The territory \"" + territName + "\" does not exist in your town.");
+                    ERR + "The territory \"" + args[0] + "\" does not exist in your town.");
             return;
         }
 
@@ -256,11 +239,6 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     }
 
     private void listPlots(int page) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         page--; //shift to 0-indexing
 
         if (page < 0) {
@@ -285,30 +263,21 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         }
     }
 
-    public void listPlots(String s_page) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "territory list plots")
+    public void listPlots(CommandSender s, String[] args) {
+        setNewCommand(s);
         int page;
         try {
-            page = Integer.parseInt(s_page);
+            if(args.length > 0)
+                page = Integer.parseInt(args[0]);
+            else
+                page = 1;
         } catch (NumberFormatException nfex) {
             localSender.sendMessage(
-                    ERR + "Error parsing integer argument. Found \"" + s_page + "\", expected integer.");
+                    ERR + "Error parsing integer argument. Found \"" + args[0] + "\", expected integer.");
             return;
         }
 
         listPlots(page);
-    }
-
-    public void listPlots() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
-        listPlots(1);
     }
 }

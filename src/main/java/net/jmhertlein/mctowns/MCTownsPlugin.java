@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.jmhertlein.core.ebcf.TreeCommandExecutor;
 import net.jmhertlein.mctowns.command.ActiveSet;
+import net.jmhertlein.mctowns.command.TerritoryHandler;
+import net.jmhertlein.mctowns.command.TownHandler;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.listeners.DepositBoxCloseListener;
 import net.jmhertlein.mctowns.listeners.MCTPlayerListener;
@@ -222,10 +225,14 @@ public class MCTownsPlugin extends JavaPlugin {
     }
 
     private void setCommandExecutors() {
-        //getCommand("mct").setExecutor(new MCTExecutor(this));
-        //getCommand("town").setExecutor(new TownExecutor(this));
-        //getCommand("territory").setExecutor(new TerritoryExecutor(this));
-        //getCommand("plot").setExecutor(new PlotExecutor(this));
+        TreeCommandExecutor tree = new TreeCommandExecutor();
+        tree.add(new TownHandler(this));
+        tree.add(new TerritoryHandler(this));
+        
+        getCommand("mct").setExecutor(tree);
+        getCommand("town").setExecutor(tree);
+        getCommand("territory").setExecutor(tree);
+        getCommand("plot").setExecutor(tree);
     }
 
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {

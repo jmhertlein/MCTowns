@@ -25,7 +25,6 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.ebcf.CommandDefinition;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
-import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.structure.Plot;
 import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.util.MCTConfig;
@@ -45,6 +44,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     }
 
     public void checkIfRegionIsManagedByMCTowns() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     public void createTown(String townName, String mayorName) {
