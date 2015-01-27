@@ -51,13 +51,8 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         super(parent);
     }
 
-    @CommandMethod(path = "town active")
+    @CommandMethod(path = "town active", requiredArgs = 1)
     public void setActiveTown(String townName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         Town t = townManager.getTown(townName);
         if (t == null) {
             localSender.sendMessage(ERR + "The town \"" + townName + "\" does not exist.");
@@ -76,11 +71,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town active reset")
     public void resetActiveTown() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         List<Town> t = townManager.matchPlayerToTowns((Player) localSender.getSender());
 
         if (t.isEmpty()) {
@@ -94,11 +84,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town spawn set")
     public void setTownSpawn() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -120,13 +105,8 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage("Town spawn location updated.");
     }
 
-    @CommandMethod(path = "")
-    public void setTownJoinMethod(String s_method) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "town joinmethod", requiredArgs = 1)
+    public void setTownJoinMethod(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -141,13 +121,12 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         TownJoinMethod method;
         try {
-            method = TownJoinMethod.parseMethod(s_method);
+            method = TownJoinMethod.parseMethod(args[0]);
         } catch (TownJoinMethodFormatException ex) {
             localSender.sendMessage(ERR + ex.getMessage());
             return;
         }
 
-        //TODO: Refactor Town so that it holds a TownJoinMethod instead of a boolean that determines economy joins or invites.
         if (method == TownJoinMethod.ECONOMY)
             t.setEconomyJoins(true);
         else if (method == TownJoinMethod.INVITATION)
@@ -157,13 +136,8 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "")
-    public void setTownPlotBuyability(String s_buyability) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "town economy buyableplots", requiredArgs = 1)
+    public void setTownPlotBuyability(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -184,9 +158,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         boolean buyability;
 
         try {
-            buyability = Boolean.parseBoolean(s_buyability);
+            buyability = Boolean.parseBoolean(args[0]);
         } catch (Exception e) {
-            localSender.sendMessage(ERR + "Error in parsing boolean: expected true/false, found " + s_buyability);
+            localSender.sendMessage(ERR + "Error in parsing boolean: expected true/false, found " + args[0]);
             return;
         }
 
@@ -198,13 +172,8 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "")
-    public void setDefaultPlotPrice(String plotPrice) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "town economy defaultplotprice", requiredArgs = 1)
+    public void setDefaultPlotPrice(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -220,7 +189,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         BigDecimal price;
 
         try {
-            price = new BigDecimal(plotPrice);
+            price = new BigDecimal(args[0]);
         } catch (NumberFormatException nfe) {
             localSender.sendMessage(ERR + "Error parsing plot price: " + nfe.getMessage());
             return;
@@ -232,12 +201,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town add territory", requiredArgs = 1)
-    public void addTerritorytoTown(String territName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void addTerritorytoTown(String[] args) {
         boolean autoActive = !cmd.hasFlag(ECommand.DISABLE_AUTOACTIVE);
         boolean admin = cmd.hasFlag(ECommand.ADMIN);
         boolean adminAllowed = localSender.hasExternalPermissions(Perms.ADMIN.toString());
@@ -265,7 +229,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        territName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, territName);
+        String territName = MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, args[0]);
 
         World w = localSender.getPlayer().getWorld();
 
@@ -327,12 +291,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town remove territory", requiredArgs = 1)
-    public void removeTerritoryFromTown(String territName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void removeTerritoryFromTown(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -345,7 +304,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        territName = MCTownsRegion.formatRegionName(to, TownLevel.TERRITORY, territName);
+        String territName = MCTownsRegion.formatRegionName(to, TownLevel.TERRITORY, args[0]);
 
         if (!townManager.removeTerritory(territName))
             localSender.sendMessage(ERR + "Error: Territory \"" + territName + "\" does not exist and was not removed (because it doesn't exist!)");
@@ -354,12 +313,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town add player", requiredArgs = 1)
-    public void invitePlayerToTown(String invitee) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void invitePlayerToTown(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -376,9 +330,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        OfflinePlayer p = server.getOfflinePlayer(invitee);
+        OfflinePlayer p = server.getOfflinePlayer(args[0]);
         if (!p.isOnline() && !p.hasPlayedBefore()) {
-            localSender.sendMessage(ERR + invitee + " has never played on this server before.");
+            localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
 
@@ -420,12 +374,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town add assistant", requiredArgs = 1)
-    public void promoteToAssistant(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void promoteToAssistant(String[] args) {
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -437,9 +386,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        OfflinePlayer p = server.getOfflinePlayer(playerName);
+        OfflinePlayer p = server.getOfflinePlayer(args[0]);
         if (!p.hasPlayedBefore()) {
-            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
+            localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
 
@@ -458,23 +407,18 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
                 townManager.getTerritory(territName).addPlayer(p);
             }
 
-            localSender.sendMessage(playerName + " has been promoted to an assistant of " + t.getTownName() + ".");
+            localSender.sendMessage(args[0] + " has been promoted to an assistant of " + t.getTownName() + ".");
 
             if (p.isOnline())
                 p.getPlayer().sendMessage("You are now an Assistant Mayor of " + t.getTownName());
         } else
-            localSender.sendMessage(ERR + playerName + " is already an assistant in this town.");
+            localSender.sendMessage(ERR + args[0] + " is already an assistant in this town.");
     }
 
     @CommandMethod(path = "town remove assistant", requiredArgs = 1)
-    public void demoteFromAssistant(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void demoteFromAssistant(String[] args) {
         Town t = localSender.getActiveTown();
-        OfflinePlayer p = server.getOfflinePlayer(playerName);
+        OfflinePlayer p = server.getOfflinePlayer(args[0]);
 
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -487,12 +431,12 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         if (!p.hasPlayedBefore()) {
-            localSender.sendMessage(ERR + playerName + " has never played on this server before.");
+            localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
 
         if (!t.playerIsResident(p)) {
-            localSender.sendMessage(ERR + playerName + " is not a resident of " + t.getTownName() + ".");
+            localSender.sendMessage(ERR + args[0] + " is not a resident of " + t.getTownName() + ".");
             return;
         }
 
@@ -509,19 +453,14 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town mayor set")
-    public void setMayor(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void setMayor(String[] args) {
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
-        Player p = server.getPlayerExact(playerName);
+        Player p = server.getPlayerExact(args[0]);
 
         if (!(localSender.hasExternalPermissions("ADMIN") || t.getMayor().equals(localSender.getPlayer().getUniqueId()))) {
             localSender.notifyInsufPermissions();
@@ -529,7 +468,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         if (p == null) {
-            localSender.sendMessage(ERR + playerName + " either does not exist or is not online.");
+            localSender.sendMessage(ERR + args[0] + " either does not exist or is not online.");
             return;
         }
 
@@ -543,12 +482,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town remove invite", requiredArgs = 1)
-    public void cancelInvitation(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void cancelInvitation(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -561,19 +495,14 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if (joinManager.clearInvitationForPlayerFromTown(playerName, t))
-            localSender.sendMessage(ChatColor.GOLD + "The invitation for " + playerName + " has been withdrawn.");
+        if (joinManager.clearInvitationForPlayerFromTown(args[0], t))
+            localSender.sendMessage(ChatColor.GOLD + "The invitation for " + args[0] + " has been withdrawn.");
         else
-            localSender.sendMessage(ERR + playerName + " does not have any pending invitations from " + t.getTownName() + ".");
+            localSender.sendMessage(ERR + args[0] + " does not have any pending invitations from " + t.getTownName() + ".");
     }
 
     @CommandMethod(path = "town remove request", requiredArgs = 1)
     public void rejectRequest(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -600,11 +529,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town list requests")
     public void listRequestsForTown() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -628,11 +552,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town list invites")
     public void listInvitesForTown() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -655,22 +574,17 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town remove player", requiredArgs = 1)
-    public void removePlayerFromTown(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void removePlayerFromTown(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        OfflinePlayer removeMe = server.getOfflinePlayer(playerName);
+        OfflinePlayer removeMe = server.getOfflinePlayer(args[0]);
         Town removeFrom = localSender.getActiveTown();
 
         if (!removeMe.hasPlayedBefore()) {
-            localSender.sendMessage(ERR + "No player named '" + playerName + "' has ever played on this server.");
+            localSender.sendMessage(ERR + "No player named '" + args[0] + "' has ever played on this server.");
             return;
         }
 
@@ -698,7 +612,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         Town.recursivelyRemovePlayerFromTown(removeMe, removeFrom);
 
-        localSender.sendMessage("\"" + playerName + "\" was removed from the town.");
+        localSender.sendMessage("\"" + removeMe.getName() + "\" was removed from the town.");
         Player onlinePlayer = removeMe.getPlayer();
         if (onlinePlayer != null)
             onlinePlayer.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + localSender.getPlayer().getName());
@@ -706,11 +620,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town remove self")
     public void removeSelfFromTown() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.sendMessage(ERR + "You're either not a member of a town, or your active town isn't set.");
@@ -729,12 +638,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town pvp friendlyfire", requiredArgs = 1)
-    public void setTownFriendlyFire(String sFriendlyFire) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    public void setTownFriendlyFire(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -749,7 +653,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         boolean friendlyFire;
 
-        friendlyFire = sFriendlyFire.equalsIgnoreCase("on");
+        friendlyFire = args[0].equalsIgnoreCase("on");
 
         t.setFriendlyFire(friendlyFire);
 
@@ -757,13 +661,8 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town motd set")
-    public void setMOTD(String motd) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "town motd set", requiredArgs = 1)
+    public void setMOTD(String[] args) {
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -776,17 +675,12 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        t.setTownMOTD(motd);
+        t.setTownMOTD(String.join(" ", args));
         localSender.sendMessage("Town MOTD has been set.");
     }
 
     @CommandMethod(path = "town motd")
     public void printMOTD() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -798,12 +692,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town list players")
-    private void listResidents(String[] args) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-        
+    public void listResidents(String[] args) {
         int page;
         if(args.length > 0) {
             try {
@@ -841,11 +730,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town spawn")
     public void warpToOtherSpawn(String[] args) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-        
         Town t;
         if(args.length > 0) {
             t = townManager.getTown(args[0]);
@@ -874,11 +758,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town bank withdraw blocks")
     public void openBlockBank() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -895,11 +774,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town bank deposit blocks")
     public void openBankDepositBox() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         Town t = localSender.getActiveTown();
         if (t == null) {
             localSender.notifyActiveTownNotSet();
@@ -911,11 +785,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town bank withdraw currency")
     public void withdrawCurrencyBank(String quantity) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -950,11 +819,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town bank deposit currency")
     public void depositCurrencyBank(String quantity) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
@@ -989,11 +853,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town bank currency check")
     public void checkCurrencyBank() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
@@ -1011,11 +870,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "town list territories")
     public void listTerritories(String[] args) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-        
         int i;
         if(args.length > 0) {
             try {
@@ -1031,11 +885,6 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     private void listTerritories(int page) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
         page--; //shift to 0-indexing
 
         if (page < 0) {
