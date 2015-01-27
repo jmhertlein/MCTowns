@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.core.ebcf.CommandDefinition;
+import net.jmhertlein.core.ebcf.annotation.CommandMethod;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.Plot;
@@ -32,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -41,6 +43,13 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
     public MCTHandler(MCTownsPlugin parent) {
         super(parent);
+    }
+    
+    @CommandMethod(path = "mct bugs", console = true)
+    public void printBugReportHelp(CommandSender s) {
+        s.sendMessage("To report a bug in MCTowns, go to this link:");
+        s.sendMessage(ChatColor.AQUA + "https://github.com/jmhertlein/MCTowns/issues");
+        s.sendMessage("Log into your GitHub account and click \"new issue\".");
     }
 
     public void checkIfRegionIsManagedByMCTowns() {
