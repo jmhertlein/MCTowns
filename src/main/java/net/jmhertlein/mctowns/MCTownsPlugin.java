@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import net.jmhertlein.core.ebcf.TreeCommandExecutor;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.MCTHandler;
+import net.jmhertlein.mctowns.command.PlotHandler;
 import net.jmhertlein.mctowns.command.TerritoryHandler;
 import net.jmhertlein.mctowns.command.TownHandler;
 import net.jmhertlein.mctowns.database.TownManager;
@@ -229,7 +230,7 @@ public class MCTownsPlugin extends JavaPlugin {
         TreeCommandExecutor tree = new TreeCommandExecutor();
         tree.add(new TownHandler(this));
         tree.add(new TerritoryHandler(this));
-        //tree.add(new Plothandler(this));
+        tree.add(new PlotHandler(this));
         tree.add(new MCTHandler(this));
         
         getCommand("mct").setExecutor(tree);

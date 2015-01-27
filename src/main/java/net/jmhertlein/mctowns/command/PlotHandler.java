@@ -23,6 +23,7 @@ import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.core.ebcf.CommandDefinition;
+import net.jmhertlein.core.ebcf.annotation.CommandMethod;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
@@ -35,6 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -46,12 +48,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         super(parent);
     }
 
-    public void printPlotInfo() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot info")
+    public void printPlotInfo(CommandSender s) {
+        setNewCommand(s);
         Plot p = localSender.getActivePlot();
 
         if (p == null) {
@@ -67,12 +66,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    public void removePlayerFromPlot(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot remove player", requiredArgs = 1)
+    public void removePlayerFromPlot(CommandSender s, String[] args) {
+        setNewCommand(s);
         Plot plot = localSender.getActivePlot();
 
         if (plot == null) {
@@ -90,19 +86,16 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if (plot.removePlayer(Bukkit.getOfflinePlayer(playerName))) {
+        if (plot.removePlayer(Bukkit.getOfflinePlayer(args[0]))) {
             localSender.sendMessage("Player removed from plot.");
         } else {
             localSender.sendMessage(ERR + "Unable to remove player from plot (either player is not in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
         }
     }
 
-    public void addPlayerToPlot(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot add player", requiredArgs = 1)
+    public void addPlayerToPlot(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -120,9 +113,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        OfflinePlayer player = server.getOfflinePlayer(playerName);
+        OfflinePlayer player = server.getOfflinePlayer(args[0]);
         if (!player.hasPlayedBefore()) {
-            localSender.sendMessage(ERR + playerName + " has never played on this server.");
+            localSender.sendMessage(ERR + args[0] + " has never played on this server.");
             return;
         }
 
@@ -139,12 +132,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    public void addPlayerToPlotAsGuest(String playerName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot add guest", requiredArgs = 1)
+    public void addPlayerToPlotAsGuest(CommandSender s, String[] args) {
+        setNewCommand(s);
         Plot plot = localSender.getActivePlot();
         if (plot == null) {
             localSender.notifyActivePlotNotSet();
@@ -161,9 +151,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        OfflinePlayer player = server.getOfflinePlayer(playerName);
+        OfflinePlayer player = server.getOfflinePlayer(args[0]);
         if (!player.hasPlayedBefore()) {
-            localSender.sendMessage(ChatColor.GOLD + playerName + " has never played on this server.");
+            localSender.sendMessage(ChatColor.GOLD + args[0] + " has never played on this server.");
             return;
         }
 
@@ -174,12 +164,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    public void setPlotBuyability(String s_forSale) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot economy forsale", requiredArgs = 1)
+    public void setPlotBuyability(CommandSender s, String[] args) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -199,9 +186,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         boolean forSale;
         try {
-            forSale = Boolean.parseBoolean(s_forSale);
+            forSale = Boolean.parseBoolean(args[0]);
         } catch (Exception e) {
-            localSender.sendMessage(ERR + "Error parsing boolean on token: " + s_forSale);
+            localSender.sendMessage(ERR + "Error parsing boolean on token: " + args[0]);
             return;
         }
 
@@ -216,7 +203,8 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.GREEN + "The plot " + p.getName() + " is " + (forSale ? "now" : "no longer") + " for sale!");
     }
 
-    public void setPlotPrice(String s_price) {
+    @CommandMethod(path = "plot economy setprice", requiredArgs = 1)
+    public void setPlotPrice(CommandSender s, String[] args) {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
@@ -230,9 +218,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         BigDecimal price;
 
         try {
-            price = new BigDecimal(s_price);
+            price = new BigDecimal(args[0]);
         } catch (Exception e) {
-            localSender.sendMessage(ERR + "Error parsing float on token: " + s_price);
+            localSender.sendMessage(ERR + "Error parsing float on token: " + args[0]);
             return;
         }
 
@@ -248,12 +236,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
     }
 
-    public void buildSign() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot sign build")
+    public void buildSign(CommandSender s) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -278,12 +263,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    public void demolishSign() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot sign demolish")
+    public void demolishSign(CommandSender s) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -305,12 +287,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage("Sign demolished.");
     }
 
-    public void setPlotSignPosition() {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot sign setpos")
+    public void setPlotSignPosition(CommandSender s) {
+        setNewCommand(s);
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
@@ -346,6 +325,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     }
 
+    //TODO: make this usable? it was apparently never made accessable
     public void surrenderPlot() {
         if (localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
@@ -376,12 +356,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    public void setActivePlot(String plotName) {
-        if (localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
-
+    @CommandMethod(path = "plot active", requiredArgs = 1)
+    public void setActivePlot(CommandSender s, String[] args) {
+        setNewCommand(s);
         Town t = localSender.getActiveTown();
 
         if (t == null) {
@@ -399,19 +376,19 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        nuActive = townManager.getPlot(plotName);
+        nuActive = townManager.getPlot(args[0]);
 
         if (nuActive == null) {
-            nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
+            nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, args[0]));
         }
 
         if (nuActive == null) {
-            localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
+            localSender.sendMessage(ERR + "The plot \"" + args[0] + "\" does not exist.");
             return;
         }
 
         if (!nuActive.getParentTownName().equals(t.getTownName())) {
-            localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist in your town.");
+            localSender.sendMessage(ERR + "The plot \"" + args[0] + "\" does not exist in your town.");
             return;
         }
 
