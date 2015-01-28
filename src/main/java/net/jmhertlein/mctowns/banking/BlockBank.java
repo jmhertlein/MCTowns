@@ -17,7 +17,6 @@
 package net.jmhertlein.mctowns.banking;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,19 +31,19 @@ import org.bukkit.inventory.ItemStack;
  * @author joshua
  */
 public class BlockBank {
-    private static final long serialVersionUID = "TOWNBANK".hashCode(); // DO NOT CHANGE
+    private final Map<String, DepositInventoryEntry> openDepositInventories;
 
-    private static final Map<String, DepositInventoryEntry> openDepositInventories = new HashMap<>();
-    
     private final Inventory bankInventory;
     private volatile BigDecimal townFunds;
 
     /**
      * Constructs a new empty block bank.
+     * @param openInventories
      */
-    public BlockBank() {
+    public BlockBank(Map<String, DepositInventoryEntry> openInventories) {
         bankInventory = Bukkit.getServer().createInventory(null, 9 * 6, "Town Bank");
         bankInventory.setMaxStackSize(500);
+        openDepositInventories = openInventories;
         townFunds = BigDecimal.ZERO;
     }
 
@@ -100,8 +99,8 @@ public class BlockBank {
     }
 
     @SuppressWarnings("unchecked")
-    public static BlockBank readYAML(FileConfiguration f) {
-        BlockBank bank = new BlockBank();
+    public static BlockBank readYAML(FileConfiguration f, Map<String, DepositInventoryEntry> open) {
+        BlockBank bank = new BlockBank(open);
 
         bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));
 
@@ -111,9 +110,5 @@ public class BlockBank {
         }
 
         return bank;
-    }
-
-    public static Map<String, DepositInventoryEntry> getOpenDepositInventories() {
-        return openDepositInventories;
     }
 }

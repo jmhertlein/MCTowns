@@ -20,11 +20,13 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.core.ebcf.TreeCommandExecutor;
 import net.jmhertlein.core.ebcf.TreeTabCompleter;
+import net.jmhertlein.mctowns.banking.DepositInventoryEntry;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.MCTHandler;
 import net.jmhertlein.mctowns.command.PlotHandler;
@@ -64,6 +66,7 @@ public class MCTownsPlugin extends JavaPlugin {
     private TownJoinManager joinManager;
     private HashMap<String, ActiveSet> activeSets;
     private HashMap<Player, ActiveSet> potentialPlotBuyers;
+    private Map<String, DepositInventoryEntry> openDepositInventories;
     private boolean abortSave;
     private Set<File> dataDirs, configFiles;
 
@@ -116,6 +119,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         joinManager = new TownJoinManager();
         activeSets = new HashMap<>();
+        openDepositInventories = new HashMap<>();
         if (MCTConfig.ECONOMY_ENABLED.getBoolean())
             potentialPlotBuyers = new HashMap<>();
 
@@ -165,7 +169,6 @@ public class MCTownsPlugin extends JavaPlugin {
             townManager = TownManager.readYAML(savesDir.getAbsolutePath());
         } catch (IOException | InvalidConfigurationException ex) {
             MCTowns.logWarning("MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
-            MCTowns.logInfo("If this was NOT expected, make sure you run the command /mct togglesave to make sure that you don't destroy your saves!");
             townManager = new TownManager();
         }
     }
@@ -207,7 +210,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(qsToolListener, this);
-        getServer().getPluginManager().registerEvents(new DepositBoxCloseListener(), this);
+        getServer().getPluginManager().registerEvents(new DepositBoxCloseListener(openDepositInventories), this);
     }
 
     public void persistTownManager() {
@@ -216,6 +219,8 @@ public class MCTownsPlugin extends JavaPlugin {
         } catch (IOException ex) {
             MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
             ex.printStackTrace();
+        } catch(NullPointerException npe) {
+            MCTowns.logSevere("Error saving town database - database did not load correctly!");
         }
     }
 
@@ -293,6 +298,10 @@ public class MCTownsPlugin extends JavaPlugin {
 
     public HashMap<Player, ActiveSet> getPotentialPlotBuyers() {
         return potentialPlotBuyers;
+    }
+
+    public Map<String, DepositInventoryEntry> getOpenDepositInventories() {
+        return openDepositInventories;
     }
 
     private void saveWorldGuardWorlds() throws Exception {
