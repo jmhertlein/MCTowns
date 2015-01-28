@@ -16,7 +16,7 @@
  */
 package net.jmhertlein.mctowns.listeners;
 
-import net.jmhertlein.mctowns.banking.BlockBank;
+import java.util.Map;
 import net.jmhertlein.mctowns.banking.DepositInventoryEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,10 +30,15 @@ import org.bukkit.inventory.ItemStack;
  * @author Joshua Michael Hertlein <jmhertlein@gmail.com>
  */
 public class DepositBoxCloseListener implements Listener {
+    private Map<String, DepositInventoryEntry> openDepositInventories;
+
+    public DepositBoxCloseListener(Map<String, DepositInventoryEntry> openDepositInventories) {
+        this.openDepositInventories = openDepositInventories;
+    }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        DepositInventoryEntry entry = BlockBank.getOpenDepositInventories().remove(e.getPlayer().getName());
+        DepositInventoryEntry entry = openDepositInventories.remove(e.getPlayer().getName());
         if (entry == null)
             return;
 

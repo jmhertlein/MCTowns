@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.util.UUIDs;
@@ -84,7 +85,7 @@ public class Town {
         assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
         territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
-        bank = new BlockBank();
+        bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
         townMOTD = "Use /town motd <msg> to set the town MOTD!";
         buyablePlots = false;
         economyJoins = false;
@@ -105,7 +106,7 @@ public class Town {
         assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
         territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
-        bank = new BlockBank();
+        bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
         townMOTD = "Use /town motd <msg> to set the town MOTD!";
         buyablePlots = false;
         economyJoins = false;
@@ -611,7 +612,7 @@ public class Town {
         t.economyJoins = f.getBoolean("economyJoins");
         t.buyablePlots = f.getBoolean("buyablePlots");
 
-        t.bank = BlockBank.readYAML(f);
+        t.bank = BlockBank.readYAML(f, MCTownsPlugin.getPlugin().getOpenDepositInventories());
         return t;
     }
 
