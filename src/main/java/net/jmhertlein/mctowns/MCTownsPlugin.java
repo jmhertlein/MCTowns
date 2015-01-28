@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.core.ebcf.TreeCommandExecutor;
+import net.jmhertlein.core.ebcf.TreeTabCompleter;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.command.MCTHandler;
 import net.jmhertlein.mctowns.command.PlotHandler;
@@ -39,6 +40,7 @@ import net.jmhertlein.mctowns.upgrade.ResourceUpgradePaths;
 import net.jmhertlein.mctowns.util.MCTConfig;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.World;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -126,7 +128,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         startPeriodicSaveTask();
         startMetricsReporting();
-        
+
         MCTowns.logInfo("MCTowns is now fully loaded.");
     }
 
@@ -232,11 +234,20 @@ public class MCTownsPlugin extends JavaPlugin {
         tree.add(new TerritoryHandler(this));
         tree.add(new PlotHandler(this));
         tree.add(new MCTHandler(this));
-        
+
+        TreeTabCompleter completer = new TreeTabCompleter(tree);
+        PluginCommand[] cmnds = new PluginCommand[]{getCommand("mct"), getCommand("town"), getCommand("territory"), getCommand("plot")};
+        for(PluginCommand c : cmnds) {
+            c.setExecutor(tree);
+            c.setTabCompleter(completer);
+        }
+
         getCommand("mct").setExecutor(tree);
         getCommand("town").setExecutor(tree);
         getCommand("territory").setExecutor(tree);
         getCommand("plot").setExecutor(tree);
+
+
     }
 
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
