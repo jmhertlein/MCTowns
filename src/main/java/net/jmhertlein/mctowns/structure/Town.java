@@ -40,22 +40,15 @@ import org.bukkit.entity.Player;
  * @author joshua
  */
 public class Town {
-    //the town name
     private volatile String townName;
-    //the town MOTD
     private volatile String townMOTD;
     private volatile ChatColor motdColor;
-    //town spawn point
     private volatile Location townSpawn;
-    //town bank
     private volatile BlockBank bank;
-    //the territories associated with it
+    //the territories associated with the town
     private Set<String> territories;
-    //the players in it
     private Set<UUID> residents;
-    //its mayor (string)
     private UUID mayor;
-    //the assistants (strings)
     private Set<UUID> assistants;
     //whether or not plots are buyable and thus have a price
     private boolean buyablePlots;
