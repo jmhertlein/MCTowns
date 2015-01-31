@@ -18,8 +18,8 @@ package net.jmhertlein.mctowns.command;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static net.jmhertlein.core.chat.ChatUtil.*;
-import net.jmhertlein.core.ebcf.CommandDefinition;
-import net.jmhertlein.core.ebcf.annotation.CommandMethod;
+import net.jmhertlein.abcf.CommandDefinition;
+import net.jmhertlein.abcf.annotation.CommandMethod;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.structure.MCTownsRegion;
