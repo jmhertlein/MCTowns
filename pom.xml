@@ -89,6 +89,11 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+          <annotationProcessors>
+            <annotationProcessor>
+              net.jmhertlein.core.ebcf.processor.CommandMethodProcessor
+            </annotationProcessor>
+          </annotationProcessors>
         </configuration>
       </plugin>
       <plugin>
@@ -133,7 +138,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>2.1</version>
+            <version>2.3</version>
             <executions>
               <execution>
                 <phase>package</phase>

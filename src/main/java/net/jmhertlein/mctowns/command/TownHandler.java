@@ -516,8 +516,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town remove request", requiredArgs = 1)
-    public void rejectRequest(CommandSender s, String playerName) {
+    public void rejectRequest(CommandSender s, String[] args) {
         setNewCommand(s);
+        String playerName = args[0];
         if (!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
