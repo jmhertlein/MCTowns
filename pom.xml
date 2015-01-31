@@ -55,6 +55,12 @@
       <scope>compile</scope>
       <version>R6</version>
     </dependency>
+    <dependency>
+      <groupId>net.jmhertlein</groupId>
+      <artifactId>abcf</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <repositories>
