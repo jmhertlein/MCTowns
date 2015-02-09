@@ -97,7 +97,7 @@
           <target>1.8</target>
           <annotationProcessors>
             <annotationProcessor>
-              net.jmhertlein.core.ebcf.processor.CommandMethodProcessor
+              net.jmhertlein.abcf.processor.CommandMethodProcessor
             </annotationProcessor>
           </annotationProcessors>
         </configuration>
