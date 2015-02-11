@@ -14,8 +14,9 @@ playersCanJoinMultipleTowns: true
 territoryXZSizeLimit: 800
 #
 #
-#The currently installed version of MCTowns. Do not change this.
+# important stuff pls don't change
 installedVersion: ${version}
-#Seriously don't change it
+wgRequirement: ([6-9]\..*)|([0-9]{2,}\..*)
+# Seriously don't change it
 #
 #

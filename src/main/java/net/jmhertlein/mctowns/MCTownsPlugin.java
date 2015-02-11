@@ -191,6 +191,21 @@ public class MCTownsPlugin extends JavaPlugin {
             return false;
         }
 
+        String wgVersion = wgp.getDescription().getVersion();
+        MCTowns.logInfo("Hooked WorldGuard version " + wgVersion);
+
+        /*
+         * Crappy version detection but it's not like Bukkit or WG actually give
+         * us a format spec to work with, so might as well try
+         * Version check failing warns only, though, since this is
+         * bound to produce false positives.
+         */
+        if(!wgVersion.matches(MCTConfig.WG_VER_REGEX.getString())) {
+            MCTowns.logWarning("======== WG VERSION WARNING ==========");
+            MCTowns.logWarning("Your WorldGuard version might be unsupported!");
+            MCTowns.logWarning("======== WG VERSION WARNING ==========");
+        }
+
         if (MCTConfig.ECONOMY_ENABLED.getBoolean())
             try {
                 boolean success = setupEconomy();

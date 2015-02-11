@@ -24,6 +24,7 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
  * @author joshua
  */
 public enum MCTConfig {
+    WG_VER_REGEX("wgRequirement", ".*"),
     DEFAULT_TOWN("defaultTown", null),
     ECONOMY_ENABLED("economyEnabled", false),
     MAYORS_CAN_BUY_TERRITORIES("mayorsCanBuyTerritories", false),
@@ -35,38 +36,38 @@ public enum MCTConfig {
     PLAYERS_CAN_JOIN_MULTIPLE_TOWNS("playersCanJoinMultipleTowns", false),
     TERRITORY_XZ_SIZE_LIMIT("territoryXZSizeLimit", 800),
     DEBUG_MODE_ENABLED("debugModeEnabled", false);
-    
+
     private static final MCTownsPlugin p = MCTownsPlugin.getPlugin();
-    
+
     private final Object dflt;
     private final String key;
-    
+
     private MCTConfig(String key, Object dflt) {
         this.dflt = dflt;
         this.key = key;
     }
-    
+
     public void set(Object value) {
        MCTownsPlugin.getPlugin().getConfig().set(getKey(), value);
     }
-    
+
     public Object getObject() {
         return p == null ? dflt : p.getConfig().get(this.getKey(), dflt);
     }
-    
+
     public int getInt() {
         return p == null ? (int) dflt : p.getConfig().getInt(this.getKey(), (int) dflt);
     }
-    
+
     public String getString() {
         String defString = dflt == null ? null : dflt.toString();
         return p == null ? defString : p.getConfig().getString(this.getKey(), defString);
     }
-    
+
     public boolean getBoolean() {
         return p == null ? (boolean) dflt : p.getConfig().getBoolean(this.getKey(), (boolean) dflt);
     }
-    
+
     public String getKey() {
         return key;
     }
