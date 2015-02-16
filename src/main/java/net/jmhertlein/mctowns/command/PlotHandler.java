@@ -307,7 +307,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         Player player = localSender.getPlayer();
 
-        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
+        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock((Set) null, 5).getLocation());
 
         if(mctLoc == null) {
             localSender.sendMessage(ERR + "Couldn't get the location you're looking at.");
