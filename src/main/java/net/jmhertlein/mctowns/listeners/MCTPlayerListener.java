@@ -69,9 +69,8 @@ public class MCTPlayerListener implements Listener {
     }
 
     /**
-     * Informs the player of any towns they're invited to tells them the MOTD
-     * for each town they're in, and if they're the mayor, tells them about
-     * pending invites and requests
+     * Informs the player of any towns they're invited to tells them the MOTD for each town they're
+     * in, and if they're the mayor, tells them about pending invites and requests
      *
      * @param event
      */
@@ -81,18 +80,18 @@ public class MCTPlayerListener implements Listener {
         List<Town> towns = townManager.matchPlayerToTowns(p);
 
         List<Town> townsInvitedTo = joinManager.getTownsPlayerIsInvitedTo(p.getName());
-        if (!townsInvitedTo.isEmpty()) {
+        if(!townsInvitedTo.isEmpty()) {
             p.sendMessage(INFO + "You are currently invited to join the following towns:");
 
-            for (Town t : townsInvitedTo) {
+            for(Town t : townsInvitedTo) {
                 p.sendMessage(INFO + t.getTownName());
             }
         }
 
-        for (Town t : towns) {
+        for(Town t : towns) {
             p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
-            if (t.playerIsMayor(p))
-                if (!joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
+            if(t.playerIsMayor(p))
+                if(!joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
                     p.sendMessage(INFO + t.getTownName() + " has players requesting to join.");
         }
     }
@@ -100,32 +99,32 @@ public class MCTPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerClickPurchaseSign(PlayerInteractEvent event) {
 
-        if (!MCTConfig.ECONOMY_ENABLED.getBoolean())
+        if(!MCTConfig.ECONOMY_ENABLED.getBoolean())
             //if economy isn't enabled, do nothing
             return;
 
-        if (event.getClickedBlock() == null || event.getClickedBlock().getType() != Material.SIGN_POST)
+        if(event.getClickedBlock() == null || event.getClickedBlock().getType() != Material.SIGN_POST)
             //If there is no block, or the block is not a sign, do nothing
             return;
 
         //if the first line of the sign isn't "[mct]" then do nothing
-        if (!((Sign) event.getClickedBlock().getState()).getLine(0).equalsIgnoreCase("[mct]"))
+        if(!((Sign) event.getClickedBlock().getState()).getLine(0).equalsIgnoreCase("[mct]"))
             return;
 
         ActiveSet plotToBuy = townManager.getPlotFromSignLocation(event.getClickedBlock().getLocation());
 
-        if (plotToBuy == null) {
+        if(plotToBuy == null) {
             MCTowns.logSevere("Sign was an MCT plot sign, but no matching plot was found.");
             MCTowns.logSevere("Sign's location was: " + event.getClickedBlock().getLocation().toString());
             return;
         }
 
-        if (!plotToBuy.getActivePlot().isForSale()) {
+        if(!plotToBuy.getActivePlot().isForSale()) {
             event.getPlayer().sendMessage(ChatColor.DARK_AQUA + "That plot is not for sale.");
             return;
         }
 
-        if (!MCTowns.getEconomy().has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice().floatValue())) {
+        if(!MCTowns.getEconomy().has(event.getPlayer().getName(), plotToBuy.getActivePlot().getPrice().floatValue())) {
             event.getPlayer().sendMessage(ChatColor.RED + "Insufficient funds (costs " + plotToBuy.getActivePlot().getPrice() + ").");
             return;
         }
@@ -138,26 +137,26 @@ public class MCTPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerTriggerFenceRegionCreation(org.bukkit.event.block.SignChangeEvent e) {
-        if (e.getBlock().getType() != Material.SIGN_POST)
+        if(e.getBlock().getType() != Material.SIGN_POST)
             return;
 
         Sign sign = (Sign) e.getBlock().getState();
 
-        if (!e.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
+        if(!e.getLine(0).equals(FENCEREGION_SIGN_PREFIX))
             return;
 
         Player p = e.getPlayer();
 
         ActiveSet pActive = plugin.getActiveSets().get(p.getName());
 
-        if (pActive == null) {
+        if(pActive == null) {
             p.sendMessage(ChatColor.RED + "Your active town is not set.");
             return;
         }
 
         Town t = pActive.getActiveTown();
 
-        if (t == null) {
+        if(t == null) {
             p.sendMessage(ChatColor.RED + "Your active town is not set.");
             return;
         }
@@ -165,16 +164,16 @@ public class MCTPlayerListener implements Listener {
         boolean isMayor;
         try {
             isMayor = t.playerIsMayor(p);
-        } catch (NullPointerException npe) {
+        } catch(NullPointerException npe) {
             isMayor = false;
         }
 
-        if (!isMayor) {
+        if(!isMayor) {
             p.sendMessage(ChatColor.RED + "Insufficient permission.");
             return;
         }
 
-        if (pActive.getActiveTerritory() == null) {
+        if(pActive.getActiveTerritory() == null) {
             p.sendMessage(ChatColor.RED + "You need to set your active territory if you want to add a plot.");
             return;
         }
@@ -183,10 +182,10 @@ public class MCTPlayerListener implements Listener {
         try {
             nuName = e.getLine(1);
 
-            if (nuName.isEmpty())
+            if(nuName.isEmpty())
                 throw new IndexOutOfBoundsException();
 
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch(IndexOutOfBoundsException ioobe) {
             p.sendMessage(ChatColor.RED + "Error: The second line must contain a name for the new plot.");
             return;
         }
@@ -198,12 +197,12 @@ public class MCTPlayerListener implements Listener {
         Vector deltaVector = signLoc.getDirection().multiply(-1);
 
         int count = 0;
-        while (signLoc.getBlock().getType() != Material.FENCE && count < 100) {
+        while(signLoc.getBlock().getType() != Material.FENCE && count < 100) {
             signLoc = signLoc.add(deltaVector);
             count++;
         }
 
-        if (count >= 100) {
+        if(count >= 100) {
             p.sendMessage(ChatColor.RED + "Error: couldn't find a fence within 100 blocks, aborting.");
             return;
         }
@@ -211,21 +210,21 @@ public class MCTPlayerListener implements Listener {
         ProtectedFenceRegion fencedReg;
         try {
             fencedReg = ProtectedFenceRegion.assembleSelectionFromFenceOrigin(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), signLoc);
-        } catch (IncompleteFenceException ex) {
+        } catch(IncompleteFenceException ex) {
             p.sendMessage(ChatColor.RED + "Error: Fence was not complete. Fence must be a complete polygon.");
             return;
-        } catch (ProtectedFenceRegion.MalformedFenceRegionException ifle) {
+        } catch(ProtectedFenceRegion.MalformedFenceRegionException ifle) {
             p.sendMessage(ChatColor.RED + "Error: " + ifle.getLocalizedMessage());
             return;
         }
 
-        if (!CommandHandler.selectionIsWithinParent(fencedReg, pActive.getActiveTerritory())) {
+        if(!CommandHandler.selectionIsWithinParent(fencedReg, pActive.getActiveTerritory())) {
             p.sendMessage(ChatColor.RED + "Error: The selected region is not within your active territory.");
             return;
         }
         try {
             townManager.addPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, nuName), p.getWorld(), fencedReg, t, pActive.getActiveTerritory());
-        } catch (TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
+        } catch(TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
             p.sendMessage(ChatColor.RED + ex.getLocalizedMessage());
             return;
         }
@@ -239,10 +238,10 @@ public class MCTPlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoinAddToDefaultTown(PlayerJoinEvent e) {
         String tName = MCTConfig.DEFAULT_TOWN.getString();
-        if (!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
+        if(!e.getPlayer().hasPlayedBefore() && townManager.matchPlayerToTowns(e.getPlayer()).isEmpty()) {
             Town t = townManager.getTown(tName);
-            if (t == null) {
-                if (tName != null && !tName.isEmpty())
+            if(t == null) {
+                if(tName != null && !tName.isEmpty())
                     MCTowns.logWarning("Error: Default town specified in config.yml does not exist.");
                 return;
             }

@@ -32,8 +32,7 @@ import net.jmhertlein.mctowns.structure.Town;
 public class TownJoinManager {
 
     /**
-     * Key- Player name Value- Set of towns the player is currently invited to
-     * join
+     * Key- Player name Value- Set of towns the player is currently invited to join
      */
     private final Map<String, Set<Town>> joinInvitations;
     /**
@@ -49,7 +48,7 @@ public class TownJoinManager {
     public void invitePlayerToTown(final String playerName, final Town invitedTo) {
         Set<Town> towns = joinInvitations.get(playerName);
 
-        if (towns == null)
+        if(towns == null)
             joinInvitations.put(playerName, new HashSet<Town>() {
                 {
                     this.add(invitedTo);
@@ -68,7 +67,7 @@ public class TownJoinManager {
     public void addJoinRequest(final String playerName, final Town requestJoinTo) {
         Set<String> players = joinRequests.get(requestJoinTo);
 
-        if (players == null)
+        if(players == null)
             joinRequests.put(requestJoinTo, new HashSet<String>() {
                 {
                     this.add(playerName);
@@ -85,14 +84,14 @@ public class TownJoinManager {
     }
 
     /**
-     * Removes the player from the list of players who have requested membership
-     * to the specified town
+     * Removes the player from the list of players who have requested membership to the specified
+     * town
      *
      * @param t
      * @param playerName
      *
-     * @return true if player was removed, false if player had not ever actually
-     *         requested membership
+     * @return true if player was removed, false if player had not ever actually requested
+     * membership
      */
     public boolean clearRequest(final String playerName, final Town t) {
         Set<String> playerNames = joinRequests.get(t);
@@ -109,8 +108,8 @@ public class TownJoinManager {
      * @param playerName
      * @param t
      *
-     * @return true if the invite was actually cleared, false if the player was
-     *         not ever actually invited
+     * @return true if the invite was actually cleared, false if the player was not ever actually
+     * invited
      */
     public boolean clearInvitationForPlayerFromTown(final String playerName, Town t) {
         Set<Town> towns = joinInvitations.get(playerName);
@@ -119,8 +118,8 @@ public class TownJoinManager {
 
     public List<Town> getTownsPlayerIsInvitedTo(final String playerName) {
         ArrayList<Town> ret = new ArrayList<>();
-        for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
-            if (e.getKey().equals(playerName))
+        for(Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
+            if(e.getKey().equals(playerName))
                 ret.addAll(e.getValue());
         }
 
@@ -132,12 +131,12 @@ public class TownJoinManager {
      *
      * @param t
      *
-     * @return A set of requests. Changes made to the set will be reflected in
-     *         later calls to this method
+     * @return A set of requests. Changes made to the set will be reflected in later calls to this
+     * method
      */
     public Set<String> getPlayersRequestingMembershipToTown(final Town t) {
         Set<String> r = joinRequests.get(t);
-        if (r == null) {
+        if(r == null) {
             r = new HashSet<>();
             joinRequests.put(t, r);
         }
@@ -146,8 +145,8 @@ public class TownJoinManager {
 
     public Set<String> getIssuedInvitesForTown(final Town t) {
         HashSet<String> playersInvited = new HashSet<>();
-        for (Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
-            if (e.getValue().contains(t))
+        for(Entry<String, Set<Town>> e : joinInvitations.entrySet()) {
+            if(e.getValue().contains(t))
                 playersInvited.add(e.getKey());
         }
 

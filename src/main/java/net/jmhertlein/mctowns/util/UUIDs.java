@@ -31,11 +31,9 @@ import java.util.UUID;
 public class UUIDs {
 
     /**
-     * Converts a list of Strings to UUID's, using one of two strategies: 
-     * 1. Assume String is the toString() of a UUID, attempt to convert straight
-     * back 
-     * 2. If that fails, assume String is the name of a player: look up
-     * their UUID and use that instead
+     * Converts a list of Strings to UUID's, using one of two strategies: 1. Assume String is the
+     * toString() of a UUID, attempt to convert straight back 2. If that fails, assume String is the
+     * name of a player: look up their UUID and use that instead
      *
      * @param strings
      * @return
@@ -48,19 +46,18 @@ public class UUIDs {
     }
 
     /**
-     * Converts a String to a UUID, using one of two strategies: 
-     * 1. Assume String is the toString() of a UUID, attempt to convert straight
-     * back 
-     * 2. If that fails, assume String is the name of a player: look up
-     * their UUID and use that instead
+     * Converts a String to a UUID, using one of two strategies: 1. Assume String is the toString()
+     * of a UUID, attempt to convert straight back 2. If that fails, assume String is the name of a
+     * player: look up their UUID and use that instead
+     *
      * @param s
-     * @return 
+     * @return
      */
     public static UUID stringToId(String s) {
         UUID ret;
         try {
             ret = UUID.fromString(s);
-        } catch (IllegalArgumentException iae) {
+        } catch(IllegalArgumentException iae) {
             ret = getUUIDForOfflinePlayer(Bukkit.getOfflinePlayer(s));
         }
         return ret;
@@ -68,7 +65,7 @@ public class UUIDs {
 
     public static Set<String> idsToStrings(Collection<UUID> ids) {
         Set<String> ret = new HashSet<>();
-        for (UUID i : ids) {
+        for(UUID i : ids) {
             ret.add(i.toString());
         }
         return ret;

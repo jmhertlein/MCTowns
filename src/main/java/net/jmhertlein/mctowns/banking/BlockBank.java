@@ -38,6 +38,7 @@ public class BlockBank {
 
     /**
      * Constructs a new empty block bank.
+     *
      * @param openInventories
      */
     public BlockBank(Map<String, DepositInventoryEntry> openInventories) {
@@ -52,7 +53,7 @@ public class BlockBank {
     }
 
     public boolean depositCurrency(BigDecimal amt) {
-        if (amt.compareTo(BigDecimal.ZERO) < 0)
+        if(amt.compareTo(BigDecimal.ZERO) < 0)
             return false;
 
         townFunds = townFunds.add(amt);
@@ -65,7 +66,7 @@ public class BlockBank {
 
         result = townFunds.subtract(amt);
 
-        if (result.compareTo(BigDecimal.ZERO) < 0)
+        if(result.compareTo(BigDecimal.ZERO) < 0)
             amt = amt.add(result);
 
         townFunds = townFunds.subtract(amt);
@@ -91,8 +92,8 @@ public class BlockBank {
         f.set("bank.townFunds", townFunds.toString());
 
         List<ItemStack> existantContents = new LinkedList<>();
-        for (ItemStack i : bankInventory.getContents())
-            if (i != null)
+        for(ItemStack i : bankInventory.getContents())
+            if(i != null)
                 existantContents.add(i);
 
         f.set("bank.contents", existantContents);
@@ -104,8 +105,8 @@ public class BlockBank {
 
         bank.townFunds = new BigDecimal(f.getString("bank.townFunds"));
 
-        for (ItemStack i : (List<ItemStack>) f.getList("bank.contents")) {
-            if (i != null)
+        for(ItemStack i : (List<ItemStack>) f.getList("bank.contents")) {
+            if(i != null)
                 bank.bankInventory.addItem(i);
         }
 

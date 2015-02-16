@@ -43,7 +43,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     public MCTHandler(MCTownsPlugin parent) {
         super(parent);
     }
-    
+
     @CommandMethod(path = "mct bugs", console = true)
     public void printBugReportHelp(CommandSender s) {
         s.sendMessage("To report a bug in MCTowns, go to this link:");
@@ -55,25 +55,25 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     public void createTown(CommandSender s, String[] args) {
         setNewCommand(s);
         String townName = args[0], mayorName = args[1];
-        if (!localSender.canCreateTown()) {
+        if(!localSender.canCreateTown()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Player nuMayor = server.getPlayer(mayorName);
 
-        if (nuMayor == null) {
+        if(nuMayor == null) {
             localSender.sendMessage(ERR + mayorName + " doesn't exist or is not online.");
             return;
         }
 
-        if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
+        if(!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
             localSender.sendMessage(ERR + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
             return;
         }
 
         Town t = townManager.addTown(townName, nuMayor);
-        if (t != null) {
+        if(t != null) {
             localSender.sendMessage("Town " + townName + " has been created.");
             server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
 
@@ -88,13 +88,13 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "mct removetown", requiredArgs = 1)
     public void removeTown(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.canDeleteTown()) {
+        if(!localSender.canDeleteTown()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Town t = townManager.getTown(args[0]);
-        if (t == null) {
+        if(t == null) {
             localSender.sendMessage(ERR + "The town \"" + args[0] + "\" does not exist.");
             return;
         }
@@ -102,13 +102,13 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         townManager.removeTown(args[0]);
 
         try {
-            for (World w : Bukkit.getWorlds()) {
+            for(World w : Bukkit.getWorlds()) {
                 MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
             }
-        } catch (StorageException ex) {
+        } catch(StorageException ex) {
             MCTowns.logSevere("Error: unable to force a region manager save in WorldGuard. Details:");
             MCTowns.logSevere(ex.getMessage());
-        } catch (NullPointerException npe) {
+        } catch(NullPointerException npe) {
             MCTowns.logSevere("Couldn't force WG to save its regions. (null)");
             MCTowns.logSevere("Debug analysis:");
             MCTowns.logSevere("WG plugin was null: " + (MCTowns.getWorldGuardPlugin() == null));
@@ -129,7 +129,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         setNewCommand(s);
         Town t = townManager.getTown(args[0]);
 
-        if (t == null) {
+        if(t == null) {
             localSender.sendMessage(ERR + "The town \"" + args[0] + "\" does not exist.");
             return;
         }
@@ -148,7 +148,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         setNewCommand(s);
         OfflinePlayer p = server.getOfflinePlayer(args[0]);
 
-        if (!p.hasPlayedBefore()) {
+        if(!p.hasPlayedBefore()) {
             localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
@@ -156,10 +156,10 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(INFO + "Player: " + p.getName());
 
         List<Town> towns = townManager.matchPlayerToTowns(p);
-        if (towns.isEmpty())
+        if(towns.isEmpty())
             localSender.sendMessage(INFO + p.getName() + " is not a member of any towns.");
         else
-            for (Town t : towns) {
+            for(Town t : towns) {
                 localSender.sendMessage("Town: " + t.getTownName());
                 localSender.sendMessage("Is Mayor: " + t.playerIsMayor(p));
                 localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(p));
@@ -175,7 +175,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
                 intPage = Integer.parseInt(args[0]);
             else
                 intPage = 1;
-        } catch (Exception e) {
+        } catch(Exception e) {
             localSender.sendMessage(ERR + "Parsing error: <page> is not a valid integer.");
             return;
         }
@@ -186,7 +186,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     private void listTowns(int page) {
         page--; //shift to 0-indexing
 
-        if (page < 0) {
+        if(page < 0) {
             localSender.sendMessage(ERR + "Invalid page.");
             return;
         }
@@ -194,7 +194,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
         Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
 
-        for (int i = page * RESULTS_PER_PAGE; i < towns.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
+        for(int i = page * RESULTS_PER_PAGE; i < towns.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             localSender.sendMessage(ChatColor.YELLOW + towns[i].getTownName());
         }
 
@@ -203,7 +203,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "mct join", requiredArgs = 1)
     public void requestAdditionToTown(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
+        if(!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && townManager.playerIsAlreadyInATown(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You cannot be in more than one town at a time.");
             return;
         }
@@ -211,27 +211,27 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         Town addTo = townManager.getTown(args[0]);
         String pName = localSender.getPlayer().getName();
 
-        if (addTo == null) {
+        if(addTo == null) {
             localSender.sendMessage(ERR + "\"" + args[0] + "\" doesn't exist.");
             return;
         }
 
-        if (addTo.usesEconomyJoins()) {
+        if(addTo.usesEconomyJoins()) {
             localSender.sendMessage(addTo.getTownName() + " doesn't use the invitation system.");
             return;
         }
 
-        if (addTo.playerIsResident(localSender.getPlayer())) {
+        if(addTo.playerIsResident(localSender.getPlayer())) {
             localSender.sendMessage(ERR + "You are already a member of " + addTo.getTownName());
             return;
         }
 
-        if (joinManager.getPlayersRequestingMembershipToTown(addTo).contains(localSender.getPlayer().getName())) {
+        if(joinManager.getPlayersRequestingMembershipToTown(addTo).contains(localSender.getPlayer().getName())) {
             localSender.sendMessage(ERR + "You've already requested to join " + addTo.getTownName());
             return;
         }
 
-        if (joinManager.invitationExists(pName, addTo)) {
+        if(joinManager.invitationExists(pName, addTo)) {
             addTo.addPlayer(localSender.getPlayer());
             localSender.sendMessage("You have joined " + addTo.getTownName() + "!");
             broadcastTownJoin(addTo, localSender.getPlayer());
@@ -251,7 +251,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
         Town t = townManager.getTown(args[0]);
 
-        if (t == null)
+        if(t == null)
             localSender.sendMessage(ERR + "You're not invited to any towns right now.");
         else {
             joinManager.clearInvitationForPlayerFromTown(pName, t);
@@ -264,19 +264,19 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "mct cancel", requiredArgs = 1)
     public void cancelRequest(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Town t = townManager.getTown(args[0]);
 
-        if (t == null) {
+        if(t == null) {
             localSender.sendMessage(ERR + "That town doesn't exist.");
             return;
         }
 
-        if (joinManager.clearRequest(localSender.getPlayer().getName(), t))
+        if(joinManager.clearRequest(localSender.getPlayer().getName(), t))
             localSender.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
         else
             localSender.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
@@ -289,7 +289,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         List<Town> towns = joinManager.getTownsPlayerIsInvitedTo(localSender.getPlayer().getName());
 
         localSender.sendMessage(INFO + "You are currently invited to the following towns:");
-        for (Town t : towns) {
+        for(Town t : towns) {
             localSender.sendMessage(INFO_ALT + t.getTownName());
         }
     }
@@ -297,50 +297,50 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "mct confirm")
     public void confirmPlotPurchase(CommandSender s) {
         setNewCommand(s);
-        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
+        if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
         ActiveSet plotToBuy = plugin.getPotentialPlotBuyers().get(localSender.getPlayer());
 
-        if (plotToBuy == null) {
+        if(plotToBuy == null) {
             localSender.sendMessage(ERR + "You haven't selected a plot to buy yet.");
             return;
         }
 
-        if (townManager.playerIsAlreadyInATown(localSender.getPlayer())) //if players can't join multiple towns AND the town they're buying from isn't their current town
+        if(townManager.playerIsAlreadyInATown(localSender.getPlayer())) //if players can't join multiple towns AND the town they're buying from isn't their current town
 
-            if (!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
+            if(!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }
 
-        if (!plotToBuy.getActiveTown().playerIsResident(localSender.getPlayer()))
-            if (!plotToBuy.getActiveTown().usesEconomyJoins()) {
+        if(!plotToBuy.getActiveTown().playerIsResident(localSender.getPlayer()))
+            if(!plotToBuy.getActiveTown().usesEconomyJoins()) {
                 localSender.sendMessage(ERR + "You aren't a member of this town.");
                 return;
             }
 
-        if (!plotToBuy.getActiveTown().usesBuyablePlots()) {
+        if(!plotToBuy.getActiveTown().usesBuyablePlots()) {
             localSender.sendMessage(ERR + "This town's plots aren't buyable.");
             return;
         }
 
         Plot p = plotToBuy.getActivePlot();
 
-        if (!p.isForSale()) {
+        if(!p.isForSale()) {
             localSender.sendMessage(ERR + "This plot isn't for sale.");
             return;
         }
 
-        if (!MCTowns.getEconomy().withdrawPlayer(localSender.getPlayer().getName(), p.getPrice().floatValue()).transactionSuccess()) {
+        if(!MCTowns.getEconomy().withdrawPlayer(localSender.getPlayer().getName(), p.getPrice().floatValue()).transactionSuccess()) {
             localSender.sendMessage(ERR + "Insufficient funds.");
             return;
         }
 
         ProtectedRegion plotReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
-        if (plotReg == null) {
+        if(plotReg == null) {
             localSender.sendMessage(ERR + "The WorldGuard region for the plot you're trying to buy seems to have been deleted. Please notify your mayor.");
             return;
         }
@@ -356,7 +356,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.GREEN + "You are now the proud owner of this plot.");
         doRegManSave(MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())));
 
-        if (!townManager.matchPlayerToTowns(localSender.getPlayer()).contains(plotToBuy.getActiveTown())) {
+        if(!townManager.matchPlayerToTowns(localSender.getPlayer()).contains(plotToBuy.getActiveTown())) {
             plotToBuy.getActiveTown().addPlayer(localSender.getPlayer());
             localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getTownName());
         }

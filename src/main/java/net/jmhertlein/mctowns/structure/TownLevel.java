@@ -31,7 +31,7 @@ public enum TownLevel {
 
     @Override
     public String toString() {
-        switch (this) {
+        switch(this) {
             case TOWN:
                 return "TOWN";
             case TERRITORY:
@@ -46,7 +46,7 @@ public enum TownLevel {
     public static final TownLevel parseTownLevel(String s) {
         s = s.toUpperCase();
 
-        switch (s) {
+        switch(s) {
             case "TOWN":
                 return TOWN;
             case "TERRITORY":

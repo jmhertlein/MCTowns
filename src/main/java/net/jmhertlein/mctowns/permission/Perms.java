@@ -48,18 +48,17 @@ public enum Perms {
      */
     WARP_FOREIGN,
     /**
-     * allow the player to withdraw from their town bank outside their town's
-     * borders
+     * allow the player to withdraw from their town bank outside their town's borders
      */
     WITHDRAW_BANK_OUTSIDE_BORDERS;
 
     /**
-     * The message to be displayed when a player attempts to perform an action
-     * for which they do not have permission.
+     * The message to be displayed when a player attempts to perform an action for which they do not
+     * have permission.
      */
     @Override
     public String toString() {
-        switch (this) {
+        switch(this) {
             case ADMIN:
                 return "mct.admin";
             case REMOVE_TOWN:
@@ -89,7 +88,7 @@ public enum Perms {
             pm.addPermission(new Permission(WARP_FOREIGN.toString()));
             pm.addPermission(new Permission(CREATE_TOWN.toString()));
             pm.addPermission(new Permission(ADMIN.toString()));
-        } catch (Exception e) {
+        } catch(Exception e) {
             Logger.getLogger("Minecraft").log(Level.WARNING, "Unable to register permissions, already registered.");
         }
 

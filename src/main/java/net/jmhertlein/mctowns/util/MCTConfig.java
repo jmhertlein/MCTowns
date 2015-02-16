@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.jmhertlein.mctowns.util;
 
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -48,7 +47,7 @@ public enum MCTConfig {
     }
 
     public void set(Object value) {
-       MCTownsPlugin.getPlugin().getConfig().set(getKey(), value);
+        MCTownsPlugin.getPlugin().getConfig().set(getKey(), value);
     }
 
     public Object getObject() {

@@ -24,10 +24,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 /**
- * A ProtectedFenceRegion is a WorldGuard region that can be constructed from a
- * fenced polygon of blocks in-game. There are some restrictions that are
- * detailed in the docs for "EasyRegion", mostly that they need to be closed
- * polygons where each fence block touches exactly two other fences.
+ * A ProtectedFenceRegion is a WorldGuard region that can be constructed from a fenced polygon of
+ * blocks in-game. There are some restrictions that are detailed in the docs for "EasyRegion",
+ * mostly that they need to be closed polygons where each fence block touches exactly two other
+ * fences.
  *
  * @author joshua
  */
@@ -41,21 +41,18 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
     }
 
     /**
-     * Creates a new ProtectedFenceRegion with the given ID (must be formatted
-     * manually to MCTowns spec) This is fairly "fire and forget", and handles
-     * most exceptional circumstances.
+     * Creates a new ProtectedFenceRegion with the given ID (must be formatted manually to MCTowns
+     * spec) This is fairly "fire and forget", and handles most exceptional circumstances.
      *
      * @param id The name of the region to useas a GUID
-     * @param l  any fence in the polygon
+     * @param l any fence in the polygon
      *
      * @return the constructed PFR
-     * @throws
-     * net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException
-     *                                                                           if the fenced-in region is not completed
-     * @throws
-     * net.jmhertlein.mctowns.util.ProtectedFenceRegion.InfiniteFenceLoopException
-     *                                                                           if the fenced-in region is not properly formed (usually, where there
-     *                                                                           exists a fence that touches more than exactly two fences)
+     * @throws net.jmhertlein.mctowns.util.ProtectedFenceRegion.IncompleteFenceException if the
+     * fenced-in region is not completed
+     * @throws net.jmhertlein.mctowns.util.ProtectedFenceRegion.InfiniteFenceLoopException if the
+     * fenced-in region is not properly formed (usually, where there exists a fence that touches
+     * more than exactly two fences)
      */
     public static final ProtectedFenceRegion assembleSelectionFromFenceOrigin(String id, Location l) throws IncompleteFenceException, MalformedFenceRegionException {
         LinkedList<BlockVector2D> points = new LinkedList<>();
@@ -70,11 +67,11 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
             dirToNext = getDirToNextFence(cameFrom, cur);
 
             //if there was a corner in the fence...
-            if (getOppositeDir(cameFrom) != dirToNext)
+            if(getOppositeDir(cameFrom) != dirToNext)
                 //add it to the polygon
                 points.add(new BlockVector2D(cur.getBlockX(), cur.getBlockZ()));
 
-            switch (dirToNext) {
+            switch(dirToNext) {
                 case NORTH:
                     cur.add(0, 0, 1);
                     cameFrom = SOUTH;
@@ -95,29 +92,29 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
                     throw new IncompleteFenceException();
             }
             numFenceSegmentsTried++;
-        } while (!cur.equals(l) && numFenceSegmentsTried < FENCE_SEGMENT_THRESHOLD);
+        } while(!cur.equals(l) && numFenceSegmentsTried < FENCE_SEGMENT_THRESHOLD);
 
-        if (numFenceSegmentsTried >= FENCE_SEGMENT_THRESHOLD)
+        if(numFenceSegmentsTried >= FENCE_SEGMENT_THRESHOLD)
             throw new MalformedFenceRegionException();
 
         return new ProtectedFenceRegion(id, points, 0, l.getWorld().getMaxHeight() - 1);
     }
 
     private static final int getDirToNextFence(int cameFrom, Location l) {
-        if (cameFrom != SOUTH)
-            if (l.clone().add(0, 0, -1).getBlock().getType() == Material.FENCE)
+        if(cameFrom != SOUTH)
+            if(l.clone().add(0, 0, -1).getBlock().getType() == Material.FENCE)
                 return SOUTH;
 
-        if (cameFrom != NORTH)
-            if (l.clone().add(0, 0, 1).getBlock().getType() == Material.FENCE)
+        if(cameFrom != NORTH)
+            if(l.clone().add(0, 0, 1).getBlock().getType() == Material.FENCE)
                 return NORTH;
 
-        if (cameFrom != EAST)
-            if (l.clone().add(1, 0, 0).getBlock().getType() == Material.FENCE)
+        if(cameFrom != EAST)
+            if(l.clone().add(1, 0, 0).getBlock().getType() == Material.FENCE)
                 return EAST;
 
-        if (cameFrom != WEST)
-            if (l.clone().add(-1, 0, 0).getBlock().getType() == Material.FENCE)
+        if(cameFrom != WEST)
+            if(l.clone().add(-1, 0, 0).getBlock().getType() == Material.FENCE)
                 return WEST;
 
         return NONE;
@@ -131,8 +128,7 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
     }
 
     /**
-     * Thrown if a fence region is malformed such that it is not possible to
-     * finish parsing it
+     * Thrown if a fence region is malformed such that it is not possible to finish parsing it
      */
     public static class MalformedFenceRegionException extends Exception {
 
@@ -142,7 +138,7 @@ public class ProtectedFenceRegion extends ProtectedPolygonalRegion {
     }
 
     private static int getOppositeDir(int dir) {
-        switch (dir) {
+        switch(dir) {
             case NORTH:
                 return SOUTH;
             case SOUTH:

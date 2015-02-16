@@ -44,19 +44,19 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     @CommandMethod(path = "territory add plot", requiredArgs = 1)
     public void addPlotToTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Town t = localSender.getActiveTown();
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
         Territory parTerr = localSender.getActiveTerritory();
-        if (parTerr == null) {
+        if(parTerr == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
@@ -65,7 +65,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
 
         World w = localSender.getPlayer().getWorld();
 
-        if (w == null) {
+        if(w == null) {
             localSender.sendMessage(
                     ERR + "You are in an invalid World. (Player::getWorld() returned null)");
             return;
@@ -73,20 +73,20 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
 
         ProtectedRegion region = getSelectedRegion(plotName);
 
-        if (region == null) {
+        if(region == null) {
             localSender.sendMessage(
                     ERR + "You need to make a WorldEdit selection first.");
             return;
         }
 
-        if (!selectionIsWithinParent(region, localSender.getActiveTerritory())) {
+        if(!selectionIsWithinParent(region, localSender.getActiveTerritory())) {
             localSender.sendMessage(ERR + "Selection is not in territory!");
             return;
         }
 
         try {
             townManager.addPlot(plotName, w, region, t, parTerr);
-        } catch (TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
+        } catch(TownManager.InvalidWorldGuardRegionNameException | TownManager.RegionAlreadyExistsException ex) {
             localSender.sendMessage(ERR + ex.getLocalizedMessage());
             return;
         }
@@ -101,19 +101,19 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     @CommandMethod(path = "territory remove plot", requiredArgs = 1)
     public void removePlotFromTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Territory t = localSender.getActiveTerritory();
 
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
-        if (!townManager.removePlot(args[0])) {
+        if(!townManager.removePlot(args[0])) {
             localSender.sendMessage(
                     ERR + "That plot doesn't exist. Make sure you're using the full name of the plot (townname_plot_plotshortname).");
             return;
@@ -125,37 +125,37 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     @CommandMethod(path = "territory add player", requiredArgs = 1)
     public void addPlayerToTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Town t = localSender.getActiveTown();
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
         Territory territ = localSender.getActiveTerritory();
-        if (territ == null) {
+        if(territ == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         OfflinePlayer player = server.getOfflinePlayer(args[0]);
-        if (!player.hasPlayedBefore()) {
+        if(!player.hasPlayedBefore()) {
             localSender.sendMessage(
                     ERR + args[0] + " has never played on this server before.");
             return;
         }
 
-        if (!t.playerIsResident(player)) {
+        if(!t.playerIsResident(player)) {
             localSender.sendMessage(
                     ERR + "That player is not a member of the town.");
             return;
         }
 
-        if (territ.addPlayer(Bukkit.getOfflinePlayer(args[0]))) {
+        if(territ.addPlayer(Bukkit.getOfflinePlayer(args[0]))) {
             localSender.sendMessage("Player added to territory.");
         } else {
             localSender.sendMessage(
@@ -166,7 +166,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     @CommandMethod(path = "territory remove player", requiredArgs = 1)
     public void removePlayerFromTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -175,30 +175,30 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
 
         Territory territ = localSender.getActiveTerritory();
 
-        if (territ == null) {
+        if(territ == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         OfflinePlayer player = server.getOfflinePlayer(args[0]);
-        if (!player.hasPlayedBefore()) {
+        if(!player.hasPlayedBefore()) {
             localSender.sendMessage(
                     ERR + args[0] + " has never played on this server before.");
             return;
         }
 
-        if (!territ.removePlayer(Bukkit.getOfflinePlayer(args[0]))) {
+        if(!territ.removePlayer(Bukkit.getOfflinePlayer(args[0]))) {
             localSender.sendMessage(
                     ERR + "Unable to remove player from territory. Either they were not in it in the first place, or the underlying World or WorldGuard Region has been deleted.");
         } else {
             localSender.sendMessage(SUCC + "Player removed from territory.");
         }
 
-        if (recursive) {
+        if(recursive) {
             localSender.sendMessage(
                     INFO + "Recursive mode was requested. Removing from child plots...");
-            for (String plotName : territ.getPlotsCollection()) {
-                if (townManager.getPlot(plotName).removePlayer(player)) {
+            for(String plotName : territ.getPlotsCollection()) {
+                if(townManager.getPlot(plotName).removePlayer(player)) {
                     localSender.sendMessage(
                             INFO + "Player removed from " + plotName);
                 }
@@ -211,24 +211,24 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         setNewCommand(s);
         Town t = localSender.getActiveTown();
 
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
         Territory nuActive = townManager.getTerritory(args[0]);
 
-        if (nuActive == null) {
+        if(nuActive == null) {
             nuActive = townManager.getTerritory(MCTownsRegion.formatRegionName(t, TownLevel.TERRITORY, args[0]));
         }
 
-        if (nuActive == null) {
+        if(nuActive == null) {
             localSender.sendMessage(
                     ERR + "The territory \"" + args[0] + "\" does not exist.");
             return;
         }
 
-        if (!nuActive.getParentTown().equals(t.getTownName())) {
+        if(!nuActive.getParentTown().equals(t.getTownName())) {
             localSender.sendMessage(
                     ERR + "The territory \"" + args[0] + "\" does not exist in your town.");
             return;
@@ -241,14 +241,14 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     private void listPlots(int page) {
         page--; //shift to 0-indexing
 
-        if (page < 0) {
+        if(page < 0) {
             localSender.sendMessage(ERR + "Invalid page.");
             return;
         }
 
         Territory t = localSender.getActiveTerritory();
 
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
@@ -258,7 +258,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         String[] plots = t.getPlotsCollection().toArray(
                 new String[t.getPlotsCollection().size()]);
 
-        for (int i = page * RESULTS_PER_PAGE; i < plots.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
+        for(int i = page * RESULTS_PER_PAGE; i < plots.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
             localSender.sendMessage(ChatColor.YELLOW + plots[i]);
         }
     }
@@ -272,7 +272,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
                 page = Integer.parseInt(args[0]);
             else
                 page = 1;
-        } catch (NumberFormatException nfex) {
+        } catch(NumberFormatException nfex) {
             localSender.sendMessage(
                     ERR + "Error parsing integer argument. Found \"" + args[0] + "\", expected integer.");
             return;

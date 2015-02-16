@@ -44,10 +44,9 @@ public abstract class MCTownsRegion {
     }
 
     /**
-     * creates a new region with the name name, and sets its world to be
-     * worldname
+     * creates a new region with the name name, and sets its world to be worldname
      *
-     * @param name      the name of the new region
+     * @param name the name of the new region
      * @param worldName the world of the new region
      */
     public MCTownsRegion(String name, String worldName) {
@@ -83,22 +82,22 @@ public abstract class MCTownsRegion {
         WorldGuardPlugin wgp = MCTowns.getWorldGuardPlugin();
 
         World w = wgp.getServer().getWorld(worldName);
-        if (w == null)
+        if(w == null)
             return false;
 
         ProtectedRegion reg = wgp.getRegionManager(w).getRegion(name);
-        if (reg == null)
+        if(reg == null)
             return false;
 
         members = reg.getMembers();
         owners = reg.getOwners();
 
-        if (members.contains(playerID)) {
+        if(members.contains(playerID)) {
             members.removePlayer(playerID);
             removed = true;
         }
 
-        if (owners.contains(playerID)) {
+        if(owners.contains(playerID)) {
             owners.removePlayer(playerID);
             removed = true;
         }
@@ -122,16 +121,16 @@ public abstract class MCTownsRegion {
 
     public boolean addPlayer(UUID playerID) {
         World w = MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName);
-        if (w == null)
+        if(w == null)
             return false;
 
         ProtectedRegion reg = MCTowns.getWorldGuardPlugin().getRegionManager(w).getRegion(name);
-        if (reg == null)
+        if(reg == null)
             return false;
 
         DefaultDomain dd = reg.getOwners();
-        
-        if (!dd.contains(playerID)) {
+
+        if(!dd.contains(playerID)) {
             dd.addPlayer(playerID);
             return true;
         }
@@ -140,16 +139,16 @@ public abstract class MCTownsRegion {
 
     public boolean addGuest(UUID playerID) {
         World w = MCTowns.getWorldGuardPlugin().getServer().getWorld(worldName);
-        if (w == null)
+        if(w == null)
             return false;
 
         ProtectedRegion reg = MCTowns.getWorldGuardPlugin().getRegionManager(w).getRegion(name);
-        if (reg == null)
+        if(reg == null)
             return false;
 
         DefaultDomain members = reg.getMembers();
 
-        if (!members.contains(playerID)) {
+        if(!members.contains(playerID)) {
             members.addPlayer(playerID);
             return true;
         }
@@ -172,14 +171,14 @@ public abstract class MCTownsRegion {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
+        if(obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if(getClass() != obj.getClass())
             return false;
         final MCTownsRegion other = (MCTownsRegion) obj;
-        if (!Objects.equals(this.name, other.name))
+        if(!Objects.equals(this.name, other.name))
             return false;
-        if (!Objects.equals(this.worldName, other.worldName))
+        if(!Objects.equals(this.worldName, other.worldName))
             return false;
         return true;
     }
@@ -196,9 +195,9 @@ public abstract class MCTownsRegion {
         plotName = plotName.toLowerCase();
 
         String infix;
-        if (type == TownLevel.PLOT)
+        if(type == TownLevel.PLOT)
             infix = TownLevel.PLOT_INFIX;
-        else if (type == TownLevel.TERRITORY)
+        else if(type == TownLevel.TERRITORY)
             infix = TownLevel.TERRITORY_INFIX;
         else
             infix = "";

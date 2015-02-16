@@ -36,7 +36,7 @@ public class Territory extends MCTownsRegion {
     /**
      * Constructs a new territory
      *
-     * @param name      the desired name of the territory
+     * @param name the desired name of the territory
      * @param worldName the name of the world in which the territory exists
      */
     public Territory(String name, String worldName, String parentTownName) {
@@ -49,16 +49,15 @@ public class Territory extends MCTownsRegion {
     }
 
     /**
-     * Adds a plot to the territory. Registering the WG region of the territory
-     * needs to be done elsewhere.
+     * Adds a plot to the territory. Registering the WG region of the territory needs to be done
+     * elsewhere.
      *
      * @param dist the plot to be added
      *
-     * @return false if the plot was not added because it is already added, true
-     *         otherwise
+     * @return false if the plot was not added because it is already added, true otherwise
      */
     public boolean addPlot(Plot plot) {
-        if (plotNames.contains(plot.getName()))
+        if(plotNames.contains(plot.getName()))
             return false;
 
         plotNames.add(plot.getName());
@@ -66,14 +65,13 @@ public class Territory extends MCTownsRegion {
     }
 
     /**
-     * Modifying membership of returned set does not modify which plots are in
-     * this territ
+     * Modifying membership of returned set does not modify which plots are in this territ
      *
-     * Sets returned by this method will not update themselves if subsequent
-     * Territory method calls add plots to it
+     * Sets returned by this method will not update themselves if subsequent Territory method calls
+     * add plots to it
      *
-     * Returned Set is a LinkedHashSet and as such performs well for iteration
-     * and set membership checks
+     * Returned Set is a LinkedHashSet and as such performs well for iteration and set membership
+     * checks
      *
      * @return the plots owned by this territory
      */
@@ -121,7 +119,7 @@ public class Territory extends MCTownsRegion {
     private List<String> getPlotNameList() {
         LinkedList<String> ret = new LinkedList<>();
 
-        for (String s : plotNames) {
+        for(String s : plotNames) {
             ret.add(s);
         }
 
