@@ -31,9 +31,8 @@ import java.util.List;
 public class WGUtils {
 
     /**
-     * Returns the number of blocks that have unique positions in the xz-plane.
-     * I.e. returns the number of blocks in a one-block-thick horizontal "slice" of the
-     * region.
+     * Returns the number of blocks that have unique positions in the xz-plane. I.e. returns the
+     * number of blocks in a one-block-thick horizontal "slice" of the region.
      *
      * @param reg the region
      *
@@ -71,8 +70,8 @@ public class WGUtils {
         List<BlockVector2D> pts2 = getPointsForRegionInCorrectOrder(b);
         BlockVector2D lastPt1 = pts1.get(pts1.size() - 1);
         BlockVector2D lastPt2 = pts2.get(pts2.size() - 1);
-        for (BlockVector2D aPts1 : pts1) {
-            for (BlockVector2D aPts2 : pts2) {
+        for(BlockVector2D aPts1 : pts1) {
+            for(BlockVector2D aPts2 : pts2) {
 
                 Line2D line1 = new Line2D.Double(
                         lastPt1.getBlockX(),
@@ -80,7 +79,7 @@ public class WGUtils {
                         aPts1.getBlockX(),
                         aPts1.getBlockZ());
 
-                if (line1.intersectsLine(
+                if(line1.intersectsLine(
                         lastPt2.getBlockX(),
                         lastPt2.getBlockZ(),
                         aPts2.getBlockX(),
@@ -101,7 +100,7 @@ public class WGUtils {
      * @return
      */
     public static List<BlockVector2D> getPointsForRegionInCorrectOrder(ProtectedRegion r) {
-        if (r instanceof ProtectedCuboidRegion) {
+        if(r instanceof ProtectedCuboidRegion) {
             List<BlockVector2D> pts = new LinkedList<>();
             int x1 = r.getMinimumPoint().getBlockX();
             int x2 = r.getMaximumPoint().getBlockX();

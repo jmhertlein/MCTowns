@@ -54,9 +54,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * CommandHandler wraps a CommandSender and various other pertinent objects
- * together in order to allow each slash command to correspond with an
- * equivalent method here.
+ * CommandHandler wraps a CommandSender and various other pertinent objects together in order to
+ * allow each slash command to correspond with an equivalent method here.
  *
  * @author joshua
  */
@@ -86,20 +85,17 @@ public abstract class CommandHandler {
     }
 
     /**
-     * Flags the specified type of region with the specified flag and the
-     * specified arguments. If no arguments are supplied, the flag is instead
-     * cleared.
+     * Flags the specified type of region with the specified flag and the specified arguments. If no
+     * arguments are supplied, the flag is instead cleared.
      *
-     * @param flagName   name of the WorldGuard flag to set or clear
-     * @param args       the args to set the flag with, or empty if it's meant to be
-     *                   cleared
-     * @param regionType Which region in the ActiveSet hierarchy to apply the
-     *                   flag to.
+     * @param flagName name of the WorldGuard flag to set or clear
+     * @param args the args to set the flag with, or empty if it's meant to be cleared
+     * @param regionType Which region in the ActiveSet hierarchy to apply the flag to.
      */
     public void flagRegion(String flagName, String[] args, TownLevel regionType) {
         MCTownsRegion reg = null;
 
-        switch (regionType) {
+        switch(regionType) {
             case TOWN:
                 localSender.sendMessage(ERR + "Can't apply flags to towns.");
                 return;
@@ -111,16 +107,16 @@ public abstract class CommandHandler {
                 break;
         }
 
-        if (reg == null) {
+        if(reg == null) {
             localSender.sendMessage(ERR + "Your active " + regionType.toString() + " is not set.");
             return;
         }
-        
+
         //grant permission if player is admin, OR (player has perm for flag AND player is mayor)
         boolean hasPermission = localSender.hasExternalPermissions("mct.admin") //is admin
-                              || ( (localSender.hasExternalPermissions("mct.flag." + flagName) || localSender.hasExternalPermissions("mct.flag.all")) //either has perm for that flag, or all flags
-                                  && localSender.getActiveTown().playerIsMayor(localSender.getPlayer())); //and is mayor
-        
+                                || ((localSender.hasExternalPermissions("mct.flag." + flagName) || localSender.hasExternalPermissions("mct.flag.all")) //either has perm for that flag, or all flags
+                                    && localSender.getActiveTown().playerIsMayor(localSender.getPlayer())); //and is mayor
+
         if(!hasPermission) {
             localSender.notifyInsufPermissions();
             return;
@@ -130,7 +126,7 @@ public abstract class CommandHandler {
 
         ProtectedRegion wgReg = regMan.getRegion(reg.getName());
 
-        if (wgReg == null) {
+        if(wgReg == null) {
             MCTowns.logSevere("Error in CommandHandler.flagRegion(): The region in WG was null (somehow). Perhaps someone manually deleted a region through WorldGuard?");
             localSender.sendMessage(ERR + "An error occurred. Please see the console output for more information. This command exited safely; nothing was changed by it.");
             return;
@@ -138,30 +134,30 @@ public abstract class CommandHandler {
 
         Flag<?> foundFlag = null;
 
-        for (Flag<?> flag : DefaultFlag.getFlags()) {
-            if (flag.getName().replace("-", "").equalsIgnoreCase(flagName.replace("-", ""))) {
+        for(Flag<?> flag : DefaultFlag.getFlags()) {
+            if(flag.getName().replace("-", "").equalsIgnoreCase(flagName.replace("-", ""))) {
                 foundFlag = flag;
                 break;
             }
         }
 
-        if (foundFlag == null) {
+        if(foundFlag == null) {
             localSender.sendMessage(ERR + "Couldn't find a matching flag.");
             return;
         }
 
         //If there are no arguments, clear the flag instead of setting it
-        if (args.length == 0) {
+        if(args.length == 0) {
             wgReg.setFlag(foundFlag, null);
             localSender.sendMessage(ChatColor.GREEN + "Successfully removed flag.");
             return;
         }
 
         String s_stateOfFlag = "";
-        if (args.length == 1)
+        if(args.length == 1)
             s_stateOfFlag = args[0];
         else {
-            for (String s : args) {
+            for(String s : args) {
                 s_stateOfFlag += s;
                 s_stateOfFlag += " ";
             }
@@ -171,7 +167,7 @@ public abstract class CommandHandler {
         try {
             setFlag(wgReg, foundFlag, localSender.getSender(), s_stateOfFlag);
             localSender.sendMessage(ChatColor.GREEN + "Region successfully flagged.");
-        } catch (InvalidFlagFormat ex) {
+        } catch(InvalidFlagFormat ex) {
             localSender.sendMessage(ERR + "Error parsing flag arguments: " + ex.getMessage());
             return;
         }
@@ -181,13 +177,13 @@ public abstract class CommandHandler {
     }
 
     public void listPlayers(TownLevel level) {
-        if (localSender.isConsole()) {
+        if(localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
         MCTownsRegion reg = null;
 
-        switch (level) {
+        switch(level) {
             case TERRITORY:
                 reg = localSender.getActiveTerritory();
                 break;
@@ -196,14 +192,14 @@ public abstract class CommandHandler {
                 break;
         }
 
-        if (reg == null) {
+        if(reg == null) {
             localSender.sendMessage(ERR + "You need to set your active " + level.toString().toLowerCase());
             return;
         }
 
         ProtectedRegion wgReg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(reg.getWorldName())).getRegion(reg.getName());
 
-        if (wgReg == null) {
+        if(wgReg == null) {
             localSender.sendMessage("Unable to get world guard region for " + reg.getName() + ". Perhaps the region was deleted outside of MCTowns?");
             return;
         }
@@ -215,47 +211,47 @@ public abstract class CommandHandler {
         localSender.sendMessage("Owners:");
 
         counter = 0;
-        for (String pl : wgReg.getOwners().getPlayers()) {
-            if (counter > 0) {
+        for(String pl : wgReg.getOwners().getPlayers()) {
+            if(counter > 0) {
                 temp += ", ";
             }
             temp += pl;
             counter++;
-            if (counter > 4) {
+            if(counter > 4) {
                 localSender.sendMessage(temp);
                 temp = "";
                 counter = 0;
             }
         }
-        if (counter != 0)
+        if(counter != 0)
             localSender.sendMessage(temp);
         temp = "";
 
         localSender.sendMessage("Members:");
 
-        for (String pl : wgReg.getMembers().getPlayers()) {
-            if (counter > 0) {
+        for(String pl : wgReg.getMembers().getPlayers()) {
+            if(counter > 0) {
                 temp += ", ";
             }
             temp += pl;
             counter++;
-            if (counter > 4) {
+            if(counter > 4) {
                 localSender.sendMessage(temp);
                 temp = "";
                 counter = 0;
             }
         }
-        if (counter != 0)
+        if(counter != 0)
             localSender.sendMessage(temp);
 
     }
 
     /**
-     * Wraps the localSender's current selection in a ProtectedRegion and
-     * returns it Supports cuboid and polygon regions
+     * Wraps the localSender's current selection in a ProtectedRegion and returns it Supports cuboid
+     * and polygon regions
      *
-     * Will throw a runtime exception if selection is not a cuboid or poly (I
-     * need to make it handle this better)
+     * Will throw a runtime exception if selection is not a cuboid or poly (I need to make it handle
+     * this better)
      *
      * @param desiredName the desired name of the region
      *
@@ -265,23 +261,23 @@ public abstract class CommandHandler {
         Selection selection;
         try {
             selection = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection(localSender.getPlayer());
-            if (selection == null)
+            if(selection == null)
                 throw new NullPointerException();
-        } catch (NullPointerException npe) {
+        } catch(NullPointerException npe) {
             localSender.sendMessage("Error getting your WorldEdit selection. Did you forget to make a selection?");
             return null;
-        } catch (CommandException ce) {
+        } catch(CommandException ce) {
             localSender.sendMessage("Error hooking the WorldEdit plugin. Please tell your server owner.");
             ce.printStackTrace();
             return null;
         }
 
         ProtectedRegion region;
-        if (selection instanceof Polygonal2DSelection) {
+        if(selection instanceof Polygonal2DSelection) {
             Polygonal2DSelection sel = (Polygonal2DSelection) selection;
 
             region = new ProtectedPolygonalRegion(desiredName, sel.getNativePoints(), sel.getMinimumPoint().getBlockY(), sel.getNativeMaximumPoint().getBlockY());
-        } else if (selection instanceof CuboidSelection) {
+        } else if(selection instanceof CuboidSelection) {
             CuboidSelection sel = (CuboidSelection) selection;
 
             Location min = sel.getMinimumPoint(), max = sel.getMaximumPoint();
@@ -291,7 +287,7 @@ public abstract class CommandHandler {
 
             region = new ProtectedCuboidRegion(desiredName, minVect, maxVect);
         } else {
-            //throw new RuntimeException("Error: The selection was neither a poly nor a cube."); 
+            //throw new RuntimeException("Error: The selection was neither a poly nor a cube.");
             localSender.sendMessage("Only cuboid and polygonal regions are supported right now.");
             return null;
         }
@@ -303,10 +299,10 @@ public abstract class CommandHandler {
         ProtectedRegion parentReg = MCTowns.getWorldGuardPlugin().getRegionManager(
                 MCTowns.getWorldGuardPlugin().getServer().getWorld(parent.getWorldName())).getRegion(parent.getName());
 
-        if (parentReg == null) {
+        if(parentReg == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "!!!WARNING!!! MCTowns detected it is in an invalid state: A WorldGuard region was manually deleted. See message on next line.");
             MCTowns.logSevere("While checking if a region is within its parent region, detected that WorldGuard region for \"" + parent.getName() + "\" does not exist. "
-                    + "You should delete this region with MCTowns and re-create it.");
+                              + "You should delete this region with MCTowns and re-create it.");
             return false;
         }
 
@@ -314,10 +310,10 @@ public abstract class CommandHandler {
     }
 
     public static boolean regionIsWithinRegion(ProtectedRegion interior, ProtectedRegion exterior) {
-        for(BlockVector2D v : interior.getPoints()) 
+        for(BlockVector2D v : interior.getPoints())
             if(!(exterior.contains(v)))
                 return false;
-        
+
         boolean ret = WGUtils.intersectsEdges(interior, exterior);
         return !ret;
     }
@@ -325,7 +321,7 @@ public abstract class CommandHandler {
     protected void doRegManSave(RegionManager regMan) {
         try {
             regMan.save();
-        } catch (StorageException ex) {
+        } catch(StorageException ex) {
             MCTowns.logSevere("Issue saving WG region list.");
         }
     }
@@ -335,9 +331,9 @@ public abstract class CommandHandler {
     }
 
     public static void broadcastTownJoin(Town t, String player) {
-        for (String pl : t.getResidentNames()) {
+        for(String pl : t.getResidentNames()) {
             Player p = Bukkit.getPlayer(pl);
-            if (p == null || pl.equals(player))
+            if(p == null || pl.equals(player))
                 continue;
             p.sendMessage(player + " just joined " + t.getTownName() + "!");
         }
@@ -346,15 +342,15 @@ public abstract class CommandHandler {
     protected ArrayList<String> getOutputFriendlyTownJoinListMessages(Set<String> playerNames) {
         ArrayList<String> msgs = new ArrayList<>();
 
-        if (playerNames.size() <= 3) {
+        if(playerNames.size() <= 3) {
             msgs.addAll(playerNames);
             return msgs;
         }
 
         int numNamesOnCurrentLine = 0;
         String curLine = "";
-        for (String s : playerNames) {
-            if (numNamesOnCurrentLine == 3) {
+        for(String s : playerNames) {
+            if(numNamesOnCurrentLine == 3) {
                 curLine = curLine.substring(0, curLine.length() - 3);
                 msgs.add(curLine);
                 numNamesOnCurrentLine = 0;
@@ -365,7 +361,7 @@ public abstract class CommandHandler {
             numNamesOnCurrentLine++;
         }
 
-        if (numNamesOnCurrentLine > 0) {
+        if(numNamesOnCurrentLine > 0) {
             curLine = curLine.substring(0, curLine.length() - 3);
             msgs.add(curLine);
         }
@@ -382,14 +378,14 @@ public abstract class CommandHandler {
     }
 
     public void redefineActiveRegion(TownLevel regType) {
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         MCTownsRegion reg;
 
-        switch (regType) {
+        switch(regType) {
             case TOWN:
                 localSender.sendMessage(ERR + "Can't redefine towns.");
                 return;
@@ -404,31 +400,31 @@ public abstract class CommandHandler {
         }
 
         //only let admins expand territories, unless mayors can buy territories, in which case mayors can too
-        if (regType == TownLevel.TERRITORY && !(localSender.hasExternalPermissions(Perms.ADMIN.toString()) 
-                                                || (MCTConfig.MAYORS_CAN_BUY_TERRITORIES.getBoolean() && localSender.hasMayoralPermissions()))) {
+        if(regType == TownLevel.TERRITORY && !(localSender.hasExternalPermissions(Perms.ADMIN.toString())
+                                               || (MCTConfig.MAYORS_CAN_BUY_TERRITORIES.getBoolean() && localSender.hasMayoralPermissions()))) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        if (reg == null) {
+        if(reg == null) {
             localSender.sendMessage(ERR + "Your active " + regType.toString() + " is not set.");
             return;
         }
-        
+
         Town t = localSender.getActiveTown();
-        
+
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(reg.getWorldName()));
 
         Selection nuRegionBounds;
         try {
             nuRegionBounds = MCTowns.getWorldGuardPlugin().getWorldEdit().getSelection(localSender.getPlayer());
-        } catch (CommandException ce) {
+        } catch(CommandException ce) {
             localSender.sendMessage("Error hooking the world edit plugn. Please inform your server owner.");
             ce.printStackTrace();
             return;
         }
 
-        if (nuRegionBounds == null) {
+        if(nuRegionBounds == null) {
             localSender.sendMessage(ERR + "You need to select what you want the region's boundaries to be updated to.");
             return;
         }
@@ -436,29 +432,29 @@ public abstract class CommandHandler {
         ProtectedRegion oldWGReg, nuWGRegion;
         oldWGReg = regMan.getRegion(reg.getName());
 
-        if (oldWGReg == null) {
+        if(oldWGReg == null) {
             localSender.sendMessage(ERR + String.format("Could not find WorldGuard region \"%s\", it was probably deleted manually. You should delete this %s.", reg.getName(), regType.toString().toLowerCase()));
             return;
         }
 
-        if (oldWGReg instanceof ProtectedPolygonalRegion) {
+        if(oldWGReg instanceof ProtectedPolygonalRegion) {
             ProtectedPolygonalRegion oldPoly = (ProtectedPolygonalRegion) oldWGReg;
 
-            if (!(nuRegionBounds instanceof Polygonal2DSelection)) {
+            if(!(nuRegionBounds instanceof Polygonal2DSelection)) {
                 localSender.sendMessage(ERR + "Error: selection type does not match region type. Must be a polygonal selection.");
                 return;
             }
             Polygonal2DSelection polySel = (Polygonal2DSelection) nuRegionBounds;
 
             nuWGRegion = new ProtectedPolygonalRegion(oldWGReg.getId(), polySel.getNativePoints(), polySel.getMaximumPoint().getBlockY(), polySel.getNativeMinimumPoint().getBlockY());
-        } else if (oldWGReg instanceof ProtectedCuboidRegion) {
-            if (!(nuRegionBounds instanceof CuboidSelection)) {
+        } else if(oldWGReg instanceof ProtectedCuboidRegion) {
+            if(!(nuRegionBounds instanceof CuboidSelection)) {
                 localSender.sendMessage(ERR + "Error: selection type does not match region type. Must be a cuboid selection.");
                 return;
             }
             nuWGRegion = new ProtectedCuboidRegion(oldWGReg.getId(),
-                    nuRegionBounds.getNativeMaximumPoint().toBlockVector(),
-                    nuRegionBounds.getNativeMinimumPoint().toBlockVector());
+                                                   nuRegionBounds.getNativeMaximumPoint().toBlockVector(),
+                                                   nuRegionBounds.getNativeMinimumPoint().toBlockVector());
         } else {
             localSender.sendMessage(ERR + "Unsupported region type: " + oldWGReg.getTypeName());
             return;
@@ -466,26 +462,26 @@ public abstract class CommandHandler {
 
         //To make sure that we can't accidentally "orphan" plots outside the region, only allow
         //new boundaries if the old region is a subset of the new region.
-        if (!regionIsWithinRegion(oldWGReg, nuWGRegion)) {
+        if(!regionIsWithinRegion(oldWGReg, nuWGRegion)) {
             localSender.sendMessage(ERR + "Your new selection must completely contain the old region (Only expansion is allowed, to ensure that subregions are not 'orphaned').");
             return;
         }
 
-        if (regType != TownLevel.TERRITORY && !regionIsWithinRegion(nuWGRegion, oldWGReg.getParent())) {
+        if(regType != TownLevel.TERRITORY && !regionIsWithinRegion(nuWGRegion, oldWGReg.getParent())) {
             localSender.sendMessage(ERR + "Your new selection must be within its parent region.");
             return;
         }
-        
+
         //if they're not an admin, charge them for the territory
         if(regType == TownLevel.TERRITORY && !localSender.hasExternalPermissions(Perms.ADMIN.toString())) {
             if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
                 localSender.sendMessage(ERR + "You're not an admin, and mayors can only redefine territories by buying more blocks, yet the economy is not enabled.");
                 return;
             }
-            
+
             BigDecimal price = new BigDecimal(MCTConfig.PRICE_PER_XZ_BLOCK.getString()).multiply(new BigDecimal(WGUtils.getNumXZBlocksInRegion(nuWGRegion) - WGUtils.getNumXZBlocksInRegion(oldWGReg)));
-            
-            if (t.getBank().getCurrencyBalance().compareTo(price) < 0) {
+
+            if(t.getBank().getCurrencyBalance().compareTo(price) < 0) {
                 //If they can't afford it...
                 localSender.sendMessage(ERR + "There is not enough money in your " + INFO + "town's bank account" + ERR + " to buy a region that large.");
                 localSender.sendMessage(ERR + "Total Price: " + price);
@@ -507,7 +503,7 @@ public abstract class CommandHandler {
         nuWGRegion.setPriority(oldWGReg.getPriority());
         try {
             nuWGRegion.setParent(oldWGReg.getParent());
-        } catch (CircularInheritanceException ex) {
+        } catch(CircularInheritanceException ex) {
             MCTowns.logSevere("Error copying parent during redefine: " + ex.getMessage());
             ex.printStackTrace();
             return;

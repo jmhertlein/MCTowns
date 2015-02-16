@@ -75,16 +75,16 @@ public class MCTownsPlugin extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        if (this.getServer().getPluginManager().getPlugin("WorldGuard") == null)
+        if(this.getServer().getPluginManager().getPlugin("WorldGuard") == null)
             return;
 
         try {
             saveWorldGuardWorlds();
-        } catch (Exception ex) {
+        } catch(Exception ex) {
             MCTowns.logSevere("Error saving WG regions: " + ex.getLocalizedMessage());
         }
 
-        if (!abortSave)
+        if(!abortSave)
             persistTownManager();
         else
             MCTowns.logInfo("The save was aborted manually, so nothing was saved.");
@@ -92,9 +92,9 @@ public class MCTownsPlugin extends JavaPlugin {
         MCTowns.logInfo("[MCTowns]: MCTowns has been successfully disabled.");
         try {
             trimFiles();
-        } catch (FileNotFoundException ex) {
+        } catch(FileNotFoundException ex) {
             Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | InvalidConfigurationException ex) {
+        } catch(IOException | InvalidConfigurationException ex) {
             Logger.getLogger(MCTownsPlugin.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -106,21 +106,20 @@ public class MCTownsPlugin extends JavaPlugin {
     }
 
     /**
-     * Sets up files needed for persistence, registers listeners and
-     * permissions, etc
+     * Sets up files needed for persistence, registers listeners and permissions, etc
      */
     @Override
     public void onEnable() {
         singleton = this;
         setupFiles();
 
-        if (!hookInDependencies())
+        if(!hookInDependencies())
             return;
 
         joinManager = new TownJoinManager();
         activeSets = new HashMap<>();
         openDepositInventories = new HashMap<>();
-        if (MCTConfig.ECONOMY_ENABLED.getBoolean())
+        if(MCTConfig.ECONOMY_ENABLED.getBoolean())
             potentialPlotBuyers = new HashMap<>();
 
         Perms.registerPermNodes(getServer().getPluginManager());
@@ -146,7 +145,7 @@ public class MCTownsPlugin extends JavaPlugin {
         dataDirs = new HashSet<>();
         dataDirs.add(savesDir);
 
-        for (File f : dataDirs) {
+        for(File f : dataDirs) {
             f.mkdirs();
         }
 
@@ -155,9 +154,9 @@ public class MCTownsPlugin extends JavaPlugin {
         configFiles.add(metaFile);
 
         try {
-            if (!metaFile.exists())
+            if(!metaFile.exists())
                 metaFile.createNewFile();
-        } catch (IOException ex) {
+        } catch(IOException ex) {
             MCTowns.logSevere("Error creating essential config file: " + ex.getMessage());
         }
 
@@ -167,7 +166,7 @@ public class MCTownsPlugin extends JavaPlugin {
     private void setupTownManager() {
         try {
             townManager = TownManager.readYAML(savesDir.getAbsolutePath());
-        } catch (IOException | InvalidConfigurationException ex) {
+        } catch(IOException | InvalidConfigurationException ex) {
             MCTowns.logWarning("MCTowns: Couldn't load the town database. Ignore if this is the first time the plugin has been run.");
             townManager = new TownManager();
         }
@@ -175,7 +174,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
     private boolean hookInDependencies() {
         Plugin wgp = this.getServer().getPluginManager().getPlugin("WorldGuard");
-        if (wgp == null) {
+        if(wgp == null) {
             MCTowns.logSevere("========================================================");
             MCTowns.logSevere(" _   _  ____ _______ _____ _____ ______");
             MCTowns.logSevere("| \\ | |/ __ \\__   __|_   _/ ____|  ____|");
@@ -195,9 +194,8 @@ public class MCTownsPlugin extends JavaPlugin {
         MCTowns.logInfo("Hooked WorldGuard version " + wgVersion);
 
         /*
-         * Crappy version detection but it's not like Bukkit or WG actually give
-         * us a format spec to work with, so might as well try
-         * Version check failing warns only, though, since this is
+         * Crappy version detection but it's not like Bukkit or WG actually give us a format spec to
+         * work with, so might as well try Version check failing warns only, though, since this is
          * bound to produce false positives.
          */
         if(!wgVersion.matches(MCTConfig.WG_VER_REGEX.getString())) {
@@ -206,12 +204,12 @@ public class MCTownsPlugin extends JavaPlugin {
             MCTowns.logWarning("======== WG VERSION WARNING ==========");
         }
 
-        if (MCTConfig.ECONOMY_ENABLED.getBoolean())
+        if(MCTConfig.ECONOMY_ENABLED.getBoolean())
             try {
                 boolean success = setupEconomy();
-                if (!success)
+                if(!success)
                     MCTowns.logSevere("MCTowns: Unable to hook-in to Vault (1)!");
-            } catch (Exception e) {
+            } catch(Exception e) {
                 MCTowns.logSevere("MCTowns: Unable to hook-in to Vault.");
                 return false;
             }
@@ -231,7 +229,7 @@ public class MCTownsPlugin extends JavaPlugin {
     public void persistTownManager() {
         try {
             townManager.writeYAML(savesDir.getAbsolutePath());
-        } catch (IOException ex) {
+        } catch(IOException ex) {
             MCTowns.logSevere("Error saving town database: " + ex.getLocalizedMessage());
             ex.printStackTrace();
         } catch(NullPointerException npe) {
@@ -242,7 +240,7 @@ public class MCTownsPlugin extends JavaPlugin {
     private boolean setupEconomy() {
         Economy economy = null;
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null)
+        if(economyProvider != null)
             economy = economyProvider.getProvider();
 
         return (economy != null);
@@ -267,7 +265,6 @@ public class MCTownsPlugin extends JavaPlugin {
         getCommand("territory").setExecutor(tree);
         getCommand("plot").setExecutor(tree);
 
-
     }
 
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
@@ -278,15 +275,15 @@ public class MCTownsPlugin extends JavaPlugin {
         List<String> towns = fileConfig.getStringList("towns"),
                 regions = fileConfig.getStringList("regions");
 
-        for (File f : root.listFiles()) {
+        for(File f : root.listFiles()) {
             //not really necessary since nothing but town files are in saves now, but... better safe.
-            if (dataDirs.contains(f) || configFiles.contains(f))
+            if(dataDirs.contains(f) || configFiles.contains(f))
                 continue;
 
             //snips off the ".yml" from the end of the files, so they'll match their region or town names again
             String regionName = f.getName().substring(0, f.getName().lastIndexOf('.'));
 
-            if (!(towns.contains(regionName) || regions.contains(regionName)))
+            if(!(towns.contains(regionName) || regions.contains(regionName)))
                 f.delete();
         }
     }
@@ -320,7 +317,7 @@ public class MCTownsPlugin extends JavaPlugin {
     }
 
     private void saveWorldGuardWorlds() throws Exception {
-        for (World w : this.getServer().getWorlds()) {
+        for(World w : this.getServer().getWorlds()) {
             MCTowns.getWorldGuardPlugin().getRegionManager(w).save();
         }
     }
@@ -360,7 +357,7 @@ public class MCTownsPlugin extends JavaPlugin {
         try {
             Metrics metrics = new Metrics(this);
             metrics.start();
-        } catch (IOException ex) {
+        } catch(IOException ex) {
             MCTowns.logWarning("Error: Unable to start metrics reporting.");
         }
     }

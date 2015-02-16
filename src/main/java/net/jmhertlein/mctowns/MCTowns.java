@@ -50,7 +50,7 @@ public class MCTowns {
     public static void logSevere(String msg) {
         MCTownsPlugin.getPlugin().getLogger().log(Level.SEVERE, msg);
     }
-    
+
     public static void logDebug(String msg) {
         if(MCTConfig.DEBUG_MODE_ENABLED.getBoolean())
             logInfo("[DEBUG]: " + msg);
@@ -63,11 +63,11 @@ public class MCTowns {
     }
 
     public static WorldGuardPlugin getWorldGuardPlugin() {
-        if (wgp != null)
+        if(wgp != null)
             return wgp;
 
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
-        if (p instanceof WorldGuardPlugin)
+        if(p instanceof WorldGuardPlugin)
             wgp = (WorldGuardPlugin) p;
         else
             wgp = null;

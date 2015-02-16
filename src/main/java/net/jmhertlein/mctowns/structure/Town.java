@@ -60,12 +60,11 @@ public class Town {
     private boolean friendlyFire;
 
     /**
-     * Creates a new town, setting the name to townName, the mayor to the player
-     * passed as mayor, and adds the mayor to the list of residents. The MOTD is
-     * set to a default motd.
+     * Creates a new town, setting the name to townName, the mayor to the player passed as mayor,
+     * and adds the mayor to the list of residents. The MOTD is set to a default motd.
      *
      * @param townName the desired name of the town
-     * @param mayor    the player to be made the mayor of the town
+     * @param mayor the player to be made the mayor of the town
      *
      */
     public Town(String townName, Player mayor) {
@@ -184,15 +183,14 @@ public class Town {
      *
      * @param p the player to be added
      *
-     * @return false if player was not added because player is already added,
-     *         true otherwise
+     * @return false if player was not added because player is already added, true otherwise
      */
     public boolean addPlayer(Player p) {
         return addPlayer(p.getUniqueId());
     }
 
     public boolean addPlayer(UUID u) {
-        if (residents.contains(u))
+        if(residents.contains(u))
             return false;
         residents.add(u);
         return true;
@@ -203,9 +201,9 @@ public class Town {
     }
 
     /**
-     * Removes a player from the town. Postcondition: Player is not a resident
-     * of the town, regardless of whether or not they were before. Note: Player
-     * must still be removed from the WG regions associated with the town
+     * Removes a player from the town. Postcondition: Player is not a resident of the town,
+     * regardless of whether or not they were before. Note: Player must still be removed from the WG
+     * regions associated with the town
      *
      * @param p - the player to be removed
      */
@@ -214,8 +212,8 @@ public class Town {
     }
 
     /**
-     * Removes the player from the town's list of residents and assistants. Does
-     * not remove them from regions.
+     * Removes the player from the town's list of residents and assistants. Does not remove them
+     * from regions.
      *
      * @param playerId
      */
@@ -225,16 +223,15 @@ public class Town {
     }
 
     /**
-     * Adds the territory to the town. The region of the territory will need to
-     * be handled separately.
+     * Adds the territory to the town. The region of the territory will need to be handled
+     * separately.
      *
      * @param territ the territory to be added
      *
-     * @return false if territ was not added because it is already added, true
-     *         otherwise
+     * @return false if territ was not added because it is already added, true otherwise
      */
     public boolean addTerritory(Territory territ) {
-        if (territories.contains(territ.getName()))
+        if(territories.contains(territ.getName()))
             return false;
 
         territories.add(territ.getName());
@@ -257,8 +254,7 @@ public class Town {
      *
      * @param player the player to be added
      *
-     * @return false if player was not added because player was already added,
-     *         true otherwise
+     * @return false if player was not added because player was already added, true otherwise
      */
     public boolean addAssistant(OfflinePlayer player) {
         return addAssistant(UUIDs.getUUIDForOfflinePlayer(player));
@@ -269,11 +265,11 @@ public class Town {
      *
      * @param playerId
      *
-     * @return true if player was added as assistant, false if they're already
-     *         an assistant or they're not a resident of the town.
+     * @return true if player was added as assistant, false if they're already an assistant or
+     * they're not a resident of the town.
      */
     public boolean addAssistant(UUID playerId) {
-        if (assistants.contains(playerId) || !residents.contains(playerId))
+        if(assistants.contains(playerId) || !residents.contains(playerId))
             return false;
 
         assistants.add(playerId);
@@ -285,8 +281,8 @@ public class Town {
      *
      * @param player the player to be demoted
      *
-     * @return false if the player was not removed because the player is not an
-     *         assistant, true otherwise
+     * @return false if the player was not removed because the player is not an assistant, true
+     * otherwise
      */
     public boolean removeAssistant(OfflinePlayer player) {
         return removeAssistant(UUIDs.getUUIDForOfflinePlayer(player));
@@ -294,7 +290,7 @@ public class Town {
     }
 
     public boolean removeAssistant(UUID playerId) {
-        if (!assistants.contains(playerId))
+        if(!assistants.contains(playerId))
             return false;
 
         assistants.remove(playerId);
@@ -305,14 +301,13 @@ public class Town {
     /**
      * Returns the territories this town has.
      *
-     * Modifying membership of returned set does not modify which territs are in
-     * this Town
+     * Modifying membership of returned set does not modify which territs are in this Town
      *
-     * Sets returned by this method will not update themselves if subsequent
-     * Town method calls add Territories to it
+     * Sets returned by this method will not update themselves if subsequent Town method calls add
+     * Territories to it
      *
-     * Returned Set is a LinkedHashSet and as such performs well for iteration
-     * and set membership checks
+     * Returned Set is a LinkedHashSet and as such performs well for iteration and set membership
+     * checks
      *
      * @return the town's territories
      */
@@ -334,14 +329,14 @@ public class Town {
     /**
      * Returns the list of all assistants in the town
      *
-     * Modifying membership of returned set does not modify which players are
-     * assistants in this Town
+     * Modifying membership of returned set does not modify which players are assistants in this
+     * Town
      *
-     * Sets returned by this method will not update themselves if subsequent
-     * Town method calls add assistants to it
+     * Sets returned by this method will not update themselves if subsequent Town method calls add
+     * assistants to it
      *
-     * Returned Set is a LinkedHashSet and as such performs well for iteration
-     * and set membership checks
+     * Returned Set is a LinkedHashSet and as such performs well for iteration and set membership
+     * checks
      *
      * @return
      */
@@ -376,12 +371,12 @@ public class Town {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
+        if(obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if(getClass() != obj.getClass())
             return false;
         final Town other = (Town) obj;
-        if (!Objects.equals(this.townName, other.townName))
+        if(!Objects.equals(this.townName, other.townName))
             return false;
         return true;
     }
@@ -479,11 +474,11 @@ public class Town {
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(p.getWorld());
 
         ProtectedRegion tempReg;
-        for (MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
-            if (mctReg instanceof Territory) {
+        for(MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
+            if(mctReg instanceof Territory) {
                 tempReg = regMan.getRegion((mctReg).getName());
-                if (tempReg != null)
-                    if (tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())))
+                if(tempReg != null)
+                    if(tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())))
                         return true;
             }
         }
@@ -612,9 +607,9 @@ public class Town {
     public static void recursivelyRemovePlayerFromTown(OfflinePlayer p, Town t) {
         TownManager tMan = MCTowns.getTownManager();
 
-        for (String teName : t.getTerritoriesCollection()) {
+        for(String teName : t.getTerritoriesCollection()) {
             Territory te = tMan.getTerritory(teName);
-            for (String plName : te.getPlotsCollection()) {
+            for(String plName : te.getPlotsCollection()) {
                 Plot pl = tMan.getPlot(plName);
                 pl.removePlayer(p);
             }

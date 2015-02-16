@@ -19,6 +19,8 @@ package net.jmhertlein.mctowns.command;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.abcf.CommandDefinition;
@@ -33,6 +35,7 @@ import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.util.MCTConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -51,7 +54,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         setNewCommand(s);
         Plot p = localSender.getActivePlot();
 
-        if (p == null) {
+        if(p == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
@@ -69,7 +72,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         setNewCommand(s);
         Plot plot = localSender.getActivePlot();
 
-        if (plot == null) {
+        if(plot == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
@@ -79,12 +82,12 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         ProtectedRegion wgPlot = regMan.getRegion(plot.getName());
 
         //if they are neither mayor nor owner
-        if (!(localSender.hasMayoralPermissions() || wgPlot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
+        if(!(localSender.hasMayoralPermissions() || wgPlot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        if (plot.removePlayer(Bukkit.getOfflinePlayer(args[0]))) {
+        if(plot.removePlayer(Bukkit.getOfflinePlayer(args[0]))) {
             localSender.sendMessage("Player removed from plot.");
         } else {
             localSender.sendMessage(ERR + "Unable to remove player from plot (either player is not in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
@@ -94,35 +97,35 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "plot add player", requiredArgs = 1)
     public void addPlayerToPlot(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Town t = localSender.getActiveTown();
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
         Plot plot = localSender.getActivePlot();
-        if (plot == null) {
+        if(plot == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
 
         OfflinePlayer player = server.getOfflinePlayer(args[0]);
-        if (!player.hasPlayedBefore()) {
+        if(!player.hasPlayedBefore()) {
             localSender.sendMessage(ERR + args[0] + " has never played on this server.");
             return;
         }
 
-        if (!t.playerIsResident(player)) {
+        if(!t.playerIsResident(player)) {
             localSender.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
-        if (plot.addPlayer(player)) {
+        if(plot.addPlayer(player)) {
             localSender.sendMessage("Player added to plot.");
         } else {
             localSender.sendMessage(ERR + "Unable to add player to plot (either player is already in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
@@ -134,7 +137,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     public void addPlayerToPlotAsGuest(CommandSender s, String[] args) {
         setNewCommand(s);
         Plot plot = localSender.getActivePlot();
-        if (plot == null) {
+        if(plot == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
@@ -144,18 +147,18 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         ProtectedRegion wgPlot = regMan.getRegion(plot.getName());
 
         //if they are neither mayor nor owner
-        if (!(localSender.hasMayoralPermissions() || wgPlot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
+        if(!(localSender.hasMayoralPermissions() || wgPlot.getOwners().contains(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer())))) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         OfflinePlayer player = server.getOfflinePlayer(args[0]);
-        if (!player.hasPlayedBefore()) {
+        if(!player.hasPlayedBefore()) {
             localSender.sendMessage(ChatColor.GOLD + args[0] + " has never played on this server.");
             return;
         }
 
-        if (plot.addGuest(player)) {
+        if(plot.addGuest(player)) {
             localSender.sendMessage(ChatColor.GREEN + "Successfully added " + player.getName() + " to the plot as a guest.");
         } else {
             localSender.sendMessage(ERR + "Unable to add player to plot as guest (either player is already guest in plot, world doesn't exist, or WorldGuard region doesn't exist.).");
@@ -165,19 +168,19 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "plot economy forsale", requiredArgs = 1)
     public void setPlotBuyability(CommandSender s, String[] args) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Town t = localSender.getActiveTown();
 
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
 
-        if (!t.usesBuyablePlots()) {
+        if(!t.usesBuyablePlots()) {
             localSender.sendMessage(ERR + t.getTownName() + " does not allow the sale of plots.");
             return;
         }
@@ -185,14 +188,14 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         boolean forSale;
         try {
             forSale = Boolean.parseBoolean(args[0]);
-        } catch (Exception e) {
+        } catch(Exception e) {
             localSender.sendMessage(ERR + "Error parsing boolean on token: " + args[0]);
             return;
         }
 
         Plot p = localSender.getActivePlot();
 
-        if (p == null) {
+        if(p == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
@@ -203,12 +206,12 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "plot economy setprice", requiredArgs = 1)
     public void setPlotPrice(CommandSender s, String[] args) {
-        if (localSender.isConsole()) {
+        if(localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
 
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
@@ -217,14 +220,14 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         try {
             price = new BigDecimal(args[0]);
-        } catch (Exception e) {
+        } catch(Exception e) {
             localSender.sendMessage(ERR + "Error parsing float on token: " + args[0]);
             return;
         }
 
         Plot p = localSender.getActivePlot();
 
-        if (p == null) {
+        if(p == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
@@ -237,24 +240,24 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "plot sign build")
     public void buildSign(CommandSender s) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
+        if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
         Plot p = localSender.getActivePlot();
 
-        if (p == null) {
+        if(p == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
 
-        if (p.buildSign(localSender.getPlayer().getLocation())) {
+        if(p.buildSign(localSender.getPlayer().getLocation())) {
             localSender.sendMessage(SUCC + "Sign built!");
         } else {
             localSender.sendMessage(ERR + "The sign wasn't built because its target location wasn't an air block. Please clear the spot and try again.");
@@ -264,19 +267,19 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "plot sign demolish")
     public void demolishSign(CommandSender s) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
-        if (!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
+        if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
         Plot p = localSender.getActivePlot();
 
-        if (p == null) {
+        if(p == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
@@ -288,14 +291,14 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "plot sign setpos")
     public void setPlotSignPosition(CommandSender s) {
         setNewCommand(s);
-        if (!localSender.hasMayoralPermissions()) {
+        if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
             return;
         }
 
         Plot p = localSender.getActivePlot();
 
-        if (p == null) {
+        if(p == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
@@ -306,7 +309,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
 
-        if (mctLoc == null) {
+        if(mctLoc == null) {
             localSender.sendMessage(ERR + "Couldn't get the location you're looking at.");
             return;
         }
@@ -325,27 +328,27 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     //TODO: make this usable? it was apparently never made accessable
     public void surrenderPlot() {
-        if (localSender.isConsole()) {
+        if(localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;
         }
 
         Plot p = localSender.getActivePlot();
-        if (p == null) {
+        if(p == null) {
             localSender.notifyActivePlotNotSet();
             return;
         }
 
         ProtectedRegion reg = MCTowns.getWorldGuardPlugin().getRegionManager(server.getWorld(p.getWorldName())).getRegion(p.getName());
 
-        if (!reg.isOwner(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer()))) {
+        if(!reg.isOwner(MCTowns.getWorldGuardPlugin().wrapPlayer(localSender.getPlayer()))) {
             localSender.sendMessage(ERR + "You don't own this plot, so you can't surrender it!");
             return;
         }
 
         reg.getOwners().removePlayer(localSender.getPlayer().getName());
 
-        for (String name : reg.getMembers().getPlayers()) {
+        for(String name : reg.getMembers().getPlayers()) {
             reg.getMembers().removePlayer(name);
         }
 
@@ -359,7 +362,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         setNewCommand(s);
         Town t = localSender.getActiveTown();
 
-        if (t == null) {
+        if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
@@ -369,29 +372,29 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         Territory te = localSender.getActiveTerritory();
 
-        if (te == null) {
+        if(te == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         nuActive = townManager.getPlot(args[0]);
 
-        if (nuActive == null) {
+        if(nuActive == null) {
             nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, args[0]));
         }
 
-        if (nuActive == null) {
+        if(nuActive == null) {
             localSender.sendMessage(ERR + "The plot \"" + args[0] + "\" does not exist.");
             return;
         }
 
-        if (!nuActive.getParentTownName().equals(t.getTownName())) {
+        if(!nuActive.getParentTownName().equals(t.getTownName())) {
             localSender.sendMessage(ERR + "The plot \"" + args[0] + "\" does not exist in your town.");
             return;
         }
 
         localSender.setActivePlot(nuActive);
-        if (nuActiveTerrit != null) {
+        if(nuActiveTerrit != null) {
             localSender.setActiveTerritory(nuActiveTerrit);
         }
         localSender.sendMessage("Active plot set to " + nuActive.getName());

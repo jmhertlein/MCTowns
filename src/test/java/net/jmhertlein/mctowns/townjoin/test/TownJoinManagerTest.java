@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.jmhertlein.mctowns.townjoin.test;
 
 import java.lang.reflect.Constructor;
@@ -100,7 +99,7 @@ public class TownJoinManagerTest {
 
     @Test
     public void testBulkRequestAdditionAndRemoval() {
-        String[] names = new String[] {"Notch", "jeb", "RMS", "Linus"};
+        String[] names = new String[]{"Notch", "jeb", "RMS", "Linus"};
 
         for(String s : names)
             manager.addJoinRequest(s, t);
@@ -126,7 +125,7 @@ public class TownJoinManagerTest {
             field.setAccessible(true);
             field.set(ret, name);
             return ret;
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException ex) {
+        } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException ex) {
             Logger.getLogger(TownJoinManagerTest.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("===============ERROR MAKING MOCK TOWN=======================");
             return null;

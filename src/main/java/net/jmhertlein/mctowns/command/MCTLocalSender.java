@@ -39,8 +39,8 @@ public class MCTLocalSender extends LocalSender {
     /**
      * Wraps a CommandSender, tying him to his ActiveSet and the townManager
      *
-     * @param tMan       the town manager
-     * @param sender     the sender to be wrapped
+     * @param tMan the town manager
+     * @param sender the sender to be wrapped
      * @param activeSets the database of active sets as a hashmap
      */
     public MCTLocalSender(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
@@ -49,9 +49,9 @@ public class MCTLocalSender extends LocalSender {
 
         console = !(sender instanceof Player);
 
-        if (!console) {
+        if(!console) {
             player = (Player) sender;
-            if (!activeSets.containsKey(player.getName())) {
+            if(!activeSets.containsKey(player.getName())) {
                 activeSets.put(player.getName(), new ActiveSet());
                 List<Town> towns = tMan.matchPlayerToTowns(player);
                 activeSets.get(player.getName()).setActiveTown(towns.isEmpty() ? null : towns.get(0));
@@ -118,9 +118,9 @@ public class MCTLocalSender extends LocalSender {
     }
 
     /**
-     * Returns whether or not the player is a mayor or pseudo-mayor. A player is
-     * a pseudo-mayor if they are an admin, op, or a mayor of their active town.
-     * If the active town is null, returns true.
+     * Returns whether or not the player is a mayor or pseudo-mayor. A player is a pseudo-mayor if
+     * they are an admin, op, or a mayor of their active town. If the active town is null, returns
+     * true.
      *
      * @return whether or not the player has permission
      */
@@ -129,8 +129,8 @@ public class MCTLocalSender extends LocalSender {
     }
 
     /**
-     * Returns true if the player is an admin, or the mayor of his active town
-     * and has the manageregion permission.
+     * Returns true if the player is an admin, or the mayor of his active town and has the
+     * manageregion permission.
      *
      * @return whether or not the player can manage regions
      */
@@ -140,8 +140,7 @@ public class MCTLocalSender extends LocalSender {
     /**
      * Returns whether or not the player can delete the active town.
      *
-     * @return true if admin, or mayor of active town and has permission node to
-     *         remove towns
+     * @return true if admin, or mayor of active town and has permission node to remove towns
      */
     public boolean canDeleteTown() {
         return hasExternalPermissions(Perms.ADMIN.toString()) || (hasMayoralPermissions() && hasExternalPermissions(Perms.REMOVE_TOWN.toString()));

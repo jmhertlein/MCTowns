@@ -52,7 +52,7 @@ public class QuickSelectToolListener implements Listener {
         this.wgp = wgp;
         this.mctp = mctp;
         this.townMan = MCTowns.getTownManager();
-        
+
         SELECT_TOOL = Material.getMaterial(MCTConfig.QUICKSELECT_TOOL.getString());
     }
 
@@ -62,15 +62,15 @@ public class QuickSelectToolListener implements Listener {
             MCTowns.logWarning("Error: quickselect tool config value is invalid.");
             return;
         }
-        
-        if ((e.getPlayer().getItemInHand().getType().compareTo(SELECT_TOOL)) != 0)
+
+        if((e.getPlayer().getItemInHand().getType().compareTo(SELECT_TOOL)) != 0)
             return;
 
         Player player = e.getPlayer();
 
         ActiveSet actives = mctp.getActiveSets().get(e.getPlayer().getName());
 
-        if (actives == null) {
+        if(actives == null) {
             actives = new ActiveSet();
             mctp.getActiveSets().put(player.getName(), actives);
             List<Town> towns = townMan.matchPlayerToTowns(player);
@@ -78,14 +78,14 @@ public class QuickSelectToolListener implements Listener {
         }
 
         e.setCancelled(true);
-        if (actives.getActiveTown() == null) {
+        if(actives.getActiveTown() == null) {
             e.getPlayer().sendMessage(ChatColor.RED + "You need to set your active town first.");
             return;
         }
 
         Block b = e.getClickedBlock();
 
-        if (b == null)
+        if(b == null)
             return;
 
         Location spotClicked = b.getLocation();
@@ -94,25 +94,25 @@ public class QuickSelectToolListener implements Listener {
 
         Town town = actives.getActiveTown();
 
-        if (town == null) {
+        if(town == null) {
             player.sendMessage(ChatColor.RED + "You need to set your active town first.");
             return;
         }
 
         Territory territ = null;
-        for (ProtectedRegion pr : regs) {
+        for(ProtectedRegion pr : regs) {
             territ = townMan.getTerritory(pr.getId());
-            if (territ != null && territ.getParentTown().equals(town.getTownName()))
+            if(territ != null && territ.getParentTown().equals(town.getTownName()))
                 break;
             else
                 territ = null;
         }
 
         Plot plot = null;
-        if (territ != null)
-            for (ProtectedRegion pr : regs) {
+        if(territ != null)
+            for(ProtectedRegion pr : regs) {
                 plot = townMan.getPlot(pr.getId());
-                if (plot != null && plot.getParentTerritoryName().equals(territ.getName()))
+                if(plot != null && plot.getParentTerritoryName().equals(territ.getName()))
                     break;
                 else
                     plot = null;
