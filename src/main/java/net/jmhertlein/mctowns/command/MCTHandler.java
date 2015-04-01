@@ -21,8 +21,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.List;
 import static net.jmhertlein.core.chat.ChatUtil.*;
-import net.jmhertlein.abcf.CommandDefinition;
-import net.jmhertlein.abcf.annotation.CommandMethod;
+import net.jmhertlein.reflective.CommandDefinition;
+import net.jmhertlein.reflective.annotation.CommandMethod;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.structure.Plot;
@@ -44,7 +44,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         super(parent);
     }
 
-    @CommandMethod(path = "mct bugs", console = true)
+    @CommandMethod(path = "mct bugs")
     public void printBugReportHelp(CommandSender s) {
         s.sendMessage("To report a bug in MCTowns, go to this link:");
         s.sendMessage(ChatColor.AQUA + "https://github.com/jmhertlein/MCTowns/issues");
