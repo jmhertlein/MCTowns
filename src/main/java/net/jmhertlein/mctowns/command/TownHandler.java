@@ -81,7 +81,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         localSender.setActiveTown(t.get(0));
-        localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active town reset to " + t.get(0).getTownName() + ".");
+        localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active town reset to " + t.get(0).getName() + ".");
     }
 
     @CommandMethod(path = "town spawn set")
@@ -172,9 +172,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         t.setBuyablePlots(buyability);
         if(buyability) {
-            localSender.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots can now be sold and new plots are buyable by default.");
+            localSender.sendMessage(ChatColor.GOLD + t.getName() + "'s plots can now be sold and new plots are buyable by default.");
         } else {
-            localSender.sendMessage(ChatColor.GOLD + t.getTownName() + "'s plots are no longer for sale.");
+            localSender.sendMessage(ChatColor.GOLD + t.getName() + "'s plots are no longer for sale.");
         }
 
     }
@@ -204,7 +204,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         t.setDefaultPlotPrice(price);
-        localSender.sendMessage(SUCC + "The default price of plots in " + t.getTownName() + " has been set to " + price);
+        localSender.sendMessage(SUCC + "The default price of plots in " + t.getName() + " has been set to " + price);
 
     }
 
@@ -330,7 +330,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(t.usesEconomyJoins()) {
-            localSender.sendMessage(t.getTownName() + " doesn't use the invitation system.");
+            localSender.sendMessage(t.getName() + " doesn't use the invitation system.");
             return;
         }
 
@@ -346,12 +346,12 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(t.playerIsResident(p)) {
-            localSender.sendMessage(ERR + p.getName() + " is already a member of " + t.getTownName());
+            localSender.sendMessage(ERR + p.getName() + " is already a member of " + t.getName());
             return;
         }
 
         if(joinManager.getIssuedInvitesForTown(t).contains(p.getName())) {
-            localSender.sendMessage(ERR + p.getName() + " is already invited to join " + t.getTownName());
+            localSender.sendMessage(ERR + p.getName() + " is already invited to join " + t.getName());
             return;
         }
 
@@ -364,16 +364,16 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         if(joinManager.requestExists(p.getName(), t)) {
             t.addPlayer(p);
             if(p.isOnline()) {
-                p.getPlayer().sendMessage("You have joined " + t.getTownName() + "!");
+                p.getPlayer().sendMessage("You have joined " + t.getName() + "!");
             }
             broadcastTownJoin(t, p.getName());
             joinManager.clearRequest(p.getName(), t);
         } else {
             joinManager.invitePlayerToTown(p.getName(), t);
-            localSender.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getTownName() + ".");
+            localSender.sendMessage(SUCC + p.getName() + " has been invited to join " + t.getName() + ".");
             if(p.isOnline()) {
-                p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getTownName() + "!");
-                p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getTownName());
+                p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "You have been invited to join the town " + t.getName() + "!");
+                p.getPlayer().sendMessage(ChatColor.DARK_GREEN + "To join, type /mct join " + t.getName());
             }
         }
     }
@@ -404,7 +404,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(!t.playerIsResident(p)) {
-            localSender.sendMessage(ERR + p.getName() + " is not a resident of " + t.getTownName() + ".");
+            localSender.sendMessage(ERR + p.getName() + " is not a resident of " + t.getName() + ".");
             return;
         }
 
@@ -413,10 +413,10 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
                 townManager.getTerritory(territName).addPlayer(p);
             }
 
-            localSender.sendMessage(args[0] + " has been promoted to an assistant of " + t.getTownName() + ".");
+            localSender.sendMessage(args[0] + " has been promoted to an assistant of " + t.getName() + ".");
 
             if(p.isOnline()) {
-                p.getPlayer().sendMessage("You are now an Assistant Mayor of " + t.getTownName());
+                p.getPlayer().sendMessage("You are now an Assistant Mayor of " + t.getName());
             }
         } else {
             localSender.sendMessage(ERR + args[0] + " is already an assistant in this town.");
@@ -445,14 +445,14 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(!t.playerIsResident(p)) {
-            localSender.sendMessage(ERR + args[0] + " is not a resident of " + t.getTownName() + ".");
+            localSender.sendMessage(ERR + args[0] + " is not a resident of " + t.getName() + ".");
             return;
         }
 
         if(t.removeAssistant(p)) {
             localSender.sendMessage(p.getName() + " has been demoted.");
             if(p.isOnline()) {
-                p.getPlayer().sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getTownName());
+                p.getPlayer().sendMessage(ChatColor.DARK_RED + "You are no longer an assistant mayor for " + t.getName());
             }
 
             for(String territName : t.getTerritoriesCollection()) {
@@ -490,7 +490,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         localSender.getActiveTown().setMayor(p);
-        t.broadcastMessageToTown("The mayor of " + t.getTownName() + " is now " + p.getName() + "!");
+        t.broadcastMessageToTown("The mayor of " + t.getName() + " is now " + p.getName() + "!");
     }
 
     @CommandMethod(path = "town remove invite", requiredArgs = 1)
@@ -511,7 +511,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         if(joinManager.clearInvitationForPlayerFromTown(args[0], t)) {
             localSender.sendMessage(ChatColor.GOLD + "The invitation for " + args[0] + " has been withdrawn.");
         } else {
-            localSender.sendMessage(ERR + args[0] + " does not have any pending invitations from " + t.getTownName() + ".");
+            localSender.sendMessage(ERR + args[0] + " does not have any pending invitations from " + t.getName() + ".");
         }
     }
 
@@ -538,7 +538,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             localSender.sendMessage(ChatColor.GOLD + (p == null ? playerName : p.getName()) + "'s request has been rejected.");
 
             if(p != null) {
-                p.sendMessage(ChatColor.DARK_RED + "Your request to join " + t.getTownName() + " has been rejected.");
+                p.sendMessage(ChatColor.DARK_RED + "Your request to join " + t.getName() + " has been rejected.");
             }
         }
 
@@ -614,7 +614,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(!removeFrom.playerIsResident(removeMe)) {
-            localSender.sendMessage(ERR + removeMe.getName() + " is not a resident of " + removeFrom.getTownName() + ".");
+            localSender.sendMessage(ERR + removeMe.getName() + " is not a resident of " + removeFrom.getName() + ".");
             return;
         }
 
@@ -635,7 +635,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage("\"" + removeMe.getName() + "\" was removed from the town.");
         Player onlinePlayer = removeMe.getPlayer();
         if(onlinePlayer != null) {
-            onlinePlayer.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getTownName() + " by " + localSender.getPlayer().getName());
+            onlinePlayer.sendMessage(ChatColor.DARK_RED + "You have been removed from " + removeFrom.getName() + " by " + localSender.getPlayer().getName());
         }
     }
 
@@ -656,7 +656,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         t.removePlayer(localSender.getPlayer());
 
-        localSender.sendMessage(ChatColor.DARK_RED + "You have left " + localSender.getActiveTown().getTownName() + ".");
+        localSender.sendMessage(ChatColor.DARK_RED + "You have left " + localSender.getActiveTown().getName() + ".");
     }
 
     @CommandMethod(path = "town pvp friendlyfire", requiredArgs = 1)
@@ -680,7 +680,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         t.setFriendlyFire(friendlyFire);
 
-        localSender.sendMessage(ChatColor.GREEN + "Friendly fire in " + t.getTownName() + " is now " + (friendlyFire ? "on" : "off") + ".");
+        localSender.sendMessage(ChatColor.GREEN + "Friendly fire in " + t.getName() + " is now " + (friendlyFire ? "on" : "off") + ".");
 
     }
 
@@ -744,7 +744,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        localSender.sendMessage(ChatColor.AQUA + "Players in " + t.getTownName() + "(page " + page + "):");
+        localSender.sendMessage(ChatColor.AQUA + "Players in " + t.getName() + "(page " + page + "):");
 
         Set<String> names = t.getResidentNames();
         String[] players = names.toArray(new String[names.size()]);
@@ -780,7 +780,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         localSender.getPlayer().teleport(t.getTownSpawn());
-        localSender.sendMessage(INFO + "Teleported to " + t.getTownName() + "! Welcome!");
+        localSender.sendMessage(INFO + "Teleported to " + t.getName() + "! Welcome!");
 
     }
 
@@ -845,7 +845,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         amt = t.getBank().withdrawCurrency(amt);
 
         MCTowns.getEconomy().depositPlayer(localSender.getPlayer().getName(), amt.doubleValue());
-        localSender.sendMessage(amt + " was withdrawn from " + t.getTownName() + "'s town bank and deposited into your account.");
+        localSender.sendMessage(amt + " was withdrawn from " + t.getName() + "'s town bank and deposited into your account.");
     }
 
     @CommandMethod(path = "town bank deposit currency")
@@ -875,7 +875,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         if(result.transactionSuccess()) {
             t.getBank().depositCurrency(amt);
-            localSender.sendMessage(args[0] + " was withdrawn from your account and deposited into " + t.getTownName() + "'s town bank.");
+            localSender.sendMessage(args[0] + " was withdrawn from your account and deposited into " + t.getName() + "'s town bank.");
         } else {
             localSender.sendMessage(ERR + "Transaction failed; maybe you do not have enough money to do this?");
             localSender.sendMessage(ChatColor.GOLD + "Actual amount deposited: " + result.amount);

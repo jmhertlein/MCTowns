@@ -335,7 +335,7 @@ public abstract class CommandHandler {
             Player p = Bukkit.getPlayer(pl);
             if(p == null || pl.equals(player))
                 continue;
-            p.sendMessage(player + " just joined " + t.getTownName() + "!");
+            p.sendMessage(player + " just joined " + t.getName() + "!");
         }
     }
 

@@ -93,10 +93,10 @@ public class TownManager {
     public Town addTown(String townName, Player mayor) {
         Town t = new Town(townName, mayor);
 
-        if(towns.containsKey(t.getTownName()))
+        if(towns.containsKey(t.getName()))
             return null;
 
-        towns.put(t.getTownName(), t);
+        towns.put(t.getName(), t);
         return t;
 
     }
@@ -104,10 +104,10 @@ public class TownManager {
     public Town addTown(String townName, Player mayorName, Location spawn) {
         Town t = new Town(townName, mayorName, spawn);
 
-        if(towns.containsKey(t.getTownName()))
+        if(towns.containsKey(t.getName()))
             return null;
 
-        towns.put(t.getTownName(), t);
+        towns.put(t.getName(), t);
         return t;
     }
 
@@ -126,7 +126,7 @@ public class TownManager {
     public void addTerritory(String fullTerritoryName, World worldTerritoryIsIn, ProtectedRegion reg, Town parentTown) throws InvalidWorldGuardRegionNameException, RegionAlreadyExistsException {
         Territory t = new Territory(fullTerritoryName,
                                     worldTerritoryIsIn.getName(),
-                                    parentTown.getTownName());
+                                    parentTown.getName());
 
         addMCTRegion(t, worldTerritoryIsIn, reg);
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(
@@ -156,7 +156,7 @@ public class TownManager {
      */
     public void addPlot(String fullPlotName, World worldPlotIsIn, ProtectedRegion reg, Town parentTown, Territory parentTerritory) throws InvalidWorldGuardRegionNameException, RegionAlreadyExistsException {
         Plot p = new Plot(fullPlotName, worldPlotIsIn.getName(),
-                          parentTerritory.getName(), parentTown.getTownName());
+                          parentTerritory.getName(), parentTown.getName());
 
         addMCTRegion(p, worldPlotIsIn, reg);
 
@@ -249,7 +249,7 @@ public class TownManager {
             removeTerritory(s);
         }
 
-        towns.remove(t.getTownName());
+        towns.remove(t.getName());
 
         return true;
     }
@@ -426,7 +426,7 @@ public class TownManager {
             f = new YamlConfiguration();
             t.writeYAML(f);
             f.save(new File(
-                    rootDirPath + File.separator + t.getTownName() + ".yml"));
+                    rootDirPath + File.separator + t.getName() + ".yml"));
         }
 
         for(MCTownsRegion reg : regions.values()) {
