@@ -47,16 +47,11 @@ public class Town {
     private volatile ChatColor motdColor;
     private volatile Location townSpawn;
     private volatile BlockBank bank;
-    //the territories associated with the town
     private Set<String> territories;
     private Set<UUID> residents;
     private UUID mayor;
     private Set<UUID> assistants;
-    //whether or not plots are buyable and thus have a price
     private boolean buyablePlots;
-    //turns off the join request/invitation system. Instead, buying a plot in
-    //the town makes you a member. Also, if this is false, you need to be a
-    //member of the town in order to buy plots.
     private boolean economyJoins;
     private volatile BigDecimal defaultPlotPrice;
     private boolean friendlyFire;
@@ -70,57 +65,24 @@ public class Town {
      *
      */
     public Town(String townName, Player mayor) {
-        this.townName = townName;
-        this.mayor = mayor.getUniqueId();
-        townSpawn = Location.convertFromBukkitLocation(mayor.getLocation());
-
-        //use Collections method to get concurrency benefits from ConcurrentHashMap
-        residents = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
-        assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
-        territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-
-        bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
-        townMOTD = "Use /town motd <msg> to set the town MOTD!";
-        buyablePlots = false;
-        economyJoins = false;
-        defaultPlotPrice = BigDecimal.TEN;
-        friendlyFire = false;
-        motdColor = ChatColor.GOLD;
-
-        residents.add(mayor.getUniqueId());
+        initialize(townName, mayor.getUniqueId(), Location.convertFromBukkitLocation(mayor.getLocation()));
     }
 
-    public Town(String townName, Player mayorName, Location townSpawnLoc) {
-        this.townName = townName;
-        mayor = mayorName.getUniqueId();
-        townSpawn = townSpawnLoc;
-
-        //use Collections method to get concurrency benefits from ConcurrentHashMap
-        residents = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
-        assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
-        territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-
-        bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
-        townMOTD = "Use /town motd <msg> to set the town MOTD!";
-        buyablePlots = false;
-        economyJoins = false;
-        defaultPlotPrice = BigDecimal.TEN;
-        friendlyFire = false;
-        motdColor = ChatColor.GOLD;
-
-        residents.add(mayor);
+    public Town(String townName, Player mayor, Location townSpawnLoc) {
+        initialize(townName, mayor.getUniqueId(), townSpawnLoc);
     }
 
     public Town(String townName, UUID mayorId, Location spawnLoc) {
-        this.townName = townName;
+        initialize(townName, mayorId, spawnLoc);
+    }
+
+    private void initialize(String townName1, UUID mayorId, Location spawnLoc) {
+        this.townName = townName1;
         mayor = mayorId;
         townSpawn = spawnLoc;
-
-        //use Collections method to get concurrency benefits from ConcurrentHashMap
         residents = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
         assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
         territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-
         bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
         townMOTD = "Use /town motd <msg> to set the town MOTD!";
         buyablePlots = false;
@@ -128,7 +90,6 @@ public class Town {
         defaultPlotPrice = BigDecimal.TEN;
         friendlyFire = false;
         motdColor = ChatColor.GOLD;
-
         residents.add(mayor);
     }
 
