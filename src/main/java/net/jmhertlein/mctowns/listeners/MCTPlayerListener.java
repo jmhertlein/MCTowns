@@ -84,15 +84,15 @@ public class MCTPlayerListener implements Listener {
             p.sendMessage(INFO + "You are currently invited to join the following towns:");
 
             for(Town t : townsInvitedTo) {
-                p.sendMessage(INFO + t.getTownName());
+                p.sendMessage(INFO + t.getName());
             }
         }
 
         for(Town t : towns) {
-            p.sendMessage(INFO + "[" + t.getTownName() + "]: " + t.getTownMOTD());
+            p.sendMessage(INFO + "[" + t.getName() + "]: " + t.getTownMOTD());
             if(t.playerIsMayor(p))
                 if(!joinManager.getPlayersRequestingMembershipToTown(t).isEmpty())
-                    p.sendMessage(INFO + t.getTownName() + " has players requesting to join.");
+                    p.sendMessage(INFO + t.getName() + " has players requesting to join.");
         }
     }
 
@@ -246,7 +246,7 @@ public class MCTPlayerListener implements Listener {
                 return;
             }
             t.addPlayer(e.getPlayer());
-            e.getPlayer().sendMessage(ChatColor.GREEN + "You've been automatically added to the town " + t.getTownName() + "!");
+            e.getPlayer().sendMessage(ChatColor.GREEN + "You've been automatically added to the town " + t.getName() + "!");
         }
     }
 }

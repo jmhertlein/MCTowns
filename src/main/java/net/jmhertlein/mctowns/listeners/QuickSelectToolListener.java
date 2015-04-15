@@ -102,7 +102,7 @@ public class QuickSelectToolListener implements Listener {
         Territory territ = null;
         for(ProtectedRegion pr : regs) {
             territ = townMan.getTerritory(pr.getId());
-            if(territ != null && territ.getParentTown().equals(town.getTownName()))
+            if(territ != null && territ.getParentTown().equals(town.getName()))
                 break;
             else
                 territ = null;

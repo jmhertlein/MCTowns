@@ -228,7 +228,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        if(!nuActive.getParentTown().equals(t.getTownName())) {
+        if(!nuActive.getParentTown().equals(t.getName())) {
             localSender.sendMessage(
                     ERR + "The territory \"" + args[0] + "\" does not exist in your town.");
             return;

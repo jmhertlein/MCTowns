@@ -136,7 +136,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
         ChatColor c = ChatColor.AQUA;
 
-        localSender.sendMessage(c + "Name: " + t.getTownName());
+        localSender.sendMessage(c + "Name: " + t.getName());
         localSender.sendMessage(c + "Mayor: " + t.getMayor());
         localSender.sendMessage(c + "Number of residents: " + t.getSize());
         localSender.sendMessage(c + "Plots are buyable: " + t.usesBuyablePlots());
@@ -160,7 +160,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             localSender.sendMessage(INFO + p.getName() + " is not a member of any towns.");
         else
             for(Town t : towns) {
-                localSender.sendMessage("Town: " + t.getTownName());
+                localSender.sendMessage("Town: " + t.getName());
                 localSender.sendMessage("Is Mayor: " + t.playerIsMayor(p));
                 localSender.sendMessage("Is Assistant: " + t.playerIsAssistant(p));
             }
@@ -195,7 +195,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
 
         for(int i = page * RESULTS_PER_PAGE; i < towns.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
-            localSender.sendMessage(ChatColor.YELLOW + towns[i].getTownName());
+            localSender.sendMessage(ChatColor.YELLOW + towns[i].getName());
         }
 
     }
@@ -217,23 +217,23 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(addTo.usesEconomyJoins()) {
-            localSender.sendMessage(addTo.getTownName() + " doesn't use the invitation system.");
+            localSender.sendMessage(addTo.getName() + " doesn't use the invitation system.");
             return;
         }
 
         if(addTo.playerIsResident(localSender.getPlayer())) {
-            localSender.sendMessage(ERR + "You are already a member of " + addTo.getTownName());
+            localSender.sendMessage(ERR + "You are already a member of " + addTo.getName());
             return;
         }
 
         if(joinManager.getPlayersRequestingMembershipToTown(addTo).contains(localSender.getPlayer().getName())) {
-            localSender.sendMessage(ERR + "You've already requested to join " + addTo.getTownName());
+            localSender.sendMessage(ERR + "You've already requested to join " + addTo.getName());
             return;
         }
 
         if(joinManager.invitationExists(pName, addTo)) {
             addTo.addPlayer(localSender.getPlayer());
-            localSender.sendMessage("You have joined " + addTo.getTownName() + "!");
+            localSender.sendMessage("You have joined " + addTo.getName() + "!");
             broadcastTownJoin(addTo, localSender.getPlayer());
 
             joinManager.clearInvitationForPlayerFromTown(pName, addTo);
@@ -255,7 +255,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             localSender.sendMessage(ERR + "You're not invited to any towns right now.");
         else {
             joinManager.clearInvitationForPlayerFromTown(pName, t);
-            localSender.sendMessage(ChatColor.GOLD + "You have rejected the invitation to join " + t.getTownName());
+            localSender.sendMessage(ChatColor.GOLD + "You have rejected the invitation to join " + t.getName());
             t.broadcastMessageToTown(ERR + pName + " has declined the invitation to join the town.");
         }
 
@@ -277,9 +277,9 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(joinManager.clearRequest(localSender.getPlayer().getName(), t))
-            localSender.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getTownName() + ".");
+            localSender.sendMessage(ChatColor.GOLD + "You have withdrawn your request to join " + t.getName() + ".");
         else
-            localSender.sendMessage(ERR + "You haven't submitted a request to join " + t.getTownName() + ".");
+            localSender.sendMessage(ERR + "You haven't submitted a request to join " + t.getName() + ".");
 
     }
 
@@ -290,7 +290,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
         localSender.sendMessage(INFO + "You are currently invited to the following towns:");
         for(Town t : towns) {
-            localSender.sendMessage(INFO_ALT + t.getTownName());
+            localSender.sendMessage(INFO_ALT + t.getName());
         }
     }
 
@@ -358,7 +358,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
         if(!townManager.matchPlayerToTowns(localSender.getPlayer()).contains(plotToBuy.getActiveTown())) {
             plotToBuy.getActiveTown().addPlayer(localSender.getPlayer());
-            localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getTownName());
+            localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getName());
         }
 
     }

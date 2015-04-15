@@ -202,7 +202,7 @@ public abstract class MCTownsRegion {
         else
             infix = "";
 
-        return (owner.getTownName() + infix + plotName).toLowerCase();
+        return (owner.getName() + infix + plotName).toLowerCase();
     }
 
     public String getReadableName() {

@@ -22,11 +22,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.banking.BlockBank;
 import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.util.TownException;
 import net.jmhertlein.mctowns.util.UUIDs;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -109,6 +111,27 @@ public class Town {
         residents.add(mayor);
     }
 
+    public Town(String townName, UUID mayorId, Location spawnLoc) {
+        this.townName = townName;
+        mayor = mayorId;
+        townSpawn = spawnLoc;
+
+        //use Collections method to get concurrency benefits from ConcurrentHashMap
+        residents = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
+        assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
+        territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+
+        bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
+        townMOTD = "Use /town motd <msg> to set the town MOTD!";
+        buyablePlots = false;
+        economyJoins = false;
+        defaultPlotPrice = BigDecimal.TEN;
+        friendlyFire = false;
+        motdColor = ChatColor.GOLD;
+
+        residents.add(mayor);
+    }
+
     private Town() {
     }
 
@@ -174,7 +197,7 @@ public class Town {
      *
      * @return the town's name
      */
-    public String getTownName() {
+    public String getName() {
         return townName;
     }
 
@@ -190,10 +213,7 @@ public class Town {
     }
 
     public boolean addPlayer(UUID u) {
-        if(residents.contains(u))
-            return false;
-        residents.add(u);
-        return true;
+        return residents.add(u);
     }
 
     public boolean addPlayer(OfflinePlayer playerId) {
@@ -227,15 +247,10 @@ public class Town {
      * separately.
      *
      * @param territ the territory to be added
-     *
      * @return false if territ was not added because it is already added, true otherwise
      */
     public boolean addTerritory(Territory territ) {
-        if(territories.contains(territ.getName()))
-            return false;
-
-        territories.add(territ.getName());
-        return true;
+        return territories.add(territ.getName());
     }
 
     /**
@@ -265,15 +280,14 @@ public class Town {
      *
      * @param playerId
      *
-     * @return true if player was added as assistant, false if they're already an assistant or
-     * they're not a resident of the town.
+     * @return true if player was added as assistant, false if they're already an assistant
+     * @throws TownException if they're not a resident of the town.
      */
     public boolean addAssistant(UUID playerId) {
-        if(assistants.contains(playerId) || !residents.contains(playerId))
-            return false;
+        if(!residents.contains(playerId))
+            throw new TownException("Player is not a resident of " + getName());
 
-        assistants.add(playerId);
-        return true;
+        return assistants.add(playerId);
     }
 
     /**
@@ -290,11 +304,7 @@ public class Town {
     }
 
     public boolean removeAssistant(UUID playerId) {
-        if(!assistants.contains(playerId))
-            return false;
-
-        assistants.remove(playerId);
-        return true;
+        return assistants.remove(playerId);
 
     }
 
@@ -306,13 +316,12 @@ public class Town {
      * Sets returned by this method will not update themselves if subsequent Town method calls add
      * Territories to it
      *
-     * Returned Set is a LinkedHashSet and as such performs well for iteration and set membership
-     * checks
+     * Returned Set is unmodifiable
      *
      * @return the town's territories
      */
     public Set<String> getTerritoriesCollection() {
-        return new LinkedHashSet<>(territories);
+        return Collections.unmodifiableSet(territories);
     }
 
     /**
@@ -335,23 +344,19 @@ public class Town {
      * Sets returned by this method will not update themselves if subsequent Town method calls add
      * assistants to it
      *
-     * Returned Set is a LinkedHashSet and as such performs well for iteration and set membership
-     * checks
-     *
      * @return
      */
     public Set<String> getResidentNames() {
-        Set<String> ret = new HashSet<>();
-        for(UUID u : residents)
-            ret.add(UUIDs.getNameForUUID(u));
-        return ret;
+        return residents.stream()
+                .map(u -> UUIDs.getNameForUUID(u))
+                .collect(Collectors.toSet());
+
     }
 
     public Set<String> getAssistantNames() {
-        Set<String> ret = new HashSet<>();
-        for(UUID u : assistants)
-            ret.add(UUIDs.getNameForUUID(u));
-        return ret;
+        return assistants.stream()
+                .map(u -> UUIDs.getNameForUUID(u))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -376,9 +381,7 @@ public class Town {
         if(getClass() != obj.getClass())
             return false;
         final Town other = (Town) obj;
-        if(!Objects.equals(this.townName, other.townName))
-            return false;
-        return true;
+        return Objects.equals(this.townName, other.townName);
     }
 
     /**
@@ -424,7 +427,6 @@ public class Town {
 
     /**
      *
-     * @param s
      *
      * @return
      */
@@ -455,35 +457,27 @@ public class Town {
      *
      * @param message
      */
-    public void broadcastMessageToTown(String message) {
-        message = ChatColor.GOLD + message;
-
-        for(Player p : Bukkit.getOnlinePlayers())
-            if(residents.contains(p.getUniqueId()))
-                p.sendMessage(message);
+    public void broadcastMessageToTown(final String message) {
+        Bukkit.getOnlinePlayers().stream()
+                .filter(p -> residents.contains(p.getUniqueId()))
+                .forEach(p -> p.sendMessage(ChatColor.GOLD + message));
     }
 
     /**
      *
      * @param p
      *
-     * @return
+     * @return true if the player is in a territory the town owns, false otherwise
      */
     public boolean playerIsInsideTownBorders(Player p) {
         org.bukkit.Location playerLoc = p.getLocation();
+        Vector playerVector = new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ());
         RegionManager regMan = MCTowns.getWorldGuardPlugin().getRegionManager(p.getWorld());
 
-        ProtectedRegion tempReg;
-        for(MCTownsRegion mctReg : MCTowns.getTownManager().getRegionsCollection()) {
-            if(mctReg instanceof Territory) {
-                tempReg = regMan.getRegion((mctReg).getName());
-                if(tempReg != null)
-                    if(tempReg.contains(new Vector(playerLoc.getBlockX(), playerLoc.getBlockY(), playerLoc.getBlockZ())))
-                        return true;
-            }
-        }
-
-        return false;
+        return getTerritoriesCollection().stream()
+                .map(name -> MCTowns.getTownManager().getTerritory(name))
+                .map(te -> regMan.getRegion(te.getName()))
+                .anyMatch(reg -> reg.contains(playerVector));
     }
 
     /**
@@ -563,7 +557,7 @@ public class Town {
         f.set("motdColor", motdColor.name());
         f.set("spawnLocation", townSpawn.toList());
         f.set("mayor", mayor.toString());
-        f.set("territs", getTerritoryNames());
+        f.set("territs", new LinkedList<>(territories));
 
         List<String> list = new LinkedList<>();
         list.addAll(UUIDs.idsToStrings(assistants));
@@ -589,7 +583,7 @@ public class Town {
         t.motdColor = ChatColor.valueOf(f.getString("motdColor"));
         t.townSpawn = Location.fromList(f.getStringList("spawnLocation"));
         t.mayor = UUIDs.stringToId(f.getString("mayor"));
-        t.territories = parseListToHashSet(f.getStringList("territs"));
+        t.territories = new HashSet<>(f.getStringList("territs"));
 
         t.assistants = UUIDs.stringsToIds(f.getStringList("assistants"));
 
@@ -617,22 +611,5 @@ public class Town {
         }
 
         t.removePlayer(p);
-    }
-
-    private List<String> getTerritoryNames() {
-        LinkedList<String> ret = new LinkedList<>();
-
-        ret.addAll(this.territories);
-
-        return ret;
-
-    }
-
-    private static HashSet<String> parseListToHashSet(List<String> s) {
-        HashSet<String> ret = new HashSet<>();
-
-        ret.addAll(s);
-
-        return ret;
     }
 }

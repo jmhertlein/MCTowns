@@ -179,7 +179,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(!t.usesBuyablePlots()) {
-            localSender.sendMessage(ERR + t.getTownName() + " does not allow the sale of plots.");
+            localSender.sendMessage(ERR + t.getName() + " does not allow the sale of plots.");
             return;
         }
 
@@ -386,7 +386,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if(!nuActive.getParentTownName().equals(t.getTownName())) {
+        if(!nuActive.getParentTownName().equals(t.getName())) {
             localSender.sendMessage(ERR + "The plot \"" + args[0] + "\" does not exist in your town.");
             return;
         }
