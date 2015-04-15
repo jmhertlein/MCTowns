@@ -16,14 +16,14 @@
  */
 package net.jmhertlein.mctowns.command;
 
-import net.jmhertlein.mctowns.structure.Town;
-import net.jmhertlein.mctowns.structure.TownLevel;
-import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
+import net.jmhertlein.mctowns.region.Town;
+import net.jmhertlein.mctowns.region.TownLevel;
+import net.jmhertlein.mctowns.region.Plot;
+import net.jmhertlein.mctowns.region.Territory;
 import java.util.HashMap;
 import java.util.List;
 import net.jmhertlein.core.command.LocalSender;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

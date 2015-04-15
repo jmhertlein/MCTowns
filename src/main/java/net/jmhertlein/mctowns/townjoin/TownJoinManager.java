@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.region.Town;
 
 /**
  *

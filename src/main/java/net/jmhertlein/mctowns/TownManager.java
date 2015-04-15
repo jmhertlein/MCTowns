@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.jmhertlein.mctowns.database;
+package net.jmhertlein.mctowns;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
@@ -34,11 +34,11 @@ import java.util.logging.Logger;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
-import net.jmhertlein.mctowns.structure.MCTownsRegion;
-import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
-import net.jmhertlein.mctowns.structure.Town;
-import net.jmhertlein.mctowns.structure.TownLevel;
+import net.jmhertlein.mctowns.region.MCTownsRegion;
+import net.jmhertlein.mctowns.region.Plot;
+import net.jmhertlein.mctowns.region.Territory;
+import net.jmhertlein.mctowns.region.Town;
+import net.jmhertlein.mctowns.region.TownLevel;
 import net.jmhertlein.mctowns.util.UUIDs;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

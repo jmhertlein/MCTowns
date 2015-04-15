@@ -18,7 +18,6 @@ package net.jmhertlein.mctowns;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.logging.Level;
-import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.util.MCTConfig;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
