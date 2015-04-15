@@ -20,7 +20,9 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.util.logging.Level;
 import net.jmhertlein.mctowns.database.TownManager;
 import net.jmhertlein.mctowns.util.MCTConfig;
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -60,6 +62,16 @@ public class MCTowns {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 
         return economyProvider != null ? economyProvider.getProvider() : null;
+    }
+
+    public static Chat getChat() {
+        RegisteredServiceProvider<Chat> chatProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        return chatProvider != null ? chatProvider.getProvider() : null;
+    }
+
+    public static Permission getPermissions() {
+        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        return permissionProvider == null ? null : permissionProvider.getProvider();
     }
 
     public static WorldGuardPlugin getWorldGuardPlugin() {

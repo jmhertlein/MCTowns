@@ -60,26 +60,29 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        Player nuMayor = server.getPlayer(mayorName);
+        Player newMayor = server.getPlayer(mayorName);
 
-        if(nuMayor == null) {
+        if(newMayor == null) {
             localSender.sendMessage(ERR + mayorName + " doesn't exist or is not online.");
             return;
         }
 
-        if(!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(nuMayor).isEmpty()) {
-            localSender.sendMessage(ERR + nuMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
+        if(!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(newMayor).isEmpty()) {
+            localSender.sendMessage(ERR + newMayor.getName() + " is already a member of a town, and as such cannot be the mayor of a new one.");
             return;
         }
 
-        Town t = townManager.addTown(townName, nuMayor);
+        Town t = townManager.addTown(townName, newMayor);
         if(t != null) {
-            localSender.sendMessage("Town " + townName + " has been created.");
-            server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
-
             localSender.setActiveTown(t);
-            localSender.sendMessage(INFO + "Active town set to newly created town.");
 
+            MCTowns.getPermissions().playerAddGroup(newMayor, townName);
+            if(MCTowns.getChat() != null)
+                MCTowns.getChat().setGroupPrefix(newMayor.getWorld(), townName, townName);
+
+            server.broadcastMessage(SUCC + "The town " + townName + " has been founded.");
+            localSender.sendMessage("Town " + townName + " has been created.");
+            localSender.sendMessage(INFO + "Active town set to newly created town.");
             localSender.sendMessage(INFO_ALT + "The town's spawn has been set to your current location. Change it with /town spawn set.");
         } else
             localSender.sendMessage(ERR + "That town already exists!");
@@ -97,6 +100,12 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         if(t == null) {
             localSender.sendMessage(ERR + "The town \"" + args[0] + "\" does not exist.");
             return;
+        }
+
+        for(OfflinePlayer p : t.getResidents()) {
+            for(World w : Bukkit.getWorlds()) {
+                MCTowns.getPermissions().playerRemoveGroup(w.getName(), p, t.getTownName());
+            }
         }
 
         townManager.removeTown(args[0]);

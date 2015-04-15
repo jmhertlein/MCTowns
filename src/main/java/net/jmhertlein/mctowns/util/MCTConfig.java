@@ -34,7 +34,8 @@ public enum MCTConfig {
     LOG_COMMANDS("logCommands", true),
     PLAYERS_CAN_JOIN_MULTIPLE_TOWNS("playersCanJoinMultipleTowns", false),
     TERRITORY_XZ_SIZE_LIMIT("territoryXZSizeLimit", 800),
-    DEBUG_MODE_ENABLED("debugModeEnabled", false);
+    DEBUG_MODE_ENABLED("debugModeEnabled", false),
+    SHOW_CHAT_PREFIX("showTownNameAsChatPrefix", false);
 
     private static final MCTownsPlugin p = MCTownsPlugin.getPlugin();
 

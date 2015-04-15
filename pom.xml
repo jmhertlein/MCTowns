@@ -45,9 +45,9 @@
     </dependency>
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
-      <artifactId>Vault</artifactId>
+      <artifactId>VaultAPI</artifactId>
       <scope>provided</scope>
-      <version>1.2.30</version>
+      <version>1.5</version>
     </dependency>
     <dependency>
       <groupId>org.mcstats.bukkit</groupId>

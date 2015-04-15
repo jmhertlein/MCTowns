@@ -22,6 +22,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -306,9 +307,6 @@ public class Town {
      * Sets returned by this method will not update themselves if subsequent Town method calls add
      * Territories to it
      *
-     * Returned Set is a LinkedHashSet and as such performs well for iteration and set membership
-     * checks
-     *
      * @return the town's territories
      */
     public Set<String> getTerritoriesCollection() {
@@ -335,9 +333,6 @@ public class Town {
      * Sets returned by this method will not update themselves if subsequent Town method calls add
      * assistants to it
      *
-     * Returned Set is a LinkedHashSet and as such performs well for iteration and set membership
-     * checks
-     *
      * @return
      */
     public Set<String> getResidentNames() {
@@ -345,6 +340,12 @@ public class Town {
         for(UUID u : residents)
             ret.add(UUIDs.getNameForUUID(u));
         return ret;
+    }
+
+    public Set<OfflinePlayer> getResidents() {
+        return residents.stream()
+                .map(uuid -> Bukkit.getOfflinePlayer(uuid))
+                .collect(Collectors.toSet());
     }
 
     public Set<String> getAssistantNames() {

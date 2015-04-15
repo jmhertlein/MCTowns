@@ -40,6 +40,7 @@ import net.jmhertlein.mctowns.permission.Perms;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.upgrade.ResourceUpgradePaths;
 import net.jmhertlein.mctowns.util.MCTConfig;
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
@@ -195,7 +196,7 @@ public class MCTownsPlugin extends JavaPlugin {
 
         /*
          * Crappy version detection but it's not like Bukkit or WG actually give us a format spec to
-         * work with, so might as well try Version check failing warns only, though, since this is
+         * work with, so might as well try. Version check failing warns only, though, since this is
          * bound to produce false positives.
          */
         if(!wgVersion.matches(MCTConfig.WG_VER_REGEX.getString())) {
@@ -204,25 +205,18 @@ public class MCTownsPlugin extends JavaPlugin {
             MCTowns.logWarning("======== WG VERSION WARNING ==========");
         }
 
-        if(MCTConfig.ECONOMY_ENABLED.getBoolean())
-            try {
-                boolean success = setupEconomy();
-                if(!success)
-                    MCTowns.logSevere("MCTowns: Unable to hook-in to Vault (1)!");
-            } catch(Exception e) {
-                MCTowns.logSevere("MCTowns: Unable to hook-in to Vault.");
-                return false;
-            }
+        if(MCTConfig.ECONOMY_ENABLED.getBoolean() && !setupEconomy())
+            MCTowns.logSevere("MCTowns: Unable to hook-in to Vault Economy!");
+
+        if(MCTConfig.SHOW_CHAT_PREFIX.getBoolean() && !setupChat())
+            MCTowns.logSevere("MCTowns: Unable to hook-in to Vault Chat!");
 
         return true;
     }
 
     private void regEventListeners() {
-        MCTPlayerListener playerListener = new MCTPlayerListener(this);
-        QuickSelectToolListener qsToolListener = new QuickSelectToolListener(MCTowns.getWorldGuardPlugin(), this);
-
-        getServer().getPluginManager().registerEvents(playerListener, this);
-        getServer().getPluginManager().registerEvents(qsToolListener, this);
+        getServer().getPluginManager().registerEvents(new MCTPlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new QuickSelectToolListener(MCTowns.getWorldGuardPlugin(), this), this);
         getServer().getPluginManager().registerEvents(new DepositBoxCloseListener(openDepositInventories), this);
     }
 
@@ -244,6 +238,16 @@ public class MCTownsPlugin extends JavaPlugin {
             economy = economyProvider.getProvider();
 
         return (economy != null);
+    }
+
+    private boolean setupChat() {
+        Chat chat = null;
+        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        if(chatProvider != null) {
+            chat = chatProvider.getProvider();
+        }
+
+        return (chat != null);
     }
 
     private void setCommandExecutors() {
