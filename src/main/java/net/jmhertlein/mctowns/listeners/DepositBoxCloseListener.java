@@ -17,7 +17,7 @@
 package net.jmhertlein.mctowns.listeners;
 
 import java.util.Map;
-import net.jmhertlein.mctowns.banking.DepositInventoryEntry;
+import net.jmhertlein.mctowns.bank.DepositInventoryEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;

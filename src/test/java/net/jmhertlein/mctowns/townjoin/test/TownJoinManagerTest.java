@@ -21,7 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.region.Town;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import org.junit.After;
 import org.junit.Before;

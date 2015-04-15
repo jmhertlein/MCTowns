@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.jmhertlein.mctowns.structure;
+package net.jmhertlein.mctowns.region;
 
 /**
  * A simple enum to hold what sort of town-y thing something is.

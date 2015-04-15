@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.jmhertlein.mctowns.structure;
+package net.jmhertlein.mctowns.region;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
-import net.jmhertlein.mctowns.banking.BlockBank;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.bank.BlockBank;
+import net.jmhertlein.mctowns.TownManager;
 import net.jmhertlein.mctowns.util.TownException;
 import net.jmhertlein.mctowns.util.UUIDs;
 import org.bukkit.Bukkit;

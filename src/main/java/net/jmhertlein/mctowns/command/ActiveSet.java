@@ -16,9 +16,9 @@
  */
 package net.jmhertlein.mctowns.command;
 
-import net.jmhertlein.mctowns.structure.Plot;
-import net.jmhertlein.mctowns.structure.Territory;
-import net.jmhertlein.mctowns.structure.Town;
+import net.jmhertlein.mctowns.region.Plot;
+import net.jmhertlein.mctowns.region.Territory;
+import net.jmhertlein.mctowns.region.Town;
 
 /**
  * The set of active objects for a player.

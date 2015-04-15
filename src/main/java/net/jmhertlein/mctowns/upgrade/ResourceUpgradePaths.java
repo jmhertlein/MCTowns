@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.jmhertlein.mctowns.MCTownsPlugin;
-import net.jmhertlein.mctowns.database.TownManager;
+import net.jmhertlein.mctowns.TownManager;
 import net.jmhertlein.mctowns.util.MCTConfig;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
