@@ -18,8 +18,13 @@ package net.jmhertlein.mctowns.command;
 
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.reflective.CommandDefinition;
 import net.jmhertlein.reflective.annotation.CommandMethod;
@@ -28,6 +33,7 @@ import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.region.Plot;
 import net.jmhertlein.mctowns.region.Town;
 import net.jmhertlein.mctowns.util.MCTConfig;
+import net.jmhertlein.reflective.io.DotWriter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -49,6 +55,38 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         s.sendMessage("To report a bug in MCTowns, go to this link:");
         s.sendMessage(ChatColor.AQUA + "https://github.com/jmhertlein/MCTowns/issues");
         s.sendMessage("Log into your GitHub account and click \"new issue\".");
+    }
+
+    @CommandMethod(path = "mct exportgraph", requiredArgs = 1, permNode = "mctowns.export")
+    public void exportGraph(CommandSender s, String filename) {
+        File f = new File(filename);
+        try(DotWriter w = new DotWriter(f, true)) {
+            MCTownsPlugin.getPlugin().getCommandExecutor().writeToGraph(w);
+        } catch(FileNotFoundException ex) {
+            Logger.getLogger(MCTHandler.class.getName()).log(Level.SEVERE, null, ex);
+            s.sendMessage("Error saving graph: " + ex.getLocalizedMessage());
+        }
+
+        s.sendMessage("DOTfile saved as " + f.getAbsolutePath());
+        int exitCode = 0;
+        try {
+            ProcessBuilder b = new ProcessBuilder("dot", "-Tpng", f.getAbsolutePath());
+            b.redirectOutput(new File(f.getAbsolutePath() + ".png"));
+            Process p = b.start();
+            exitCode = p.waitFor();
+        } catch(IOException | InterruptedException ex) {
+            s.sendMessage(ChatColor.GREEN + "Graphviz returned " + exitCode);
+            s.sendMessage("Error running graphviz: " + ex.getLocalizedMessage());
+            s.sendMessage("Please make sure graphviz is installed.");
+            return;
+        }
+        if(exitCode != 0) {
+            s.sendMessage(ChatColor.GREEN + "Graphviz returned " + exitCode);
+            s.sendMessage("Please make sure graphviz is installed.");
+            return;
+        }
+
+        s.sendMessage(ChatColor.GREEN + "Exported DOTfile to PNG as " + f.getAbsolutePath() + ".png");
     }
 
     @CommandMethod(path = "mct addtown", requiredArgs = 2)
