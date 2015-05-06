@@ -68,6 +68,7 @@ public class MCTownsPlugin extends JavaPlugin {
     private Map<String, DepositInventoryEntry> openDepositInventories;
     private boolean abortSave;
     private Set<File> dataDirs, configFiles;
+    private TreeCommandExecutor commands;
 
     /**
      * Persist any data that needs to be persisted.
@@ -264,6 +265,7 @@ public class MCTownsPlugin extends JavaPlugin {
         getCommand("territory").setExecutor(tree);
         getCommand("plot").setExecutor(tree);
 
+        this.commands = tree;
     }
 
     private void trimFiles() throws FileNotFoundException, IOException, InvalidConfigurationException {
@@ -359,5 +361,9 @@ public class MCTownsPlugin extends JavaPlugin {
         } catch(IOException ex) {
             MCTowns.logWarning("Error: Unable to start metrics reporting.");
         }
+    }
+
+    public TreeCommandExecutor getCommandExecutor() {
+        return commands;
     }
 }
