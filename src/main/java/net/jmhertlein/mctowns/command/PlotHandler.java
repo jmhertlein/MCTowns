@@ -204,6 +204,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     @CommandMethod(path = "plot economy setprice", requiredArgs = 1)
     public void setPlotPrice(CommandSender s, String[] args) {
+        setNewCommand(s);
         if(localSender.isConsole()) {
             localSender.notifyConsoleNotSupported();
             return;

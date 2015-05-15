@@ -754,6 +754,92 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
+    @CommandMethod(path = "town add warp", requiredArgs = 1)
+    public void addWarp(Player p, String warpName) {
+        setNewCommand(p);
+        if(!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
+            return;
+        }
+
+        Town t = localSender.getActiveTown();
+        if(t == null) {
+            localSender.notifyActiveTownNotSet();
+            return;
+        }
+
+        if(!t.playerIsInsideTownBorders(p)) {
+            p.sendMessage(ChatColor.RED + "You need to be inside your town to do this.");
+            return;
+        }
+
+        if(t.putWarp(warpName, p.getLocation()) == null) {
+            p.sendMessage(ChatColor.GREEN + "Warp added.");
+        } else {
+            p.sendMessage(ChatColor.GREEN + "Warp updated.");
+        }
+    }
+
+    @CommandMethod(path = "town remove warp", requiredArgs = 1)
+    public void deleteWarp(Player s, String warpName) {
+        setNewCommand(s);
+        if(!localSender.hasMayoralPermissions()) {
+            localSender.notifyInsufPermissions();
+            return;
+        }
+
+        Town t = localSender.getActiveTown();
+        if(t == null) {
+            localSender.notifyActiveTownNotSet();
+            return;
+        }
+
+        if(t.removeWarp(warpName) == null) {
+            localSender.sendMessage(ChatColor.YELLOW + "No warp named \"" + warpName + "\" to delete.");
+        } else {
+            localSender.sendMessage(ChatColor.GREEN + "Warp \"" + warpName + "\" deleted.");
+        }
+    }
+
+    @CommandMethod(path = "town list warps")
+    public void listWarps(Player p) {
+        setNewCommand(p);
+        Town t = localSender.getActiveTown();
+        if(t == null) {
+            localSender.notifyActiveTownNotSet();
+            return;
+        }
+
+        localSender.sendMessage(ChatColor.GOLD + "Warps in " + t.getName() + ":");
+        t.getWarps().stream().forEach(w -> localSender.sendMessage(ChatColor.GOLD + w));
+    }
+
+    @CommandMethod(path = "town warp", requiredArgs = 1)
+    public void useWarp(Player p, String warpName) {
+        setNewCommand(p);
+        Town t = localSender.getActiveTown();
+        if(t == null) {
+            localSender.notifyActiveTownNotSet();
+            return;
+        }
+
+        Location dest = t.getWarp(warpName);
+        if(dest == null) {
+            p.sendMessage(ChatColor.RED + "No warp named " + warpName);
+            p.sendMessage(ChatColor.RED + "Similar warps:");
+            t.getWarps().stream()
+                    .filter(w -> w.startsWith(warpName.substring(0, 1)))
+                    .forEach(w -> p.sendMessage(w));
+            return;
+        }
+
+        if(t.playerIsResident(p)) {
+            p.teleport(dest);
+        } else {
+            p.sendMessage(ChatColor.RED + "You need to be a member of this town to use its warps.");
+        }
+    }
+
     @CommandMethod(path = "town spawn")
     public void warpToOtherSpawn(CommandSender s, String[] args) {
         setNewCommand(s);
