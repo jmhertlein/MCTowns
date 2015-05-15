@@ -377,6 +377,7 @@ public abstract class CommandHandler {
         server.dispatchCommand(server.getConsoleSender(), command);
     }
 
+    //TODO: fix redefine
     public void redefineActiveRegion(TownLevel regType) {
         if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();

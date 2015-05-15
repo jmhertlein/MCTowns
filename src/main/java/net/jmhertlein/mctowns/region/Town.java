@@ -18,12 +18,10 @@ package net.jmhertlein.mctowns.region;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import net.jmhertlein.core.location.Location;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.bank.BlockBank;
@@ -32,8 +30,9 @@ import net.jmhertlein.mctowns.util.TownException;
 import net.jmhertlein.mctowns.util.UUIDs;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -45,7 +44,6 @@ public class Town {
     private volatile String townName;
     private volatile String townMOTD;
     private volatile ChatColor motdColor;
-    private volatile Location townSpawn;
     private volatile BlockBank bank;
     private Set<String> territories;
     private Set<UUID> residents;
@@ -55,6 +53,7 @@ public class Town {
     private boolean economyJoins;
     private volatile BigDecimal defaultPlotPrice;
     private boolean friendlyFire;
+    private Map<String, Location> warps;
 
     /**
      * Creates a new town, setting the name to townName, the mayor to the player passed as mayor,
@@ -65,7 +64,7 @@ public class Town {
      *
      */
     public Town(String townName, Player mayor) {
-        initialize(townName, mayor.getUniqueId(), Location.convertFromBukkitLocation(mayor.getLocation()));
+        initialize(townName, mayor.getUniqueId(), mayor.getLocation());
     }
 
     public Town(String townName, Player mayor, Location townSpawnLoc) {
@@ -79,10 +78,11 @@ public class Town {
     private void initialize(String townName1, UUID mayorId, Location spawnLoc) {
         this.townName = townName1;
         mayor = mayorId;
-        townSpawn = spawnLoc;
-        residents = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
-        assistants = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
-        territories = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        residents = new HashSet<>();
+        assistants = new HashSet<>();
+        territories = new HashSet<>();
+        warps = new HashMap<>();
+        setSpawn(spawnLoc);
         bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
         townMOTD = "Use /town motd <msg> to set the town MOTD!";
         buyablePlots = false;
@@ -388,15 +388,6 @@ public class Town {
 
     /**
      *
-     *
-     * @return
-     */
-    public org.bukkit.Location getTownSpawn() {
-        return Location.convertToBukkitLocation(Bukkit.getServer(), townSpawn);
-    }
-
-    /**
-     *
      * @param id
      *
      * @return
@@ -446,17 +437,20 @@ public class Town {
      * @param loc
      */
     public void setSpawn(org.bukkit.Location loc) {
-        townSpawn = Location.convertFromBukkitLocation(loc);
+        warps.put("spawn", loc);
     }
 
     /**
      *
-     * @param s
      *
      * @return
      */
-    public org.bukkit.Location getSpawn(Server s) {
-        return Location.convertToBukkitLocation(s, townSpawn);
+    public Location getSpawn() {
+        return getWarp("spawn");
+    }
+
+    public Location getWarp(String name) {
+        return warps.get(name);
     }
 
     /**
@@ -516,7 +510,7 @@ public class Town {
         f.set("townName", townName);
         f.set("motd", townMOTD);
         f.set("motdColor", motdColor.name());
-        f.set("spawnLocation", townSpawn.toList());
+        f.set("warps", warps);
         f.set("mayor", mayor.toString());
         f.set("territs", new LinkedList<>(territories));
 
@@ -542,7 +536,8 @@ public class Town {
         t.townName = f.getString("townName");
         t.townMOTD = f.getString("motd");
         t.motdColor = ChatColor.valueOf(f.getString("motdColor"));
-        t.townSpawn = Location.fromList(f.getStringList("spawnLocation"));
+        t.warps = (Map<String, Location>) (Map) ((MemorySection) f.get("warps")).getValues(true);
+
         t.mayor = UUIDs.stringToId(f.getString("mayor"));
         t.territories = new HashSet<>(f.getStringList("territs"));
 

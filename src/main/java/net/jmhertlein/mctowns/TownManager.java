@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.jmhertlein.core.location.Location;
-import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.command.ActiveSet;
 import net.jmhertlein.mctowns.region.MCTownsRegion;
 import net.jmhertlein.mctowns.region.Plot;
@@ -41,6 +39,7 @@ import net.jmhertlein.mctowns.region.Town;
 import net.jmhertlein.mctowns.region.TownLevel;
 import net.jmhertlein.mctowns.util.UUIDs;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -369,15 +368,13 @@ public class TownManager {
      * with a town.
      */
     public ActiveSet getPlotFromSignLocation(org.bukkit.Location bukkitLoc) {
-        Location mctLoc = Location.convertFromBukkitLocation(bukkitLoc);
-
         Plot p;
         Territory territ;
         Town town;
         for(MCTownsRegion reg : regions.values()) {
             if(reg instanceof Plot) {
                 p = (Plot) reg;
-                if(p.getSignLoc() != null && p.getSignLoc().equals(mctLoc)) {
+                if(p.getSignLoc() != null && p.getSignLoc().equals(net.jmhertlein.core.location.Location.convertFromBukkitLocation(bukkitLoc))) {
                     territ = getTerritory(p.getParentTerritoryName());
                     town = getTown(territ.getParentTown());
                     return new ActiveSet(town, territ, p);
