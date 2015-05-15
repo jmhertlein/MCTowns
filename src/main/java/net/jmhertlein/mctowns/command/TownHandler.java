@@ -779,7 +779,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        localSender.getPlayer().teleport(t.getTownSpawn());
+        localSender.getPlayer().teleport(t.getSpawn());
         localSender.sendMessage(INFO + "Teleported to " + t.getName() + "! Welcome!");
 
     }
