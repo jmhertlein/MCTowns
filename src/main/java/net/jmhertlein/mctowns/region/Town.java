@@ -440,6 +440,18 @@ public class Town {
         warps.put("spawn", loc);
     }
 
+    public Location putWarp(String name, Location l) {
+        return warps.put(name, l);
+    }
+
+    public Location removeWarp(String name) {
+        return warps.remove(name);
+    }
+
+    public Set<String> getWarps() {
+        return warps.keySet();
+    }
+
     /**
      *
      *
