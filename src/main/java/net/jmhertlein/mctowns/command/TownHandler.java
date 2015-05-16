@@ -84,16 +84,11 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.LIGHT_PURPLE + "Active town reset to " + t.get(0).getName() + ".");
     }
 
-    @CommandMethod(path = "town spawn set")
+    @CommandMethod(path = "town spawn set", filters = {"mayoralPerms"})
     public void setTownSpawn(CommandSender s) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
-
         if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
@@ -108,13 +103,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage("Town spawn location updated.");
     }
 
-    @CommandMethod(path = "town joinmethod", requiredArgs = 1)
+    @CommandMethod(path = "town joinmethod", requiredArgs = 1, filters = {"mayoralPerms"})
     public void setTownJoinMethod(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -141,13 +132,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town economy buyableplots", requiredArgs = 1)
+    @CommandMethod(path = "town economy buyableplots", requiredArgs = 1, filters = {"mayoralPerms"})
     public void setTownPlotBuyability(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -179,13 +166,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town economy defaultplotprice", requiredArgs = 1)
+    @CommandMethod(path = "town economy defaultplotprice", requiredArgs = 1, filters = {"mayoralPerms"})
     public void setDefaultPlotPrice(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -291,13 +274,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town remove territory", requiredArgs = 1)
+    @CommandMethod(path = "town remove territory", requiredArgs = 1, filters = {"mayoralPerms"})
     public void removeTerritoryFromTown(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town to = localSender.getActiveTown();
 
@@ -315,13 +294,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "town add player", requiredArgs = 1)
+    @CommandMethod(path = "town add player", requiredArgs = 1, filters = {"mayoralPerms"})
     public void invitePlayerToTown(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
         Town t = localSender.getActiveTown();
 
         if(t == null) {
@@ -463,7 +438,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "town mayor set")
+    @CommandMethod(path = "town mayor set", requiredArgs = 1)
     public void setMayor(CommandSender s, String[] args) {
         setNewCommand(s);
         Town t = localSender.getActiveTown();
@@ -493,13 +468,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         t.broadcastMessageToTown("The mayor of " + t.getName() + " is now " + p.getName() + "!");
     }
 
-    @CommandMethod(path = "town remove invite", requiredArgs = 1)
+    @CommandMethod(path = "town remove invite", requiredArgs = 1, filters = {"mayoralPerms"})
     public void cancelInvitation(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -515,14 +486,10 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "town remove request", requiredArgs = 1)
+    @CommandMethod(path = "town remove request", requiredArgs = 1, filters = {"mayoralPerms"})
     public void rejectRequest(CommandSender s, String[] args) {
         setNewCommand(s);
         String playerName = args[0];
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Player p = server.getPlayer(playerName);
         Town t = localSender.getActiveTown();
@@ -544,13 +511,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town list requests")
+    @CommandMethod(path = "town list requests", filters = {"mayoralPerms"})
     public void listRequestsForTown(CommandSender s) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -568,13 +531,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town list invites")
+    @CommandMethod(path = "town list invites", filters = {"mayoralPerms"})
     public void listInvitesForTown(CommandSender s) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -592,13 +551,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "town remove player", requiredArgs = 1)
+    @CommandMethod(path = "town remove player", requiredArgs = 1, filters = {"mayoralPerms"})
     public void removePlayerFromTown(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         OfflinePlayer removeMe = server.getOfflinePlayer(args[0]);
         Town removeFrom = localSender.getActiveTown();
@@ -659,13 +614,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.DARK_RED + "You have left " + localSender.getActiveTown().getName() + ".");
     }
 
-    @CommandMethod(path = "town pvp friendlyfire", requiredArgs = 1)
+    @CommandMethod(path = "town pvp friendlyfire", requiredArgs = 1, filters = {"mayoralPerms"})
     public void setTownFriendlyFire(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -684,13 +635,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town motd set", requiredArgs = 1)
+    @CommandMethod(path = "town motd set", requiredArgs = 1, filters = {"mayoralPerms"})
     public void setMOTD(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -754,13 +701,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "town add warp", requiredArgs = 1)
+    @CommandMethod(path = "town add warp", requiredArgs = 1, filters = {"mayoralPerms"})
     public void addWarp(Player p, String warpName) {
         setNewCommand(p);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
         if(t == null) {
@@ -780,13 +723,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "town remove warp", requiredArgs = 1)
+    @CommandMethod(path = "town remove warp", requiredArgs = 1, filters = {"mayoralPerms"})
     public void deleteWarp(Player s, String warpName) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
         if(t == null) {
@@ -870,13 +809,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    @CommandMethod(path = "town bank withdraw blocks")
+    @CommandMethod(path = "town bank withdraw blocks", filters = {"mayoralPerms"})
     public void openBlockBank(CommandSender s) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
         if(t == null) {
@@ -899,13 +834,9 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         localSender.getPlayer().openInventory(t.getBank().getNewDepositBox(localSender.getPlayer()));
     }
 
-    @CommandMethod(path = "town bank withdraw currency", requiredArgs = 1)
+    @CommandMethod(path = "town bank withdraw currency", requiredArgs = 1, filters = {"mayoralPerms"})
     public void withdrawCurrencyBank(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");

@@ -102,4 +102,10 @@ public class ActiveSet {
     public String toString() {
         return "Town: " + activeTown + " Territ: " + activeTerritory + " Plot: " + activePlot;
     }
+
+    void clear() {
+        this.activePlot = null;
+        this.activeTerritory = null;
+        this.activeTown = null;
+    }
 }

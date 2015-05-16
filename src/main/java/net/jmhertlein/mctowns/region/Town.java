@@ -20,7 +20,6 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import net.jmhertlein.mctowns.MCTowns;
 import net.jmhertlein.mctowns.MCTownsPlugin;
@@ -84,7 +83,7 @@ public class Town {
         warps = new HashMap<>();
         setSpawn(spawnLoc);
         bank = new BlockBank(MCTownsPlugin.getPlugin().getOpenDepositInventories());
-        townMOTD = "Use /town motd <msg> to set the town MOTD!";
+        townMOTD = "Use /town motd set <msg> to set the town MOTD!";
         buyablePlots = false;
         economyJoins = false;
         defaultPlotPrice = BigDecimal.TEN;
@@ -297,13 +296,13 @@ public class Town {
     }
 
     /**
-     * Returns the list of all assistants in the town
+     * Returns the list of all assistants in the town.
      *
      * Modifying membership of returned set does not modify which players are assistants in this
-     * Town
+     * Town.
      *
      * Sets returned by this method will not update themselves if subsequent Town method calls add
-     * assistants to it
+     * assistants to it.
      *
      * @return
      */
@@ -313,6 +312,16 @@ public class Town {
                 .collect(Collectors.toSet());
 
     }
+
+    /**
+     * 
+     * @return A list of the UUIDs for all residents of the town.
+     */
+    public Set<UUID> getResidents() {
+        return Collections.unmodifiableSet(residents);
+    }
+    
+    
 
     public Set<String> getAssistantNames() {
         return assistants.stream()

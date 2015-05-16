@@ -92,13 +92,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "plot add player", requiredArgs = 1)
+    @CommandMethod(path = "plot add player", requiredArgs = 1, filters = {"mayoralPerms"})
     public void addPlayerToPlot(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
         if(t == null) {
@@ -163,13 +159,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "plot economy forsale", requiredArgs = 1)
+    @CommandMethod(path = "plot economy forsale", requiredArgs = 1, filters = {"mayoralPerms"})
     public void setPlotBuyability(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
 
@@ -202,13 +194,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.GREEN + "The plot " + p.getName() + " is " + (forSale ? "now" : "no longer") + " for sale!");
     }
 
-    @CommandMethod(path = "plot economy setprice", requiredArgs = 1)
+    @CommandMethod(path = "plot economy setprice", requiredArgs = 1, filters = {"mayoralPerms"})
     public void setPlotPrice(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
 
         if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
@@ -236,13 +224,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(ChatColor.GREEN + "Price of " + p.getName() + " set to " + p.getPrice() + ".");
     }
 
-    @CommandMethod(path = "plot sign build")
+    @CommandMethod(path = "plot sign build", filters = {"mayoralPerms"})
     public void buildSign(CommandSender s) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
@@ -263,13 +247,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
     }
 
-    @CommandMethod(path = "plot sign demolish")
+    @CommandMethod(path = "plot sign demolish", filters = {"mayoralPerms"})
     public void demolishSign(CommandSender s) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
@@ -287,13 +267,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage("Sign demolished.");
     }
 
-    @CommandMethod(path = "plot sign setpos")
+    @CommandMethod(path = "plot sign setpos", filters = {"mayoralPerms"})
     public void setPlotSignPosition(CommandSender s) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Plot p = localSender.getActivePlot();
 
@@ -327,10 +303,6 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     //TODO: make this usable? it was apparently never made accessable
     public void surrenderPlot() {
-        if(localSender.isConsole()) {
-            localSender.notifyConsoleNotSupported();
-            return;
-        }
 
         Plot p = localSender.getActivePlot();
         if(p == null) {
