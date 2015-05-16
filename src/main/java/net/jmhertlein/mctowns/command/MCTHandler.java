@@ -57,7 +57,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         s.sendMessage("Log into your GitHub account and click \"new issue\".");
     }
 
-    @CommandMethod(path = "mct exportgraph", requiredArgs = 1, permNode = "mctowns.export")
+    @CommandMethod(path = "mct exportgraph", requiredArgs = 1, permNodes = {"mctowns.export"})
     public void exportGraph(CommandSender s, String filename) {
         File f = new File(filename);
         try(DotWriter w = new DotWriter(f, true)) {
@@ -151,11 +151,13 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             MCTowns.logSevere("Debug analysis:");
             MCTowns.logSevere("WG plugin was null: " + (MCTowns.getWorldGuardPlugin() == null));
             MCTowns.logSevere("Server was null: " + (MCTowns.getWorldGuardPlugin() == null));
-            MCTowns.logSevere("Town was null: " + (t == null));
         }
-
-        //clear active sets to remove pointers to deleted town
-        plugin.getActiveSets().clear();
+        
+        t.getResidents().stream()
+                .map(uuid -> Bukkit.getOfflinePlayer(uuid))
+                .filter(player -> player.isOnline())
+                .map(p -> plugin.getActiveSets().get(p.getName()))
+                .forEach(as -> as.clear());
 
         localSender.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + args[0] + " has been disbanded.");
@@ -302,10 +304,6 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "mct cancel", requiredArgs = 1)
     public void cancelRequest(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = townManager.getTown(args[0]);
 

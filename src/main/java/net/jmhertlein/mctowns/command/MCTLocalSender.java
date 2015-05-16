@@ -21,11 +21,12 @@ import net.jmhertlein.mctowns.region.TownLevel;
 import net.jmhertlein.mctowns.region.Plot;
 import net.jmhertlein.mctowns.region.Territory;
 import java.util.HashMap;
-import java.util.List;
 import net.jmhertlein.core.command.LocalSender;
+import net.jmhertlein.mctowns.MCTownsPlugin;
 import net.jmhertlein.mctowns.TownManager;
 import net.jmhertlein.mctowns.permission.Perms;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -45,20 +46,17 @@ public class MCTLocalSender extends LocalSender {
      */
     public MCTLocalSender(TownManager tMan, CommandSender sender, HashMap<String, ActiveSet> activeSets) {
         super(sender);
+        System.out.println("Wrapping " + sender.getName());
         this.sender = sender;
 
         console = !(sender instanceof Player);
 
         if(!console) {
             player = (Player) sender;
-            if(!activeSets.containsKey(player.getName())) {
-                activeSets.put(player.getName(), new ActiveSet());
-                List<Town> towns = tMan.matchPlayerToTowns(player);
-                activeSets.get(player.getName()).setActiveTown(towns.isEmpty() ? null : towns.get(0));
-            }
-
             this.activeSet = activeSets.get(player.getName());
-
+            System.out.println("Fetched AS is " + activeSet);
+            System.out.println("ActiveSets contains:");
+            activeSets.entrySet().stream().forEach(e -> System.out.println(e.getKey() + " - " + e.getValue()));
         } else {
             player = null;
             activeSet = null;
@@ -114,6 +112,7 @@ public class MCTLocalSender extends LocalSender {
      * @param activeTown the town to be set as active
      */
     public void setActiveTown(Town activeTown) {
+        System.out.println(activeSet);
         activeSet.setActiveTown(activeTown);
     }
 
@@ -126,6 +125,21 @@ public class MCTLocalSender extends LocalSender {
      */
     public boolean hasMayoralPermissions() {
         return hasExternalPermissions(Perms.ADMIN.toString()) || (activeSet.getActiveTown() == null ? true : (activeSet.getActiveTown().playerIsMayor(player) ? true : activeSet.getActiveTown().playerIsAssistant(player)));
+    }
+    
+    public static boolean hasMayoralPermissions(CommandSender p) {
+        if(p instanceof ConsoleCommandSender) {
+            return true;
+        } else {
+            ActiveSet activeSet = MCTownsPlugin.getPlugin().getActiveSets().get(p.getName());
+            Town t = activeSet.getActiveTown();
+            if(t == null)
+                return true;
+            
+            return p.hasPermission(Perms.ADMIN.toString()) || t.playerIsAssistant((Player) p) || t.playerIsMayor((Player) p);
+        }
+        
+                
     }
 
     /**

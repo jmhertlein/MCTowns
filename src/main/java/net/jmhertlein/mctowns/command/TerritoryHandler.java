@@ -41,13 +41,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         super(parent);
     }
 
-    @CommandMethod(path = "territory add plot", requiredArgs = 1)
+    @CommandMethod(path = "territory add plot", requiredArgs = 1, filters = {"mayoralPerms"})
     public void addPlotToTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
         if(t == null) {
@@ -98,13 +94,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
 
     }
 
-    @CommandMethod(path = "territory remove plot", requiredArgs = 1)
+    @CommandMethod(path = "territory remove plot", requiredArgs = 1, filters = {"mayoralPerms"})
     public void removePlotFromTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Territory t = localSender.getActiveTerritory();
 
@@ -122,13 +114,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         localSender.sendMessage(SUCC + "Plot removed.");
     }
 
-    @CommandMethod(path = "territory add player", requiredArgs = 1)
+    @CommandMethod(path = "territory add player", requiredArgs = 1, filters = {"mayoralPerms"})
     public void addPlayerToTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         Town t = localSender.getActiveTown();
         if(t == null) {
@@ -163,13 +151,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         }
     }
 
-    @CommandMethod(path = "territory remove player", requiredArgs = 1)
+    @CommandMethod(path = "territory remove player", requiredArgs = 1, filters = {"mayoralPerms"})
     public void removePlayerFromTerritory(CommandSender s, String[] args) {
         setNewCommand(s);
-        if(!localSender.hasMayoralPermissions()) {
-            localSender.notifyInsufPermissions();
-            return;
-        }
 
         boolean recursive = true; // TODO: come up with a way to allow recursive flag again
 

@@ -34,6 +34,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritan
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.mctowns.MCTowns;
@@ -46,6 +47,7 @@ import net.jmhertlein.mctowns.region.TownLevel;
 import net.jmhertlein.mctowns.townjoin.TownJoinManager;
 import net.jmhertlein.mctowns.util.MCTConfig;
 import net.jmhertlein.mctowns.util.WGUtils;
+import net.jmhertlein.reflective.CommandDefinition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -59,7 +61,7 @@ import org.bukkit.entity.Player;
  *
  * @author joshua
  */
-public abstract class CommandHandler {
+public abstract class CommandHandler implements CommandDefinition {
 
     protected static final int RESULTS_PER_PAGE = 10;
     protected MCTownsPlugin plugin;
@@ -521,4 +523,16 @@ public abstract class CommandHandler {
         localSender.sendMessage(SUCC + "The region \"" + nuWGRegion.getId() + "\" has been updated.");
 
     }
+
+    @Override
+    public Predicate<CommandSender> getFilter(String filterName) {
+        switch(filterName) {
+            case "mayoralPerms":
+                return s -> MCTLocalSender.hasMayoralPermissions(s);
+            default:
+                return null;
+        }
+    }
+    
+    
 }
