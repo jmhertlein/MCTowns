@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import net.jmhertlein.reflective.CommandDefinition;
 import net.jmhertlein.reflective.annotation.CommandMethod;
@@ -119,7 +120,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             localSender.sendMessage(INFO + "Active town set to newly created town.");
 
             localSender.sendMessage(INFO_ALT + "The town's spawn has been set to your current location. Change it with /town spawn set.");
-        } else
+        } else 
             localSender.sendMessage(ERR + "That town already exists!");
     }
 
@@ -152,7 +153,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             MCTowns.logSevere("WG plugin was null: " + (MCTowns.getWorldGuardPlugin() == null));
             MCTowns.logSevere("Server was null: " + (MCTowns.getWorldGuardPlugin() == null));
         }
-        
+
         t.getResidents().stream()
                 .map(uuid -> Bukkit.getOfflinePlayer(uuid))
                 .filter(player -> player.isOnline())
@@ -196,7 +197,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         localSender.sendMessage(INFO + "Player: " + p.getName());
 
         List<Town> towns = townManager.matchPlayerToTowns(p);
-        if(towns.isEmpty())
+        if(towns.isEmpty()) 
             localSender.sendMessage(INFO + p.getName() + " is not a member of any towns.");
         else
             for(Town t : towns) {
@@ -207,37 +208,14 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "mct list towns")
-    public void listTowns(CommandSender s, String[] args) {
+    public void listTowns(CommandSender s) {
         setNewCommand(s);
-        int intPage;
-        try {
-            if(args.length > 0)
-                intPage = Integer.parseInt(args[0]);
-            else
-                intPage = 1;
-        } catch(Exception e) {
-            localSender.sendMessage(ERR + "Parsing error: <page> is not a valid integer.");
-            return;
-        }
 
-        this.listTowns(intPage);
-    }
-
-    private void listTowns(int page) {
-        page--; //shift to 0-indexing
-
-        if(page < 0) {
-            localSender.sendMessage(ERR + "Invalid page.");
-            return;
-        }
-        localSender.sendMessage(ChatColor.AQUA + "Existing towns (page " + page + "):");
-
-        Town[] towns = townManager.getTownsCollection().toArray(new Town[townManager.getTownsCollection().size()]);
-
-        for(int i = page * RESULTS_PER_PAGE; i < towns.length && i < page * RESULTS_PER_PAGE + RESULTS_PER_PAGE; i++) {
-            localSender.sendMessage(ChatColor.YELLOW + towns[i].getName());
-        }
-
+        townManager.getTownsCollection().stream()
+                .collect(Collectors.toMap(
+                                t -> t.getName(),
+                                t -> getOnlinePlayerCounts(t)))
+                .forEach((town, counts) -> s.sendMessage(String.format("%s%s (%s/%s online)", ChatColor.YELLOW, town, counts[0], counts[1])));
     }
 
     @CommandMethod(path = "mct join", requiredArgs = 1)
@@ -346,12 +324,12 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         }
 
         if(townManager.playerIsAlreadyInATown(localSender.getPlayer())) //if players can't join multiple towns AND the town they're buying from isn't their current town
-
+        
             if(!MCTConfig.PLAYERS_CAN_JOIN_MULTIPLE_TOWNS.getBoolean() && !townManager.matchPlayerToTowns(localSender.getPlayer()).get(0).equals(plotToBuy.getActiveTown())) {
                 localSender.sendMessage(ERR + "You're already in a different town.");
                 return;
             }
-
+            
         if(!plotToBuy.getActiveTown().playerIsResident(localSender.getPlayer()))
             if(!plotToBuy.getActiveTown().usesEconomyJoins()) {
                 localSender.sendMessage(ERR + "You aren't a member of this town.");
@@ -396,6 +374,15 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             plotToBuy.getActiveTown().addPlayer(localSender.getPlayer());
             localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getName());
         }
+    }
+
+    private static long[] getOnlinePlayerCounts(Town t) {
+        long online = t.getResidents().stream()
+                .map(id -> Bukkit.getOfflinePlayer(id))
+                .filter(p -> p.isOnline())
+                .count();
+        long total = t.getSize();
+        return new long[]{online, total};
 
     }
 }
