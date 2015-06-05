@@ -19,6 +19,7 @@ package net.jmhertlein.mctowns.command;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
@@ -282,7 +283,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         Player player = localSender.getPlayer();
 
-        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
+        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock((HashSet<Byte>)null, 5).getLocation());
 
         if(mctLoc == null) {
             localSender.sendMessage(ERR + "Couldn't get the location you're looking at.");
