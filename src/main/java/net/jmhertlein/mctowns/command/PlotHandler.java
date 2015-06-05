@@ -19,6 +19,7 @@ package net.jmhertlein.mctowns.command;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
