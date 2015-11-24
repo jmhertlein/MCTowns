@@ -70,7 +70,7 @@
     </repository>
     <repository>
       <id>jmh-repo</id>
-      <url>http://maven.jmhertlein.net/~joshua/maven/</url>
+      <url>https://maven.jmhertlein.net/</url>
     </repository>
     <repository>
       <id>spigot-nexus-snaps</id>
