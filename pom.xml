@@ -131,7 +131,7 @@
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ssh</artifactId>
+        <artifactId>wagon-ssh-external</artifactId>
       </extension>
     </extensions>
 
@@ -183,7 +183,7 @@
   <distributionManagement>
     <repository>
       <id>jmh-repo</id>
-      <url>sftp://maven.jmhertlein.net:4242/home/joshua/public_html/maven</url>
+      <url>scpexe://maven.jmhertlein.net/var/www/maven</url>
     </repository>
   </distributionManagement>
   <description>A flexible town-management plugin for the Bukkit API, using the popular WorldGuard plugin for regions and WorldEdit for selection.</description>
