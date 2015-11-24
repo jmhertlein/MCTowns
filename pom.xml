@@ -89,7 +89,7 @@
   <pluginRepositories>
     <pluginRepository>
       <id>jmh-repo</id>
-      <url>http://maven.jmhertlein.net/~joshua/maven/</url>
+      <url>https://maven.jmhertlein.net/</url>
     </pluginRepository>
   </pluginRepositories>
 
