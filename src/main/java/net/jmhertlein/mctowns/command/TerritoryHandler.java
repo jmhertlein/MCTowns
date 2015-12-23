@@ -265,4 +265,9 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
 
         listPlots(page);
     }
+
+    @CommandMethod(path = "territory redefine")
+    public void redefine() {
+        redefineActiveRegion(TownLevel.TERRITORY);
+    }
 }

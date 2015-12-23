@@ -366,4 +366,9 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
         localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
+
+    @CommandMethod(path = "plot redefine")
+    public void redefine() {
+        redefineActiveRegion(TownLevel.PLOT);
+    }
 }

@@ -389,7 +389,6 @@ public abstract class CommandHandler implements CommandDefinition {
         server.dispatchCommand(server.getConsoleSender(), command);
     }
 
-    //TODO: redefine needs to be made accessable again
     public void redefineActiveRegion(TownLevel regType) {
         if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
@@ -451,8 +450,6 @@ public abstract class CommandHandler implements CommandDefinition {
         }
 
         if(oldWGReg instanceof ProtectedPolygonalRegion) {
-            ProtectedPolygonalRegion oldPoly = (ProtectedPolygonalRegion) oldWGReg;
-
             if(!(nuRegionBounds instanceof Polygonal2DSelection)) {
                 localSender.sendMessage(ERR + "Error: selection type does not match region type. Must be a polygonal selection.");
                 return;
