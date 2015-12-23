@@ -379,7 +379,7 @@ public abstract class CommandHandler implements CommandDefinition {
         server.dispatchCommand(server.getConsoleSender(), command);
     }
 
-    //TODO: fix redefine
+    //TODO: redefine needs to be made accessable again
     public void redefineActiveRegion(TownLevel regType) {
         if(!localSender.hasMayoralPermissions()) {
             localSender.notifyInsufPermissions();
