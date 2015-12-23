@@ -375,6 +375,8 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
             localSender.sendMessage(ChatColor.GREEN + "You have joined the town " + plotToBuy.getActiveTown().getName());
         }
     }
+    
+    
 
     private static long[] getOnlinePlayerCounts(Town t) {
         long online = t.getResidents().stream()
@@ -383,6 +385,5 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
                 .count();
         long total = t.getSize();
         return new long[]{online, total};
-
     }
 }

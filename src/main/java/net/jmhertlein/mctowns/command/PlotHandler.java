@@ -20,7 +20,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.reflective.CommandDefinition;
@@ -303,7 +302,8 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
     }
 
-    //TODO: make this usable? it was apparently never made accessable
+    // TODO: this was never made accessable, probably needs testing
+    //@CommandMethod(path = "plot surrender")
     public void surrenderPlot() {
 
         Plot p = localSender.getActivePlot();
@@ -327,48 +327,43 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         p.setForSale(false);
         p.setPrice(BigDecimal.ZERO);
-
     }
 
     @CommandMethod(path = "plot active", requiredArgs = 1)
-    public void setActivePlot(CommandSender s, String[] args) {
+    public void setActivePlot(CommandSender s, String plotName) {
         setNewCommand(s);
+        
         Town t = localSender.getActiveTown();
-
         if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-
-        Plot nuActive = null;
-        Territory nuActiveTerrit = null;
-
+        
         Territory te = localSender.getActiveTerritory();
-
         if(te == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
-        nuActive = townManager.getPlot(args[0]);
-
+        Plot nuActive = townManager.getPlot(plotName);
         if(nuActive == null) {
-            nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, args[0]));
-        }
-
-        if(nuActive == null) {
-            localSender.sendMessage(ERR + "The plot \"" + args[0] + "\" does not exist.");
-            return;
+            nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
+            
+            if(nuActive == null) {
+                localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
+                return;
+            }
         }
 
         if(!nuActive.getParentTownName().equals(t.getName())) {
-            localSender.sendMessage(ERR + "The plot \"" + args[0] + "\" does not exist in your town.");
+            localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist in your town.");
             return;
         }
 
         localSender.setActivePlot(nuActive);
-        if(nuActiveTerrit != null) {
-            localSender.setActiveTerritory(nuActiveTerrit);
+        if(!localSender.getActiveTerritory().getName().equals(nuActive.getParentTerritoryName())) {
+            localSender.setActiveTerritory(townManager.getTerritory(nuActive.getParentTerritoryName()));
+            localSender.sendMessage(ChatColor.YELLOW + "Also setting parent territory to " + nuActive.getParentTerritoryName());
         }
         localSender.sendMessage("Active plot set to " + nuActive.getName());
     }
