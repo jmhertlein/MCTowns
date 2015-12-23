@@ -252,10 +252,11 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         setNewCommand(s);
         int page;
         try {
-            if(args.length > 0)
+            if(args.length > 0) {
                 page = Integer.parseInt(args[0]);
-            else
+            } else {
                 page = 1;
+            }
         } catch(NumberFormatException nfex) {
             localSender.sendMessage(
                     ERR + "Error parsing integer argument. Found \"" + args[0] + "\", expected integer.");

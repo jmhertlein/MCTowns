@@ -332,13 +332,13 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "plot active", requiredArgs = 1)
     public void setActivePlot(CommandSender s, String plotName) {
         setNewCommand(s);
-        
+
         Town t = localSender.getActiveTown();
         if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         Territory te = localSender.getActiveTerritory();
         if(te == null) {
             localSender.notifyActiveTerritoryNotSet();
@@ -348,7 +348,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         Plot nuActive = townManager.getPlot(plotName);
         if(nuActive == null) {
             nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
-            
+
             if(nuActive == null) {
                 localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
                 return;

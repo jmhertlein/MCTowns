@@ -117,34 +117,34 @@ public class MCTLocalSender extends LocalSender {
     }
 
     /**
-     * Returns whether or not the player is a mayor or pseudo-mayor. A player is a pseudo-mayor if
-     * they are an admin, op, or a mayor of their active town. If the active town is null, returns
-     * true.
+     * Returns whether or not the player is a mayor or pseudo-mayor. A player is
+     * a pseudo-mayor if they are an admin, op, or a mayor of their active town.
+     * If the active town is null, returns true.
      *
      * @return whether or not the player has permission
      */
     public boolean hasMayoralPermissions() {
         return hasExternalPermissions(Perms.ADMIN.toString()) || (activeSet.getActiveTown() == null ? true : (activeSet.getActiveTown().playerIsMayor(player) ? true : activeSet.getActiveTown().playerIsAssistant(player)));
     }
-    
+
     public static boolean hasMayoralPermissions(CommandSender p) {
         if(p instanceof ConsoleCommandSender) {
             return true;
         } else {
             ActiveSet activeSet = MCTownsPlugin.getPlugin().getActiveSets().get(p.getName());
             Town t = activeSet.getActiveTown();
-            if(t == null)
+            if(t == null) {
                 return true;
-            
+            }
+
             return p.hasPermission(Perms.ADMIN.toString()) || t.playerIsAssistant((Player) p) || t.playerIsMayor((Player) p);
         }
-        
-                
+
     }
 
     /**
-     * Returns true if the player is an admin, or the mayor of his active town and has the
-     * manageregion permission.
+     * Returns true if the player is an admin, or the mayor of his active town
+     * and has the manageregion permission.
      *
      * @return whether or not the player can manage regions
      */
@@ -154,7 +154,8 @@ public class MCTLocalSender extends LocalSender {
     /**
      * Returns whether or not the player can delete the active town.
      *
-     * @return true if admin, or mayor of active town and has permission node to remove towns
+     * @return true if admin, or mayor of active town and has permission node to
+     * remove towns
      */
     public boolean canDeleteTown() {
         return hasExternalPermissions(Perms.ADMIN.toString()) || (hasMayoralPermissions() && hasExternalPermissions(Perms.REMOVE_TOWN.toString()));

@@ -36,10 +36,11 @@ public class MCTowns {
     }
 
     public static void logInfo(String msg) {
-        if(MCTownsPlugin.getPlugin() == null)
+        if(MCTownsPlugin.getPlugin() == null) {
             System.out.println(msg);
-        else
+        } else {
             MCTownsPlugin.getPlugin().getLogger().log(Level.INFO, msg);
+        }
     }
 
     public static void logWarning(String msg) {
@@ -51,8 +52,9 @@ public class MCTowns {
     }
 
     public static void logDebug(String msg) {
-        if(MCTConfig.DEBUG_MODE_ENABLED.getBoolean())
+        if(MCTConfig.DEBUG_MODE_ENABLED.getBoolean()) {
             logInfo("[DEBUG]: " + msg);
+        }
     }
 
     public static Economy getEconomy() {
@@ -62,14 +64,16 @@ public class MCTowns {
     }
 
     public static WorldGuardPlugin getWorldGuardPlugin() {
-        if(wgp != null)
+        if(wgp != null) {
             return wgp;
+        }
 
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
-        if(p instanceof WorldGuardPlugin)
+        if(p instanceof WorldGuardPlugin) {
             wgp = (WorldGuardPlugin) p;
-        else
+        } else {
             wgp = null;
+        }
 
         return wgp;
     }

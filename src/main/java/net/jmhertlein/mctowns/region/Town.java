@@ -55,8 +55,9 @@ public class Town {
     private Map<String, Location> warps;
 
     /**
-     * Creates a new town, setting the name to townName, the mayor to the player passed as mayor,
-     * and adds the mayor to the list of residents. The MOTD is set to a default motd.
+     * Creates a new town, setting the name to townName, the mayor to the player
+     * passed as mayor, and adds the mayor to the list of residents. The MOTD is
+     * set to a default motd.
      *
      * @param townName the desired name of the town
      * @param mayor the player to be made the mayor of the town
@@ -166,7 +167,8 @@ public class Town {
      *
      * @param p the player to be added
      *
-     * @return false if player was not added because player is already added, true otherwise
+     * @return false if player was not added because player is already added,
+     * true otherwise
      */
     public boolean addPlayer(Player p) {
         return addPlayer(p.getUniqueId());
@@ -181,9 +183,9 @@ public class Town {
     }
 
     /**
-     * Removes a player from the town. Postcondition: Player is not a resident of the town,
-     * regardless of whether or not they were before. Note: Player must still be removed from the WG
-     * regions associated with the town
+     * Removes a player from the town. Postcondition: Player is not a resident
+     * of the town, regardless of whether or not they were before. Note: Player
+     * must still be removed from the WG regions associated with the town
      *
      * @param p - the player to be removed
      */
@@ -192,8 +194,8 @@ public class Town {
     }
 
     /**
-     * Removes the player from the town's list of residents and assistants. Does not remove them
-     * from regions.
+     * Removes the player from the town's list of residents and assistants. Does
+     * not remove them from regions.
      *
      * @param playerId
      */
@@ -203,11 +205,12 @@ public class Town {
     }
 
     /**
-     * Adds the territory to the town. The region of the territory will need to be handled
-     * separately.
+     * Adds the territory to the town. The region of the territory will need to
+     * be handled separately.
      *
      * @param territ the territory to be added
-     * @return false if territ was not added because it is already added, true otherwise
+     * @return false if territ was not added because it is already added, true
+     * otherwise
      */
     public boolean addTerritory(Territory territ) {
         return territories.add(territ.getName());
@@ -229,7 +232,8 @@ public class Town {
      *
      * @param player the player to be added
      *
-     * @return false if player was not added because player was already added, true otherwise
+     * @return false if player was not added because player was already added,
+     * true otherwise
      */
     public boolean addAssistant(OfflinePlayer player) {
         return addAssistant(UUIDs.getUUIDForOfflinePlayer(player));
@@ -240,12 +244,14 @@ public class Town {
      *
      * @param playerId
      *
-     * @return true if player was added as assistant, false if they're already an assistant
+     * @return true if player was added as assistant, false if they're already
+     * an assistant
      * @throws TownException if they're not a resident of the town.
      */
     public boolean addAssistant(UUID playerId) {
-        if(!residents.contains(playerId))
+        if(!residents.contains(playerId)) {
             throw new TownException("Player is not a resident of " + getName());
+        }
 
         return assistants.add(playerId);
     }
@@ -255,8 +261,8 @@ public class Town {
      *
      * @param player the player to be demoted
      *
-     * @return false if the player was not removed because the player is not an assistant, true
-     * otherwise
+     * @return false if the player was not removed because the player is not an
+     * assistant, true otherwise
      */
     public boolean removeAssistant(OfflinePlayer player) {
         return removeAssistant(UUIDs.getUUIDForOfflinePlayer(player));
@@ -271,10 +277,11 @@ public class Town {
     /**
      * Returns the territories this town has.
      *
-     * Modifying membership of returned set does not modify which territs are in this Town
+     * Modifying membership of returned set does not modify which territs are in
+     * this Town
      *
-     * Sets returned by this method will not update themselves if subsequent Town method calls add
-     * Territories to it
+     * Sets returned by this method will not update themselves if subsequent
+     * Town method calls add Territories to it
      *
      * Returned Set is unmodifiable
      *
@@ -298,11 +305,11 @@ public class Town {
     /**
      * Returns the list of all assistants in the town.
      *
-     * Modifying membership of returned set does not modify which players are assistants in this
-     * Town.
+     * Modifying membership of returned set does not modify which players are
+     * assistants in this Town.
      *
-     * Sets returned by this method will not update themselves if subsequent Town method calls add
-     * assistants to it.
+     * Sets returned by this method will not update themselves if subsequent
+     * Town method calls add assistants to it.
      *
      * @return
      */
@@ -314,14 +321,12 @@ public class Town {
     }
 
     /**
-     * 
+     *
      * @return A list of the UUIDs for all residents of the town.
      */
     public Set<UUID> getResidents() {
         return Collections.unmodifiableSet(residents);
     }
-    
-    
 
     public Set<String> getAssistantNames() {
         return assistants.stream()
@@ -346,10 +351,12 @@ public class Town {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == null)
+        if(obj == null) {
             return false;
-        if(getClass() != obj.getClass())
+        }
+        if(getClass() != obj.getClass()) {
             return false;
+        }
         final Town other = (Town) obj;
         return Objects.equals(this.townName, other.townName);
     }
@@ -428,7 +435,8 @@ public class Town {
      *
      * @param p
      *
-     * @return true if the player is in a territory the town owns, false otherwise
+     * @return true if the player is in a territory the town owns, false
+     * otherwise
      */
     public boolean playerIsInsideTownBorders(Player p) {
         org.bukkit.Location playerLoc = p.getLocation();

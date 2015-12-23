@@ -31,24 +31,27 @@ import java.util.UUID;
 public class UUIDs {
 
     /**
-     * Converts a list of Strings to UUID's, using one of two strategies: 1. Assume String is the
-     * toString() of a UUID, attempt to convert straight back 2. If that fails, assume String is the
-     * name of a player: look up their UUID and use that instead
+     * Converts a list of Strings to UUID's, using one of two strategies: 1.
+     * Assume String is the toString() of a UUID, attempt to convert straight
+     * back 2. If that fails, assume String is the name of a player: look up
+     * their UUID and use that instead
      *
      * @param strings
      * @return
      */
     public static Set<UUID> stringsToIds(Collection<String> strings) {
         Set<UUID> ret = new HashSet<>();
-        for(String s : strings)
+        for(String s : strings) {
             ret.add(stringToId(s));
+        }
         return ret;
     }
 
     /**
-     * Converts a String to a UUID, using one of two strategies: 1. Assume String is the toString()
-     * of a UUID, attempt to convert straight back 2. If that fails, assume String is the name of a
-     * player: look up their UUID and use that instead
+     * Converts a String to a UUID, using one of two strategies: 1. Assume
+     * String is the toString() of a UUID, attempt to convert straight back 2.
+     * If that fails, assume String is the name of a player: look up their UUID
+     * and use that instead
      *
      * @param s
      * @return
