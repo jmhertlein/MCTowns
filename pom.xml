@@ -107,6 +107,7 @@
               net.jmhertlein.reflective.processor.CommandMethodProcessor
             </annotationProcessor>
           </annotationProcessors>
+          <compilerArgument>-parameters</compilerArgument>
         </configuration>
       </plugin>
       <plugin>
