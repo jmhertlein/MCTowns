@@ -152,33 +152,30 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     }
 
     @CommandMethod(path = "territory remove player", requiredArgs = 1, filters = {"mayoralPerms"})
-    public void removePlayerFromTerritory(CommandSender s, String[] args) {
+    public void removePlayerFromTerritory(CommandSender s, String playerName, Boolean recursive) {
         setNewCommand(s);
 
-        boolean recursive = true; // TODO: come up with a way to allow recursive flag again
-
         Territory territ = localSender.getActiveTerritory();
-
         if(territ == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
-        OfflinePlayer player = server.getOfflinePlayer(args[0]);
+        OfflinePlayer player = server.getOfflinePlayer(playerName);
         if(!player.hasPlayedBefore()) {
             localSender.sendMessage(
-                    ERR + args[0] + " has never played on this server before.");
+                    ERR + playerName + " has never played on this server before.");
             return;
         }
 
-        if(!territ.removePlayer(Bukkit.getOfflinePlayer(args[0]))) {
+        if(!territ.removePlayer(Bukkit.getOfflinePlayer(playerName))) {
             localSender.sendMessage(
                     ERR + "Unable to remove player from territory. Either they were not in it in the first place, or the underlying World or WorldGuard Region has been deleted.");
         } else {
             localSender.sendMessage(SUCC + "Player removed from territory.");
         }
 
-        if(recursive) {
+        if(recursive != null && recursive) {
             localSender.sendMessage(
                     INFO + "Recursive mode was requested. Removing from child plots...");
             for(String plotName : territ.getPlotsCollection()) {
