@@ -31,8 +31,9 @@ import java.util.List;
 public class WGUtils {
 
     /**
-     * Returns the number of blocks that have unique positions in the xz-plane. I.e. returns the
-     * number of blocks in a one-block-thick horizontal "slice" of the region.
+     * Returns the number of blocks that have unique positions in the xz-plane.
+     * I.e. returns the number of blocks in a one-block-thick horizontal "slice"
+     * of the region.
      *
      * @param reg the region
      *
@@ -83,8 +84,9 @@ public class WGUtils {
                         lastPt2.getBlockX(),
                         lastPt2.getBlockZ(),
                         aPts2.getBlockX(),
-                        aPts2.getBlockZ()))
+                        aPts2.getBlockZ())) {
                     return true;
+                }
                 lastPt2 = aPts2;
             }
             lastPt1 = aPts1;
@@ -113,7 +115,8 @@ public class WGUtils {
             pts.add(new BlockVector2D(x1, z2));
 
             return pts;
-        } else
+        } else {
             return r.getPoints();
+        }
     }
 }

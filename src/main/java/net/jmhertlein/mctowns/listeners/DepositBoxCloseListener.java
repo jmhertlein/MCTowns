@@ -39,12 +39,14 @@ public class DepositBoxCloseListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         DepositInventoryEntry entry = openDepositInventories.remove(e.getPlayer().getName());
-        if(entry == null)
+        if(entry == null) {
             return;
+        }
 
         for(ItemStack i : e.getInventory()) {
-            if(i == null || i.getType() == null || i.getType() == Material.AIR)
+            if(i == null || i.getType() == null || i.getType() == Material.AIR) {
                 continue;
+            }
             entry.getOpener().sendMessage(ChatColor.BLUE + "Depositing " + i.getAmount() + " of " + i.getType().toString());
 
             for(ItemStack overflow : entry.getTargetBank().getBankInventory().addItem(i).values()) {

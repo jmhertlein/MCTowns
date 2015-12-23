@@ -101,18 +101,21 @@ public class TownJoinManagerTest {
     public void testBulkRequestAdditionAndRemoval() {
         String[] names = new String[]{"Notch", "jeb", "RMS", "Linus"};
 
-        for(String s : names)
+        for(String s : names) {
             manager.addJoinRequest(s, t);
-        for(String s : names)
+        }
+        for(String s : names) {
             assertTrue(manager.requestExists(s, t));
+        }
 
         for(String s : names) {
             manager.clearRequest(s, t);
             assertFalse(manager.requestExists(s, t));
         }
 
-        for(String s : names)
+        for(String s : names) {
             assertFalse(manager.requestExists(s, t));
+        }
     }
 
     private static Town getMockTown(String name) {

@@ -282,7 +282,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
 
         Player player = localSender.getPlayer();
 
-        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock((HashSet<Byte>)null, 5).getLocation());
+        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock((HashSet<Byte>) null, 5).getLocation());
 
         if(mctLoc == null) {
             localSender.sendMessage(ERR + "Couldn't get the location you're looking at.");
@@ -331,13 +331,13 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     @CommandMethod(path = "plot active", requiredArgs = 1)
     public void setActivePlot(CommandSender s, String plotName) {
         setNewCommand(s);
-        
+
         Town t = localSender.getActiveTown();
         if(t == null) {
             localSender.notifyActiveTownNotSet();
             return;
         }
-        
+
         Territory te = localSender.getActiveTerritory();
         if(te == null) {
             localSender.notifyActiveTerritoryNotSet();
@@ -347,7 +347,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         Plot nuActive = townManager.getPlot(plotName);
         if(nuActive == null) {
             nuActive = townManager.getPlot(MCTownsRegion.formatRegionName(t, TownLevel.PLOT, plotName));
-            
+
             if(nuActive == null) {
                 localSender.sendMessage(ERR + "The plot \"" + plotName + "\" does not exist.");
                 return;
