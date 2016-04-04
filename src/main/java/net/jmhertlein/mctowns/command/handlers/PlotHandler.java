@@ -19,6 +19,7 @@ package net.jmhertlein.mctowns.command.handlers;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
+import java.util.Set;
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
 import net.jmhertlein.mctowns.MCTowns;
@@ -30,6 +31,7 @@ import net.jmhertlein.mctowns.structure.Town;
 import net.jmhertlein.mctowns.structure.TownLevel;
 import net.jmhertlein.mctowns.util.MCTConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -320,7 +322,7 @@ public class PlotHandler extends CommandHandler {
 
         Player player = localSender.getPlayer();
 
-        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock(null, 5).getLocation());
+        mctLoc = net.jmhertlein.core.location.Location.convertFromBukkitLocation(player.getTargetBlock((Set<Material>) null, 5).getLocation());
 
         if (mctLoc == null) {
             localSender.sendMessage(ERR + "Couldn't get the location you're looking at.");
