@@ -10,3 +10,5 @@ nbproject
 .settings
 dependency-reduced-pom.xml
 /.tags
+/*.iml
+/.idea

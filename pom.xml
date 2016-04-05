@@ -13,7 +13,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <scm>
     <connection>scm:git:git://github.com:jmhertlein/MCTowns.git</connection>
   </scm>
@@ -22,19 +22,19 @@
     <dependency>
       <groupId>com.sk89q</groupId>
       <artifactId>worldguard</artifactId>
-      <version>6.0.0-SNAPSHOT</version>
+      <version>6.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.sk89q</groupId>
       <artifactId>worldedit</artifactId>
-      <version>5.6.2</version>
+      <version>6.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.8-R0.1-SNAPSHOT</version>
+      <version>1.9.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -85,10 +85,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.2</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -124,7 +124,7 @@
       </resource>
     </resources>
   </build>
-  
+
   <profiles>
     <profile>
       <id>shaded</id>
@@ -161,7 +161,7 @@
       </build>
     </profile>
   </profiles>
-  
+
   <distributionManagement>
     <repository>
       <id>jmh-repo</id>
