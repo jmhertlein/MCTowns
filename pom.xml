@@ -4,7 +4,7 @@
 
   <groupId>net.jmhertlein</groupId>
   <artifactId>MCTowns</artifactId>
-  <version>2.4.0</version>
+  <version>2.4.1</version>
   <packaging>jar</packaging>
 
   <name>MCTowns</name>
@@ -53,7 +53,7 @@
       <groupId>org.mcstats.bukkit</groupId>
       <artifactId>metrics</artifactId>
       <scope>compile</scope>
-      <version>R6</version>
+      <version>R8-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
@@ -168,7 +168,9 @@
       <url>sftp://maven.jmhertlein.net:4242/home/joshua/public_html/maven</url>
     </repository>
   </distributionManagement>
-  <description>A flexible town-management plugin for the Bukkit API, using the popular WorldGuard plugin for regions and WorldEdit for selection.</description>
+  <description>A flexible town-management plugin for the Bukkit API, using the popular WorldGuard plugin for regions and
+    WorldEdit for selection.
+  </description>
   <licenses>
     <license>
       <name>The GNU General Public License, version 3</name>
