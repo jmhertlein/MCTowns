@@ -70,7 +70,7 @@
     </repository>
     <repository>
       <id>jmh-repo</id>
-      <url>https://maven.jmhertlein.net/</url>
+      <url>https://maven.josh.cafe/</url>
     </repository>
     <repository>
       <id>spigot-nexus-snaps</id>
@@ -85,13 +85,6 @@
       <url>http://repo.mcstats.org/content/repositories/public</url>
     </repository>
   </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>jmh-repo</id>
-      <url>https://maven.jmhertlein.net/</url>
-    </pluginRepository>
-  </pluginRepositories>
 
   <build>
     <plugins>
@@ -184,7 +177,7 @@
   <distributionManagement>
     <repository>
       <id>jmh-repo</id>
-      <url>scpexe://maven.jmhertlein.net/var/www/maven</url>
+      <url>scpexe://maven.josh.cafe/var/www/maven</url>
     </repository>
   </distributionManagement>
   <description>A flexible town-management plugin for the Bukkit API, using the popular WorldGuard plugin for regions and
