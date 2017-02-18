@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Set;
 
 import static net.jmhertlein.core.chat.ChatUtil.*;
-import net.jmhertlein.reflective.CommandDefinition;
-import net.jmhertlein.reflective.annotation.CommandMethod;
+import cafe.josh.reflective.CommandDefinition;
+import cafe.josh.reflective.annotation.CommandMethod;
 import cafe.josh.mctowns.util.MCTConfig;
 import org.bukkit.command.CommandSender;
 

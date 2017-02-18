@@ -47,7 +47,7 @@ import cafe.josh.mctowns.region.Town;
 import cafe.josh.mctowns.region.TownLevel;
 import cafe.josh.mctowns.util.MCTConfig;
 import cafe.josh.mctowns.util.WGUtils;
-import net.jmhertlein.reflective.CommandDefinition;
+import cafe.josh.reflective.CommandDefinition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

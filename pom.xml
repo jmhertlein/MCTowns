@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>net.jmhertlein</groupId>
+  <groupId>cafe.josh</groupId>
   <artifactId>MCTowns</artifactId>
   <version>2.5.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -56,7 +56,7 @@
       <version>R8-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>net.jmhertlein</groupId>
+      <groupId>cafe.josh</groupId>
       <artifactId>reflective</artifactId>
       <version>1.1-SNAPSHOT</version>
       <scope>compile</scope>
@@ -97,7 +97,7 @@
           <target>1.8</target>
           <annotationProcessors>
             <annotationProcessor>
-              net.jmhertlein.reflective.processor.CommandMethodProcessor
+              cafe.josh.reflective.processor.CommandMethodProcessor
             </annotationProcessor>
           </annotationProcessors>
           <compilerArgument>-parameters</compilerArgument>
@@ -162,7 +162,7 @@
                     </relocation>
                     <relocation>
                       <pattern>org.mcstats</pattern>
-                      <shadedPattern>net.jmhertlein.mctowns.shaded.mcstats</shadedPattern>
+                      <shadedPattern>cafe.josh.mctowns.shaded.mcstats</shadedPattern>
                     </relocation>
                   </relocations>
                 </configuration>

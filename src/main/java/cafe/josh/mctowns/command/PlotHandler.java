@@ -23,8 +23,8 @@ import java.util.Set;
 
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
-import net.jmhertlein.reflective.CommandDefinition;
-import net.jmhertlein.reflective.annotation.CommandMethod;
+import cafe.josh.reflective.CommandDefinition;
+import cafe.josh.reflective.annotation.CommandMethod;
 import cafe.josh.mctowns.MCTowns;
 import cafe.josh.mctowns.MCTownsPlugin;
 import cafe.josh.mctowns.region.MCTownsRegion;
