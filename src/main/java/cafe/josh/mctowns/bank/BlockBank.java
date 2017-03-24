@@ -57,7 +57,7 @@ public class BlockBank {
             return false;
         }
 
-        townFunds = townFunds.add(amt);
+        townFunds = townFunds.add(amt.setScale(6, BigDecimal.ROUND_FLOOR));
         return true;
 
     }
