@@ -38,7 +38,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>net.jmhertlein</groupId>
+      <groupId>cafe.josh</groupId>
       <artifactId>EverCoreUtils</artifactId>
       <version>4.0-SNAPSHOT</version>
       <scope>compile</scope>
@@ -66,7 +66,7 @@
   <repositories>
     <repository>
       <id>vault-repo</id>
-      <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+      <url>http://nexus.hc.to/content/repositories/pub_releases</url>
     </repository>
     <repository>
       <id>jmh-repo</id>
