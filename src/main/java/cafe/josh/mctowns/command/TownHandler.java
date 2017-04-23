@@ -41,6 +41,7 @@ import static net.jmhertlein.core.chat.ChatUtil.*;
 import cafe.josh.reflective.CommandDefinition;
 import cafe.josh.reflective.annotation.CommandMethod;
 import cafe.josh.mctowns.util.MCTConfig;
+import cafe.josh.mctowns.util.SanitizeInput;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -844,13 +845,11 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        BigDecimal amt;
-        try {
-            amt = new BigDecimal(args[0]);
-        } catch(NumberFormatException nfe) {
-            localSender.sendMessage(ERR + "Error parsing quantity \"" + args[0] + "\" : " + nfe.getMessage());
+        BigDecimal amt = SanitizeInput.SanitizeBigDec(args[0], localSender);
+        if(amt == null) {
             return;
         }
+
 
         Town t = localSender.getActiveTown();
 
@@ -874,11 +873,8 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        BigDecimal amt;
-        try {
-            amt = new BigDecimal(args[0]);
-        } catch(NumberFormatException nfe) {
-            localSender.sendMessage(ERR + "Error parsing quantity \"" + args[0] + "\" : " + nfe.getMessage());
+        BigDecimal amt = SanitizeInput.SanitizeBigDec(args[0], localSender);
+        if(amt == null) {
             return;
         }
 
