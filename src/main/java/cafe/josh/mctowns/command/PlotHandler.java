@@ -16,6 +16,7 @@
  */
 package cafe.josh.mctowns.command;
 
+import cafe.josh.mctowns.util.Players;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
@@ -111,7 +112,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
 
         OfflinePlayer player = server.getOfflinePlayer(args[0]);
-        if(!player.hasPlayedBefore()) {
+        if(!Players.playedHasEverLoggedIn(player)) {
             localSender.sendMessage(ERR + args[0] + " has never played on this server.");
             return;
         }
@@ -149,7 +150,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
         }
 
         OfflinePlayer player = server.getOfflinePlayer(args[0]);
-        if(!player.hasPlayedBefore()) {
+        if(!Players.playedHasEverLoggedIn(player)) {
             localSender.sendMessage(ChatColor.GOLD + args[0] + " has never played on this server.");
             return;
         }

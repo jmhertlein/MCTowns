@@ -17,6 +17,7 @@
 package cafe.josh.mctowns.command;
 
 import cafe.josh.mctowns.region.MCTownsRegion;
+import cafe.josh.mctowns.util.Players;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import cafe.josh.reflective.CommandDefinition;
@@ -124,30 +125,27 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
             return;
         }
 
-        Territory territ = localSender.getActiveTerritory();
-        if(territ == null) {
+        Territory terr = localSender.getActiveTerritory();
+        if(terr == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         OfflinePlayer player = server.getOfflinePlayer(args[0]);
-        if(!player.hasPlayedBefore()) {
-            localSender.sendMessage(
-                    ERR + args[0] + " has never played on this server before.");
+        if(!Players.playedHasEverLoggedIn(player)) {
+            localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
 
         if(!t.playerIsResident(player)) {
-            localSender.sendMessage(
-                    ERR + "That player is not a member of the town.");
+            localSender.sendMessage(ERR + "That player is not a member of the town.");
             return;
         }
 
-        if(territ.addPlayer(Bukkit.getOfflinePlayer(args[0]))) {
+        if(terr.addPlayer(Bukkit.getOfflinePlayer(args[0]))) {
             localSender.sendMessage("Player added to territory.");
         } else {
-            localSender.sendMessage(
-                    ERR + "Unable to add player to territory. Either they are already in it, or the underlying World or WorldGuard Region has been deleted.");
+            localSender.sendMessage(ERR + "Unable to add player to territory. Either they are already in it, or the underlying World or WorldGuard Region has been deleted.");
         }
     }
 
@@ -155,20 +153,20 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
     public void removePlayerFromTerritory(CommandSender s, String playerName, Boolean recursive) {
         setNewCommand(s);
 
-        Territory territ = localSender.getActiveTerritory();
-        if(territ == null) {
+        Territory terr = localSender.getActiveTerritory();
+        if(terr == null) {
             localSender.notifyActiveTerritoryNotSet();
             return;
         }
 
         OfflinePlayer player = server.getOfflinePlayer(playerName);
-        if(!player.hasPlayedBefore()) {
+        if(!Players.playedHasEverLoggedIn(player)) {
             localSender.sendMessage(
                     ERR + playerName + " has never played on this server before.");
             return;
         }
 
-        if(!territ.removePlayer(Bukkit.getOfflinePlayer(playerName))) {
+        if(!terr.removePlayer(Bukkit.getOfflinePlayer(playerName))) {
             localSender.sendMessage(
                     ERR + "Unable to remove player from territory. Either they were not in it in the first place, or the underlying World or WorldGuard Region has been deleted.");
         } else {
@@ -178,7 +176,7 @@ public class TerritoryHandler extends CommandHandler implements CommandDefinitio
         if(recursive != null && recursive) {
             localSender.sendMessage(
                     INFO + "Recursive mode was requested. Removing from child plots...");
-            for(String plotName : territ.getPlotsCollection()) {
+            for(String plotName : terr.getPlotsCollection()) {
                 if(townManager.getPlot(plotName).removePlayer(player)) {
                     localSender.sendMessage(
                             INFO + "Player removed from " + plotName);

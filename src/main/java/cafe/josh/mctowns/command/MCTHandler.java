@@ -18,6 +18,7 @@ package cafe.josh.mctowns.command;
 
 import cafe.josh.mctowns.region.Plot;
 import cafe.josh.mctowns.region.Town;
+import cafe.josh.mctowns.util.Players;
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.File;
@@ -156,10 +157,10 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         }
 
         t.getResidents().stream()
-                .map(uuid -> Bukkit.getOfflinePlayer(uuid))
-                .filter(player -> player.isOnline())
+                .map(Bukkit::getOfflinePlayer)
+                .filter(OfflinePlayer::isOnline)
                 .map(p -> plugin.getActiveSets().get(p.getName()))
-                .forEach(as -> as.clear());
+                .forEach(ActiveSet::clear);
 
         localSender.sendMessage("Town removed.");
         server.broadcastMessage(ChatColor.DARK_RED + args[0] + " has been disbanded.");
@@ -190,7 +191,7 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
         setNewCommand(s);
         OfflinePlayer p = server.getOfflinePlayer(args[0]);
 
-        if(!p.hasPlayedBefore()) {
+        if(!Players.playedHasEverLoggedIn(p)) {
             localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
@@ -383,8 +384,8 @@ public class MCTHandler extends CommandHandler implements CommandDefinition {
 
     private static long[] getOnlinePlayerCounts(Town t) {
         long online = t.getResidents().stream()
-                .map(id -> Bukkit.getOfflinePlayer(id))
-                .filter(p -> p.isOnline())
+                .map(Bukkit::getOfflinePlayer)
+                .filter(OfflinePlayer::isOnline)
                 .count();
         long total = t.getSize();
         return new long[]{online, total};

@@ -22,6 +22,7 @@ import cafe.josh.mctowns.region.MCTownsRegion;
 import cafe.josh.mctowns.region.Town;
 import cafe.josh.mctowns.region.TownLevel;
 import cafe.josh.mctowns.townjoin.TownJoinMethodFormatException;
+import cafe.josh.mctowns.util.Players;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import cafe.josh.mctowns.MCTowns;
 import cafe.josh.mctowns.MCTownsPlugin;
@@ -310,7 +311,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         OfflinePlayer p = server.getOfflinePlayer(args[0]);
-        if(!p.isOnline() && !p.hasPlayedBefore()) {
+        if(!p.isOnline() && !Players.playedHasEverLoggedIn(p)) {
             localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
@@ -368,7 +369,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         }
 
         OfflinePlayer p = server.getOfflinePlayer(args[0]);
-        if(!p.hasPlayedBefore()) {
+        if(!Players.playedHasEverLoggedIn(p)) {
             localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
@@ -414,7 +415,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        if(!p.hasPlayedBefore()) {
+        if(!Players.playedHasEverLoggedIn(p)) {
             localSender.sendMessage(ERR + args[0] + " has never played on this server before.");
             return;
         }
@@ -558,7 +559,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
         OfflinePlayer removeMe = server.getOfflinePlayer(args[0]);
         Town removeFrom = localSender.getActiveTown();
 
-        if(!removeMe.hasPlayedBefore()) {
+        if(!Players.playedHasEverLoggedIn(removeMe)) {
             localSender.sendMessage(ERR + "No player named '" + args[0] + "' has ever played on this server.");
             return;
         }
