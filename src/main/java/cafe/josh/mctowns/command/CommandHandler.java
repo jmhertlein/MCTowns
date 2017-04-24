@@ -535,7 +535,7 @@ public abstract class CommandHandler implements CommandDefinition {
     public Predicate<CommandSender> getFilter(String filterName) {
         switch(filterName) {
             case "mayoralPerms":
-                return s -> MCTLocalSender.hasMayoralPermissions(s);
+                return MCTLocalSender::hasMayoralPermissions;
             default:
                 return null;
         }

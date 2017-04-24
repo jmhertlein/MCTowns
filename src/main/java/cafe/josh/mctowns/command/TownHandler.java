@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static net.jmhertlein.core.chat.ChatUtil.*;
 import cafe.josh.reflective.CommandDefinition;
@@ -168,7 +169,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town economy defaultplotprice", requiredArgs = 1, filters = {"mayoralPerms"})
-    public void setDefaultPlotPrice(CommandSender s, String[] args) {
+    public void setDefaultPlotPrice(CommandSender s, String rawAmount) {
         setNewCommand(s);
 
         Town t = localSender.getActiveTown();
@@ -178,10 +179,15 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        BigDecimal price;
+        if(!Pattern.compile(MCTConfig.CURRENCY_INPUT_PATTERN.getString()).matcher(rawAmount).matches())
+        {
+            localSender.sendMessage(ERR + "Invalid currency input: " + rawAmount);
+            return;
+        }
 
+        BigDecimal price;
         try {
-            price = new BigDecimal(args[0]);
+            price = new BigDecimal(rawAmount);
         } catch(NumberFormatException nfe) {
             localSender.sendMessage(ERR + "Error parsing plot price: " + nfe.getMessage());
             return;
@@ -836,7 +842,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town bank withdraw currency", requiredArgs = 1, filters = {"mayoralPerms"})
-    public void withdrawCurrencyBank(CommandSender s, String[] args) {
+    public void withdrawCurrencyBank(CommandSender s, String rawAmount) {
         setNewCommand(s);
 
         if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
@@ -844,11 +850,17 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
+        if(!Pattern.compile(MCTConfig.CURRENCY_INPUT_PATTERN.getString()).matcher(rawAmount).matches())
+        {
+            localSender.sendMessage(ERR + "Invalid currency input: " + rawAmount);
+            return;
+        }
+
         BigDecimal amt;
         try {
-            amt = new BigDecimal(args[0]);
+            amt = new BigDecimal(rawAmount);
         } catch(NumberFormatException nfe) {
-            localSender.sendMessage(ERR + "Error parsing quantity \"" + args[0] + "\" : " + nfe.getMessage());
+            localSender.sendMessage(ERR + "Error parsing quantity \"" + rawAmount + "\" : " + nfe.getMessage());
             return;
         }
 
@@ -859,7 +871,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        //DO the withdrawl from the town bank
+        //Do the withdrawl from the town bank
         amt = t.getBank().withdrawCurrency(amt);
 
         MCTowns.getEconomy().depositPlayer(localSender.getPlayer().getName(), amt.doubleValue());
@@ -867,18 +879,24 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "town bank deposit currency")
-    public void depositCurrencyBank(CommandSender s, String[] args) {
+    public void depositCurrencyBank(CommandSender s, String rawAmount) {
         setNewCommand(s);
         if(!MCTConfig.ECONOMY_ENABLED.getBoolean()) {
             localSender.sendMessage(ERR + "The economy isn't enabled for your server.");
             return;
         }
 
+        if(!Pattern.compile(MCTConfig.CURRENCY_INPUT_PATTERN.getString()).matcher(rawAmount).matches())
+        {
+            localSender.sendMessage(ERR + "Invalid currency input: " + rawAmount);
+            return;
+        }
+
         BigDecimal amt;
         try {
-            amt = new BigDecimal(args[0]);
+            amt = new BigDecimal(rawAmount);
         } catch(NumberFormatException nfe) {
-            localSender.sendMessage(ERR + "Error parsing quantity \"" + args[0] + "\" : " + nfe.getMessage());
+            localSender.sendMessage(ERR + "Error parsing quantity \"" + rawAmount + "\" : " + nfe.getMessage());
             return;
         }
 
@@ -893,7 +911,7 @@ public class TownHandler extends CommandHandler implements CommandDefinition {
 
         if(result.transactionSuccess()) {
             t.getBank().depositCurrency(amt);
-            localSender.sendMessage(args[0] + " was withdrawn from your account and deposited into " + t.getName() + "'s town bank.");
+            localSender.sendMessage(rawAmount + " was withdrawn from your account and deposited into " + t.getName() + "'s town bank.");
         } else {
             localSender.sendMessage(ERR + "Transaction failed; maybe you do not have enough money to do this?");
             localSender.sendMessage(ChatColor.GOLD + "Actual amount deposited: " + result.amount);

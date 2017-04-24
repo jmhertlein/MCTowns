@@ -12,6 +12,7 @@ playersCanJoinMultipleTowns: true
 #Maximum number of tiles in the XZ plane that a mayor can use when making a territory
 # default is a generous 50 chunks (50 * 16 = 800)
 territoryXZSizeLimit: 800
+currencyInputPattern: ^\d{1,10}(\.\d{1,10})?$
 #
 #
 # important stuff pls don't change

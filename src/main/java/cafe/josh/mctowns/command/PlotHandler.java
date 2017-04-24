@@ -21,6 +21,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static net.jmhertlein.core.chat.ChatUtil.ERR;
 import static net.jmhertlein.core.chat.ChatUtil.SUCC;
@@ -198,7 +199,7 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
     }
 
     @CommandMethod(path = "plot economy setprice", requiredArgs = 1, filters = {"mayoralPerms"})
-    public void setPlotPrice(CommandSender s, String[] args) {
+    public void setPlotPrice(CommandSender s, String rawAmount) {
         setNewCommand(s);
 
         if(!localSender.hasMayoralPermissions()) {
@@ -206,12 +207,17 @@ public class PlotHandler extends CommandHandler implements CommandDefinition {
             return;
         }
 
-        BigDecimal price;
+        if(!Pattern.compile(MCTConfig.CURRENCY_INPUT_PATTERN.getString()).matcher(rawAmount).matches())
+        {
+            localSender.sendMessage(ERR + "Invalid currency input: " + rawAmount);
+            return;
+        }
 
+        BigDecimal price;
         try {
-            price = new BigDecimal(args[0]);
+            price = new BigDecimal(rawAmount);
         } catch(Exception e) {
-            localSender.sendMessage(ERR + "Error parsing float on token: " + args[0]);
+            localSender.sendMessage(ERR + "Error parsing float on token: " + rawAmount);
             return;
         }
 
