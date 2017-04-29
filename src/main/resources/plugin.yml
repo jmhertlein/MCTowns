@@ -1,5 +1,5 @@
 name: MCTowns
-main: MCTownsPlugin
+main: cafe.josh.mctowns.MCTownsPlugin
 version: ${version}-${buildNumber}
 softdepend: [WorldGuard, Vault]
 commands:
